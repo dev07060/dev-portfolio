@@ -170,7 +170,12 @@ export const projects: Project[] = [
         scrollable: true,
       },
     ],
-    links: [],
+    links: [
+      {
+        label: 'Live Site',
+        url: 'https://www.wantrip.kr',
+      },
+    ],
   },
   {
     id: 'wantrip-user-mobile',
@@ -259,7 +264,12 @@ export const projects: Project[] = [
         scrollable: true,
       },
     ],
-    links: [],
+    links: [
+      {
+        label: 'Live Site',
+        url: 'https://www.wantrip.kr',
+      },
+    ],
   },
   {
     id: 'local-mobile-rag-gemma',
