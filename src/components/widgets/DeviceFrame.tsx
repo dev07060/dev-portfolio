@@ -1,5 +1,6 @@
-import { Smartphone, Monitor, Tablet, Maximize2, ChevronsUpDown } from 'lucide-react';
+import { Smartphone, Monitor, Tablet, Maximize2 } from 'lucide-react';
 import Image from 'next/image';
+import { useRef, useEffect } from 'react';
 import { Project } from '@/types/project';
 
 interface DeviceFrameProps {
@@ -134,19 +135,20 @@ const MobilePresentationFrame = ({
 }) => {
   const currentScreen = project.screens[currentScreenIndex];
   const isScrollable = currentScreen?.scrollable;
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Reset scroll position when screen changes
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = 0;
+    }
+  }, [currentScreenIndex]);
 
   return (
     <div className="relative">
-      {/* Scroll Indicator */}
-      {isScrollable && (
-        <div className="absolute -right-12 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 text-white/60">
-          <ChevronsUpDown size={20} className="animate-bounce" />
-          <span className="text-[10px] writing-mode-vertical">Scroll</span>
-        </div>
-      )}
       
       <div className="relative border-gray-100 bg-gray-100 border-[8px] rounded-[2.5rem] h-[60vh] md:h-[70vh] aspect-[9/19] shadow-2xl flex flex-col">
-        <div className={`rounded-[2rem] w-full h-full bg-slate-800 relative ${isScrollable ? 'overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent' : 'overflow-hidden'}`}>
+        <div ref={scrollRef} className={`rounded-[2rem] w-full h-full bg-slate-800 relative ${isScrollable ? 'overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent' : 'overflow-hidden'}`}>
           {currentScreen?.imagePath ? (
             isScrollable ? (
               // Scrollable: 이미지 원본 비율 유지하며 스크롤
@@ -200,6 +202,14 @@ const WebPresentationFrame = ({
 }) => {
   const currentScreen = project.screens[currentScreenIndex];
   const isScrollable = currentScreen?.scrollable;
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Reset scroll position when screen changes
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = 0;
+    }
+  }, [currentScreenIndex]);
 
   return (
     <div className={`relative bg-gray-800 rounded-lg shadow-2xl border-t-[24px] border-white/90 flex flex-col w-[90vw] max-w-[calc((100vh-200px)*16/9)] ${isScrollable ? '' : ''}`} style={{ aspectRatio: isScrollable ? undefined : '16/9', height: isScrollable ? '70vh' : undefined, width: isScrollable ? '90vw' : undefined, maxWidth: isScrollable ? 'calc((100vh-200px)*16/9)' : undefined }}>
@@ -208,7 +218,7 @@ const WebPresentationFrame = ({
         <div className="w-3 h-3 rounded-full bg-yellow-400" />
         <div className="w-3 h-3 rounded-full bg-green-400" />
       </div>
-      <div className={`w-full h-full ${isScrollable ? 'overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent' : 'relative'}`}>
+      <div ref={scrollRef} className={`w-full h-full ${isScrollable ? 'overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent' : 'relative'}`}>
         {currentScreen?.imagePath ? (
           isScrollable ? (
             // Scrollable: 이미지 원본 비율 유지하며 스크롤
@@ -304,16 +314,17 @@ const TabletPresentationFrame = ({
 }) => {
   const currentScreen = project.screens[currentScreenIndex];
   const isScrollable = currentScreen?.scrollable;
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Reset scroll position when screen changes
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = 0;
+    }
+  }, [currentScreenIndex]);
 
   return (
     <div className="relative">
-      {/* Scroll Indicator */}
-      {isScrollable && (
-        <div className="absolute -right-12 top-1/2 -translate-y-1/2 flex flex-col items-center gap-1 text-white/60">
-          <ChevronsUpDown size={20} className="animate-bounce" />
-          <span className="text-[10px] writing-mode-vertical">Scroll</span>
-        </div>
-      )}
 
       <div 
         className="relative border-gray-100 bg-gray-100 border-[12px] rounded-[2.5rem] shadow-2xl flex flex-col"
@@ -322,7 +333,7 @@ const TabletPresentationFrame = ({
         {/* 태블릿 상단 카메라 */}
         <div className="absolute top-4 left-1/2 -translate-x-1/2 w-3 h-3 bg-gray-300 rounded-full z-10" />
         
-        <div className={`rounded-[2rem] w-full h-full bg-slate-800 relative mt-2 ${isScrollable ? 'overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent' : 'overflow-hidden'}`}>
+        <div ref={scrollRef} className={`rounded-[2rem] w-full h-full bg-slate-800 relative mt-2 ${isScrollable ? 'overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent' : 'overflow-hidden'}`}>
           {currentScreen?.imagePath ? (
             isScrollable ? (
               <div className="w-full">

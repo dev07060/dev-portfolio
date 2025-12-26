@@ -1,6 +1,266 @@
 import { Project } from '@/types/project';
 
 export const projects: Project[] = [
+    {
+    id: 'fiet-fitness-trainer',
+    type: 'tablet',
+    title: '피에트 피트니스 트레이너',
+    subtitle: '피에트 피트니스 센터의 트레이너 전용 앱',
+    description:
+      '피에트 피트니스 센터의 트레이너 전용 앱입니다. 회원 관리, 운동 프로그램 설계, 식단 관리 및 체중 데이터 추적을 태블릿에 최적화된 인터페이스로 제공합니다.',
+    techStack: ['Flutter', 'Dart', 'Firebase'],
+    color: 'from-indigo-500 to-purple-500',
+    iconType: 'dumbbell',
+    screens: [
+      {
+        title: 'Splash',
+        desc: '앱 시작 화면입니다.',
+        imagePath: '/images/fiet-fitness-trainer/Splash.png',
+      },
+      {
+        title: '결과 리포트 - 인바디',
+        desc: '회원의 인바디 측정 결과를 분석하여 표시합니다.',
+        imagePath: '/images/fiet-fitness-trainer/report-inbody.png',
+        scrollable: true,
+      },
+      {
+        title: '결과 리포트 - 피에트',
+        desc: '피에트 피트니스 종합 분석 리포트를 제공합니다.',
+        imagePath: '/images/fiet-fitness-trainer/report-fiet.png',
+        scrollable: true,
+      },
+      {
+        title: '동영상 촬영',
+        desc: '운동 자세 촬영 중인 화면입니다.',
+        imagePath: '/images/fiet-fitness-trainer/video-recording.png',
+      },
+      {
+        title: '동영상 보기',
+        desc: '촬영된 동영상을 세로로 확인합니다.',
+        imagePath: '/images/fiet-fitness-trainer/video-vertical.png',
+      },
+      {
+        title: '사진 촬영',
+        desc: '촬영된 사진을 확인하는 화면입니다.',
+        imagePath: '/images/fiet-fitness-trainer/photo-captured.png',
+      },
+    ],
+    links: [
+      {
+        label: 'Google Play Store',
+        url: 'https://play.google.com/store/apps/details?id=net.fiet.mvm_trainer&hl=ko',
+      },
+      {
+        label: 'iOS App Store',
+        url: 'https://apps.apple.com/kr/app/%ED%94%BC%EC%97%90%ED%8A%B8-%ED%94%BC%ED%8A%B8%EB%8B%88%EC%8A%A4-%ED%8A%B8%EB%A0%88%EC%9D%B4%EB%84%88/id6670158561',
+      },
+    ],
+  },
+  {
+    id: 'fiet-fitness-user',
+    type: 'mobile',
+    title: '피에트 피트니스',
+    subtitle: 'AI 건강 관리 회사가 만든 새로운 개념의 피트니스 센터',
+    description:
+      'AI 건강 관리 회사가 만든 새로운 개념의 피트니스 센터 앱입니다. 트레이너와 연동하여 맞춤형 운동 프로그램과 식단을 확인하고 진행 상황을 기록합니다.',
+    techStack: ['Flutter', 'Dart', 'Firebase'],
+    color: 'from-violet-500 to-fuchsia-500',
+    iconType: 'dumbbell',
+    screens: [
+      {
+        title: 'Splash',
+        desc: '앱 시작 화면입니다.',
+        imagePath: '/images/fiet-fitness-user/Splash.png',
+      },
+      {
+        title: '기록하기',
+        desc: '운동 및 활동을 기록하는 화면입니다.',
+        imagePath: '/images/fiet-fitness-user/record.png',
+      },
+      {
+        title: '수분 섭취',
+        desc: '일일 수분 섭취량을 기록하고 확인합니다.',
+        imagePath: '/images/fiet-fitness-user/water.png',
+        scrollable: true,
+      },
+      {
+        title: '식단',
+        desc: '식단 정보를 확인하고 관리합니다.',
+        imagePath: '/images/fiet-fitness-user/diet.png',
+        scrollable: true,
+      },
+      {
+        title: '알림',
+        desc: '앱 알림을 확인하는 화면입니다.',
+        imagePath: '/images/fiet-fitness-user/notification.png',
+        scrollable: true,
+      },
+      {
+        title: '체중',
+        desc: '체중 변화를 추적하고 그래프로 확인합니다.',
+        imagePath: '/images/fiet-fitness-user/weight.png',
+        scrollable: true,
+      },
+    ],
+    links: [
+      {
+        label: 'Google Play Store',
+        url: 'https://play.google.com/store/apps/details?id=net.fiet.mvm_member&hl=ko',
+      },
+      {
+        label: 'iOS App Store',
+        url: 'https://apps.apple.com/kr/app/%ED%94%BC%EC%97%90%ED%8A%B8-%ED%94%BC%ED%8A%B8%EB%8B%88%EC%8A%A4/id6670158395',
+      },
+    ],
+  },
+  {
+    id: 'wantrip-curator-web',
+    type: 'web',
+    title: 'Wantrip Curator\n여행 큐레이터 웹',
+    subtitle: '맞춤형 여행 플래닝 큐레이터용 웹 서비스',
+    description:
+      '여행 큐레이터가 고객의 요청을 받아 맞춤형 여행 플랜을 제공하는 웹 서비스입니다. 고객 매칭, 실시간 채팅, 견적서 작성 및 전송, 플랜 확정, 예약 대행까지 여행 큐레이팅의 전체 플로우를 지원합니다.',
+    techStack: ['TypeScript', 'Vue', 'Nuxt.js', 'PostgreSQL', 'NestJS'],
+    color: 'from-sky-500 to-blue-500',
+    iconType: 'globe',
+    screens: [
+      {
+        title: '매칭 전',
+        desc: '새로운 고객 요청을 확인하고 매칭을 기다리는 대시보드 화면입니다.',
+        imagePath: '/images/wantrip-curator-web/매칭 전.png',
+        scrollable: true,
+      },
+      {
+        title: '대화',
+        desc: '고객과 실시간으로 소통하며 여행 요구사항을 파악하는 채팅 화면입니다.',
+        imagePath: '/images/wantrip-curator-web/대화.png',
+      },
+      {
+        title: '견적서 작성',
+        desc: '고객 요구에 맞는 여행 플랜과 비용을 정리하여 견적서를 작성합니다.',
+        imagePath: '/images/wantrip-curator-web/견적서 작성.png',
+        scrollable: true,
+      },
+      {
+        title: '견적서 전송',
+        desc: '작성된 견적서를 고객에게 전송하여 확인을 요청합니다.',
+        imagePath: '/images/wantrip-curator-web/견적서 전송.png',
+      },
+      {
+        title: '플랜 확정',
+        desc: '고객이 승인한 여행 플랜을 최종 확정하는 화면입니다.',
+        imagePath: '/images/wantrip-curator-web/플랜 확정.png',
+        scrollable: true,
+      },
+      {
+        title: '매칭완료 (예약 대행)',
+        desc: '매칭이 완료되고 항공권, 숙소 등 예약을 대행하는 화면입니다.',
+        imagePath: '/images/wantrip-curator-web/매칭완료(예약 대행).png',
+        scrollable: true,
+      },
+      {
+        title: '내 여행',
+        desc: '진행 중인 여행 목록과 상태를 관리하는 화면입니다.',
+        imagePath: '/images/wantrip-curator-web/내 여행.png',
+      },
+      {
+        title: '여행 완료',
+        desc: '여행이 완료되고 고객 리뷰까지 작성된 최종 완료 화면입니다.',
+        imagePath: '/images/wantrip-curator-web/여행 완료(리뷰 작성까지 완료).png',
+        scrollable: true,
+      },
+    ],
+    links: [],
+  },
+  {
+    id: 'wantrip-user-mobile',
+    type: 'mobile',
+    title: 'Wantrip User\n여행자 앱',
+    subtitle: '맞춤형 여행 플래닝 사용자용 모바일 앱',
+    description:
+      '여행자가 큐레이터에게 맞춤형 여행 플랜을 요청하고 관리하는 모바일 앱입니다. 큐레이션 상세 확인, 견적서 검토, 예약금/잔금 결제, 여행 일정 확인, 후기 작성까지 전체 여행 플로우를 지원합니다.',
+    techStack: ['TypeScript', 'Vue', 'Nuxt.js', 'PostgreSQL', 'NestJS'],
+    color: 'from-cyan-500 to-teal-500',
+    iconType: 'smartphone',
+    screens: [
+      {
+        title: '큐레이션 상세',
+        desc: '큐레이터가 제공하는 여행 큐레이션 상세 정보를 확인합니다.',
+        imagePath: '/images/watrip-user-mobile/큐레이션 상세페이지.png',
+        scrollable: true,
+      },
+      {
+        title: '매칭중인 견적서 목록',
+        desc: '현재 매칭 진행 중인 견적서 목록을 확인합니다.',
+        imagePath: '/images/watrip-user-mobile/_매칭중인 견적서 목록.png',
+        scrollable: true,
+      },
+      {
+        title: '제시한 견적서',
+        desc: '큐레이터가 제시한 견적서 상세 내용을 확인합니다.',
+        imagePath: '/images/watrip-user-mobile/제시한 견적서.png',
+        scrollable: true,
+      },
+      {
+        title: '견적서 전송',
+        desc: '큐레이터가 전송한 견적서를 확인합니다.',
+        imagePath: '/images/watrip-user-mobile/견적서 전송.png',
+        scrollable: true,
+      },
+      {
+        title: '매칭완료 견적서',
+        desc: '매칭이 완료된 견적서로, 잔금 결제 전 상태입니다.',
+        imagePath: '/images/watrip-user-mobile/매칭완료 견적서(잔금 결제 전).png',
+        scrollable: true,
+      },
+      {
+        title: '여행자 정보',
+        desc: '여행자 정보를 입력하고 관리하는 화면입니다.',
+        imagePath: '/images/watrip-user-mobile/여행자 정보.png',
+        scrollable: true,
+      },
+      {
+        title: '예약금 결제 페이지',
+        desc: '예약금을 결제하기 위한 결제 정보 입력 화면입니다.',
+        imagePath: '/images/watrip-user-mobile/예약금 결제 페이지.png',
+        scrollable: true,
+      },
+      {
+        title: 'KG 결제',
+        desc: 'KG이니시스를 통한 결제 진행 화면입니다.',
+        imagePath: '/images/watrip-user-mobile/KG 결제.png',
+      },
+      {
+        title: '잔금 결제 요청',
+        desc: '잔금 결제 요청을 받은 화면입니다.',
+        imagePath: '/images/watrip-user-mobile/잔금 결제 요청.png',
+      },
+      {
+        title: '쪽지',
+        desc: '큐레이터와 주고받은 쪽지 목록을 확인합니다.',
+        imagePath: '/images/watrip-user-mobile/쪽지.png',
+        scrollable: true,
+      },
+      {
+        title: '전체 금액 결제완료',
+        desc: '전체 결제가 완료된 상태를 표시합니다.',
+        imagePath: '/images/watrip-user-mobile/전체 금액 결제완료.png',
+      },
+      {
+        title: '여행 일정',
+        desc: '확정된 여행 일정을 상세하게 확인합니다.',
+        imagePath: '/images/watrip-user-mobile/여행 일정.png',
+        scrollable: true,
+      },
+      {
+        title: '후기',
+        desc: '여행 완료 후 후기를 확인하고 작성합니다.',
+        imagePath: '/images/watrip-user-mobile/후기.png',
+        scrollable: true,
+      },
+    ],
+    links: [],
+  },
   {
     id: 'local-mobile-rag-gemma',
     type: 'mobile',
@@ -250,116 +510,5 @@ export const projects: Project[] = [
       },
     ],
   },
-  {
-    id: 'fiet-fitness-trainer',
-    type: 'tablet',
-    title: '피에트 피트니스 트레이너',
-    subtitle: '피에트 피트니스 센터의 트레이너 전용 앱',
-    description:
-      '피에트 피트니스 센터의 트레이너 전용 앱입니다. 회원 관리, 운동 프로그램 설계, 식단 관리 및 체중 데이터 추적을 태블릿에 최적화된 인터페이스로 제공합니다.',
-    techStack: ['Flutter', 'Dart', 'Firebase'],
-    color: 'from-indigo-500 to-purple-500',
-    iconType: 'dumbbell',
-    screens: [
-      {
-        title: 'Splash',
-        desc: '앱 시작 화면입니다.',
-        imagePath: '/images/fiet-fitness-trainer/Splash.png',
-      },
-      {
-        title: '결과 리포트 - 인바디',
-        desc: '회원의 인바디 측정 결과를 분석하여 표시합니다.',
-        imagePath: '/images/fiet-fitness-trainer/report-inbody.png',
-        scrollable: true,
-      },
-      {
-        title: '결과 리포트 - 피에트',
-        desc: '피에트 피트니스 종합 분석 리포트를 제공합니다.',
-        imagePath: '/images/fiet-fitness-trainer/report-fiet.png',
-        scrollable: true,
-      },
-      {
-        title: '동영상 촬영',
-        desc: '운동 자세 촬영 중인 화면입니다.',
-        imagePath: '/images/fiet-fitness-trainer/video-recording.png',
-      },
-      {
-        title: '동영상 보기',
-        desc: '촬영된 동영상을 세로로 확인합니다.',
-        imagePath: '/images/fiet-fitness-trainer/video-vertical.png',
-      },
-      {
-        title: '사진 촬영',
-        desc: '촬영된 사진을 확인하는 화면입니다.',
-        imagePath: '/images/fiet-fitness-trainer/photo-captured.png',
-      },
-    ],
-    links: [
-      {
-        label: 'Google Play Store',
-        url: 'https://play.google.com/store/apps/details?id=net.fiet.mvm_trainer&hl=ko',
-      },
-      {
-        label: 'iOS App Store',
-        url: 'https://apps.apple.com/kr/app/%ED%94%BC%EC%97%90%ED%8A%B8-%ED%94%BC%ED%8A%B8%EB%8B%88%EC%8A%A4-%ED%8A%B8%EB%A0%88%EC%9D%B4%EB%84%88/id6670158561',
-      },
-    ],
-  },
-  {
-    id: 'fiet-fitness-user',
-    type: 'mobile',
-    title: '피에트 피트니스',
-    subtitle: 'AI 건강 관리 회사가 만든 새로운 개념의 피트니스 센터',
-    description:
-      'AI 건강 관리 회사가 만든 새로운 개념의 피트니스 센터 앱입니다. 트레이너와 연동하여 맞춤형 운동 프로그램과 식단을 확인하고 진행 상황을 기록합니다.',
-    techStack: ['Flutter', 'Dart', 'Firebase'],
-    color: 'from-violet-500 to-fuchsia-500',
-    iconType: 'dumbbell',
-    screens: [
-      {
-        title: 'Splash',
-        desc: '앱 시작 화면입니다.',
-        imagePath: '/images/fiet-fitness-user/Splash.png',
-      },
-      {
-        title: '기록하기',
-        desc: '운동 및 활동을 기록하는 화면입니다.',
-        imagePath: '/images/fiet-fitness-user/record.png',
-      },
-      {
-        title: '수분 섭취',
-        desc: '일일 수분 섭취량을 기록하고 확인합니다.',
-        imagePath: '/images/fiet-fitness-user/water.png',
-        scrollable: true,
-      },
-      {
-        title: '식단',
-        desc: '식단 정보를 확인하고 관리합니다.',
-        imagePath: '/images/fiet-fitness-user/diet.png',
-        scrollable: true,
-      },
-      {
-        title: '알림',
-        desc: '앱 알림을 확인하는 화면입니다.',
-        imagePath: '/images/fiet-fitness-user/notification.png',
-        scrollable: true,
-      },
-      {
-        title: '체중',
-        desc: '체중 변화를 추적하고 그래프로 확인합니다.',
-        imagePath: '/images/fiet-fitness-user/weight.png',
-        scrollable: true,
-      },
-    ],
-    links: [
-      {
-        label: 'Google Play Store',
-        url: 'https://play.google.com/store/apps/details?id=net.fiet.mvm_member&hl=ko',
-      },
-      {
-        label: 'iOS App Store',
-        url: 'https://apps.apple.com/kr/app/%ED%94%BC%EC%97%90%ED%8A%B8-%ED%94%BC%ED%8A%B8%EB%8B%88%EC%8A%A4/id6670158395',
-      },
-    ],
-  },
+
 ];
