@@ -146,7 +146,7 @@ const MobilePresentationFrame = ({
 
   return (
     <div className="relative">
-      <div className="relative border-gray-100 bg-gray-100 border-[8px] rounded-[2.5rem] h-[60vh] md:h-[70vh] aspect-[9/19] shadow-2xl flex flex-col">
+      <div className="relative border-gray-100 bg-gray-100 border-[8px] rounded-[2.5rem] h-[65vh] md:h-[70vh] aspect-[9/19] shadow-2xl flex flex-col">
         <div ref={scrollRef} className={`rounded-[2rem] w-full h-full bg-slate-800 relative ${isScrollable ? 'overflow-y-auto overflow-x-hidden scrollbar-hide' : 'overflow-hidden'}`}>
           {currentScreen?.imagePath ? (
             isScrollable ? (
@@ -182,8 +182,8 @@ const MobilePresentationFrame = ({
           )}
         </div>
 
-        {/* Page Indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 bg-black/40 backdrop-blur-md px-3 py-1 rounded-full text-xs text-white/90 font-medium border border-white/10 shadow-lg">
+        {/* Page Indicator - Desktop only */}
+        <div className="hidden md:block absolute bottom-8 left-1/2 -translate-x-1/2 z-10 bg-black/40 backdrop-blur-md px-3 py-1 rounded-full text-xs text-white/90 font-medium border border-white/10 shadow-lg">
           {currentScreenIndex + 1} / {project.screens.length}
         </div>
       </div>
@@ -372,8 +372,8 @@ const TabletPresentationFrame = ({
           )}
         </div>
 
-        {/* Page Indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 bg-black/40 backdrop-blur-md px-3 py-1 rounded-full text-xs text-white/90 font-medium border border-white/10 shadow-lg">
+        {/* Page Indicator - Desktop only */}
+        <div className="hidden md:block absolute bottom-8 left-1/2 -translate-x-1/2 z-10 bg-black/40 backdrop-blur-md px-3 py-1 rounded-full text-xs text-white/90 font-medium border border-white/10 shadow-lg">
           {currentScreenIndex + 1} / {project.screens.length}
         </div>
       </div>

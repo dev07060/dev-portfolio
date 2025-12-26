@@ -27,16 +27,17 @@ const PresentationOverlay = ({
         <X size={24} />
       </button>
 
+      {/* Desktop Navigation Arrows - Hidden on mobile */}
       <button
         onClick={onPrevSlide}
-        className="absolute left-4 md:left-10 p-4 rounded-full bg-white/5 hover:bg-white/10 text-white transition-colors z-50 hover:scale-110"
+        className="hidden md:block absolute left-4 md:left-10 p-4 rounded-full bg-white/5 hover:bg-white/10 text-white transition-colors z-50 hover:scale-110"
       >
         <ChevronLeft size={40} />
       </button>
 
       <button
         onClick={onNextSlide}
-        className="absolute right-4 md:right-10 p-4 rounded-full bg-white/5 hover:bg-white/10 text-white transition-colors z-50 hover:scale-110"
+        className="hidden md:block absolute right-4 md:right-10 p-4 rounded-full bg-white/5 hover:bg-white/10 text-white transition-colors z-50 hover:scale-110"
       >
         <ChevronRight size={40} />
       </button>
@@ -49,6 +50,27 @@ const PresentationOverlay = ({
           variant="presentation"
           currentScreenIndex={currentScreenIndex}
         />
+      </div>
+
+      {/* Mobile Navigation - Below Device Frame */}
+      <div className="flex md:hidden items-center justify-center gap-6 py-4">
+        <button
+          onClick={onPrevSlide}
+          className="p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+        >
+          <ChevronLeft size={28} />
+        </button>
+        
+        <span className="text-white/80 text-sm font-medium min-w-[60px] text-center">
+          {currentScreenIndex + 1} / {project.screens.length}
+        </span>
+        
+        <button
+          onClick={onNextSlide}
+          className="p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+        >
+          <ChevronRight size={28} />
+        </button>
       </div>
 
       {/* Bottom Caption Area */}
@@ -65,28 +87,14 @@ const CaptionArea = ({
   project: Project;
   currentScreenIndex: number;
 }) => (
-  <div className="w-full bg-black/80 backdrop-blur-md p-6 md:p-8 border-t border-white/10 text-center md:text-left">
-    <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-      <div>
-        <h3 className="text-2xl font-bold text-white mb-1 flex items-center justify-center md:justify-start gap-3">
-          {project.screens[currentScreenIndex].title}
-        </h3>
-        <p className="text-slate-400 max-w-2xl text-sm md:text-base leading-relaxed">
-          {project.screens[currentScreenIndex].desc}
-        </p>
-      </div>
-
-      {/* Tech Tags */}
-      <div className="flex gap-2">
-        {project.techStack.slice(0, 2).map((t) => (
-          <span
-            key={t}
-            className="text-xs text-slate-500 border border-slate-700 px-2 py-1 rounded-full"
-          >
-            {t}
-          </span>
-        ))}
-      </div>
+  <div className="w-full bg-black/80 backdrop-blur-md p-6 md:p-8 border-t border-white/10 text-center">
+    <div className="max-w-4xl mx-auto">
+      <h3 className="text-2xl font-bold text-white mb-2">
+        {project.screens[currentScreenIndex].title}
+      </h3>
+      <p className="text-slate-400 text-sm md:text-base leading-relaxed">
+        {project.screens[currentScreenIndex].desc}
+      </p>
     </div>
   </div>
 );
