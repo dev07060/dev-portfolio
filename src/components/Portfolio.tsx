@@ -9,6 +9,7 @@ import {
   ProjectModal,
   PresentationOverlay,
   Footer,
+  OpenSourceBanner,
 } from './widgets';
 
 const Portfolio = () => {
@@ -89,6 +90,9 @@ const Portfolio = () => {
     <div className="min-h-screen bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a] text-white font-sans">
       {/* Header / Profile Section */}
       <ProfileHeader />
+
+      {/* Open Source Packages Banner */}
+      <OpenSourceBanner />
 
       {/* Project Grid Section */}
       <ProjectGrid projects={projects} onProjectClick={handleProjectClick} />

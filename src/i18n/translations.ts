@@ -32,6 +32,15 @@ export const ui = {
   mobile: { en: 'Mobile', ko: 'Mobile' },
   web: { en: 'Web', ko: 'Web' },
   state: { en: 'State', ko: 'State' },
+
+  // Open Source Packages Section
+  openSourcePackages: { en: 'Open Source Packages', ko: '오픈소스 패키지' },
+  openSourceDesc: {
+    en: 'High-performance Flutter packages I developed and published on pub.dev',
+    ko: '직접 개발하여 pub.dev에 배포한 고성능 Flutter 패키지',
+  },
+  viewOnPubDev: { en: 'pub.dev', ko: 'pub.dev' },
+  viewOnGitHub: { en: 'GitHub', ko: 'GitHub' },
 } as const;
 
 // ============================================================
