@@ -1,6 +1,9 @@
+'use client';
+
 import { Smartphone, Monitor, Tablet } from 'lucide-react';
 import { Project } from '@/types/project';
 import ProjectIcon from './ProjectIcon';
+import { useLocale, ui } from '@/i18n';
 
 interface ProjectCardProps {
   project: Project;
@@ -8,6 +11,8 @@ interface ProjectCardProps {
 }
 
 const ProjectCard = ({ project, onClick }: ProjectCardProps) => {
+  const { t } = useLocale();
+
   const getDeviceIcon = () => {
     if (project.type === 'mobile') return <Smartphone size={12} />;
     if (project.type === 'tablet') return <Tablet size={12} />;
@@ -15,9 +20,9 @@ const ProjectCard = ({ project, onClick }: ProjectCardProps) => {
   };
 
   const getDeviceLabel = () => {
-    if (project.type === 'mobile') return 'APP';
-    if (project.type === 'tablet') return 'TABLET';
-    return 'WEB';
+    if (project.type === 'mobile') return t(ui.deviceApp);
+    if (project.type === 'tablet') return t(ui.deviceTablet);
+    return t(ui.deviceWeb);
   };
 
   return (
@@ -42,10 +47,10 @@ const ProjectCard = ({ project, onClick }: ProjectCardProps) => {
       {/* Content Area */}
       <div className="p-6">
         <h3 className="text-xl font-bold text-white mb-1 group-hover:text-cyan-400 transition-colors">
-          {project.title}
+          {t(project.title)}
         </h3>
         <p className="text-sm text-slate-400 mb-4 line-clamp-2">
-          {project.description}
+          {t(project.description)}
         </p>
         <div className="flex flex-wrap gap-2">
           {project.techStack.slice(0, 3).map((tech) => (
@@ -63,3 +68,4 @@ const ProjectCard = ({ project, onClick }: ProjectCardProps) => {
 };
 
 export default ProjectCard;
+

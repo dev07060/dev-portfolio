@@ -1,7 +1,10 @@
+'use client';
+
 import { Smartphone, Monitor, Tablet, Maximize2, Mouse } from 'lucide-react';
 import Image from 'next/image';
 import { useRef, useEffect } from 'react';
 import { Project } from '@/types/project';
+import { useLocale } from '@/i18n';
 
 interface DeviceFrameProps {
   project: Project;
@@ -56,34 +59,38 @@ const MobileFrame = ({
 }: {
   project: Project;
   onClick: (e: React.MouseEvent) => void;
-}) => (
-  <div
-    onClick={onClick}
-    className="relative mx-auto cursor-pointer border-gray-100 bg-gray-100 border-[8px] rounded-[2.5rem] h-[400px] w-[220px] md:h-[500px] md:w-[280px] shadow-xl flex flex-col transform transition-transform duration-500 hover:scale-105"
-  >
-    <div className="h-[32px] w-[3px] bg-gray-100 absolute -left-[10px] top-[72px] rounded-l-lg" />
-    <div className="h-[46px] w-[3px] bg-gray-100 absolute -left-[10px] top-[124px] rounded-l-lg" />
-    <div className="h-[64px] w-[3px] bg-gray-100 absolute -right-[10px] top-[142px] rounded-r-lg" />
-    <div className="rounded-[2rem] overflow-hidden w-full h-full bg-slate-800 relative">
-      {project.screens[0]?.imagePath ? (
-        <Image
-          src={project.screens[0].imagePath}
-          alt={project.title}
-          fill
-          className="object-cover"
-        />
-      ) : (
-        <div
-          className={`w-full h-full bg-gradient-to-br ${project.color} flex flex-col items-center justify-center text-white p-4 text-center`}
-        >
-          <Smartphone size={48} className="mb-4 opacity-80" />
-          <h3 className="text-xl font-bold">{project.title}</h3>
-          <p className="text-xs opacity-75 mt-2">Tap to view screens</p>
-        </div>
-      )}
+}) => {
+  const { t } = useLocale();
+  
+  return (
+    <div
+      onClick={onClick}
+      className="relative mx-auto cursor-pointer border-gray-100 bg-gray-100 border-[8px] rounded-[2.5rem] h-[400px] w-[220px] md:h-[500px] md:w-[280px] shadow-xl flex flex-col transform transition-transform duration-500 hover:scale-105"
+    >
+      <div className="h-[32px] w-[3px] bg-gray-100 absolute -left-[10px] top-[72px] rounded-l-lg" />
+      <div className="h-[46px] w-[3px] bg-gray-100 absolute -left-[10px] top-[124px] rounded-l-lg" />
+      <div className="h-[64px] w-[3px] bg-gray-100 absolute -right-[10px] top-[142px] rounded-r-lg" />
+      <div className="rounded-[2rem] overflow-hidden w-full h-full bg-slate-800 relative">
+        {project.screens[0]?.imagePath ? (
+          <Image
+            src={project.screens[0].imagePath}
+            alt={t(project.title)}
+            fill
+            className="object-cover"
+          />
+        ) : (
+          <div
+            className={`w-full h-full bg-gradient-to-br ${project.color} flex flex-col items-center justify-center text-white p-4 text-center`}
+          >
+            <Smartphone size={48} className="mb-4 opacity-80" />
+            <h3 className="text-xl font-bold">{t(project.title)}</h3>
+            <p className="text-xs opacity-75 mt-2">Tap to view screens</p>
+          </div>
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 // Web Frame Component
 const WebFrame = ({
@@ -92,38 +99,42 @@ const WebFrame = ({
 }: {
   project: Project;
   onClick: (e: React.MouseEvent) => void;
-}) => (
-  <div
-    onClick={onClick}
-    className="relative w-full max-w-md aspect-video bg-gray-800 rounded-lg shadow-2xl border-t-[20px] border-white/90 transform transition-transform duration-500 hover:scale-105 cursor-pointer"
-  >
-    <div className="absolute -top-[14px] left-3 flex gap-1.5">
-      <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
-      <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
-      <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
-    </div>
-    {project.screens[0]?.imagePath ? (
-      <div className="w-full h-full relative">
-        <Image
-          src={project.screens[0].imagePath}
-          alt={project.title}
-          fill
-          className="object-cover"
-        />
+}) => {
+  const { t } = useLocale();
+  
+  return (
+    <div
+      onClick={onClick}
+      className="relative w-full max-w-md aspect-video bg-gray-800 rounded-lg shadow-2xl border-t-[20px] border-white/90 transform transition-transform duration-500 hover:scale-105 cursor-pointer"
+    >
+      <div className="absolute -top-[14px] left-3 flex gap-1.5">
+        <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
+        <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
+        <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
       </div>
-    ) : (
-      <div
-        className={`w-full h-full bg-gradient-to-br ${project.color} flex items-center justify-center`}
-      >
-        <div className="text-white text-center">
-          <Monitor size={48} className="mx-auto mb-2 opacity-80" />
-          <span className="font-bold text-xl">{project.title}</span>
-          <p className="text-xs mt-2 opacity-80">Click to browse</p>
+      {project.screens[0]?.imagePath ? (
+        <div className="w-full h-full relative">
+          <Image
+            src={project.screens[0].imagePath}
+            alt={t(project.title)}
+            fill
+            className="object-cover"
+          />
         </div>
-      </div>
-    )}
-  </div>
-);
+      ) : (
+        <div
+          className={`w-full h-full bg-gradient-to-br ${project.color} flex items-center justify-center`}
+        >
+          <div className="text-white text-center">
+            <Monitor size={48} className="mx-auto mb-2 opacity-80" />
+            <span className="font-bold text-xl">{t(project.title)}</span>
+            <p className="text-xs mt-2 opacity-80">Click to browse</p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 // Mobile Presentation Frame
 const MobilePresentationFrame = ({
@@ -133,6 +144,7 @@ const MobilePresentationFrame = ({
   project: Project;
   currentScreenIndex: number;
 }) => {
+  const { t } = useLocale();
   const currentScreen = project.screens[currentScreenIndex];
   const isScrollable = currentScreen?.scrollable;
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -154,7 +166,7 @@ const MobilePresentationFrame = ({
               <div className="w-full">
                 <img
                   src={currentScreen.imagePath}
-                  alt={currentScreen.title}
+                  alt={t(currentScreen.title)}
                   className="w-full h-auto"
                 />
               </div>
@@ -162,7 +174,7 @@ const MobilePresentationFrame = ({
               // Non-scrollable: 기존 fill + object-cover
               <Image
                 src={currentScreen.imagePath}
-                alt={currentScreen.title}
+                alt={t(currentScreen.title)}
                 fill
                 className="object-cover"
               />
@@ -173,11 +185,11 @@ const MobilePresentationFrame = ({
             >
               <div className="absolute top-10 left-0 right-0 text-center">
                 <span className="text-xs uppercase tracking-widest opacity-50">
-                  {currentScreen.title}
+                  {t(currentScreen.title)}
                 </span>
               </div>
               <Smartphone size={64} className="mb-6 opacity-90" />
-              <h2 className="text-3xl font-bold mb-2">{project.title}</h2>
+              <h2 className="text-3xl font-bold mb-2">{t(project.title)}</h2>
             </div>
           )}
         </div>
@@ -207,6 +219,7 @@ const WebPresentationFrame = ({
   project: Project;
   currentScreenIndex: number;
 }) => {
+  const { t } = useLocale();
   const currentScreen = project.screens[currentScreenIndex];
   const isScrollable = currentScreen?.scrollable;
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -232,7 +245,7 @@ const WebPresentationFrame = ({
             <>
               <img
                 src={currentScreen.imagePath}
-                alt={currentScreen.title}
+                alt={t(currentScreen.title)}
                 className="w-full h-auto"
               />
               {/* Numeric Badge */}
@@ -245,7 +258,7 @@ const WebPresentationFrame = ({
             <>
               <Image
                 src={currentScreen.imagePath}
-                alt={currentScreen.title}
+                alt={t(currentScreen.title)}
                 fill
                 className="object-cover"
               />
@@ -261,7 +274,7 @@ const WebPresentationFrame = ({
           >
             <Monitor size={80} className="mb-6 text-white opacity-80" />
             <h2 className="text-4xl font-bold text-white">
-              {currentScreen.title}
+              {t(currentScreen.title)}
             </h2>
 
             {/* Numeric Badge */}
@@ -282,34 +295,38 @@ const TabletFrame = ({
 }: {
   project: Project;
   onClick: (e: React.MouseEvent) => void;
-}) => (
-  <div
-    onClick={onClick}
-    className="relative mx-auto cursor-pointer border-gray-100 bg-gray-100 border-[10px] rounded-[2rem] shadow-xl flex flex-col transform transition-transform duration-500 hover:scale-105"
-    style={{ width: '280px', height: '400px' }}
-  >
-    {/* 태블릿 상단 카메라 */}
-    <div className="absolute top-3 left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-300 rounded-full" />
-    <div className="rounded-[1.5rem] overflow-hidden w-full h-full bg-slate-800 relative mt-2">
-      {project.screens[0]?.imagePath ? (
-        <Image
-          src={project.screens[0].imagePath}
-          alt={project.title}
-          fill
-          className="object-cover"
-        />
-      ) : (
-        <div
-          className={`w-full h-full bg-gradient-to-br ${project.color} flex flex-col items-center justify-center text-white p-4 text-center`}
-        >
-          <Tablet size={48} className="mb-4 opacity-80" />
-          <h3 className="text-xl font-bold">{project.title}</h3>
-          <p className="text-xs opacity-75 mt-2">Tap to view screens</p>
-        </div>
-      )}
+}) => {
+  const { t } = useLocale();
+  
+  return (
+    <div
+      onClick={onClick}
+      className="relative mx-auto cursor-pointer border-gray-100 bg-gray-100 border-[10px] rounded-[2rem] shadow-xl flex flex-col transform transition-transform duration-500 hover:scale-105"
+      style={{ width: '280px', height: '400px' }}
+    >
+      {/* 태블릿 상단 카메라 */}
+      <div className="absolute top-3 left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-300 rounded-full" />
+      <div className="rounded-[1.5rem] overflow-hidden w-full h-full bg-slate-800 relative mt-2">
+        {project.screens[0]?.imagePath ? (
+          <Image
+            src={project.screens[0].imagePath}
+            alt={t(project.title)}
+            fill
+            className="object-cover"
+          />
+        ) : (
+          <div
+            className={`w-full h-full bg-gradient-to-br ${project.color} flex flex-col items-center justify-center text-white p-4 text-center`}
+          >
+            <Tablet size={48} className="mb-4 opacity-80" />
+            <h3 className="text-xl font-bold">{t(project.title)}</h3>
+            <p className="text-xs opacity-75 mt-2">Tap to view screens</p>
+          </div>
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 // Tablet Presentation Frame (프레젠테이션 모드용)
 const TabletPresentationFrame = ({
@@ -319,6 +336,7 @@ const TabletPresentationFrame = ({
   project: Project;
   currentScreenIndex: number;
 }) => {
+  const { t } = useLocale();
   const currentScreen = project.screens[currentScreenIndex];
   const isScrollable = currentScreen?.scrollable;
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -345,14 +363,14 @@ const TabletPresentationFrame = ({
               <div className="w-full">
                 <img
                   src={currentScreen.imagePath}
-                  alt={currentScreen.title}
+                  alt={t(currentScreen.title)}
                   className="w-full h-auto"
                 />
               </div>
             ) : (
               <Image
                 src={currentScreen.imagePath}
-                alt={currentScreen.title}
+                alt={t(currentScreen.title)}
                 fill
                 className="object-cover"
               />
@@ -363,11 +381,11 @@ const TabletPresentationFrame = ({
             >
               <div className="absolute top-10 left-0 right-0 text-center">
                 <span className="text-xs uppercase tracking-widest opacity-50">
-                  {currentScreen.title}
+                  {t(currentScreen.title)}
                 </span>
               </div>
               <Tablet size={64} className="mb-6 opacity-90" />
-              <h2 className="text-3xl font-bold mb-2">{project.title}</h2>
+              <h2 className="text-3xl font-bold mb-2">{t(project.title)}</h2>
             </div>
           )}
         </div>

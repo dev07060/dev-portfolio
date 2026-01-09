@@ -1,6 +1,7 @@
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Project } from '@/types/project';
 import DeviceFrame from './DeviceFrame';
+import { useLocale } from '@/i18n';
 
 interface PresentationOverlayProps {
   project: Project;
@@ -86,17 +87,22 @@ const CaptionArea = ({
 }: {
   project: Project;
   currentScreenIndex: number;
-}) => (
-  <div className="w-full bg-black/80 backdrop-blur-md p-6 md:p-8 border-t border-white/10 text-center">
-    <div className="max-w-4xl mx-auto">
-      <h3 className="text-2xl font-bold text-white mb-2">
-        {project.screens[currentScreenIndex].title}
-      </h3>
-      <p className="text-slate-400 text-sm md:text-base leading-relaxed">
-        {project.screens[currentScreenIndex].desc}
-      </p>
+}) => {
+  const { t } = useLocale();
+  
+  return (
+    <div className="w-full bg-black/80 backdrop-blur-md p-4 md:p-8 border-t border-white/10 text-center">
+      <div className="max-w-4xl mx-auto">
+        <h3 className="text-lg md:text-2xl font-bold text-white mb-1 md:mb-2">
+          {t(project.screens[currentScreenIndex].title)}
+        </h3>
+        <p className="text-slate-400 text-xs md:text-base leading-relaxed">
+          {t(project.screens[currentScreenIndex].desc)}
+        </p>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default PresentationOverlay;
+
