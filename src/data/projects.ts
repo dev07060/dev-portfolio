@@ -2,6 +2,92 @@ import { Project } from '@/types/project';
 
 export const projects: Project[] = [
   {
+    id: 'law-info-engine',
+    type: 'web',
+    title: { en: 'Swifty-law', ko: 'Swifty-law' },
+    subtitle: {
+      en: 'Citation-grounded Korean Law RAG Engine',
+      ko: '인용 기반 한국 법령 검색 RAG 엔진',
+    },
+    description: {
+      en: 'In-house engine that normalizes official Korean statute data into citable chunks and serves hybrid retrieval so LLMs answer only within official sources with full citations.',
+      ko: '공식 법령정보를 인용 가능한 단위로 정규화·색인하고 hybrid retrieval로 검색하는 사내 공통 엔진. LLM은 검색된 공식 chunk와 citation 안에서만 답변합니다.',
+    },
+    implementationPoints: [
+      {
+        en: 'Built Bronze/Silver/Gold three-tier lake so chunks and embeddings can be regenerated from raw API at any time.',
+        ko: 'Bronze/Silver/Gold 3계층 레이크로 원본 API에서 청크·임베딩을 언제든 재생성 가능하게 설계.',
+      },
+      {
+        en: 'Fused SBERT dense + Milvus BM25 sparse via RRFRanker(60) with corpus-derived query expansion.',
+        ko: 'SBERT dense + Milvus BM25 sparse를 RRFRanker(60)로 융합하고 corpus 기반 질의 확장 적용.',
+      },
+      {
+        en: 'Hardened upstream Open API quota with daily limit, min interval, and exponential backoff retries.',
+        ko: '국가법령 Open API quota를 일일 한도·최소 간격·지수 백오프 재시도로 1급 시민으로 보호.',
+      },
+      {
+        en: 'Gated releases on nDCG@5 / MRR@10 / Recall@10 against golden_retrieval_v1 (74 dev / 30 holdout).',
+        ko: 'golden_retrieval_v1(74 dev / 30 holdout) nDCG@5 / MRR@10 / Recall@10 회귀 게이트로 릴리스 차단.',
+      },
+    ],
+    techStack: ['Python', 'FastAPI', 'PostgreSQL', 'Milvus', 'SBERT', 'Docker'],
+    color: 'from-amber-500 to-orange-600',
+    iconType: 'scale',
+    screens: [
+      {
+        title: { en: 'API Landing', ko: 'API 진입 화면' },
+        desc: {
+          en: 'Developer entry at law-api.swifty.kr — endpoint index and health surface.',
+          ko: 'law-api.swifty.kr 개발자 진입 화면 — endpoint 인덱스와 health 표면.',
+        },
+        imagePath: '/images/law-info-engine/api-landing.png',
+        scrollable: true,
+      },
+      {
+        title: { en: 'Live Search UI', ko: '검색 화면' },
+        desc: {
+          en: 'Public search experience — ask in natural language, get statute chunks back.',
+          ko: '실제 서비스 검색 화면 — 자연어 질의로 조문 단위 결과를 돌려줍니다.',
+        },
+        imagePath: '/images/law-info-engine/search-ui.png',
+      },
+      {
+        title: { en: 'Results · Citations', ko: '검색 결과·인용' },
+        desc: {
+          en: 'Every result carries statute name, article path, effective date, and source URL.',
+          ko: '모든 결과에 법령명·조문경로·시행일·출처 URL이 함께 노출됩니다.',
+        },
+        imagePath: '/images/law-info-engine/search-ui-full.png',
+        scrollable: true,
+      },
+      {
+        title: { en: 'System Architecture', ko: '시스템 구성' },
+        desc: {
+          en: 'Five layers — sources, data lake, index · knowledge graph, analysis, API.',
+          ko: '5계층 흐름 — 원천 수집, 데이터 정제, 색인·지식그래프, 분석, API 노출.',
+        },
+        imagePath: '/images/law-info-engine/architecture.svg',
+        scrollable: true,
+      },
+      {
+        title: { en: 'Search · Analyze Paths', ko: '검색·분석 경로' },
+        desc: {
+          en: 'Single-shot chunk search vs. issue decomposition + knowledge-graph expanded evidence.',
+          ko: '단순 조문 검색 경로와 쟁점 분해 + 지식그래프 확장 근거 경로의 단계별 흐름.',
+        },
+        imagePath: '/images/law-info-engine/api-flows.svg',
+        scrollable: true,
+      },
+    ],
+    links: [
+      {
+        label: 'Live Site',
+        url: 'https://law-api.swifty.kr/search-info/',
+      },
+    ],
+  },
+  {
     id: 'fiet-fitness-trainer',
     type: 'tablet',
     title: { en: 'FIET Fitness Trainer', ko: '피에트 피트니스 트레이너' },
@@ -10,6 +96,20 @@ export const projects: Project[] = [
       en: 'A trainer-only app for FIET Fitness Center. Provides member management, workout program design, diet management, and weight data tracking in a tablet-optimized interface.',
       ko: '피에트 피트니스 센터의 트레이너 전용 앱입니다. 회원 관리, 운동 프로그램 설계, 식단 관리 및 체중 데이터 추적을 태블릿에 최적화된 인터페이스로 제공합니다.',
     },
+    implementationPoints: [
+      {
+        en: 'Built tablet-first Flutter UI and reusable widgets for trainer workflows.',
+        ko: '트레이너 업무 흐름에 맞춘 태블릿 우선 Flutter UI와 재사용 위젯을 구축했습니다.',
+      },
+      {
+        en: 'Implemented BLE real-time data flow for scale and accelerometer devices.',
+        ko: '체중계와 가속도 센서 연동을 위한 BLE 실시간 데이터 전송 흐름을 구현했습니다.',
+      },
+      {
+        en: 'Automated mobile release pipeline with Fastlane and GitHub Actions.',
+        ko: 'Fastlane과 GitHub Actions로 모바일 배포 자동화 파이프라인을 구축했습니다.',
+      },
+    ],
     techStack: ['Flutter', 'Dart', 'Firebase'],
     color: 'from-indigo-500 to-purple-500',
     iconType: 'dumbbell',
@@ -47,16 +147,6 @@ export const projects: Project[] = [
         imagePath: '/images/fiet-fitness-trainer/photo-captured.png',
       },
     ],
-    links: [
-      {
-        label: 'Google Play Store',
-        url: 'https://play.google.com/store/apps/details?id=net.fiet.mvm_trainer&hl=ko',
-      },
-      {
-        label: 'iOS App Store',
-        url: 'https://apps.apple.com/kr/app/%ED%94%BC%EC%97%90%ED%8A%B8-%ED%94%BC%ED%8A%B8%EB%8B%88%EC%8A%A4-%ED%8A%B8%EB%A0%88%EC%9D%B4%EB%84%88/id6670158561',
-      },
-    ],
   },
   {
     id: 'fiet-fitness-user',
@@ -67,6 +157,20 @@ export const projects: Project[] = [
       en: 'A fitness center app by an AI health company. Syncs with trainers to view customized workout programs and diet plans, and tracks progress.',
       ko: 'AI 건강 관리 회사가 만든 새로운 개념의 피트니스 센터 앱입니다. 트레이너와 연동하여 맞춤형 운동 프로그램과 식단을 확인하고 진행 상황을 기록합니다.',
     },
+    implementationPoints: [
+      {
+        en: 'Implemented workout and diet tracking screens with Flutter state-driven UI.',
+        ko: 'Flutter 상태 기반 UI로 운동/식단 추적 화면을 구현했습니다.',
+      },
+      {
+        en: 'Integrated push notification workflow with Firebase Cloud Messaging.',
+        ko: 'Firebase Cloud Messaging 기반 푸시 알림 워크플로를 연동했습니다.',
+      },
+      {
+        en: 'Built chart-driven views for water intake and weight progress history.',
+        ko: '수분 섭취와 체중 변화 이력을 차트 중심 화면으로 시각화했습니다.',
+      },
+    ],
     techStack: ['Flutter', 'Dart', 'Firebase'],
     color: 'from-violet-500 to-fuchsia-500',
     iconType: 'dumbbell',
@@ -106,26 +210,35 @@ export const projects: Project[] = [
         scrollable: true,
       },
     ],
-    links: [
-      {
-        label: 'Google Play Store',
-        url: 'https://play.google.com/store/apps/details?id=net.fiet.mvm_member&hl=ko',
-      },
-      {
-        label: 'iOS App Store',
-        url: 'https://apps.apple.com/kr/app/%ED%94%BC%EC%97%90%ED%8A%B8-%ED%94%BC%ED%8A%B8%EB%8B%88%EC%8A%A4/id6670158395',
-      },
-    ],
   },
   {
     id: 'local-mobile-rag-gemma',
     type: 'mobile',
     title: { en: 'Local Mobile RAG Gemma', ko: 'Local Mobile RAG Gemma' },
-    subtitle: { en: 'Local On-device Mobile RAG Engine with Gemma 3n', ko: 'Gemma 3n 기반 로컬 온디바이스 모바일 RAG 엔진' },
+    releaseLabel: { en: 'Released v0.13.0', ko: 'v0.13.0 배포' },
+    subtitle: { en: 'Local On-device Mobile RAG Engine with Gemma 3n (Released to v0.13.0)', ko: 'Gemma 3n 기반 로컬 온디바이스 모바일 RAG 엔진 (v0.13.0 배포)' },
     description: {
-      en: 'Implemented a mobile RAG engine that runs fast on local devices. Uses Gemma 3n to store models locally and provides answers to user questions.',
-      ko: '로컬 디바이스에서 빠르게 실행되는 모바일 RAG 엔진을 구현했습니다. Gemma 3n을 사용하여 모델을 로컬에 저장하고, 사용자의 질문에 대한 답변을 제공합니다.',
+      en: 'Implemented a mobile RAG engine that runs fast on local devices and released it through v0.13.0. Uses Gemma 3n to store models locally and provides answers to user questions.',
+      ko: '로컬 디바이스에서 빠르게 실행되는 모바일 RAG 엔진을 구현하고 v0.13.0까지 배포했습니다. Gemma 3n을 사용하여 모델을 로컬에 저장하고, 사용자의 질문에 대한 답변을 제공합니다.',
     },
+    implementationPoints: [
+      {
+        en: 'Connected Flutter and Rust through FFI for on-device RAG orchestration.',
+        ko: 'Flutter와 Rust FFI를 연결해 온디바이스 RAG 실행 파이프라인을 구성했습니다.',
+      },
+      {
+        en: 'Ran local inference with ONNX Runtime and optimized tokenization path.',
+        ko: 'ONNX Runtime 기반 로컬 추론과 토크나이징 경로 최적화를 적용했습니다.',
+      },
+      {
+        en: 'Implemented SQLite + HNSW vector retrieval for fast local document search.',
+        ko: 'SQLite + HNSW 벡터 검색으로 빠른 로컬 문서 검색을 구현했습니다.',
+      },
+      {
+        en: 'Packaged and released mobile_rag_engine up to v0.13.0.',
+        ko: 'mobile_rag_engine을 v0.13.0까지 패키징 및 배포했습니다.',
+      },
+    ],
     techStack: ['Flutter', 'Rust', 'ONNX Runtime', 'SQLite', 'HNSW'],
     color: 'from-blue-500 to-cyan-400',
     iconType: 'brain',
@@ -169,7 +282,11 @@ export const projects: Project[] = [
     links: [
       {
         label: 'GitHub',
-        url: 'https://github.com/dev07060/mobile_rag_engine/blob/main/docs/guides/architecture_guide.md',
+        url: 'https://github.com/dev07060/mobile_rag_engine',
+      },
+      {
+        label: 'pub.dev',
+        url: 'https://pub.dev/packages/mobile_rag_engine',
       },
     ],
   },
@@ -182,6 +299,20 @@ export const projects: Project[] = [
       en: 'A web service that automatically fetches restaurant info from Naver Map URLs, allowing friends to vote together. Provides real-time voting status and result analysis.',
       ko: '네이버 지도 URL을 붙여넣으면 맛집 정보를 자동으로 불러오고, 친구들과 함께 투표할 수 있는 웹 서비스입니다. 실시간 투표 현황과 결과 분석 기능을 제공합니다.',
     },
+    implementationPoints: [
+      {
+        en: 'Built real-time voting flow with Next.js and TypeScript plus shareable links.',
+        ko: 'Next.js와 TypeScript로 실시간 투표 흐름과 공유 링크 기능을 구현했습니다.',
+      },
+      {
+        en: 'Automated restaurant metadata extraction pipeline from Naver Map URLs.',
+        ko: '네이버 지도 URL에서 맛집 메타데이터를 자동 수집하는 파이프라인을 구축했습니다.',
+      },
+      {
+        en: 'Used Supabase(PostgreSQL) for vote persistence and Playwright for E2E checks.',
+        ko: 'Supabase(PostgreSQL)로 투표 데이터를 관리하고 Playwright로 E2E 검증을 구성했습니다.',
+      },
+    ],
     techStack: ['Next.js', 'TypeScript', 'Tailwind CSS', 'PostgreSQL', 'Supabase', 'Playwright'],
     color: 'from-purple-500 to-pink-500',
     iconType: 'utensils',
@@ -232,12 +363,6 @@ export const projects: Project[] = [
         imagePath: '/images/motgo/result-page-2.png',
       },
     ],
-    links: [
-      {
-        label: 'Live Site',
-        url: 'https://motgo-271951071528.asia-northeast3.run.app/',
-      },
-    ],
   },
   {
     id: 'haru-check',
@@ -248,6 +373,20 @@ export const projects: Project[] = [
       en: 'A health management app that records daily workout/diet certifications and provides AI weekly reports using Google VertexAI (Gemini). Supports calendar-based tracking and interactive data visualization.',
       ko: '일일 운동/식단 인증을 기록하고, Google VertexAI (Gemini)를 활용한 AI 주간 리포트를 제공하는 건강 관리 앱입니다. 캘린더 기반 추적과 인터랙티브 데이터 시각화를 지원합니다.',
     },
+    implementationPoints: [
+      {
+        en: 'Built certification tracking UX with Flutter and Riverpod state architecture.',
+        ko: 'Flutter + Riverpod 상태 아키텍처로 인증 기록 UX를 구현했습니다.',
+      },
+      {
+        en: 'Generated weekly AI reports using Vertex AI (Gemini) with Cloud Functions.',
+        ko: 'Cloud Functions와 Vertex AI(Gemini) 연동으로 주간 AI 리포트 생성 파이프라인을 구축했습니다.',
+      },
+      {
+        en: 'Designed Firebase data model for calendar history and social feed features.',
+        ko: '캘린더 히스토리와 소셜 피드 기능을 위한 Firebase 데이터 모델을 설계했습니다.',
+      },
+    ],
     techStack: ['Flutter', 'Firebase', 'Firestore', 'VertexAI', 'Riverpod', 'Cloud Functions'],
     color: 'from-orange-500 to-red-400',
     iconType: 'activity',
@@ -328,6 +467,20 @@ export const projects: Project[] = [
       en: 'A digital therapy-oriented service using Behavioral Activation (BA) techniques. Provides emotion selection, BA recommendations, status monitoring, and counseling center information.',
       ko: 'BA(행동 활성화) 기법을 활용한 디지털 치료 지향 서비스입니다. 감정 선택, BA 추천, 상태 모니터링, 심리 상담 센터 소개 등의 기능을 제공합니다.',
     },
+    implementationPoints: [
+      {
+        en: 'Implemented counseling and activity flows with Flutter, Riverpod, and GoRouter.',
+        ko: 'Flutter + Riverpod + GoRouter로 상담/활동 플로우를 구현했습니다.',
+      },
+      {
+        en: 'Integrated Naver Map API and analytics events for counseling center discovery.',
+        ko: 'Naver Map API와 분석 이벤트를 연동해 상담센터 탐색 흐름을 구성했습니다.',
+      },
+      {
+        en: 'Optimized behavior tracking and interaction metrics with Google Analytics.',
+        ko: 'Google Analytics 기반 행동 데이터 추적으로 사용자 상호작용 지표를 개선했습니다.',
+      },
+    ],
     techStack: ['Flutter', 'Riverpod', 'GoRouter', 'Naver Map API', 'Google Analytics'],
     color: 'from-teal-500 to-green-400',
     iconType: 'heart',

@@ -30,15 +30,15 @@ const DeviceFrame = ({
   }
 
   return (
-    <div className="w-full lg:w-1/3 bg-gradient-to-b from-slate-900 to-[#0b1120] flex items-center justify-center p-8 order-1 lg:order-2 overflow-hidden relative min-h-[500px] lg:min-h-[500px] group">
+    <div className="w-full lg:w-1/3 bg-gradient-to-b from-[#f2ede4] to-[#e8dfd0] flex items-center justify-center p-8 order-1 lg:order-2 overflow-hidden relative min-h-[500px] lg:min-h-[500px] group">
       {/* Hover hint */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 px-3 py-1 rounded-full text-xs text-white flex items-center gap-2 pointer-events-none">
+      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-[#1f1b16]/80 px-3 py-1 rounded-full text-xs text-[#faf7f2] flex items-center gap-2 pointer-events-none">
         <Maximize2 size={12} /> Click device to explore
       </div>
 
       {/* Background Glow Effect */}
       <div
-        className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r ${project.color} rounded-full blur-[100px] opacity-20 pointer-events-none`}
+        className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r ${project.color} rounded-full blur-[100px] opacity-30 pointer-events-none`}
       />
 
       {project.type === 'mobile' ? (
@@ -105,9 +105,9 @@ const WebFrame = ({
   return (
     <div
       onClick={onClick}
-      className="relative w-full max-w-md aspect-video bg-gray-800 rounded-lg shadow-2xl border-t-[20px] border-white/90 transform transition-transform duration-500 hover:scale-105 cursor-pointer"
+      className="relative w-full max-w-md aspect-video bg-[#faf7f2] rounded-lg shadow-2xl border-t-[20px] border-white/90 transform transition-transform duration-500 hover:scale-105 cursor-pointer overflow-hidden"
     >
-      <div className="absolute -top-[14px] left-3 flex gap-1.5">
+      <div className="absolute -top-[14px] left-3 flex gap-1.5 z-10">
         <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
         <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
         <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
@@ -167,6 +167,7 @@ const MobilePresentationFrame = ({
                 <img
                   src={currentScreen.imagePath}
                   alt={t(currentScreen.title)}
+                  decoding="async"
                   className="w-full h-auto"
                 />
               </div>
@@ -192,11 +193,6 @@ const MobilePresentationFrame = ({
               <h2 className="text-3xl font-bold mb-2">{t(project.title)}</h2>
             </div>
           )}
-        </div>
-
-        {/* Page Indicator - Desktop only */}
-        <div className="hidden md:block absolute bottom-8 left-1/2 -translate-x-1/2 z-10 bg-black/40 backdrop-blur-md px-3 py-1 rounded-full text-xs text-white/90 font-medium border border-white/10 shadow-lg">
-          {currentScreenIndex + 1} / {project.screens.length}
         </div>
       </div>
 
@@ -232,8 +228,8 @@ const WebPresentationFrame = ({
   }, [currentScreenIndex]);
 
   return (
-    <div className={`relative bg-gray-800 rounded-lg shadow-2xl border-t-[24px] border-white/90 flex flex-col w-[90vw] max-w-[calc((100vh-200px)*16/9)] ${isScrollable ? '' : ''}`} style={{ aspectRatio: isScrollable ? undefined : '16/9', height: isScrollable ? '70vh' : undefined, width: isScrollable ? '90vw' : undefined, maxWidth: isScrollable ? 'calc((100vh-200px)*16/9)' : undefined }}>
-      <div className="absolute -top-[16px] left-4 flex gap-2">
+    <div className={`relative bg-[#faf7f2] rounded-lg shadow-2xl border-t-[24px] border-white/90 flex flex-col w-[90vw] max-w-[calc((100vh-200px)*16/9)] overflow-hidden ${isScrollable ? '' : ''}`} style={{ aspectRatio: isScrollable ? undefined : '16/9', height: isScrollable ? '70vh' : undefined, width: isScrollable ? '90vw' : undefined, maxWidth: isScrollable ? 'calc((100vh-200px)*16/9)' : undefined }}>
+      <div className="absolute -top-[16px] left-4 flex gap-2 z-10">
         <div className="w-3 h-3 rounded-full bg-red-400" />
         <div className="w-3 h-3 rounded-full bg-yellow-400" />
         <div className="w-3 h-3 rounded-full bg-green-400" />
@@ -241,46 +237,29 @@ const WebPresentationFrame = ({
       <div ref={scrollRef} className={`w-full h-full ${isScrollable ? 'overflow-y-auto overflow-x-hidden scrollbar-hide' : 'relative'}`}>
         {currentScreen?.imagePath ? (
           isScrollable ? (
-            // Scrollable: 이미지 원본 비율 유지하며 스크롤
-            <>
-              <img
-                src={currentScreen.imagePath}
-                alt={t(currentScreen.title)}
-                className="w-full h-auto"
-              />
-              {/* Numeric Badge */}
-              <div className="sticky bottom-6 left-1/2 -translate-x-1/2 z-10 bg-black/20 backdrop-blur-md px-3 py-1 rounded-full text-xs text-white/90 font-medium border border-white/10 shadow-lg w-fit mx-auto">
-                {currentScreenIndex + 1} / {project.screens.length}
-              </div>
-            </>
+            <img
+              src={currentScreen.imagePath}
+              alt={t(currentScreen.title)}
+              decoding="async"
+              className="w-full h-auto"
+            />
           ) : (
-            // Non-scrollable: 기존 fill + object-cover
-            <>
-              <Image
-                src={currentScreen.imagePath}
-                alt={t(currentScreen.title)}
-                fill
-                className="object-cover"
-              />
-              {/* Numeric Badge */}
-              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 bg-black/20 backdrop-blur-md px-3 py-1 rounded-full text-xs text-white/90 font-medium border border-white/10 shadow-lg">
-                {currentScreenIndex + 1} / {project.screens.length}
-              </div>
-            </>
+            <Image
+              src={currentScreen.imagePath}
+              alt={t(currentScreen.title)}
+              fill
+              priority
+              className="object-cover"
+            />
           )
         ) : (
           <div
-            className={`w-full h-full bg-gradient-to-br ${project.color} flex flex-col items-center justify-center relative`}
+            className={`w-full h-full bg-gradient-to-br ${project.color} flex flex-col items-center justify-center`}
           >
             <Monitor size={80} className="mb-6 text-white opacity-80" />
             <h2 className="text-4xl font-bold text-white">
               {t(currentScreen.title)}
             </h2>
-
-            {/* Numeric Badge */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 bg-black/20 backdrop-blur-md px-3 py-1 rounded-full text-xs text-white/90 font-medium border border-white/10 shadow-lg">
-              {currentScreenIndex + 1} / {project.screens.length}
-            </div>
           </div>
         )}
       </div>
@@ -364,6 +343,7 @@ const TabletPresentationFrame = ({
                 <img
                   src={currentScreen.imagePath}
                   alt={t(currentScreen.title)}
+                  decoding="async"
                   className="w-full h-auto"
                 />
               </div>
@@ -372,6 +352,7 @@ const TabletPresentationFrame = ({
                 src={currentScreen.imagePath}
                 alt={t(currentScreen.title)}
                 fill
+                priority
                 className="object-cover"
               />
             )
@@ -388,11 +369,6 @@ const TabletPresentationFrame = ({
               <h2 className="text-3xl font-bold mb-2">{t(project.title)}</h2>
             </div>
           )}
-        </div>
-
-        {/* Page Indicator - Desktop only */}
-        <div className="hidden md:block absolute bottom-8 left-1/2 -translate-x-1/2 z-10 bg-black/40 backdrop-blur-md px-3 py-1 rounded-full text-xs text-white/90 font-medium border border-white/10 shadow-lg">
-          {currentScreenIndex + 1} / {project.screens.length}
         </div>
       </div>
 

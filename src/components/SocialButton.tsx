@@ -9,7 +9,7 @@ interface SocialButtonProps {
 const SocialButton = ({ icon, label, href = '#' }: SocialButtonProps) => (
   <a
     href={href}
-    className="p-2 bg-slate-800 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700 transition-all border border-slate-700 hover:border-slate-500"
+    className="p-2.5 bg-white rounded-full text-[#4a4339] hover:text-[#b8543a] hover:bg-[#f2ede4] transition-all border border-[#e8dfd0] hover:border-[#b8543a]/40"
     aria-label={label}
   >
     {icon}

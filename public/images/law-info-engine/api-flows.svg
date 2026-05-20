@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" font-family="-apple-system, 'Apple SD Gothic Neo', 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <style>
+      .h1 { font-size: 26px; font-weight: 700; fill: #0f172a; letter-spacing: -0.3px; }
+      .h2 { font-size: 18px; font-weight: 700; fill: #0f172a; }
+      .tag { font-size: 12px; font-weight: 700; fill: #fff; letter-spacing: 1px; }
+      .step { font-size: 15px; font-weight: 600; fill: #0f172a; }
+      .desc { font-size: 12.5px; fill: #475569; }
+      .note { font-size: 11.5px; fill: #64748b; font-style: italic; }
+      .phase { font-size: 14px; font-weight: 700; letter-spacing: 0.5px; }
+      .arrow-blue { stroke: #0284c7; stroke-width: 2; fill: none; marker-end: url(#arr-b); }
+      .arrow-purple { stroke: #9333ea; stroke-width: 2; fill: none; marker-end: url(#arr-p); }
+      .arrow-soft { stroke: #c4b5fd; stroke-width: 1.8; fill: none; marker-end: url(#arr-p); stroke-dasharray: 6 5; }
+    </style>
+    <marker id="arr-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#0284c7"/>
+    </marker>
+    <marker id="arr-p" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9333ea"/>
+    </marker>
+  </defs>
+
+  <!-- ============================================== -->
+  <!-- Title -->
+  <text x="60" y="56" class="h1">법령 정보 엔진 — 두 가지 검색·분석 경로</text>
+  <text x="60" y="80" class="desc">단순 검색(v2/search)과 그래프 기반 분석(v3/analyze)의 처리 흐름</text>
+
+  <!-- ============================================== -->
+  <!-- v2/search header -->
+  <rect x="60" y="120" width="160" height="32" rx="16" fill="#0284c7"/>
+  <text x="140" y="141" text-anchor="middle" class="tag">/v2/search</text>
+  <text x="236" y="143" class="h2">단순 검색 · 조문 단위 결과 반환</text>
+
+  <!-- v2 nodes (1~5) — 박스 폭 160, 간격 50 -->
+  <!-- Box 1: x=60 -->
+  <rect x="60"  y="180" width="160" height="120" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <circle cx="86" cy="208" r="16" fill="#0284c7"/>
+  <text x="86" y="213" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">1</text>
+  <text x="112" y="213" class="step">질문 입력</text>
+  <text x="74" y="244" class="desc">키워드 · 자연어로</text>
+  <text x="74" y="262" class="desc">법령 조문을 찾는다</text>
+  <text x="74" y="284" class="note">예: "근로시간 한도"</text>
+
+  <!-- Box 2: x=270 -->
+  <rect x="270" y="180" width="160" height="120" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <circle cx="296" cy="208" r="16" fill="#0284c7"/>
+  <text x="296" y="213" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">2</text>
+  <text x="322" y="213" class="step">컬렉션 라우팅</text>
+  <text x="284" y="244" class="desc">질문 의도 분석으로</text>
+  <text x="284" y="262" class="desc">법령군(노동·상법 등)</text>
+  <text x="284" y="280" class="desc">자동 선택</text>
+
+  <!-- Box 3: x=480 -->
+  <rect x="480" y="180" width="160" height="120" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <circle cx="506" cy="208" r="16" fill="#0284c7"/>
+  <text x="506" y="213" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">3</text>
+  <text x="532" y="213" class="step">벡터 검색</text>
+  <text x="494" y="244" class="desc">의미 기반 임베딩으로</text>
+  <text x="494" y="262" class="desc">유사도 높은 조문 후보</text>
+  <text x="494" y="280" class="desc">상위 N개 수집</text>
+
+  <!-- Box 4: x=690 -->
+  <rect x="690" y="180" width="160" height="120" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <circle cx="716" cy="208" r="16" fill="#0284c7"/>
+  <text x="716" y="213" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">4</text>
+  <text x="742" y="213" class="step">재랭킹 · 필터</text>
+  <text x="704" y="244" class="desc">LLM 리랭커로 정렬</text>
+  <text x="704" y="262" class="desc">최저 점수 미만은</text>
+  <text x="704" y="280" class="desc">결과에서 제외</text>
+
+  <!-- Box 5 (결과 강조): x=900 -->
+  <rect x="900" y="180" width="160" height="120" rx="12" fill="#eff6ff" stroke="#0284c7" stroke-width="2.5"/>
+  <circle cx="926" cy="208" r="16" fill="#0284c7"/>
+  <text x="926" y="213" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">5</text>
+  <text x="952" y="213" class="step">검색 결과</text>
+  <text x="914" y="244" class="desc">조문 본문 + 인용 정보</text>
+  <text x="914" y="262" class="desc">신뢰도 밴드 표시</text>
+  <text x="914" y="280" class="desc">시행일 · 부처</text>
+
+  <!-- v2 arrows: 박스 우측 220 → 다음 박스 좌측 270 등 -->
+  <path class="arrow-blue" d="M222 240 L268 240"/>
+  <path class="arrow-blue" d="M432 240 L478 240"/>
+  <path class="arrow-blue" d="M642 240 L688 240"/>
+  <path class="arrow-blue" d="M852 240 L898 240"/>
+
+  <text x="600" y="338" text-anchor="middle" class="note">한 번의 검색 호출로 끝 — 빠르고 단순한 조회 경로</text>
+
+  <!-- Divider -->
+  <line x1="60" y1="380" x2="1140" y2="380" stroke="#e2e8f0" stroke-width="1"/>
+
+  <!-- ============================================== -->
+  <!-- v3/analyze header -->
+  <rect x="60" y="412" width="160" height="32" rx="16" fill="#9333ea"/>
+  <text x="140" y="433" text-anchor="middle" class="tag">/v3/analyze</text>
+  <text x="236" y="435" class="h2">법률 자문형 분석 · 쟁점 + 근거 + 판례</text>
+
+  <!-- Phase A label -->
+  <text x="60" y="476" class="phase" fill="#7e22ce">PHASE A — 기본 분석</text>
+  <text x="60" y="494" class="note">질문을 쟁점으로 쪼개고 법령·판례 근거를 채운다</text>
+
+  <!-- Phase A nodes (5개): 박스 폭 150, 간격 50, 마지막은 강조 220폭 -->
+  <!-- A1: x=60 -->
+  <rect x="60"  y="514" width="150" height="110" rx="12" fill="#ffffff" stroke="#d8b4fe" stroke-width="1.5"/>
+  <text x="76" y="542" class="step">질문 정제</text>
+  <text x="76" y="570" class="desc">법률 질문인지 확인</text>
+  <text x="76" y="588" class="desc">정보 부족 시</text>
+  <text x="76" y="606" class="desc">추가 질문 안내</text>
+
+  <!-- A2: x=260 -->
+  <rect x="260" y="514" width="150" height="110" rx="12" fill="#ffffff" stroke="#d8b4fe" stroke-width="1.5"/>
+  <text x="276" y="542" class="step">쟁점 분해</text>
+  <text x="276" y="570" class="desc">LLM이 핵심 쟁점을</text>
+  <text x="276" y="588" class="desc">목록화 + 검색 계획</text>
+  <text x="276" y="606" class="desc">자동 수립</text>
+
+  <!-- A3: x=460 -->
+  <rect x="460" y="514" width="150" height="110" rx="12" fill="#ffffff" stroke="#d8b4fe" stroke-width="1.5"/>
+  <text x="476" y="542" class="step">근거 검색</text>
+  <text x="476" y="570" class="desc">쟁점별로 v2 검색을</text>
+  <text x="476" y="588" class="desc">병렬 호출 →</text>
+  <text x="476" y="606" class="desc">조문 근거 수집</text>
+
+  <!-- A4: x=660 -->
+  <rect x="660" y="514" width="150" height="110" rx="12" fill="#ffffff" stroke="#d8b4fe" stroke-width="1.5"/>
+  <text x="676" y="542" class="step">판례 매칭</text>
+  <text x="676" y="570" class="desc">쟁점에 대응하는</text>
+  <text x="676" y="588" class="desc">판례·행정해석을</text>
+  <text x="676" y="606" class="desc">근거로 연결</text>
+
+  <!-- A5 (강조): x=860 width=220 -->
+  <rect x="860" y="514" width="220" height="110" rx="12" fill="#f3e8ff" stroke="#9333ea" stroke-width="2.5"/>
+  <text x="876" y="542" class="step">쟁점별 법령·판례 근거</text>
+  <text x="876" y="570" class="desc">자문 형식 응답</text>
+  <text x="876" y="588" class="desc">(v2/analyze와 동일)</text>
+  <text x="876" y="612" class="note">↓ 여기에 v3 보강 추가</text>
+
+  <!-- Phase A arrows -->
+  <path class="arrow-purple" d="M212 569 L258 569"/>
+  <path class="arrow-purple" d="M412 569 L458 569"/>
+  <path class="arrow-purple" d="M612 569 L658 569"/>
+  <path class="arrow-purple" d="M812 569 L858 569"/>
+
+  <!-- Phase B label -->
+  <text x="60" y="676" class="phase" fill="#7e22ce">PHASE B — 지식그래프 확장</text>
+  <text x="60" y="694" class="note">조문 간 관계를 따라 빠진 근거를 보강한다</text>
+
+  <!-- Phase B nodes (4개): 박스 폭 230, 간격 30 -->
+  <!-- B1: x=60 -->
+  <rect x="60"  y="714" width="230" height="68" rx="10" fill="#ffffff" stroke="#a855f7" stroke-width="1.5"/>
+  <text x="80" y="742" class="step">앵커 조문 추출</text>
+  <text x="80" y="766" class="desc">Phase A 결과가 시작점</text>
+
+  <!-- B2: x=320 -->
+  <rect x="320" y="714" width="230" height="68" rx="10" fill="#ffffff" stroke="#a855f7" stroke-width="1.5"/>
+  <text x="340" y="742" class="step">관계 그래프 탐색</text>
+  <text x="340" y="766" class="desc">특별법·판례·인용 확장</text>
+
+  <!-- B3: x=580 -->
+  <rect x="580" y="714" width="230" height="68" rx="10" fill="#ffffff" stroke="#a855f7" stroke-width="1.5"/>
+  <text x="600" y="742" class="step">정밀도 게이트</text>
+  <text x="600" y="766" class="desc">기준 미달 시 보강 중단</text>
+
+  <!-- B4 (최종, 강조): x=840 -->
+  <rect x="840" y="714" width="240" height="68" rx="10" fill="#f3e8ff" stroke="#9333ea" stroke-width="2.5"/>
+  <text x="860" y="742" class="step">최종 응답</text>
+  <text x="860" y="766" class="desc">근거 보강 완료</text>
+
+  <!-- Phase B arrows: 각 박스 우측 → 다음 박스 좌측 -->
+  <path class="arrow-purple" d="M292 748 L318 748"/>
+  <path class="arrow-purple" d="M552 748 L578 748"/>
+  <path class="arrow-purple" d="M812 748 L838 748"/>
+
+  <!-- Phase A → Phase B (응답 박스에서 앵커로 내려옴) -->
+  <path class="arrow-soft" d="M970 626 L970 660 L175 660 L175 712"/>
+  <text x="572" y="654" text-anchor="middle" class="note" fill="#9333ea">Phase A 응답의 인용 조문을 앵커로 사용</text>
+
+  <!-- bottom caption -->
+  <text x="600" y="836" text-anchor="middle" class="note">검색 → 분석 → 그래프 확장의 3단 파이프라인 · 자문 수준의 응답을 자동 생성</text>
+</svg>

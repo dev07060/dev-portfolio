@@ -18,8 +18,11 @@ const PresentationOverlay = ({
   onPrevSlide,
   onNextSlide,
 }: PresentationOverlayProps) => {
+  const isFirst = currentScreenIndex === 0;
+  const isLast = currentScreenIndex === project.screens.length - 1;
+
   return (
-    <div className="fixed inset-0 z-[60] bg-black flex flex-col items-center justify-center animate-fade-in">
+    <div className="fixed inset-0 z-[60] bg-[#1f1b16] flex flex-col items-center justify-center animate-fade-in">
       {/* Navigation Controls */}
       <button
         onClick={onExit}
@@ -28,20 +31,19 @@ const PresentationOverlay = ({
         <X size={24} />
       </button>
 
-      {/* Desktop Navigation Arrows - Hidden on mobile */}
-      <button
-        onClick={onPrevSlide}
-        className="hidden md:block absolute left-4 md:left-10 p-4 rounded-full bg-white/5 hover:bg-white/10 text-white transition-colors z-50 hover:scale-110"
-      >
-        <ChevronLeft size={40} />
-      </button>
-
-      <button
-        onClick={onNextSlide}
-        className="hidden md:block absolute right-4 md:right-10 p-4 rounded-full bg-white/5 hover:bg-white/10 text-white transition-colors z-50 hover:scale-110"
-      >
-        <ChevronRight size={40} />
-      </button>
+      {/* Progress indicator (top center) */}
+      <div className="absolute top-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-1.5">
+        {project.screens.map((_, i) => (
+          <span
+            key={i}
+            className={`h-1 rounded-full transition-all ${
+              i === currentScreenIndex
+                ? 'w-6 bg-[#faf7f2]'
+                : 'w-1.5 bg-white/30'
+            }`}
+          />
+        ))}
+      </div>
 
       {/* Main Visual Area */}
       <div className="flex-1 w-full flex items-center justify-center p-4 md:p-10 overflow-hidden">
@@ -53,24 +55,36 @@ const PresentationOverlay = ({
         />
       </div>
 
-      {/* Mobile Navigation - Below Device Frame */}
-      <div className="flex md:hidden items-center justify-center gap-6 py-4">
+      {/* Unified Navigation Bar - Below Device Frame */}
+      <div className="w-full flex items-center justify-center gap-4 md:gap-6 py-4 md:py-5">
         <button
           onClick={onPrevSlide}
-          className="p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+          disabled={isFirst}
+          aria-label="Previous slide"
+          className={`p-3 md:p-3.5 rounded-full text-white border border-white/20 transition-all ${
+            isFirst
+              ? 'bg-white/[0.03] opacity-25 cursor-not-allowed'
+              : 'bg-white/10 hover:bg-white/20 hover:border-white/40 hover:scale-105 active:scale-95'
+          }`}
         >
-          <ChevronLeft size={28} />
+          <ChevronLeft size={24} className="md:size-7" />
         </button>
-        
-        <span className="text-white/80 text-sm font-medium min-w-[60px] text-center">
-          {currentScreenIndex + 1} / {project.screens.length}
+
+        <span className="text-white/90 text-sm md:text-base font-mono min-w-[70px] md:min-w-[80px] text-center tracking-wider">
+          {String(currentScreenIndex + 1).padStart(2, '0')} / {String(project.screens.length).padStart(2, '0')}
         </span>
-        
+
         <button
           onClick={onNextSlide}
-          className="p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+          disabled={isLast}
+          aria-label="Next slide"
+          className={`p-3 md:p-3.5 rounded-full text-white border border-white/20 transition-all ${
+            isLast
+              ? 'bg-white/[0.03] opacity-25 cursor-not-allowed'
+              : 'bg-white/10 hover:bg-white/20 hover:border-white/40 hover:scale-105 active:scale-95'
+          }`}
         >
-          <ChevronRight size={28} />
+          <ChevronRight size={24} className="md:size-7" />
         </button>
       </div>
 
@@ -91,12 +105,12 @@ const CaptionArea = ({
   const { t } = useLocale();
   
   return (
-    <div className="w-full bg-black/80 backdrop-blur-md p-4 md:p-8 border-t border-white/10 text-center">
+    <div className="w-full bg-[#1f1b16]/90 backdrop-blur-md p-4 md:p-8 border-t border-white/10 text-center">
       <div className="max-w-4xl mx-auto">
-        <h3 className="text-lg md:text-2xl font-bold text-white mb-1 md:mb-2">
+        <h3 className="font-serif text-xl md:text-3xl font-light text-[#faf7f2] mb-1 md:mb-2">
           {t(project.screens[currentScreenIndex].title)}
         </h3>
-        <p className="text-slate-400 text-xs md:text-base leading-relaxed">
+        <p className="text-[#cfc4b2] text-xs md:text-base leading-relaxed">
           {t(project.screens[currentScreenIndex].desc)}
         </p>
       </div>

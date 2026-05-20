@@ -7,46 +7,56 @@ import { useLocale, profile } from '@/i18n';
 const ProfileHeader = () => {
   const { t, locale } = useLocale();
 
+  const chipClass =
+    'px-2.5 py-1 md:px-3 md:py-1.5 text-xs md:text-sm font-medium bg-[#f2ede4] text-[#4a4339] rounded-full border border-[#e8dfd0] hover:border-[#b8543a]/60 hover:text-[#1f1b16] transition-colors';
+
   return (
     <header className="max-w-7xl mx-auto px-6 pt-20 pb-12 relative overflow-hidden">
       <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 animate-fade-in-up relative z-20">
         {/* Left: Avatar + Profile Info */}
         <div className="flex-1 flex flex-col sm:flex-row items-start sm:items-center gap-6 sm:gap-8">
           {/* Profile Avatar */}
-          <div className="relative group shrink-0">
-            <div className="absolute -inset-1 bg-gradient-to-r from-cyan-400 to-blue-600 rounded-full blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
-            <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-slate-800 flex items-center justify-center border-2 border-slate-600">
-              <Code2 size={36} className="text-cyan-400 sm:w-10 sm:h-10" />
+          <div className="relative shrink-0">
+            <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#f2ede4] flex items-center justify-center border border-[#e8dfd0]">
+              <Code2 size={36} className="text-[#b8543a] sm:w-10 sm:h-10" />
             </div>
           </div>
 
           {/* Profile Info */}
           <div className="flex-1">
-            <h1 className="text-3xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400 mb-1 tracking-tight md:tracking-normal">
+            <p className="text-[11px] uppercase tracking-[0.25em] text-[#8a7f70] mb-3 font-mono">
+              — Portfolio · 2025
+            </p>
+            <h1 className="font-serif text-4xl md:text-6xl font-light text-[#1f1b16] mb-2 tracking-tight leading-[1.05]">
               {t(profile.name)}
             </h1>
-            <p className="text-lg md:text-xl text-cyan-400 font-medium mb-4">
+            <p className="text-base md:text-lg text-[#b8543a] font-medium mb-5 italic font-serif">
               {t(profile.tagline)}
             </p>
-            
+
             {/* Intro Section: locale + screen size responsive */}
             {locale === 'ko' ? (
               <>
                 {/* Korean: Paragraph on desktop, bullets on mobile */}
-                <p className="hidden md:block text-base md:text-lg text-slate-300 max-w-xl leading-relaxed whitespace-pre-line">
+                <p className="hidden md:block text-base md:text-lg text-[#4a4339] max-w-xl leading-[1.7] whitespace-pre-line">
                   {t(profile.intro)}
                 </p>
                 <div className="md:hidden">
                   <ul className="space-y-2 mb-4">
                     {profile.highlights.map((highlight, index) => (
-                      <li key={index} className="flex items-center gap-2 text-sm text-slate-300">
-                        <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0" />
+                      <li
+                        key={index}
+                        className="flex items-center gap-2 text-sm text-[#4a4339]"
+                      >
+                        <span className="w-1 h-1 rounded-full bg-[#b8543a] shrink-0" />
                         {t(highlight)}
                       </li>
                     ))}
                   </ul>
-                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-800/50 rounded-lg border border-slate-700">
-                    <span className="text-xs font-medium text-slate-400">{t(profile.experience)}</span>
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#f2ede4] rounded-full border border-[#e8dfd0]">
+                    <span className="text-xs font-medium text-[#8a7f70]">
+                      {t(profile.experience)}
+                    </span>
                   </div>
                 </div>
               </>
@@ -55,56 +65,93 @@ const ProfileHeader = () => {
                 {/* English: Always bullets */}
                 <ul className="space-y-2 mb-4">
                   {profile.highlights.map((highlight, index) => (
-                    <li key={index} className="flex items-center gap-2 text-sm md:text-base text-slate-300">
-                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0" />
+                    <li
+                      key={index}
+                      className="flex items-center gap-2 text-sm md:text-base text-[#4a4339]"
+                    >
+                      <span className="w-1 h-1 rounded-full bg-[#b8543a] shrink-0" />
                       {t(highlight)}
                     </li>
                   ))}
                 </ul>
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-800/50 rounded-lg border border-slate-700">
-                  <span className="text-xs md:text-sm font-medium text-slate-400">{t(profile.experience)}</span>
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#f2ede4] rounded-full border border-[#e8dfd0]">
+                  <span className="text-xs md:text-sm font-medium text-[#8a7f70]">
+                    {t(profile.experience)}
+                  </span>
                 </div>
               </>
             )}
 
             {/* Social Links */}
-            <div className="flex gap-4 mt-6">
-              <SocialButton icon={<Github size={20} />} label="GitHub" href='https://github.com/dev07060'/>
-              <SocialButton icon={<Notebook size={20} />} label="Blog" href='https://devblog-fawn.vercel.app'/>
-              <SocialButton icon={<Mail size={20} />} label="Email" href='mailto:byeongheeoh51@gmail.com'/>
+            <div className="flex gap-3 mt-6">
+              <SocialButton
+                icon={<Github size={20} />}
+                label="GitHub"
+                href="https://github.com/dev07060"
+              />
+              <SocialButton
+                icon={<Notebook size={20} />}
+                label="Blog"
+                href="https://devblog-fawn.vercel.app"
+              />
+              <SocialButton
+                icon={<Mail size={20} />}
+                label="Email"
+                href="mailto:byeongheeoh51@gmail.com"
+              />
             </div>
           </div>
         </div>
 
         {/* Right: Tech Stack */}
-        <div className="flex-1 space-y-4">
+        <div className="flex-1 space-y-5">
+          {/* Languages */}
+          <div className="flex flex-col gap-2">
+            <span className="text-[11px] md:text-xs font-mono text-[#b8543a] uppercase tracking-[0.25em]">
+              — Languages
+            </span>
+            <div className="flex flex-wrap gap-2">
+              <span className={chipClass}>TypeScript</span>
+              <span className={chipClass}>Dart</span>
+              <span className={chipClass}>Python</span>
+              <span className={chipClass}>Rust</span>
+              <span className={chipClass}>Kotlin</span>
+            </div>
+          </div>
           {/* Mobile */}
           <div className="flex flex-col gap-2">
-            <span className="text-xs md:text-sm font-semibold text-cyan-400 uppercase tracking-wider">Mobile</span>
+            <span className="text-[11px] md:text-xs font-mono text-[#b8543a] uppercase tracking-[0.25em]">
+              — Mobile
+            </span>
             <div className="flex flex-wrap gap-2">
-              <span className="px-2.5 py-1 md:px-3 md:py-1.5 text-xs md:text-sm font-medium bg-slate-700/50 text-slate-300 rounded-lg border border-slate-600/50 hover:border-cyan-400/50 transition-colors">Flutter</span>
-              <span className="px-2.5 py-1 md:px-3 md:py-1.5 text-xs md:text-sm font-medium bg-slate-700/50 text-slate-300 rounded-lg border border-slate-600/50 hover:border-cyan-400/50 transition-colors">React Native</span>
-              <span className="px-2.5 py-1 md:px-3 md:py-1.5 text-xs md:text-sm font-medium bg-slate-700/50 text-slate-300 rounded-lg border border-slate-600/50 hover:border-cyan-400/50 transition-colors">Kotlin</span>
-              <span className="px-2.5 py-1 md:px-3 md:py-1.5 text-xs md:text-sm font-medium bg-slate-700/50 text-slate-300 rounded-lg border border-slate-600/50 hover:border-cyan-400/50 transition-colors">Jetpack Compose</span>
+              <span className={chipClass}>Flutter</span>
+              <span className={chipClass}>Jetpack Compose</span>
+              <span className={chipClass}>React Native</span>
             </div>
           </div>
-          {/* Web - Frameworks */}
+          {/* Web */}
           <div className="flex flex-col gap-2">
-            <span className="text-xs md:text-sm font-semibold text-cyan-400 uppercase tracking-wider">Web</span>
+            <span className="text-[11px] md:text-xs font-mono text-[#b8543a] uppercase tracking-[0.25em]">
+              — Web
+            </span>
             <div className="flex flex-wrap gap-2">
-              <span className="px-2.5 py-1 md:px-3 md:py-1.5 text-xs md:text-sm font-medium bg-slate-700/50 text-slate-300 rounded-lg border border-slate-600/50 hover:border-cyan-400/50 transition-colors">React</span>
-              <span className="px-2.5 py-1 md:px-3 md:py-1.5 text-xs md:text-sm font-medium bg-slate-700/50 text-slate-300 rounded-lg border border-slate-600/50 hover:border-cyan-400/50 transition-colors">Next.js</span>
-              <span className="px-2.5 py-1 md:px-3 md:py-1.5 text-xs md:text-sm font-medium bg-slate-700/50 text-slate-300 rounded-lg border border-slate-600/50 hover:border-cyan-400/50 transition-colors">Vue</span>
-              <span className="px-2.5 py-1 md:px-3 md:py-1.5 text-xs md:text-sm font-medium bg-slate-700/50 text-slate-300 rounded-lg border border-slate-600/50 hover:border-cyan-400/50 transition-colors">Nuxt</span>
-              <span className="px-2.5 py-1 md:px-3 md:py-1.5 text-xs md:text-sm font-medium bg-slate-700/50 text-slate-300 rounded-lg border border-slate-600/50 hover:border-cyan-400/50 transition-colors">TypeScript</span>
+              <span className={chipClass}>React</span>
+              <span className={chipClass}>Next.js</span>
+              <span className={chipClass}>Vue · Nuxt</span>
             </div>
           </div>
-          {/* State Management */}
+          {/* Backend & AI */}
           <div className="flex flex-col gap-2">
-            <span className="text-xs md:text-sm font-semibold text-cyan-400 uppercase tracking-wider">State</span>
+            <span className="text-[11px] md:text-xs font-mono text-[#b8543a] uppercase tracking-[0.25em]">
+              — Backend · AI
+            </span>
             <div className="flex flex-wrap gap-2">
-              <span className="px-2.5 py-1 md:px-3 md:py-1.5 text-xs md:text-sm font-medium bg-slate-700/50 text-slate-300 rounded-lg border border-slate-600/50 hover:border-cyan-400/50 transition-colors">Zustand</span>
-              <span className="px-2.5 py-1 md:px-3 md:py-1.5 text-xs md:text-sm font-medium bg-slate-700/50 text-slate-300 rounded-lg border border-slate-600/50 hover:border-cyan-400/50 transition-colors">TanStack Query</span>
+              <span className={chipClass}>FastAPI</span>
+              <span className={chipClass}>PostgreSQL</span>
+              <span className={chipClass}>Milvus</span>
+              <span className={chipClass}>SBERT</span>
+              <span className={chipClass}>ONNX Runtime</span>
+              <span className={chipClass}>Docker</span>
             </div>
           </div>
         </div>
@@ -114,4 +161,3 @@ const ProfileHeader = () => {
 };
 
 export default ProfileHeader;
-

@@ -15,12 +15,14 @@ export type LocaleText = {
 export const ui = {
   // ProjectModal
   projectOverview: { en: 'Project Overview', ko: '프로젝트 개요' },
+  keyImplementations: { en: 'Key Implementations', ko: '핵심 구현' },
   technologiesUsed: { en: 'Technologies Used', ko: '사용 기술' },
   mobileApplication: { en: 'MOBILE APPLICATION', ko: '모바일 앱' },
   tabletApplication: { en: 'TABLET APPLICATION', ko: '태블릿 앱' },
   webPlatform: { en: 'WEB PLATFORM', ko: '웹 플랫폼' },
 
   // ProjectCard
+  coreStack: { en: 'Core Stack', ko: '핵심 기술 스택' },
   deviceApp: { en: 'APP', ko: '앱' },
   deviceTablet: { en: 'TABLET', ko: '태블릿' },
   deviceWeb: { en: 'WEB', ko: '웹' },
@@ -31,7 +33,7 @@ export const ui = {
   // Tech Stack Categories
   mobile: { en: 'Mobile', ko: 'Mobile' },
   web: { en: 'Web', ko: 'Web' },
-  state: { en: 'State', ko: 'State' },
+  state: { en: 'Stack', ko: 'Stack' },
 
   // Open Source Packages Section
   openSourcePackages: { en: 'Open Source Packages', ko: '오픈소스 패키지' },
@@ -49,26 +51,25 @@ export const ui = {
 export const profile = {
   name: { en: 'Byeonghee Oh', ko: '오병희' },
   tagline: {
-    en: 'Cross Platform Developer',
-    ko: 'Cross Platform Developer',
+    en: 'Cross-Platform Developer',
+    ko: 'Cross-Platform Developer',
   },
   // Korean uses intro paragraph, English uses highlights
   intro: {
     en: '', // Not used for English
-    ko: `사용자 경험을 최우선으로 생각하는 프론트엔드 개발자입니다.
-모바일 앱과 웹의 경계를 허무는 몰입형 인터페이스를 만듭니다.
-정밀한 디자인 구현, 최적화, 지속가능한 코드를 우선시 합니다.
-프로젝트 경험 : Web 3년차, Mobile 4년차`,
+    ko: `사용자 경험을 중심으로 웹·서버리스 웹·모바일 앱을 설계/개발/운영해 온 크로스플랫폼 개발자입니다.
+MAU 1만+ 규모 서비스 운영과 복잡한 데이터 처리 구간의 성능 개선을 주도했습니다.
+좋은 코드를 넘어 장애를 예방하는 구조 설계를 지향하며, 리뷰 문화·컴포넌트 공용화·아키텍처 개선으로 비즈니스 가치를 높입니다.`,
   },
   highlights: [
-    { en: 'User experience first', ko: '사용자 경험 최우선' },
-    { en: 'Immersive interfaces across mobile & web', ko: '모바일 & 웹을 넘나드는 몰입형 인터페이스' },
-    { en: 'Precise design, optimized code', ko: '정밀한 디자인, 최적화된 코드' },
-    { en: 'Kotlin & Rust native dev with Flutter integration', ko: 'Kotlin & Rust 네이티브 개발, Flutter 연동' },
+    { en: 'User experience first', ko: '사용자 경험 중심 개발' },
+    { en: 'Built and operated web, serverless web, and mobile services', ko: '웹·서버리스 웹·모바일 서비스 설계/개발/운영' },
+    { en: 'Improved bottlenecks in complex data pipelines', ko: '복잡한 데이터 처리 병목 성능 개선' },
+    { en: 'Structure-first engineering for stable services', ko: '장애 예방 중심의 구조 설계' },
   ],
   experience: {
-    en: '3 years Web · 4 years Mobile',
-    ko: 'Web 3년차 · Mobile 4년차',
+    en: '5 years 4 months total · 3 years Web · 4 years Mobile',
+    ko: '총 5년 4개월 · Web 3년 · Mobile 4년',
   },
 } as const;
 

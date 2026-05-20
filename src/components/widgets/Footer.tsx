@@ -1,7 +1,12 @@
 const Footer = () => {
   return (
-    <footer className="text-center py-12 text-slate-500 text-sm border-t border-slate-800/50">
-      &copy; 2024 Byeonghee Oh. Design & Built with Next.js.
+    <footer className="max-w-7xl mx-auto px-6 py-12 mt-8 border-t border-[#e8dfd0] flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-sm text-[#8a7f70]">
+      <span className="font-serif italic">
+        © 2024 Byeonghee Oh
+      </span>
+      <span className="font-mono text-xs uppercase tracking-[0.25em]">
+        Designed & Built with Next.js
+      </span>
     </footer>
   );
 };

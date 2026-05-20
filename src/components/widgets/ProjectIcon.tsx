@@ -1,7 +1,7 @@
-import { Zap, Globe, Smartphone, Layers, Tablet, Brain, Utensils, Activity, Heart, Dumbbell } from 'lucide-react';
+import { Zap, Globe, Smartphone, Layers, Tablet, Brain, Utensils, Activity, Heart, Dumbbell, Scale } from 'lucide-react';
 
 interface ProjectIconProps {
-  iconType: 'zap' | 'globe' | 'smartphone' | 'layers' | 'tablet' | 'brain' | 'utensils' | 'activity' | 'heart' | 'dumbbell';
+  iconType: 'zap' | 'globe' | 'smartphone' | 'layers' | 'tablet' | 'brain' | 'utensils' | 'activity' | 'heart' | 'dumbbell' | 'scale';
   size?: number;
   className?: string;
 }
@@ -17,6 +17,7 @@ const iconMap = {
   activity: Activity,
   heart: Heart,
   dumbbell: Dumbbell,
+  scale: Scale,
 };
 
 const ProjectIcon = ({ iconType, size = 48, className = 'text-white' }: ProjectIconProps) => {

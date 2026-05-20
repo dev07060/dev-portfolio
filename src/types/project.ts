@@ -19,9 +19,10 @@ export interface Project {
   subtitle: LocaleText;
   description: LocaleText;
   techStack: string[];
+  implementationPoints?: LocaleText[];
+  releaseLabel?: LocaleText;
   color: string;
-  iconType: 'zap' | 'globe' | 'smartphone' | 'layers' | 'tablet' | 'brain' | 'utensils' | 'activity' | 'heart' | 'dumbbell';
+  iconType: 'zap' | 'globe' | 'smartphone' | 'layers' | 'tablet' | 'brain' | 'utensils' | 'activity' | 'heart' | 'dumbbell' | 'scale';
   screens: Screen[];
   links?: ProjectLink[];
 }
-

@@ -48,8 +48,8 @@ const Portfolio = () => {
     (e?: React.MouseEvent) => {
       e?.stopPropagation();
       if (selectedProject) {
-        setCurrentScreenIndex(
-          (prev) => (prev + 1) % selectedProject.screens.length
+        setCurrentScreenIndex((prev) =>
+          Math.min(prev + 1, selectedProject.screens.length - 1)
         );
       }
     },
@@ -59,15 +59,9 @@ const Portfolio = () => {
   const prevSlide = useCallback(
     (e?: React.MouseEvent) => {
       e?.stopPropagation();
-      if (selectedProject) {
-        setCurrentScreenIndex(
-          (prev) =>
-            (prev - 1 + selectedProject.screens.length) %
-            selectedProject.screens.length
-        );
-      }
+      setCurrentScreenIndex((prev) => Math.max(prev - 1, 0));
     },
-    [selectedProject]
+    []
   );
 
   // Keyboard Navigation
@@ -86,8 +80,20 @@ const Portfolio = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isPresentationMode, nextSlide, prevSlide]);
 
+  // Preload all screen images as soon as a project modal opens
+  // so subsequent slide navigation hits browser cache (no fetch delay).
+  useEffect(() => {
+    if (!selectedProject) return;
+    selectedProject.screens.forEach((screen) => {
+      if (!screen.imagePath) return;
+      const img = new window.Image();
+      img.decoding = 'async';
+      img.src = screen.imagePath;
+    });
+  }, [selectedProject]);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a] text-white font-sans">
+    <div className="min-h-screen bg-[#faf7f2] text-[#1f1b16] font-sans">
       {/* Header / Profile Section */}
       <ProfileHeader />
 
