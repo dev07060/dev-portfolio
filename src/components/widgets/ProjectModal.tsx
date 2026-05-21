@@ -67,46 +67,48 @@ const ProjectInfoPanel = ({ project }: { project: Project }) => {
   };
 
   return (
-    <div className="w-full lg:w-1/3 p-8 flex flex-col justify-center border-b lg:border-b-0 lg:border-r border-[#e8dfd0] order-2 lg:order-1 bg-white">
-      <div className="mb-6">
-        <span className="inline-block font-mono text-[10px] uppercase tracking-[0.25em] text-[#b8543a] mb-4">
-          — {getTypeLabel()}
-        </span>
-        <h2 className="font-serif text-3xl md:text-4xl font-light text-[#1f1b16] mb-2 leading-tight">
-          {t(project.title)}
-        </h2>
-        <p className="text-base text-[#8a7f70] italic font-serif mb-6">
-          {t(project.subtitle)}
-        </p>
-      </div>
-
-      <div className="space-y-6">
-        <div>
-          <h4 className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#8a7f70] mb-2">
-            — {t(ui.projectOverview)}
-          </h4>
-          <p className="text-[#4a4339] leading-relaxed text-sm">
-            {t(project.description)}
+    <div className="w-full lg:w-1/3 lg:overflow-y-auto scrollbar-hide border-b lg:border-b-0 lg:border-r border-[#e8dfd0] order-2 lg:order-1 bg-white">
+      <div className="p-8 flex flex-col justify-center min-h-full">
+        <div className="mb-6">
+          <span className="inline-block font-mono text-[10px] uppercase tracking-[0.25em] text-[#b8543a] mb-4">
+            — {getTypeLabel()}
+          </span>
+          <h2 className="font-serif text-3xl md:text-4xl font-light text-[#1f1b16] mb-2 leading-tight">
+            {t(project.title)}
+          </h2>
+          <p className="text-base text-[#8a7f70] italic font-serif mb-6">
+            {t(project.subtitle)}
           </p>
         </div>
-        {project.implementationPoints && project.implementationPoints.length > 0 && (
+
+        <div className="space-y-6">
           <div>
-            <h4 className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#8a7f70] mb-3">
-              — {t(ui.keyImplementations)}
+            <h4 className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#8a7f70] mb-2">
+              — {t(ui.projectOverview)}
             </h4>
-            <ul className="space-y-2">
-              {project.implementationPoints.map((point, index) => (
-                <li
-                  key={index}
-                  className="flex gap-2 text-sm text-[#4a4339] leading-relaxed"
-                >
-                  <span className="text-[#b8543a] mt-[2px]">·</span>
-                  <span>{t(point)}</span>
-                </li>
-              ))}
-            </ul>
+            <p className="text-[#4a4339] leading-relaxed text-sm">
+              {t(project.description)}
+            </p>
           </div>
-        )}
+          {project.implementationPoints && project.implementationPoints.length > 0 && (
+            <div>
+              <h4 className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#8a7f70] mb-3">
+                — {t(ui.keyImplementations)}
+              </h4>
+              <ul className="space-y-2">
+                {project.implementationPoints.map((point, index) => (
+                  <li
+                    key={index}
+                    className="flex gap-2 text-sm text-[#4a4339] leading-relaxed"
+                  >
+                    <span className="text-[#b8543a] mt-[2px]">·</span>
+                    <span>{t(point)}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -117,47 +119,49 @@ const TechStackPanel = ({ project }: { project: Project }) => {
   const { t } = useLocale();
 
   return (
-    <div className="w-full lg:w-1/3 p-8 flex flex-col justify-center order-3 bg-white border-t lg:border-t-0 lg:border-l border-[#e8dfd0]">
-      <h4 className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#8a7f70] mb-6">
-        — {t(ui.technologiesUsed)}
-      </h4>
+    <div className="w-full lg:w-1/3 lg:overflow-y-auto scrollbar-hide order-3 bg-white border-t lg:border-t-0 lg:border-l border-[#e8dfd0]">
+      <div className="p-8 flex flex-col justify-center min-h-full">
+        <h4 className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#8a7f70] mb-6">
+          — {t(ui.technologiesUsed)}
+        </h4>
 
-      <div className="space-y-3">
-        {project.techStack.map((tech, index) => (
-          <div key={index} className="flex items-center gap-3 group">
-            <div
-              className={`p-2 rounded-lg bg-gradient-to-br ${project.color} opacity-90 group-hover:opacity-100 transition-opacity`}
-            >
-              <Code2 size={14} className="text-white" />
-            </div>
-            <span className="text-[#4a4339] font-medium text-sm group-hover:text-[#1f1b16] transition-colors">
-              {tech}
-            </span>
-          </div>
-        ))}
-      </div>
-
-      {project.links && project.links.length > 0 && (
-        <div className="mt-10 pt-6 border-t border-[#e8dfd0] space-y-3">
-          {project.links.map((link, index) => (
-            <a
-              key={index}
-              href={link.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-between w-full p-4 rounded-xl bg-[#faf7f2] hover:bg-[#f2ede4] transition-colors group border border-[#e8dfd0] hover:border-[#b8543a]/40"
-            >
-              <span className="font-semibold text-[#1f1b16] text-sm">
-                {link.label}
+        <div className="space-y-3">
+          {project.techStack.map((tech, index) => (
+            <div key={index} className="flex items-center gap-3 group">
+              <div
+                className={`p-2 rounded-lg bg-gradient-to-br ${project.color} opacity-90 group-hover:opacity-100 transition-opacity`}
+              >
+                <Code2 size={14} className="text-white" />
+              </div>
+              <span className="text-[#4a4339] font-medium text-sm group-hover:text-[#1f1b16] transition-colors">
+                {tech}
               </span>
-              <ExternalLink
-                size={16}
-                className="text-[#8a7f70] group-hover:text-[#b8543a] transition-colors"
-              />
-            </a>
+            </div>
           ))}
         </div>
-      )}
+
+        {project.links && project.links.length > 0 && (
+          <div className="mt-10 pt-6 border-t border-[#e8dfd0] space-y-3">
+            {project.links.map((link, index) => (
+              <a
+                key={index}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between w-full p-4 rounded-xl bg-[#faf7f2] hover:bg-[#f2ede4] transition-colors group border border-[#e8dfd0] hover:border-[#b8543a]/40"
+              >
+                <span className="font-semibold text-[#1f1b16] text-sm">
+                  {link.label}
+                </span>
+                <ExternalLink
+                  size={16}
+                  className="text-[#8a7f70] group-hover:text-[#b8543a] transition-colors"
+                />
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

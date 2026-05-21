@@ -51,6 +51,7 @@ export const projects: Project[] = [
           ko: '실제 서비스 검색 화면 — 자연어 질의로 조문 단위 결과를 돌려줍니다.',
         },
         imagePath: '/images/law-info-engine/search-ui.png',
+        scrollable: true,
       },
       {
         title: { en: 'Results · Citations', ko: '검색 결과·인용' },
@@ -84,6 +85,10 @@ export const projects: Project[] = [
       {
         label: 'Live Site',
         url: 'https://law-api.swifty.kr/search-info/',
+      },
+      {
+        label: 'Docs',
+        url: 'https://law-api.swifty.kr/docs',
       },
     ],
   },
@@ -215,11 +220,11 @@ export const projects: Project[] = [
     id: 'local-mobile-rag-gemma',
     type: 'mobile',
     title: { en: 'Local Mobile RAG Gemma', ko: 'Local Mobile RAG Gemma' },
-    releaseLabel: { en: 'Released v0.13.0', ko: 'v0.13.0 배포' },
-    subtitle: { en: 'Local On-device Mobile RAG Engine with Gemma 3n (Released to v0.13.0)', ko: 'Gemma 3n 기반 로컬 온디바이스 모바일 RAG 엔진 (v0.13.0 배포)' },
+    releaseLabel: { en: 'Released v0.18.5', ko: 'v0.18.5 배포' },
+    subtitle: { en: 'Local On-device Mobile RAG Engine with Gemma 3n (Released to v0.18.5)', ko: 'Gemma 3n 기반 로컬 온디바이스 모바일 RAG 엔진 (v0.18.5 배포)' },
     description: {
-      en: 'Implemented a mobile RAG engine that runs fast on local devices and released it through v0.13.0. Uses Gemma 3n to store models locally and provides answers to user questions.',
-      ko: '로컬 디바이스에서 빠르게 실행되는 모바일 RAG 엔진을 구현하고 v0.13.0까지 배포했습니다. Gemma 3n을 사용하여 모델을 로컬에 저장하고, 사용자의 질문에 대한 답변을 제공합니다.',
+      en: 'Implemented a mobile RAG engine that runs fast on local devices and released it through v0.18.5. Uses Gemma 3n to store models locally and provides answers to user questions.',
+      ko: '로컬 디바이스에서 빠르게 실행되는 모바일 RAG 엔진을 구현하고 v0.18.5까지 배포했습니다. Gemma 3n을 사용하여 모델을 로컬에 저장하고, 사용자의 질문에 대한 답변을 제공합니다.',
     },
     implementationPoints: [
       {
@@ -231,15 +236,19 @@ export const projects: Project[] = [
         ko: 'ONNX Runtime 기반 로컬 추론과 토크나이징 경로 최적화를 적용했습니다.',
       },
       {
-        en: 'Implemented SQLite + HNSW vector retrieval for fast local document search.',
-        ko: 'SQLite + HNSW 벡터 검색으로 빠른 로컬 문서 검색을 구현했습니다.',
+        en: 'Implemented SQLite + HNSW + BM25 hybrid retrieval with PDF/DOCX ingestion for fast local document search.',
+        ko: 'SQLite + HNSW + BM25 하이브리드 검색과 PDF/DOCX 추출 파이프라인으로 빠른 로컬 문서 검색을 구현했습니다.',
       },
       {
-        en: 'Packaged and released mobile_rag_engine up to v0.13.0.',
-        ko: 'mobile_rag_engine을 v0.13.0까지 패키징 및 배포했습니다.',
+        en: 'Optimized retrieval hot path with zero-copy embedding transport (TransferableTypedData) and preserved BM25 rankings through term indexes.',
+        ko: 'Zero-copy 임베딩 전송(TransferableTypedData)과 term index 기반 BM25 랭킹 보존으로 검색 hot path를 최적화했습니다.',
+      },
+      {
+        en: 'Packaged and released mobile_rag_engine up to v0.18.5 on pub.dev.',
+        ko: 'mobile_rag_engine을 pub.dev에 v0.18.5까지 패키징 및 배포했습니다.',
       },
     ],
-    techStack: ['Flutter', 'Rust', 'ONNX Runtime', 'SQLite', 'HNSW'],
+    techStack: ['Flutter', 'Rust', 'ONNX Runtime', 'SQLite', 'HNSW', 'BM25'],
     color: 'from-blue-500 to-cyan-400',
     iconType: 'brain',
     screens: [

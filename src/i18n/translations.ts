@@ -51,19 +51,19 @@ export const ui = {
 export const profile = {
   name: { en: 'Byeonghee Oh', ko: '오병희' },
   tagline: {
-    en: 'Cross-Platform Developer',
-    ko: 'Cross-Platform Developer',
+    en: 'Cross-Platform Developer · Local RAG Engineer',
+    ko: 'Cross-Platform Developer · Local RAG Engineer',
   },
   // Korean uses intro paragraph, English uses highlights
   intro: {
     en: '', // Not used for English
-    ko: `사용자 경험을 중심으로 웹·서버리스 웹·모바일 앱을 설계/개발/운영해 온 크로스플랫폼 개발자입니다.
-MAU 1만+ 규모 서비스 운영과 복잡한 데이터 처리 구간의 성능 개선을 주도했습니다.
-좋은 코드를 넘어 장애를 예방하는 구조 설계를 지향하며, 리뷰 문화·컴포넌트 공용화·아키텍처 개선으로 비즈니스 가치를 높입니다.`,
+    ko: `웹·모바일을 설계/개발/운영해 온 크로스플랫폼 개발자이자, Rust FFI 기반 온디바이스 RAG 엔진(mobile_rag_engine)을 pub.dev에 배포 중인 로컬 RAG 엔지니어입니다.
+MAU 1만+ 서비스 운영과 온디바이스 AI 파이프라인 구축을 주도했고, 장애를 예방하는 구조 설계로 비즈니스 가치를 높입니다.`,
   },
   highlights: [
     { en: 'User experience first', ko: '사용자 경험 중심 개발' },
     { en: 'Built and operated web, serverless web, and mobile services', ko: '웹·서버리스 웹·모바일 서비스 설계/개발/운영' },
+    { en: 'Shipped on-device RAG engine (Rust FFI · ONNX) on pub.dev', ko: 'pub.dev에 온디바이스 RAG 엔진(Rust FFI·ONNX) 배포' },
     { en: 'Improved bottlenecks in complex data pipelines', ko: '복잡한 데이터 처리 병목 성능 개선' },
     { en: 'Structure-first engineering for stable services', ko: '장애 예방 중심의 구조 설계' },
   ],
