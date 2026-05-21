@@ -1,10 +1,10 @@
 'use client';
 
 import { Smartphone, Monitor, Tablet, Maximize2, Mouse } from 'lucide-react';
-import Image from 'next/image';
 import { useRef, useEffect } from 'react';
 import { Project } from '@/types/project';
 import { useLocale } from '@/i18n';
+import ScreenImage from './ScreenImage';
 
 interface DeviceFrameProps {
   project: Project;
@@ -72,11 +72,11 @@ const MobileFrame = ({
       <div className="h-[64px] w-[3px] bg-gray-100 absolute -right-[10px] top-[142px] rounded-r-lg" />
       <div className="rounded-[2rem] overflow-hidden w-full h-full bg-slate-800 relative">
         {project.screens[0]?.imagePath ? (
-          <Image
+          <ScreenImage
+            variant="fill"
             src={project.screens[0].imagePath}
             alt={t(project.title)}
-            fill
-            className="object-cover"
+            fallbackGradient={project.color}
           />
         ) : (
           <div
@@ -114,11 +114,11 @@ const WebFrame = ({
       </div>
       {project.screens[0]?.imagePath ? (
         <div className="w-full h-full relative">
-          <Image
+          <ScreenImage
+            variant="fill"
             src={project.screens[0].imagePath}
             alt={t(project.title)}
-            fill
-            className="object-cover"
+            fallbackGradient={project.color}
           />
         </div>
       ) : (
@@ -162,22 +162,22 @@ const MobilePresentationFrame = ({
         <div ref={scrollRef} className={`rounded-[2rem] w-full h-full bg-slate-800 relative ${isScrollable ? 'overflow-y-auto overflow-x-hidden scrollbar-hide' : 'overflow-hidden'}`}>
           {currentScreen?.imagePath ? (
             isScrollable ? (
-              // Scrollable: 이미지 원본 비율 유지하며 스크롤
-              <div className="w-full">
-                <img
+              <div className="w-full relative">
+                <ScreenImage
+                  variant="scroll"
                   src={currentScreen.imagePath}
                   alt={t(currentScreen.title)}
-                  decoding="async"
-                  className="w-full h-auto"
+                  fallbackGradient={project.color}
+                  priority
                 />
               </div>
             ) : (
-              // Non-scrollable: 기존 fill + object-cover
-              <Image
+              <ScreenImage
+                variant="fill"
                 src={currentScreen.imagePath}
                 alt={t(currentScreen.title)}
-                fill
-                className="object-cover"
+                fallbackGradient={project.color}
+                priority
               />
             )
           ) : (
@@ -234,22 +234,23 @@ const WebPresentationFrame = ({
         <div className="w-3 h-3 rounded-full bg-yellow-400" />
         <div className="w-3 h-3 rounded-full bg-green-400" />
       </div>
-      <div ref={scrollRef} className={`w-full h-full ${isScrollable ? 'overflow-y-auto overflow-x-hidden scrollbar-hide' : 'relative'}`}>
+      <div ref={scrollRef} className={`w-full h-full relative ${isScrollable ? 'overflow-y-auto overflow-x-hidden scrollbar-hide' : ''}`}>
         {currentScreen?.imagePath ? (
           isScrollable ? (
-            <img
+            <ScreenImage
+              variant="scroll"
               src={currentScreen.imagePath}
               alt={t(currentScreen.title)}
-              decoding="async"
-              className="w-full h-auto"
+              fallbackGradient={project.color}
+              priority
             />
           ) : (
-            <Image
+            <ScreenImage
+              variant="fill"
               src={currentScreen.imagePath}
               alt={t(currentScreen.title)}
-              fill
+              fallbackGradient={project.color}
               priority
-              className="object-cover"
             />
           )
         ) : (
@@ -287,11 +288,11 @@ const TabletFrame = ({
       <div className="absolute top-3 left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-300 rounded-full" />
       <div className="rounded-[1.5rem] overflow-hidden w-full h-full bg-slate-800 relative mt-2">
         {project.screens[0]?.imagePath ? (
-          <Image
+          <ScreenImage
+            variant="fill"
             src={project.screens[0].imagePath}
             alt={t(project.title)}
-            fill
-            className="object-cover"
+            fallbackGradient={project.color}
           />
         ) : (
           <div
@@ -339,21 +340,22 @@ const TabletPresentationFrame = ({
         <div ref={scrollRef} className={`rounded-[2rem] w-full h-full bg-slate-800 relative mt-2 ${isScrollable ? 'overflow-y-auto overflow-x-hidden scrollbar-hide' : 'overflow-hidden'}`}>
           {currentScreen?.imagePath ? (
             isScrollable ? (
-              <div className="w-full">
-                <img
+              <div className="w-full relative">
+                <ScreenImage
+                  variant="scroll"
                   src={currentScreen.imagePath}
                   alt={t(currentScreen.title)}
-                  decoding="async"
-                  className="w-full h-auto"
+                  fallbackGradient={project.color}
+                  priority
                 />
               </div>
             ) : (
-              <Image
+              <ScreenImage
+                variant="fill"
                 src={currentScreen.imagePath}
                 alt={t(currentScreen.title)}
-                fill
+                fallbackGradient={project.color}
                 priority
-                className="object-cover"
               />
             )
           ) : (
