@@ -92,6 +92,22 @@ const Portfolio = () => {
     });
   }, [selectedProject]);
 
+  // Lock background scroll while a modal/overlay is open
+  useEffect(() => {
+    if (!selectedProject) return;
+    const previousOverflow = document.body.style.overflow;
+    const previousPaddingRight = document.body.style.paddingRight;
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    document.body.style.overflow = 'hidden';
+    if (scrollbarWidth > 0) {
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    }
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.body.style.paddingRight = previousPaddingRight;
+    };
+  }, [selectedProject]);
+
   return (
     <div className="min-h-screen bg-[#faf7f2] text-[#1f1b16] font-sans">
       {/* Header / Profile Section */}

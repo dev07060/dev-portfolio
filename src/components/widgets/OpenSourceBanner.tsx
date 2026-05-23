@@ -5,7 +5,7 @@ import { useLocale, ui } from '@/i18n';
 
 interface PackageInfo {
   name: string;
-  description: { en: string; ko: string };
+  bullets: { en: string; ko: string }[];
   version: string;
   techStack: string[];
   pubDevUrl: string;
@@ -17,10 +17,24 @@ interface PackageInfo {
 const packages: PackageInfo[] = [
   {
     name: 'mobile_rag_engine',
-    description: {
-      en: 'High-performance On-Device RAG Engine for Flutter. Run semantic search completely offline.',
-      ko: '고성능 온디바이스 RAG 엔진. 100% 오프라인 시맨틱 검색을 Flutter에서 구현.',
-    },
+    bullets: [
+      {
+        en: '100% on-device — fully offline semantic search',
+        ko: '완전 온디바이스 · 100% 오프라인 시맨틱 검색',
+      },
+      {
+        en: 'Hybrid retrieval — HNSW dense + BM25 sparse',
+        ko: '하이브리드 검색 — HNSW 벡터 + BM25 키워드',
+      },
+      {
+        en: 'PDF · DOCX ingestion via fast-path file API',
+        ko: 'PDF · DOCX 추출 + Fast-path 인제스션 API',
+      },
+      {
+        en: 'Zero-copy embedding transport over Rust core',
+        ko: 'Rust 코어 기반 Zero-copy 임베딩 전송',
+      },
+    ],
     version: '0.18.5',
     techStack: ['Rust', 'Flutter FFI', 'ONNX Runtime', 'HNSW', 'BM25', 'SQLite'],
     pubDevUrl: 'https://pub.dev/packages/mobile_rag_engine',
@@ -30,10 +44,24 @@ const packages: PackageInfo[] = [
   },
   {
     name: 'rag_engine_flutter',
-    description: {
-      en: 'Native Rust FFI plugin for mobile_rag_engine. 10-100x faster tokenization than pure Dart.',
-      ko: 'mobile_rag_engine을 위한 네이티브 Rust FFI 플러그인. Pure Dart 대비 10-100배 빠른 토크나이징.',
-    },
+    bullets: [
+      {
+        en: 'Native Rust FFI via flutter_rust_bridge',
+        ko: 'flutter_rust_bridge 기반 네이티브 Rust FFI',
+      },
+      {
+        en: '10–100× faster tokenization than pure Dart',
+        ko: 'Pure Dart 대비 10~100× 빠른 토크나이징',
+      },
+      {
+        en: 'HuggingFace Tokenizers (BPE · WordPiece) compatible',
+        ko: 'HuggingFace Tokenizers (BPE · WordPiece) 호환',
+      },
+      {
+        en: 'iOS · Android · Desktop packaging via cargokit',
+        ko: 'cargokit으로 iOS · Android · Desktop 크로스플랫폼',
+      },
+    ],
     version: '0.18.3',
     techStack: ['Rust', 'flutter_rust_bridge', 'cargokit', 'HuggingFace Tokenizers'],
     pubDevUrl: 'https://pub.dev/packages/rag_engine_flutter',
@@ -108,10 +136,15 @@ const OpenSourceBanner = () => {
                 </div>
               </div>
 
-              {/* Description - flex-grow pushes badges to bottom */}
-              <p className="text-sm text-[#4a4339] mb-4 leading-relaxed flex-grow">
-                {pkg.description[locale]}
-              </p>
+              {/* Spec bullets - flex-grow pushes badges to bottom */}
+              <ul className="text-sm text-[#4a4339] mb-4 leading-relaxed flex-grow space-y-1.5">
+                {pkg.bullets.map((b, i) => (
+                  <li key={i} className="flex gap-2">
+                    <span className="text-[#b8543a] mt-[2px] leading-none">·</span>
+                    <span>{b[locale]}</span>
+                  </li>
+                ))}
+              </ul>
 
               {/* Tech Stack Badges - fixed at bottom */}
               <div className="flex flex-wrap gap-2 mt-auto">

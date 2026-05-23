@@ -1,4 +1,7 @@
+'use client';
+
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useRef } from 'react';
 import { Project } from '@/types/project';
 import DeviceFrame from './DeviceFrame';
 import { useLocale } from '@/i18n';
@@ -11,6 +14,8 @@ interface PresentationOverlayProps {
   onNextSlide: (e?: React.MouseEvent) => void;
 }
 
+const SWIPE_THRESHOLD = 50; // px
+
 const PresentationOverlay = ({
   project,
   currentScreenIndex,
@@ -21,8 +26,31 @@ const PresentationOverlay = ({
   const isFirst = currentScreenIndex === 0;
   const isLast = currentScreenIndex === project.screens.length - 1;
 
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    const t = e.touches[0];
+    touchStart.current = { x: t.clientX, y: t.clientY };
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!touchStart.current) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - touchStart.current.x;
+    const dy = t.clientY - touchStart.current.y;
+    touchStart.current = null;
+    // Only treat as swipe if horizontal movement dominates and exceeds threshold
+    if (Math.abs(dx) < SWIPE_THRESHOLD || Math.abs(dx) <= Math.abs(dy)) return;
+    if (dx < 0 && !isLast) onNextSlide();
+    else if (dx > 0 && !isFirst) onPrevSlide();
+  };
+
   return (
-    <div className="fixed inset-0 z-[60] bg-[#1f1b16] flex flex-col items-center justify-center animate-fade-in">
+    <div
+      className="fixed inset-0 z-[60] bg-[#1f1b16] flex flex-col items-center justify-center animate-fade-in"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
       {/* Navigation Controls */}
       <button
         onClick={onExit}

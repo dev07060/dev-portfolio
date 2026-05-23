@@ -1,5 +1,8 @@
+'use client';
+
 import { Project } from '@/types/project';
 import ProjectCard from './ProjectCard';
+import { useLocale, ui } from '@/i18n';
 
 interface ProjectGridProps {
   projects: Project[];
@@ -7,14 +10,16 @@ interface ProjectGridProps {
 }
 
 const ProjectGrid = ({ projects, onProjectClick }: ProjectGridProps) => {
+  const { t } = useLocale();
+
   return (
     <main className="max-w-7xl mx-auto px-6 pb-20 relative z-20">
       <div className="mb-10 pb-6 border-b border-[#e8dfd0] flex items-baseline justify-between">
         <h2 className="font-serif text-3xl md:text-4xl font-light text-[#1f1b16] tracking-tight">
-          Selected Work
+          {t(ui.selectedWork)}
         </h2>
         <span className="font-mono text-xs uppercase tracking-[0.25em] text-[#8a7f70]">
-          {String(projects.length).padStart(2, '0')} Projects
+          {String(projects.length).padStart(2, '0')} {t(ui.projectsSuffix)}
         </span>
       </div>
 

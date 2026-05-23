@@ -35,6 +35,10 @@ export const ui = {
   web: { en: 'Web', ko: 'Web' },
   state: { en: 'Stack', ko: 'Stack' },
 
+  // ProjectGrid Section
+  selectedWork: { en: 'Selected Work', ko: '선정 프로젝트' },
+  projectsSuffix: { en: 'Projects', ko: '프로젝트' },
+
   // Open Source Packages Section
   openSourcePackages: { en: 'Open Source Packages', ko: '오픈소스 패키지' },
   openSourceDesc: {
@@ -51,8 +55,8 @@ export const ui = {
 export const profile = {
   name: { en: 'Byeonghee Oh', ko: '오병희' },
   tagline: {
-    en: 'Cross-Platform Developer · Local RAG Engineer',
-    ko: 'Cross-Platform Developer · Local RAG Engineer',
+    en: 'Cross-Platform Developer · RAG Engineer',
+    ko: 'Cross-Platform Developer · RAG Engineer',
   },
   // Korean uses intro paragraph, English uses highlights
   intro: {

@@ -30,10 +30,11 @@ const DeviceFrame = ({
   }
 
   return (
-    <div className="w-full lg:w-1/3 bg-gradient-to-b from-[#f2ede4] to-[#e8dfd0] flex items-center justify-center p-8 order-1 lg:order-2 overflow-hidden relative min-h-[500px] lg:min-h-[500px] group">
-      {/* Hover hint */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-[#1f1b16]/80 px-3 py-1 rounded-full text-xs text-[#faf7f2] flex items-center gap-2 pointer-events-none">
-        <Maximize2 size={12} /> Click device to explore
+    <div className="w-full lg:w-3/5 bg-gradient-to-b from-[#f2ede4] to-[#e8dfd0] flex items-center justify-center p-8 order-1 lg:order-2 overflow-hidden relative min-h-[500px] lg:min-h-[500px] group">
+      {/* Always-visible affordance badge — also works on touch devices */}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 bg-[#1f1b16]/75 backdrop-blur-sm px-3 py-1.5 rounded-full text-[10px] uppercase tracking-[0.2em] text-[#faf7f2] flex items-center gap-1.5 pointer-events-none font-mono shadow-sm group-hover:bg-[#1f1b16]/90 transition-colors">
+        <Maximize2 size={10} />
+        <span>Tap to open</span>
       </div>
 
       {/* Background Glow Effect */}
@@ -65,7 +66,7 @@ const MobileFrame = ({
   return (
     <div
       onClick={onClick}
-      className="relative mx-auto cursor-pointer border-gray-100 bg-gray-100 border-[8px] rounded-[2.5rem] h-[400px] w-[220px] md:h-[500px] md:w-[280px] shadow-xl flex flex-col transform transition-transform duration-500 hover:scale-105"
+      className="relative mx-auto cursor-pointer border-gray-100 bg-gray-100 border-[8px] rounded-[2.5rem] h-[400px] w-[220px] md:h-[500px] md:w-[280px] lg:h-[560px] lg:w-[310px] shadow-xl flex flex-col transform transition-transform duration-500 hover:scale-105"
     >
       <div className="h-[32px] w-[3px] bg-gray-100 absolute -left-[10px] top-[72px] rounded-l-lg" />
       <div className="h-[46px] w-[3px] bg-gray-100 absolute -left-[10px] top-[124px] rounded-l-lg" />
@@ -105,7 +106,7 @@ const WebFrame = ({
   return (
     <div
       onClick={onClick}
-      className="relative w-full max-w-md aspect-video bg-[#faf7f2] rounded-lg shadow-2xl border-t-[20px] border-white/90 transform transition-transform duration-500 hover:scale-105 cursor-pointer overflow-hidden"
+      className="relative w-full max-w-md lg:max-w-xl aspect-video bg-[#faf7f2] rounded-lg shadow-2xl border-t-[20px] border-white/90 transform transition-transform duration-500 hover:scale-105 cursor-pointer overflow-hidden"
     >
       <div className="absolute -top-[14px] left-3 flex gap-1.5 z-10">
         <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
@@ -281,8 +282,7 @@ const TabletFrame = ({
   return (
     <div
       onClick={onClick}
-      className="relative mx-auto cursor-pointer border-gray-100 bg-gray-100 border-[10px] rounded-[2rem] shadow-xl flex flex-col transform transition-transform duration-500 hover:scale-105"
-      style={{ width: '280px', height: '400px' }}
+      className="relative mx-auto cursor-pointer border-gray-100 bg-gray-100 border-[10px] rounded-[2rem] shadow-xl flex flex-col transform transition-transform duration-500 hover:scale-105 w-[280px] h-[400px] lg:w-[360px] lg:h-[510px]"
     >
       {/* 태블릿 상단 카메라 */}
       <div className="absolute top-3 left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-300 rounded-full" />
