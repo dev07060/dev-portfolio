@@ -169,6 +169,19 @@ try {
 
   const home390 = await createPage(390, 844);
   await screenshot(home390, 'mobile-390-home-after.png');
+  await home390.send('Runtime.evaluate', {
+    awaitPromise: true,
+    expression: `
+      (async () => {
+        const target = Array.from(document.querySelectorAll('h2'))
+          .find((el) => el.textContent.trim() === 'Selected Work');
+        target?.scrollIntoView({ block: 'start' });
+        window.scrollBy(0, -12);
+        await new Promise((resolve) => setTimeout(resolve, 400));
+      })()
+    `,
+  });
+  await screenshot(home390, 'mobile-390-project-cards-after-followup.png');
 
   const home360 = await createPage(360, 740);
   await screenshot(home360, 'small-mobile-360-home-after.png');
