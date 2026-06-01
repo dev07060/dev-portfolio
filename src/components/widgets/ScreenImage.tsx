@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { ImageOff, Loader2 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 type BaseProps = {
   src: string;
@@ -19,13 +19,14 @@ const DEFAULT_GRADIENT = 'from-slate-700 to-slate-900';
 
 const ScreenImage = (props: Props) => {
   const { src, alt, fallbackGradient = DEFAULT_GRADIENT, priority, variant } = props;
-  const [loaded, setLoaded] = useState(false);
-  const [error, setError] = useState(false);
+  const [imageState, setImageState] = useState({
+    src,
+    loaded: false,
+    error: false,
+  });
 
-  useEffect(() => {
-    setLoaded(false);
-    setError(false);
-  }, [src]);
+  const loaded = imageState.src === src && imageState.loaded;
+  const error = imageState.src === src && imageState.error;
 
   const skeleton = !loaded && !error && (
     <div
@@ -56,8 +57,8 @@ const ScreenImage = (props: Props) => {
           alt={alt}
           fill
           priority={priority}
-          onLoad={() => setLoaded(true)}
-          onError={() => setError(true)}
+          onLoad={() => setImageState({ src, loaded: true, error: false })}
+          onError={() => setImageState({ src, loaded: false, error: true })}
           className={`object-cover transition-opacity duration-300 ${
             loaded ? 'opacity-100' : 'opacity-0'
           }`}
@@ -76,8 +77,8 @@ const ScreenImage = (props: Props) => {
         alt={alt}
         decoding="async"
         loading={priority ? 'eager' : 'lazy'}
-        onLoad={() => setLoaded(true)}
-        onError={() => setError(true)}
+        onLoad={() => setImageState({ src, loaded: true, error: false })}
+        onError={() => setImageState({ src, loaded: false, error: true })}
         className={`relative z-10 w-full h-auto transition-opacity duration-300 ${
           loaded ? 'opacity-100' : 'opacity-0'
         }`}

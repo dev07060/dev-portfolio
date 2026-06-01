@@ -93,6 +93,146 @@ export const projects: Project[] = [
     ],
   },
   {
+    id: 'easy-contract-viewer',
+    type: 'mobile',
+    title: { en: 'Easy Contract Viewer', ko: 'Easy Contract Viewer' },
+    subtitle: {
+      en: 'AI-assisted insurance contract review app',
+      ko: 'AI 기반 보험 약관 검토 앱',
+    },
+    description: {
+      en: 'A Flutter app that imports insurance PDF contracts, indexes clauses locally with mobile_rag_engine, surfaces review priorities, and opens the exact source PDF highlights with optional AI summaries.',
+      ko: '보험 약관 PDF를 가져와 mobile_rag_engine으로 로컬 색인하고, 검토 우선순위를 정리하며, 원문 PDF 하이라이트와 선택형 AI 요약까지 연결하는 Flutter 앱입니다.',
+    },
+    implementationPoints: [
+      {
+        en: 'Built PDF ingestion and clause-aware chunking with pdfrx while preserving page rectangles for source highlights.',
+        ko: 'pdfrx 기반 PDF 추출과 조항 인식 chunking을 구현하고, 원문 하이라이트를 위해 페이지 좌표를 보존했습니다.',
+      },
+      {
+        en: 'Integrated mobile_rag_engine for on-device SQLite, HNSW, and BM25 hybrid search across uploaded contracts.',
+        ko: 'mobile_rag_engine을 연동해 업로드된 약관을 온디바이스 SQLite, HNSW, BM25 하이브리드 검색으로 처리했습니다.',
+      },
+      {
+        en: 'Designed an automatic insurance-clause analysis pipeline that ranks urgent, review, and reference items from intent candidates.',
+        ko: '보험 약관 intent 후보를 기반으로 즉시, 검토, 참고 항목을 정렬하는 자동 분석 파이프라인을 설계했습니다.',
+      },
+      {
+        en: 'Added consent-gated AI summary generation with server readiness checks, client session handling, and local fallback summaries.',
+        ko: '동의 기반 AI 요약 생성, 서버 readiness 확인, 클라이언트 세션 처리, 로컬 fallback 요약 흐름을 구축했습니다.',
+      },
+    ],
+    techStack: ['Flutter', 'Dart', 'Riverpod', 'GoRouter', 'pdfrx', 'mobile_rag_engine'],
+    color: 'from-sky-500 to-emerald-500',
+    iconType: 'layers',
+    screens: [
+      {
+        title: { en: 'Home Dashboard', ko: '홈 대시보드' },
+        desc: {
+          en: 'Shows uploaded contracts and the number of items still waiting for review.',
+          ko: '업로드된 약관별 검토 현황과 남은 미검토 항목 수를 보여줍니다.',
+        },
+        imagePath: '/images/easy-contract-viewer/android-screens/00-home-dashboard.png',
+      },
+      {
+        title: { en: 'Analysis Overview', ko: '분석 결과 개요' },
+        desc: {
+          en: 'Summarizes urgent, review, and reference items after contract analysis.',
+          ko: '약관 분석 후 즉시, 검토, 참고 항목을 요약해 보여줍니다.',
+        },
+        imagePath: '/images/easy-contract-viewer/android-screens/01-analysis-overview.png',
+      },
+      {
+        title: { en: 'Review List Search Entry', ko: '검토 목록과 검색 진입' },
+        desc: {
+          en: 'Combines review cards with the Smart Guide entry point for contract search.',
+          ko: '검토 카드와 약관 검색을 위한 Smart Guide 진입점을 함께 제공합니다.',
+        },
+        imagePath: '/images/easy-contract-viewer/android-screens/02-analysis-review-list-search-entry.png',
+      },
+      {
+        title: { en: 'Expanded Review Item', ko: '검토 항목 확장' },
+        desc: {
+          en: 'Expands a review item to show matched clauses, evidence, and next actions.',
+          ko: '검토 항목을 펼쳐 매칭 조항, 근거, 다음 행동을 확인합니다.',
+        },
+        imagePath: '/images/easy-contract-viewer/android-screens/03-analysis-review-item-expanded.png',
+      },
+      {
+        title: { en: 'Highlight Summary', ko: '하이라이트 요약' },
+        desc: {
+          en: 'Presents key terms and checkpoints before opening the original clause.',
+          ko: '원문 조항을 열기 전 주요 키워드와 확인 사항을 정리합니다.',
+        },
+        imagePath: '/images/easy-contract-viewer/android-screens/04-review-detail-highlight-summary.png',
+      },
+      {
+        title: { en: 'AI Summary Consent', ko: 'AI 요약 동의' },
+        desc: {
+          en: 'Shows consent and caution text before generating an AI summary.',
+          ko: 'AI 요약 생성 전 동의 항목과 주의 문구를 표시합니다.',
+        },
+        imagePath: '/images/easy-contract-viewer/android-screens/05-ai-summary-consent-dialog.png',
+      },
+      {
+        title: { en: 'Generated AI Summary', ko: '생성된 AI 요약' },
+        desc: {
+          en: 'Displays a concise AI summary while keeping the original contract as the source of truth.',
+          ko: '원문 약관을 기준으로 확인해야 한다는 안내와 함께 간결한 AI 요약을 제공합니다.',
+        },
+        imagePath: '/images/easy-contract-viewer/android-screens/06-ai-summary-generated.png',
+      },
+      {
+        title: { en: 'PDF Source Highlight', ko: 'PDF 원문 하이라이트' },
+        desc: {
+          en: 'Opens the source PDF at the matched clause and highlights the evidence region.',
+          ko: '매칭된 조항 위치의 PDF 원문을 열고 근거 영역을 하이라이트합니다.',
+        },
+        imagePath: '/images/easy-contract-viewer/android-screens/07-pdf-source-highlight.png',
+      },
+      {
+        title: { en: 'Highlight Detail Sheet', ko: '하이라이트 상세 시트' },
+        desc: {
+          en: 'Shows clause details from the selected PDF highlight.',
+          ko: '선택한 PDF 하이라이트의 조항 상세 내용을 표시합니다.',
+        },
+        imagePath: '/images/easy-contract-viewer/android-screens/08-pdf-highlight-detail-sheet.png',
+      },
+      {
+        title: { en: 'Smart Guide Entry', ko: 'Smart Guide 진입 카드' },
+        desc: {
+          en: 'Offers guided contract search with suggested keywords from analysis results.',
+          ko: '분석 결과에서 뽑은 추천 키워드로 약관 검색을 시작합니다.',
+        },
+        imagePath: '/images/easy-contract-viewer/android-screens/09-smart-guide-entry-card.png',
+      },
+      {
+        title: { en: 'Smart Guide Empty Search', ko: 'Smart Guide 검색 대기' },
+        desc: {
+          en: 'Provides search input and quick tags before the user enters a query.',
+          ko: '검색어 입력 전 검색창과 빠른 태그를 제공합니다.',
+        },
+        imagePath: '/images/easy-contract-viewer/android-screens/10-smart-guide-search-empty.png',
+      },
+      {
+        title: { en: 'Smart Guide Results', ko: 'Smart Guide 검색 결과' },
+        desc: {
+          en: 'Returns relevant contract clauses with highlighted query matches.',
+          ko: '검색어와 일치하는 약관 조항을 하이라이트와 함께 보여줍니다.',
+        },
+        imagePath: '/images/easy-contract-viewer/android-screens/11-smart-guide-search-results.png',
+      },
+      {
+        title: { en: 'Search Result PDF Highlight', ko: '검색 결과 PDF 하이라이트' },
+        desc: {
+          en: 'Connects Smart Guide search results back to exact PDF evidence.',
+          ko: 'Smart Guide 검색 결과를 정확한 PDF 근거 위치로 연결합니다.',
+        },
+        imagePath: '/images/easy-contract-viewer/android-screens/12-smart-guide-result-pdf-highlight.png',
+      },
+    ],
+  },
+  {
     id: 'fiet-fitness-trainer',
     type: 'tablet',
     title: { en: 'FIET Fitness Trainer', ko: '피에트 피트니스 트레이너' },
