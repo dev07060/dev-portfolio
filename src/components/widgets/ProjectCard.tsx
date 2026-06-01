@@ -35,7 +35,7 @@ const ProjectCard = ({ project, index, onClick }: ProjectCardProps) => {
     >
       {/* Thumbnail Area */}
       <div
-        className={`h-44 bg-gradient-to-br ${project.color} flex items-center justify-center relative overflow-hidden`}
+        className={`h-36 sm:h-44 bg-gradient-to-br ${project.color} flex items-center justify-center relative overflow-hidden`}
       >
         <div className="absolute inset-0 bg-[#1f1b16]/15 group-hover:bg-[#1f1b16]/5 transition-colors duration-300" />
         {typeof index === 'number' && (
@@ -53,8 +53,8 @@ const ProjectCard = ({ project, index, onClick }: ProjectCardProps) => {
       </div>
 
       {/* Content Area */}
-      <div className="p-6">
-        <h3 className="font-serif text-2xl font-light text-[#1f1b16] mb-1 group-hover:text-[#b8543a] transition-colors leading-tight">
+      <div className="p-5 sm:p-6">
+        <h3 className="font-serif text-xl sm:text-2xl font-light text-[#1f1b16] mb-1 group-hover:text-[#b8543a] transition-colors leading-tight">
           {t(project.title)}
         </h3>
         {project.releaseLabel && (
@@ -67,7 +67,7 @@ const ProjectCard = ({ project, index, onClick }: ProjectCardProps) => {
         <p className="text-sm text-[#4a4339] mb-5 line-clamp-2 leading-relaxed">
           {t(project.description)}
         </p>
-        <p className="text-[10px] uppercase tracking-[0.25em] text-[#8a7f70] font-mono mb-2">
+        <p className="text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.25em] text-[#8a7f70] font-mono mb-2">
           — {t(ui.coreStack)}
         </p>
         <div className="flex flex-wrap items-center gap-2">

@@ -74,7 +74,7 @@ const PresentationOverlay = ({
       </div>
 
       {/* Main Visual Area */}
-      <div className="flex-1 w-full flex items-center justify-center p-4 md:p-10 overflow-hidden">
+      <div className="flex-1 min-h-0 w-full flex items-center justify-center px-3 pt-12 pb-2 md:p-10 overflow-hidden">
         <DeviceFrame
           project={project}
           onEnterPresentation={() => {}}
@@ -84,7 +84,7 @@ const PresentationOverlay = ({
       </div>
 
       {/* Unified Navigation Bar - Below Device Frame */}
-      <div className="w-full flex items-center justify-center gap-4 md:gap-6 py-4 md:py-5">
+      <div className="w-full shrink-0 flex items-center justify-center gap-4 md:gap-6 py-3 md:py-5">
         <button
           onClick={onPrevSlide}
           disabled={isFirst}
@@ -133,9 +133,9 @@ const CaptionArea = ({
   const { t } = useLocale();
   
   return (
-    <div className="w-full bg-[#1f1b16]/90 backdrop-blur-md p-4 md:p-8 border-t border-white/10 text-center">
+    <div className="w-full shrink-0 bg-[#1f1b16]/90 backdrop-blur-md p-3 md:p-8 border-t border-white/10 text-center">
       <div className="max-w-4xl mx-auto">
-        <h3 className="font-serif text-xl md:text-3xl font-light text-[#faf7f2] mb-1 md:mb-2">
+        <h3 className="font-serif text-lg md:text-3xl font-light text-[#faf7f2] mb-1 md:mb-2">
           {t(project.screens[currentScreenIndex].title)}
         </h3>
         <p className="text-[#cfc4b2] text-xs md:text-base leading-relaxed">
@@ -147,4 +147,3 @@ const CaptionArea = ({
 };
 
 export default PresentationOverlay;
-

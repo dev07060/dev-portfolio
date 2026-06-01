@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Portfolio Responsive UX Audit - 2026-06-01</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #faf7f2;
+        --paper: #ffffff;
+        --ink: #1f1b16;
+        --body: #4a4339;
+        --muted: #8a7f70;
+        --border: #e8dfd0;
+        --accent: #b8543a;
+        --ok: #2f6f4e;
+        --warn: #9d5a12;
+        --risk: #a83a2c;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--body);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        line-height: 1.65;
+      }
+
+      main {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 56px 24px 80px;
+      }
+
+      header {
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 32px;
+        margin-bottom: 36px;
+      }
+
+      h1,
+      h2,
+      h3 {
+        color: var(--ink);
+        line-height: 1.15;
+        margin: 0;
+        letter-spacing: 0;
+      }
+
+      h1 {
+        font-size: clamp(2.1rem, 5vw, 4.4rem);
+        font-weight: 650;
+        max-width: 900px;
+      }
+
+      h2 {
+        font-size: clamp(1.6rem, 3vw, 2.5rem);
+        margin: 48px 0 18px;
+      }
+
+      h3 {
+        font-size: 1.08rem;
+        margin-bottom: 8px;
+      }
+
+      p {
+        margin: 0 0 14px;
+      }
+
+      a {
+        color: var(--accent);
+      }
+
+      .eyebrow {
+        color: var(--accent);
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        margin-bottom: 14px;
+      }
+
+      .lead {
+        font-size: 1.08rem;
+        max-width: 860px;
+        color: var(--body);
+      }
+
+      .meta {
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 18px;
+      }
+
+      .card {
+        background: var(--paper);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 20px;
+      }
+
+      .metric {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .metric strong {
+        color: var(--ink);
+        font-size: 1.55rem;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        width: fit-content;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        padding: 3px 9px;
+        color: var(--muted);
+        font-size: 0.78rem;
+        font-weight: 700;
+      }
+
+      .badge.high {
+        border-color: color-mix(in srgb, var(--risk), transparent 55%);
+        color: var(--risk);
+      }
+
+      .badge.medium {
+        border-color: color-mix(in srgb, var(--warn), transparent 55%);
+        color: var(--warn);
+      }
+
+      .badge.low {
+        border-color: color-mix(in srgb, var(--ok), transparent 55%);
+        color: var(--ok);
+      }
+
+      .finding {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 240px;
+        gap: 22px;
+        align-items: start;
+        margin-bottom: 18px;
+      }
+
+      .finding figure {
+        margin: 0;
+      }
+
+      .finding img,
+      .gallery img {
+        width: 100%;
+        display: block;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: #eee7dc;
+      }
+
+      figcaption {
+        color: var(--muted);
+        font-size: 0.78rem;
+        margin-top: 8px;
+      }
+
+      ul {
+        margin: 10px 0 0;
+        padding-left: 1.15rem;
+      }
+
+      li + li {
+        margin-top: 7px;
+      }
+
+      code {
+        background: #f2ede4;
+        color: var(--ink);
+        border: 1px solid var(--border);
+        border-radius: 5px;
+        padding: 1px 5px;
+        font-size: 0.9em;
+      }
+
+      .callout {
+        border-left: 4px solid var(--accent);
+        background: color-mix(in srgb, var(--accent), transparent 92%);
+        padding: 16px 18px;
+        border-radius: 0 8px 8px 0;
+      }
+
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--paper);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .table th,
+      .table td {
+        text-align: left;
+        vertical-align: top;
+        padding: 13px 14px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .table tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .table th {
+        color: var(--ink);
+        background: #f2ede4;
+      }
+
+      .gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+      }
+
+      .footer-note {
+        margin-top: 48px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 760px) {
+        main {
+          padding: 36px 16px 64px;
+        }
+
+        .finding {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div class="eyebrow">Responsive UX Audit</div>
+        <h1>dev-portfolio 모바일 반응형 분석</h1>
+        <p class="lead">
+          2026-06-01 기준 로컬 Next.js 사이트를 실제 브라우저에서
+          1440x900, 768x1024, 390x844, 360x740 뷰포트로 확인했다. 앱 코드는
+          변경하지 않았고, 아래 내용은 화면 캡처와 컴포넌트 코드 라인을 함께
+          본 진단 결과다.
+        </p>
+        <p class="meta">
+          대상: <code>http://127.0.0.1:3000</code> / cwd:
+          <code>/Users/dev_bh/Desktop/works/portfolio/dev-portfolio</code>
+        </p>
+      </header>
+
+      <section class="grid">
+        <div class="card metric">
+          <span class="badge low">좋은 점</span>
+          <strong>0px</strong>
+          <span>390px/360px 모바일 뷰포트에서 문서 가로 overflow는 감지되지 않았다.</span>
+        </div>
+        <div class="card metric">
+          <span class="badge medium">모바일 비용</span>
+          <strong>6.4k px</strong>
+          <span>390x844 영문 기준 전체 페이지 높이. 카드와 헤더가 길어 스캔 비용이 크다.</span>
+        </div>
+        <div class="card metric">
+          <span class="badge high">핵심 리스크</span>
+          <strong>Modal</strong>
+          <span>전역 언어 스위처와 모달/닫기 버튼 레이어가 모바일에서 충돌한다.</span>
+        </div>
+      </section>
+
+      <h2>요약 판단</h2>
+      <div class="callout">
+        <p>
+          기본 grid collapse, 가로 overflow 방지, modal scroll lock, 이미지 preload,
+          프레젠테이션 swipe 지원은 이미 잘 들어가 있다. 다만 모바일에서는
+          "작아졌을 뿐 같은 정보 구조"에 가깝고, 고정 요소와 큰 preview 영역이
+          실제 콘텐츠 탐색을 방해한다.
+        </p>
+      </div>
+
+      <h2>우선순위 이슈</h2>
+
+      <article class="card finding">
+        <div>
+          <span class="badge high">P1 / 모바일 모달</span>
+          <h3>언어 스위처가 모달 닫기 버튼과 겹친다</h3>
+          <p>
+            <code>LanguageSwitcher.tsx:9</code>의 전역 <code>fixed top-4 right-4 z-50</code>가
+            <code>ProjectModal.tsx:23</code>의 <code>z-40</code> 모달보다 위에 있다.
+            닫기 버튼도 <code>ProjectModal.tsx:38</code>에서 <code>z-50</code>라서
+            모바일에서는 두 컨트롤이 같은 모서리에서 경쟁한다.
+          </p>
+          <ul>
+            <li>개선 방향: 모달/프레젠테이션이 열릴 때 언어 스위처를 숨기거나, 모달 레이어를 명확히 더 위로 올린다.</li>
+            <li>추가 개선: 닫기 버튼은 스크롤 컨테이너 안의 <code>absolute</code>가 아니라 viewport 기준 <code>fixed</code> 또는 컨테이너 내부 <code>sticky</code>로 둔다.</li>
+            <li>Trade-off: 모달 안에서 언어 전환은 덜 편해지지만, 닫기/탐색의 안정성이 더 중요하다.</li>
+          </ul>
+        </div>
+        <figure>
+          <img src="assets/mobile-390x844-swifty-modal-top.png" alt="Mobile modal overlap" />
+          <figcaption>390x844: 언어 스위처가 닫기 버튼 영역을 침범한다.</figcaption>
+        </figure>
+      </article>
+
+      <article class="card finding">
+        <div>
+          <span class="badge high">P1 / 모바일 모달</span>
+          <h3>모달을 스크롤하면 닫기 버튼이 사라진다</h3>
+          <p>
+            모달 컨테이너는 <code>ProjectModal.tsx:34</code>에서
+            <code>overflow-y-auto</code>이고, 닫기 버튼은 같은 컨테이너 내부
+            <code>absolute</code>다. 모바일에서 상세 설명을 읽다가 빠져나갈
+            명확한 컨트롤이 없어지는 흐름이 생긴다.
+          </p>
+          <ul>
+            <li>개선 방향: 모바일 모달 헤더를 별도 sticky row로 만들고, close/language/status를 한 곳에 둔다.</li>
+            <li>Trade-off: 상단 44-56px 정도의 고정 영역이 생기지만, 긴 프로젝트 설명에서 사용성이 좋아진다.</li>
+          </ul>
+        </div>
+        <figure>
+          <img src="assets/mobile-390x844-swifty-modal-scrolled.png" alt="Scrolled mobile modal" />
+          <figcaption>390x844: 상세 내용을 읽는 중 닫기 버튼은 화면 밖으로 밀린다.</figcaption>
+        </figure>
+      </article>
+
+      <article class="card finding">
+        <div>
+          <span class="badge high">P1 / 프레젠테이션</span>
+          <h3>웹 프로젝트 프레젠테이션의 세로 배분이 모바일에 맞지 않는다</h3>
+          <p>
+            <code>DeviceFrame.tsx:232</code>에서 scrollable 웹 프레임은
+            <code>height: 70vh</code>를 사용한다. 여기에
+            <code>PresentationOverlay.tsx:87</code>의 네비게이션 바와
+            <code>PresentationOverlay.tsx:136</code>의 caption이 더해져 작은
+            모바일 화면에서는 설명 영역이 하단에 붙거나 일부가 답답하게 보인다.
+          </p>
+          <ul>
+            <li>개선 방향: 프레임 높이를 <code>calc(100dvh - caption - nav - safe-area)</code> 기반으로 제한한다.</li>
+            <li>웹 screenshot은 모바일에서는 세로 mock browser보다 full-width preview + 내부 스크롤로 단순화하는 편이 낫다.</li>
+            <li>Trade-off: 데스크톱 같은 "큰 mockup" 감성은 줄지만, 모바일에서는 설명과 조작 버튼이 안정적으로 남는다.</li>
+          </ul>
+        </div>
+        <figure>
+          <img src="assets/mobile-390x844-swifty-presentation-after-coordinate-click.png" alt="Web presentation on mobile" />
+          <figcaption>390x844: 웹 프레임이 화면 대부분을 차지하고 caption이 하단에 밀린다.</figcaption>
+        </figure>
+      </article>
+
+      <article class="card finding">
+        <div>
+          <span class="badge medium">P2 / 첫 화면</span>
+          <h3>모바일 첫 화면의 정보 밀도가 낮다</h3>
+          <p>
+            <code>ProfileHeader.tsx:14</code>의 <code>pt-20 pb-12</code>,
+            큰 avatar, 전체 tech stack 노출 때문에 390px 폭에서
+            Open Source 섹션이 약 946px 지점, 360px 폭에서는 약 1060px 지점부터
+            시작한다. 첫 화면에서 "프로젝트를 볼 수 있는 사이트"라는 신호가 늦다.
+          </p>
+          <ul>
+            <li>개선 방향: 모바일에서는 avatar 크기/상단 padding을 줄이고, tech stack은 핵심 6-8개만 우선 노출한다.</li>
+            <li>대안: Languages/Mobile/Web/Backend를 accordion 또는 compact two-column chip group으로 바꾼다.</li>
+            <li>Trade-off: 자기소개 감성은 조금 줄지만, 포트폴리오 탐색 속도는 좋아진다.</li>
+          </ul>
+        </div>
+        <figure>
+          <img src="assets/mobile-390x844-home-top.png" alt="Mobile home top" />
+          <figcaption>390x844: 첫 화면이 거의 프로필과 기술 스택으로 채워진다.</figcaption>
+        </figure>
+      </article>
+
+      <article class="card finding">
+        <div>
+          <span class="badge medium">P2 / 한국어 모바일</span>
+          <h3>bullet 정렬과 한국어 줄바꿈이 어색하다</h3>
+          <p>
+            <code>ProfileHeader.tsx:49</code>, <code>ProfileHeader.tsx:70</code>의
+            <code>items-center</code> 때문에 2줄 bullet의 점이 첫 줄이 아니라
+            문장 중앙에 붙는다. 한국어에서는 "배포" 같은 단어가 줄 끝에서
+            쪼개져 읽힘도 낮아진다.
+          </p>
+          <ul>
+            <li>개선 방향: bullet row는 <code>items-start</code>, dot은 <code>mt-2</code>로 조정한다.</li>
+            <li>한국어 텍스트에는 제한적으로 <code>break-keep</code> 또는 <code>word-break: keep-all</code>을 적용한다.</li>
+            <li>Trade-off: keep-all은 일부 긴 문장에서 줄 수가 늘어날 수 있어 모바일 문구도 같이 다듬는 편이 좋다.</li>
+          </ul>
+        </div>
+        <figure>
+          <img src="assets/mobile-390x844-ko-home-top-corrected.png" alt="Korean mobile home" />
+          <figcaption>390x844 한국어: bullet alignment와 줄바꿈이 다듬어질 여지가 있다.</figcaption>
+        </figure>
+      </article>
+
+      <article class="card finding">
+        <div>
+          <span class="badge medium">P2 / 섹션 헤더</span>
+          <h3>모바일 section header가 desktop flex를 그대로 따른다</h3>
+          <p>
+            <code>OpenSourceBanner.tsx:80</code>와 <code>ProjectGrid.tsx:17</code>은
+            모두 <code>flex items-baseline justify-between</code>이다. 영문
+            <em>Open Source Packages</em>는 두 줄로 떨어지는데 <em>pub.dev</em>
+            메타는 우측에 남아 시선 흐름이 갈라진다.
+          </p>
+          <ul>
+            <li>개선 방향: 모바일에서는 <code>flex-col items-start gap-2</code>로 전환하고 meta tracking을 줄인다.</li>
+            <li>Trade-off: header 높이는 조금 늘지만, 제목과 보조 정보의 관계가 더 명확해진다.</li>
+          </ul>
+        </div>
+        <figure>
+          <img src="assets/mobile-390x844-tech-packages.png" alt="Mobile section header" />
+          <figcaption>390x844: 제목은 두 줄, meta는 우측에 남아 균형이 약하다.</figcaption>
+        </figure>
+      </article>
+
+      <article class="card finding">
+        <div>
+          <span class="badge medium">P2 / 프로젝트 카드</span>
+          <h3>카드가 모바일에서 너무 길고, 실제 작업물이 잘 드러나지 않는다</h3>
+          <p>
+            <code>ProjectCard.tsx:38</code>의 176px 썸네일은 아이콘 중심이라
+            프로젝트 내용을 빠르게 비교하기 어렵다. 설명은
+            <code>ProjectCard.tsx:67</code>에서 2줄 clamp라 중요한 맥락이
+            잘린다. 8개 프로젝트를 전부 보려면 모바일에서 긴 스크롤이 필요하다.
+          </p>
+          <ul>
+            <li>개선 방향: 모바일 카드 썸네일 높이를 132-152px로 줄이고, 대표 screenshot crop 또는 핵심 metric을 넣는다.</li>
+            <li>개선 방향: 첫 2-3개 프로젝트는 featured density를 높이고 나머지는 compact list로 전환하는 것도 가능하다.</li>
+            <li>Trade-off: 현재 카드의 여백감은 줄지만, 포트폴리오의 증거성이 좋아진다.</li>
+          </ul>
+        </div>
+        <figure>
+          <img src="assets/mobile-390x844-project-cards.png" alt="Mobile project cards" />
+          <figcaption>390x844: 카드당 세로 길이가 크고 screenshot 정보가 없다.</figcaption>
+        </figure>
+      </article>
+
+      <article class="card finding">
+        <div>
+          <span class="badge low">P3 / 터치와 접근성</span>
+          <h3>클릭 가능한 카드가 semantic button/link가 아니다</h3>
+          <p>
+            <code>ProjectCard.tsx:32</code>는 <code>div onClick</code>이다.
+            모바일 사용자에게는 문제가 덜 보여도 키보드 접근성과 screen reader
+            측면에서 카드가 명령인지 명확하지 않다. 모달의 preview 클릭도
+            <code>DeviceFrame.tsx:35</code>의 시각 badge에 의존한다.
+          </p>
+          <ul>
+            <li>개선 방향: 카드 root를 <code>button</code>으로 바꾸거나 <code>role="button"</code>, <code>tabIndex</code>, keyboard handler를 추가한다.</li>
+            <li>Trade-off: button reset 스타일이 필요하지만, interaction contract가 명확해진다.</li>
+          </ul>
+        </div>
+        <figure>
+          <img src="assets/mobile-390x844-packages-selected-work.png" alt="Mobile selected work" />
+          <figcaption>시각적으로는 카드지만, DOM semantic은 버튼이 아니다.</figcaption>
+        </figure>
+      </article>
+
+      <h2>현재 잘 되어 있는 부분</h2>
+      <ul>
+        <li>390px/360px 폭에서 문서 전체의 가로 overflow는 발생하지 않았다.</li>
+        <li>프로젝트 grid는 모바일에서 1열로 자연스럽게 접힌다.</li>
+        <li>모달 오픈 시 background scroll lock과 이미지 preload가 구현되어 있다.</li>
+        <li>프레젠테이션 모드에 swipe navigation이 있어 터치 사용성의 기반은 있다.</li>
+      </ul>
+
+      <h2>추천 진행 순서</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>단계</th>
+            <th>목표</th>
+            <th>수정 후보</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>모바일 모달 안전성 확보</td>
+            <td>언어 스위처 overlay policy, sticky/fixed close, modal z-index 정리</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>첫 화면 모바일 밀도 개선</td>
+            <td>ProfileHeader spacing, tech stack compact layout, bullet alignment</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>프로젝트 탐색 속도 개선</td>
+            <td>ProjectCard mobile thumbnail/card density, 대표 screenshot 도입</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>프레젠테이션 모드 정리</td>
+            <td>dvh 기반 frame sizing, caption/nav reserve, scroll indicator 위치 보정</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>캡처 증거</h2>
+      <div class="gallery">
+        <figure>
+          <img src="assets/desktop-1440x900-home.png" alt="Desktop home" />
+          <figcaption>Desktop 1440x900</figcaption>
+        </figure>
+        <figure>
+          <img src="assets/tablet-768x1024-home.png" alt="Tablet home" />
+          <figcaption>Tablet 768x1024</figcaption>
+        </figure>
+        <figure>
+          <img src="assets/mobile-390x844-home-top.png" alt="Mobile home" />
+          <figcaption>Mobile 390x844</figcaption>
+        </figure>
+        <figure>
+          <img src="assets/small-mobile-360x740-home-top.png" alt="Small mobile home" />
+          <figcaption>Small mobile 360x740</figcaption>
+        </figure>
+        <figure>
+          <img src="assets/small-mobile-360x740-easy-contract-presentation.png" alt="Small mobile presentation" />
+          <figcaption>Small mobile presentation</figcaption>
+        </figure>
+        <figure>
+          <img src="assets/mobile-390x844-ko-selected-work.png" alt="Korean selected work" />
+          <figcaption>Korean selected work</figcaption>
+        </figure>
+      </div>
+
+      <p class="footer-note">
+        검증 메모: 문서 가로 overflow는 390x844/360x740에서 0px로 측정되었다.
+        캡처 중 좌하단의 검은 원형 <em>N</em> 표시는 Next.js dev overlay로
+        production UI 이슈로 보지 않았다.
+      </p>
+    </main>
+  </body>
+</html>

@@ -31,6 +31,10 @@ body {
   font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
 }
 
+body[data-portfolio-overlay="true"] .language-switcher {
+  display: none;
+}
+
 /* Custom Animations */
 @keyframes fadeInUp {
   from {

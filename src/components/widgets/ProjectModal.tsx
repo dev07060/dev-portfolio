@@ -20,7 +20,7 @@ const ProjectModal = ({
 }: ProjectModalProps) => {
   return (
     <div
-      className={`fixed inset-0 z-40 flex items-center justify-center px-4 md:px-8 py-2 md:py-4 transition-opacity duration-300 ${
+      className={`fixed inset-0 z-50 flex items-center justify-center px-3 sm:px-4 md:px-8 py-2 md:py-4 transition-opacity duration-300 ${
         isAnimating ? 'opacity-100' : 'opacity-0'
       }`}
     >
@@ -31,11 +31,12 @@ const ProjectModal = ({
       />
 
       {/* Modal Content Container */}
-      <div className="relative w-full max-w-6xl h-auto lg:h-[720px] max-h-[calc(100vh-2rem)] lg:max-h-[calc(100vh-2rem)] bg-[#faf7f2] border border-[#e8dfd0] rounded-3xl shadow-[0_30px_80px_-20px_rgba(31,27,22,0.25)] overflow-y-auto lg:overflow-hidden flex flex-col lg:flex-row scrollbar-hide">
+      <div className="relative w-full max-w-6xl h-auto lg:h-[720px] max-h-[calc(100dvh-1rem)] lg:max-h-[calc(100vh-2rem)] bg-[#faf7f2] border border-[#e8dfd0] rounded-2xl md:rounded-3xl shadow-[0_30px_80px_-20px_rgba(31,27,22,0.25)] overflow-y-auto lg:overflow-hidden flex flex-col lg:flex-row scrollbar-hide">
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-50 p-2 bg-white/80 border border-[#e8dfd0] rounded-full hover:bg-white text-[#4a4339] transition-colors"
+          aria-label="Close project details"
+          className="fixed lg:absolute top-5 right-5 lg:top-4 lg:right-4 z-[70] p-2 bg-white/90 border border-[#e8dfd0] rounded-full hover:bg-white text-[#4a4339] shadow-sm transition-colors"
         >
           <X size={20} />
         </button>
@@ -65,7 +66,7 @@ const ProjectInfoPanel = ({ project }: { project: Project }) => {
 
   return (
     <div className="w-full lg:w-2/5 lg:overflow-y-auto scrollbar-hide lg:border-r border-[#e8dfd0] order-2 lg:order-1 bg-white">
-      <div className="p-8 flex flex-col justify-center min-h-full">
+      <div className="p-6 sm:p-8 flex flex-col justify-start lg:justify-center min-h-full">
         <div className="mb-6">
           <span className="inline-block font-mono text-[10px] uppercase tracking-[0.25em] text-[#b8543a] mb-4">
             — {getTypeLabel()}

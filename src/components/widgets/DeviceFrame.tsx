@@ -30,7 +30,7 @@ const DeviceFrame = ({
   }
 
   return (
-    <div className="w-full lg:w-3/5 bg-gradient-to-b from-[#f2ede4] to-[#e8dfd0] flex items-center justify-center p-8 order-1 lg:order-2 overflow-hidden relative min-h-[500px] lg:min-h-[500px] group">
+    <div className="w-full lg:w-3/5 bg-gradient-to-b from-[#f2ede4] to-[#e8dfd0] flex items-center justify-center p-4 sm:p-6 lg:p-8 order-1 lg:order-2 overflow-hidden relative min-h-[360px] sm:min-h-[460px] lg:min-h-[500px] group">
       {/* Always-visible affordance badge — also works on touch devices */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 bg-[#1f1b16]/75 backdrop-blur-sm px-3 py-1.5 rounded-full text-[10px] uppercase tracking-[0.2em] text-[#faf7f2] flex items-center gap-1.5 pointer-events-none font-mono shadow-sm group-hover:bg-[#1f1b16]/90 transition-colors">
         <Maximize2 size={10} />
@@ -66,7 +66,7 @@ const MobileFrame = ({
   return (
     <div
       onClick={onClick}
-      className="relative mx-auto cursor-pointer border-gray-100 bg-gray-100 border-[8px] rounded-[2.5rem] h-[400px] w-[220px] md:h-[500px] md:w-[280px] lg:h-[560px] lg:w-[310px] shadow-xl flex flex-col transform transition-transform duration-500 hover:scale-105"
+      className="relative mx-auto cursor-pointer border-gray-100 bg-gray-100 border-[8px] rounded-[2.5rem] h-[340px] w-[188px] sm:h-[400px] sm:w-[220px] md:h-[500px] md:w-[280px] lg:h-[560px] lg:w-[310px] shadow-xl flex flex-col transform transition-transform duration-500 hover:scale-105"
     >
       <div className="h-[32px] w-[3px] bg-gray-100 absolute -left-[10px] top-[72px] rounded-l-lg" />
       <div className="h-[46px] w-[3px] bg-gray-100 absolute -left-[10px] top-[124px] rounded-l-lg" />
@@ -159,7 +159,7 @@ const MobilePresentationFrame = ({
 
   return (
     <div className="relative">
-      <div className="relative border-gray-100 bg-gray-100 border-[8px] rounded-[2.5rem] h-[65vh] md:h-[70vh] aspect-[9/19] shadow-2xl flex flex-col">
+      <div className="relative border-gray-100 bg-gray-100 border-[8px] rounded-[2.5rem] h-[min(58dvh,540px)] md:h-[70vh] aspect-[9/19] shadow-2xl flex flex-col">
         <div ref={scrollRef} className={`rounded-[2rem] w-full h-full bg-slate-800 relative ${isScrollable ? 'overflow-y-auto overflow-x-hidden scrollbar-hide' : 'overflow-hidden'}`}>
           {currentScreen?.imagePath ? (
             isScrollable ? (
@@ -199,7 +199,7 @@ const MobilePresentationFrame = ({
 
       {/* Scroll Indicator - Right side (absolute positioned) */}
       {isScrollable && (
-        <div className="absolute -right-16 top-1/2 -translate-y-1/2 flex flex-col items-center gap-2 text-white/60 animate-bounce">
+        <div className="absolute -right-16 top-1/2 -translate-y-1/2 hidden sm:flex flex-col items-center gap-2 text-white/60 animate-bounce">
           <Mouse size={20} />
           <span className="text-xs whitespace-nowrap">Scroll</span>
         </div>
@@ -229,7 +229,15 @@ const WebPresentationFrame = ({
   }, [currentScreenIndex]);
 
   return (
-    <div className={`relative bg-[#faf7f2] rounded-lg shadow-2xl border-t-[24px] border-white/90 flex flex-col w-[90vw] max-w-[calc((100vh-200px)*16/9)] overflow-hidden ${isScrollable ? '' : ''}`} style={{ aspectRatio: isScrollable ? undefined : '16/9', height: isScrollable ? '70vh' : undefined, width: isScrollable ? '90vw' : undefined, maxWidth: isScrollable ? 'calc((100vh-200px)*16/9)' : undefined }}>
+    <div
+      className={`relative bg-[#faf7f2] rounded-lg shadow-2xl border-t-[20px] md:border-t-[24px] border-white/90 flex flex-col w-[92vw] max-w-[calc((100vh-200px)*16/9)] overflow-hidden ${isScrollable ? '' : ''}`}
+      style={{
+        aspectRatio: isScrollable ? undefined : '16/9',
+        height: isScrollable ? 'min(58dvh, 620px)' : undefined,
+        width: isScrollable ? '92vw' : undefined,
+        maxWidth: isScrollable ? 'min(92vw, calc((58dvh) * 16 / 9))' : undefined,
+      }}
+    >
       <div className="absolute -top-[16px] left-4 flex gap-2 z-10">
         <div className="w-3 h-3 rounded-full bg-red-400" />
         <div className="w-3 h-3 rounded-full bg-yellow-400" />
@@ -282,7 +290,7 @@ const TabletFrame = ({
   return (
     <div
       onClick={onClick}
-      className="relative mx-auto cursor-pointer border-gray-100 bg-gray-100 border-[10px] rounded-[2rem] shadow-xl flex flex-col transform transition-transform duration-500 hover:scale-105 w-[280px] h-[400px] lg:w-[360px] lg:h-[510px]"
+      className="relative mx-auto cursor-pointer border-gray-100 bg-gray-100 border-[10px] rounded-[2rem] shadow-xl flex flex-col transform transition-transform duration-500 hover:scale-105 w-[236px] h-[336px] sm:w-[280px] sm:h-[400px] lg:w-[360px] lg:h-[510px]"
     >
       {/* 태블릿 상단 카메라 */}
       <div className="absolute top-3 left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-300 rounded-full" />
@@ -330,9 +338,9 @@ const TabletPresentationFrame = ({
 
   return (
     <div className="relative">
-      <div 
+        <div 
         className="relative border-gray-100 bg-gray-100 border-[12px] rounded-[2.5rem] shadow-2xl flex flex-col"
-        style={{ height: 'calc(100vh - 200px)', aspectRatio: '834/1194' }}
+        style={{ height: 'min(58dvh, 640px)', aspectRatio: '834/1194' }}
       >
         {/* 태블릿 상단 카메라 */}
         <div className="absolute top-4 left-1/2 -translate-x-1/2 w-3 h-3 bg-gray-300 rounded-full z-10" />
@@ -376,7 +384,7 @@ const TabletPresentationFrame = ({
 
       {/* Scroll Indicator - Right side (absolute positioned) */}
       {isScrollable && (
-        <div className="absolute -right-16 top-1/2 -translate-y-1/2 flex flex-col items-center gap-2 text-white/60 animate-bounce">
+        <div className="absolute -right-16 top-1/2 -translate-y-1/2 hidden sm:flex flex-col items-center gap-2 text-white/60 animate-bounce">
           <Mouse size={20} />
           <span className="text-xs whitespace-nowrap">Scroll</span>
         </div>

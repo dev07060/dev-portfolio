@@ -75,22 +75,22 @@ const OpenSourceBanner = () => {
   const { t, locale } = useLocale();
 
   return (
-    <section className="max-w-7xl mx-auto px-6 pb-14 relative z-20">
+    <section className="max-w-7xl mx-auto px-5 sm:px-6 pb-10 sm:pb-14 relative z-20">
       {/* Section Header */}
-      <div className="mb-8 pb-6 border-b border-[#e8dfd0] flex items-baseline justify-between">
-        <h2 className="font-serif text-3xl md:text-4xl font-light text-[#1f1b16] tracking-tight">
+      <div className="mb-6 sm:mb-8 pb-5 sm:pb-6 border-b border-[#e8dfd0] flex flex-col sm:flex-row items-start sm:items-baseline justify-between gap-2 sm:gap-0">
+        <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-light text-[#1f1b16] tracking-tight">
           {t(ui.openSourcePackages)}
         </h2>
-        <span className="font-mono text-xs uppercase tracking-[0.25em] text-[#8a7f70]">
+        <span className="font-mono text-[11px] sm:text-xs uppercase tracking-[0.18em] sm:tracking-[0.25em] text-[#8a7f70]">
           pub.dev
         </span>
       </div>
-      <p className="text-[#4a4339] text-sm md:text-base mb-8 max-w-2xl leading-relaxed">
+      <p className="text-[#4a4339] text-sm md:text-base mb-6 sm:mb-8 max-w-2xl leading-relaxed">
         {t(ui.openSourceDesc)}
       </p>
 
       {/* Package Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
         {packages.map((pkg) => (
           <div
             key={pkg.name}
@@ -99,7 +99,7 @@ const OpenSourceBanner = () => {
             {/* Gradient Top Bar */}
             <div className={`h-1 bg-gradient-to-r ${pkg.gradient}`} />
 
-            <div className="p-6 flex flex-col h-full">
+            <div className="p-5 sm:p-6 flex flex-col h-full">
               {/* Header with Icon Links */}
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">

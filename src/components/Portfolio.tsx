@@ -97,7 +97,9 @@ const Portfolio = () => {
     if (!selectedProject) return;
     const previousOverflow = document.body.style.overflow;
     const previousPaddingRight = document.body.style.paddingRight;
+    const previousOverlayState = document.body.dataset.portfolioOverlay;
     const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    document.body.dataset.portfolioOverlay = 'true';
     document.body.style.overflow = 'hidden';
     if (scrollbarWidth > 0) {
       document.body.style.paddingRight = `${scrollbarWidth}px`;
@@ -105,6 +107,11 @@ const Portfolio = () => {
     return () => {
       document.body.style.overflow = previousOverflow;
       document.body.style.paddingRight = previousPaddingRight;
+      if (previousOverlayState) {
+        document.body.dataset.portfolioOverlay = previousOverlayState;
+      } else {
+        delete document.body.dataset.portfolioOverlay;
+      }
     };
   }, [selectedProject]);
 
