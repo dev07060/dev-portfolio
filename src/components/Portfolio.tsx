@@ -35,7 +35,7 @@ const Portfolio = () => {
     }, 300);
   };
 
-  const enterPresentationMode = (e: React.MouseEvent) => {
+  const enterPresentationMode = (e: React.MouseEvent | React.KeyboardEvent) => {
     e.stopPropagation();
     setIsPresentationMode(true);
   };
@@ -134,6 +134,7 @@ const Portfolio = () => {
         <ProjectModal
           project={selectedProject}
           isAnimating={isAnimating}
+          isPresentationMode={isPresentationMode}
           onClose={closeModal}
           onEnterPresentation={enterPresentationMode}
         />

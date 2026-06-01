@@ -228,6 +228,11 @@
           <strong>8 / 8</strong>
           <p>프로젝트 카드가 모두 실제 preview image와 keyboard-operable button root를 갖는다.</p>
         </div>
+        <div class="card metric">
+          <span class="badge">접근성</span>
+          <strong>2 dialogs</strong>
+          <p>프로젝트 모달과 프레젠테이션 오버레이에 이름, 설명, focus trap을 부여했다.</p>
+        </div>
       </section>
 
       <h2>수정한 것</h2>
@@ -265,6 +270,49 @@
             <td>아이콘 중심 썸네일을 실제 첫 화면 screenshot preview로 교체하고, 카드 root를 <code>button type="button"</code>으로 전환</td>
             <td><code>ProjectCard.tsx</code></td>
           </tr>
+          <tr>
+            <td>접근성 후속</td>
+            <td>상세 모달과 프레젠테이션 오버레이를 <code>role="dialog"</code>, <code>aria-modal</code>, <code>aria-labelledby</code>, <code>aria-describedby</code>로 연결하고 초기 focus와 focus trap을 추가</td>
+            <td><code>ProjectModal.tsx</code>, <code>PresentationOverlay.tsx</code>, <code>useFocusTrap.ts</code></td>
+          </tr>
+          <tr>
+            <td>프레젠테이션 진입</td>
+            <td>디바이스 preview를 실제 <code>button</code>으로 전환하고 <code>Enter</code>/<code>Space</code> 키 활성화를 같은 전환 경로로 연결</td>
+            <td><code>DeviceFrame.tsx</code>, <code>Portfolio.tsx</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>접근성 검증</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>항목</th>
+            <th>결과</th>
+            <th>확인값</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>프로젝트 상세 모달</td>
+            <td>통과</td>
+            <td>활성 focus: <code>Close Swifty-law project details</code>, label: <code>Swifty-law</code>, description length: <code>173</code></td>
+          </tr>
+          <tr>
+            <td>프레젠테이션 오버레이</td>
+            <td>통과</td>
+            <td>활성 dialog 수: <code>1</code>, 초기 focus: <code>Exit presentation mode</code>, label: <code>API Landing</code></td>
+          </tr>
+          <tr>
+            <td>키보드 focus trap</td>
+            <td>통과</td>
+            <td><code>Shift+Tab</code>: 다음 화면 버튼으로 순환, <code>Tab</code>: 닫기 버튼으로 복귀</td>
+          </tr>
+          <tr>
+            <td>focus 복귀</td>
+            <td>통과</td>
+            <td>프레젠테이션 종료 후 preview 버튼, 모달 종료 후 원래 프로젝트 카드로 focus 복귀</td>
+          </tr>
         </tbody>
       </table>
 
@@ -274,6 +322,7 @@
         <li>모달이 열린 동안 언어 전환은 숨겨진다. 대신 닫기/상세 읽기 흐름의 안정성을 우선했다.</li>
         <li>프레젠테이션의 모바일 device mockup은 이전보다 작아졌다. 대신 네비게이션과 caption이 화면 안에 안정적으로 남는다.</li>
         <li>프로젝트 카드 썸네일이 실제 화면 중심으로 바뀌면서 정보성은 좋아졌지만, 각 프로젝트의 스크린샷 품질 차이가 카드에서 더 직접적으로 드러난다.</li>
+        <li>디바이스 preview button에 명시적인 <code>Enter</code>/<code>Space</code> 처리도 추가했다. native button 기본 동작보다 코드가 조금 늘었지만 브라우저/테스트 환경에서 키보드 진입 경로가 더 명확해졌다.</li>
       </ul>
 
       <h2>캡처</h2>
@@ -307,7 +356,7 @@
       <h2>후속 추천</h2>
       <ul>
         <li>모바일에서 tech stack 전체를 항상 펼칠지, 핵심 stack + 펼치기 방식으로 바꿀지 한 번 더 제품 관점에서 결정하면 좋다.</li>
-        <li>다음 접근성 후속으로 모달 focus trap, ESC/닫기 후 원래 카드로 focus 복귀, 프레젠테이션 버튼의 더 구체적인 label을 점검하면 좋다.</li>
+        <li>다음 접근성 후속은 색 대비 자동 점검과 heading landmark 구조 점검으로 넘어가는 것이 좋다.</li>
       </ul>
     </main>
   </body>

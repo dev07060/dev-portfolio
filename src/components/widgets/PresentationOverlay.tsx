@@ -5,6 +5,7 @@ import { useRef } from 'react';
 import { Project } from '@/types/project';
 import DeviceFrame from './DeviceFrame';
 import { useLocale } from '@/i18n';
+import { useFocusTrap } from './useFocusTrap';
 
 interface PresentationOverlayProps {
   project: Project;
@@ -26,7 +27,13 @@ const PresentationOverlay = ({
   const isFirst = currentScreenIndex === 0;
   const isLast = currentScreenIndex === project.screens.length - 1;
 
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
+  const titleId = `presentation-title-${project.id}`;
+  const descriptionId = `presentation-description-${project.id}`;
+
+  useFocusTrap(dialogRef, { initialFocusRef: closeButtonRef });
 
   const handleTouchStart = (e: React.TouchEvent) => {
     const t = e.touches[0];
@@ -47,20 +54,31 @@ const PresentationOverlay = ({
 
   return (
     <div
+      ref={dialogRef}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={titleId}
+      aria-describedby={descriptionId}
+      tabIndex={-1}
       className="fixed inset-0 z-[60] bg-[#1f1b16] flex flex-col items-center justify-center animate-fade-in"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
       {/* Navigation Controls */}
       <button
+        ref={closeButtonRef}
         onClick={onExit}
+        aria-label="Exit presentation mode"
         className="absolute top-6 right-6 p-3 bg-white/10 rounded-full hover:bg-white/20 text-white z-50 transition-colors"
       >
         <X size={24} />
       </button>
 
       {/* Progress indicator (top center) */}
-      <div className="absolute top-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-1.5">
+      <div
+        aria-hidden="true"
+        className="absolute top-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-1.5"
+      >
         {project.screens.map((_, i) => (
           <span
             key={i}
@@ -88,7 +106,7 @@ const PresentationOverlay = ({
         <button
           onClick={onPrevSlide}
           disabled={isFirst}
-          aria-label="Previous slide"
+          aria-label="Go to previous screen"
           className={`p-3 md:p-3.5 rounded-full text-white border border-white/20 transition-all ${
             isFirst
               ? 'bg-white/[0.03] opacity-25 cursor-not-allowed'
@@ -105,7 +123,7 @@ const PresentationOverlay = ({
         <button
           onClick={onNextSlide}
           disabled={isLast}
-          aria-label="Next slide"
+          aria-label="Go to next screen"
           className={`p-3 md:p-3.5 rounded-full text-white border border-white/20 transition-all ${
             isLast
               ? 'bg-white/[0.03] opacity-25 cursor-not-allowed'
@@ -117,7 +135,12 @@ const PresentationOverlay = ({
       </div>
 
       {/* Bottom Caption Area */}
-      <CaptionArea project={project} currentScreenIndex={currentScreenIndex} />
+      <CaptionArea
+        project={project}
+        currentScreenIndex={currentScreenIndex}
+        titleId={titleId}
+        descriptionId={descriptionId}
+      />
     </div>
   );
 };
@@ -126,19 +149,29 @@ const PresentationOverlay = ({
 const CaptionArea = ({
   project,
   currentScreenIndex,
+  titleId,
+  descriptionId,
 }: {
   project: Project;
   currentScreenIndex: number;
+  titleId: string;
+  descriptionId: string;
 }) => {
   const { t } = useLocale();
   
   return (
     <div className="w-full shrink-0 bg-[#1f1b16]/90 backdrop-blur-md p-3 md:p-8 border-t border-white/10 text-center">
       <div className="max-w-4xl mx-auto">
-        <h3 className="font-serif text-lg md:text-3xl font-light text-[#faf7f2] mb-1 md:mb-2">
+        <h3
+          id={titleId}
+          className="font-serif text-lg md:text-3xl font-light text-[#faf7f2] mb-1 md:mb-2"
+        >
           {t(project.screens[currentScreenIndex].title)}
         </h3>
-        <p className="text-[#cfc4b2] text-xs md:text-base leading-relaxed">
+        <p
+          id={descriptionId}
+          className="text-[#cfc4b2] text-xs md:text-base leading-relaxed"
+        >
           {t(project.screens[currentScreenIndex].desc)}
         </p>
       </div>

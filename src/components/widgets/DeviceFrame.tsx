@@ -8,10 +8,12 @@ import ScreenImage from './ScreenImage';
 
 interface DeviceFrameProps {
   project: Project;
-  onEnterPresentation: (e: React.MouseEvent) => void;
+  onEnterPresentation: (e: React.MouseEvent | React.KeyboardEvent) => void;
   variant?: 'modal' | 'presentation';
   currentScreenIndex?: number;
 }
+
+type PresentationTriggerEvent = React.MouseEvent | React.KeyboardEvent;
 
 const DeviceFrame = ({
   project,
@@ -59,14 +61,23 @@ const MobileFrame = ({
   onClick,
 }: {
   project: Project;
-  onClick: (e: React.MouseEvent) => void;
+  onClick: (e: PresentationTriggerEvent) => void;
 }) => {
   const { t } = useLocale();
+  const title = t(project.title);
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    e.preventDefault();
+    onClick(e);
+  };
   
   return (
-    <div
+    <button
+      type="button"
       onClick={onClick}
-      className="relative mx-auto cursor-pointer border-gray-100 bg-gray-100 border-[8px] rounded-[2.5rem] h-[340px] w-[188px] sm:h-[400px] sm:w-[220px] md:h-[500px] md:w-[280px] lg:h-[560px] lg:w-[310px] shadow-xl flex flex-col transform transition-transform duration-500 hover:scale-105"
+      onKeyDown={handleKeyDown}
+      aria-label={`Open ${title} presentation view`}
+      className="relative mx-auto cursor-pointer border-gray-100 bg-gray-100 border-[8px] rounded-[2.5rem] h-[340px] w-[188px] sm:h-[400px] sm:w-[220px] md:h-[500px] md:w-[280px] lg:h-[560px] lg:w-[310px] shadow-xl flex flex-col transform transition-transform duration-500 hover:scale-105 appearance-none p-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b8543a]/70 focus-visible:ring-offset-4 focus-visible:ring-offset-[#f2ede4]"
     >
       <div className="h-[32px] w-[3px] bg-gray-100 absolute -left-[10px] top-[72px] rounded-l-lg" />
       <div className="h-[46px] w-[3px] bg-gray-100 absolute -left-[10px] top-[124px] rounded-l-lg" />
@@ -76,7 +87,7 @@ const MobileFrame = ({
           <ScreenImage
             variant="fill"
             src={project.screens[0].imagePath}
-            alt={t(project.title)}
+            alt={title}
             fallbackGradient={project.color}
           />
         ) : (
@@ -84,12 +95,12 @@ const MobileFrame = ({
             className={`w-full h-full bg-gradient-to-br ${project.color} flex flex-col items-center justify-center text-white p-4 text-center`}
           >
             <Smartphone size={48} className="mb-4 opacity-80" />
-            <h3 className="text-xl font-bold">{t(project.title)}</h3>
+            <h3 className="text-xl font-bold">{title}</h3>
             <p className="text-xs opacity-75 mt-2">Tap to view screens</p>
           </div>
         )}
       </div>
-    </div>
+    </button>
   );
 };
 
@@ -99,14 +110,23 @@ const WebFrame = ({
   onClick,
 }: {
   project: Project;
-  onClick: (e: React.MouseEvent) => void;
+  onClick: (e: PresentationTriggerEvent) => void;
 }) => {
   const { t } = useLocale();
+  const title = t(project.title);
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    e.preventDefault();
+    onClick(e);
+  };
   
   return (
-    <div
+    <button
+      type="button"
       onClick={onClick}
-      className="relative w-full max-w-md lg:max-w-xl aspect-video bg-[#faf7f2] rounded-lg shadow-2xl border-t-[20px] border-white/90 transform transition-transform duration-500 hover:scale-105 cursor-pointer overflow-hidden"
+      onKeyDown={handleKeyDown}
+      aria-label={`Open ${title} presentation view`}
+      className="relative w-full max-w-md lg:max-w-xl aspect-video bg-[#faf7f2] rounded-lg shadow-2xl border-t-[20px] border-white/90 transform transition-transform duration-500 hover:scale-105 cursor-pointer overflow-hidden appearance-none p-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b8543a]/70 focus-visible:ring-offset-4 focus-visible:ring-offset-[#f2ede4]"
     >
       <div className="absolute -top-[14px] left-3 flex gap-1.5 z-10">
         <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
@@ -118,7 +138,7 @@ const WebFrame = ({
           <ScreenImage
             variant="fill"
             src={project.screens[0].imagePath}
-            alt={t(project.title)}
+            alt={title}
             fallbackGradient={project.color}
           />
         </div>
@@ -128,12 +148,12 @@ const WebFrame = ({
         >
           <div className="text-white text-center">
             <Monitor size={48} className="mx-auto mb-2 opacity-80" />
-            <span className="font-bold text-xl">{t(project.title)}</span>
+            <span className="font-bold text-xl">{title}</span>
             <p className="text-xs mt-2 opacity-80">Click to browse</p>
           </div>
         </div>
       )}
-    </div>
+    </button>
   );
 };
 
@@ -283,14 +303,23 @@ const TabletFrame = ({
   onClick,
 }: {
   project: Project;
-  onClick: (e: React.MouseEvent) => void;
+  onClick: (e: PresentationTriggerEvent) => void;
 }) => {
   const { t } = useLocale();
+  const title = t(project.title);
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    e.preventDefault();
+    onClick(e);
+  };
   
   return (
-    <div
+    <button
+      type="button"
       onClick={onClick}
-      className="relative mx-auto cursor-pointer border-gray-100 bg-gray-100 border-[10px] rounded-[2rem] shadow-xl flex flex-col transform transition-transform duration-500 hover:scale-105 w-[236px] h-[336px] sm:w-[280px] sm:h-[400px] lg:w-[360px] lg:h-[510px]"
+      onKeyDown={handleKeyDown}
+      aria-label={`Open ${title} presentation view`}
+      className="relative mx-auto cursor-pointer border-gray-100 bg-gray-100 border-[10px] rounded-[2rem] shadow-xl flex flex-col transform transition-transform duration-500 hover:scale-105 w-[236px] h-[336px] sm:w-[280px] sm:h-[400px] lg:w-[360px] lg:h-[510px] appearance-none p-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b8543a]/70 focus-visible:ring-offset-4 focus-visible:ring-offset-[#f2ede4]"
     >
       {/* 태블릿 상단 카메라 */}
       <div className="absolute top-3 left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-300 rounded-full" />
@@ -299,7 +328,7 @@ const TabletFrame = ({
           <ScreenImage
             variant="fill"
             src={project.screens[0].imagePath}
-            alt={t(project.title)}
+            alt={title}
             fallbackGradient={project.color}
           />
         ) : (
@@ -307,12 +336,12 @@ const TabletFrame = ({
             className={`w-full h-full bg-gradient-to-br ${project.color} flex flex-col items-center justify-center text-white p-4 text-center`}
           >
             <Tablet size={48} className="mb-4 opacity-80" />
-            <h3 className="text-xl font-bold">{t(project.title)}</h3>
+            <h3 className="text-xl font-bold">{title}</h3>
             <p className="text-xs opacity-75 mt-2">Tap to view screens</p>
           </div>
         )}
       </div>
-    </div>
+    </button>
   );
 };
 
