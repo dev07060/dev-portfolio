@@ -3,21 +3,31 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Project } from '@/types/project';
 import { projects } from '@/data/projects';
+import { localize, useLocale } from '@/i18n';
 import {
-  ProfileHeader,
+  ConversionHero,
+  ProofStrip,
+  FeaturedWork,
   ProjectGrid,
   ProjectModal,
   PresentationOverlay,
   Footer,
   OpenSourceBanner,
 } from './widgets';
+import { conversionSections, featuredProjectIds } from '@/data/conversion';
 
 const Portfolio = () => {
+  const { locale } = useLocale();
   // State
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
   const [isPresentationMode, setIsPresentationMode] = useState(false);
   const [currentScreenIndex, setCurrentScreenIndex] = useState(0);
+  const featuredProjectSet = new Set<string>(featuredProjectIds);
+  const featuredProjects = featuredProjectIds
+    .map((id) => projects.find((project) => project.id === id))
+    .filter((project): project is Project => Boolean(project));
+  const moreWorkProjects = projects.filter((project) => !featuredProjectSet.has(project.id));
 
   // Handlers
   const handleProjectClick = (project: Project) => {
@@ -88,9 +98,9 @@ const Portfolio = () => {
       if (!screen.imagePath) return;
       const img = new window.Image();
       img.decoding = 'async';
-      img.src = screen.imagePath;
+      img.src = localize(screen.imagePath, locale);
     });
-  }, [selectedProject]);
+  }, [selectedProject, locale]);
 
   // Lock background scroll while a modal/overlay is open
   useEffect(() => {
@@ -117,14 +127,25 @@ const Portfolio = () => {
 
   return (
     <div className="min-h-screen bg-[#faf7f2] text-[#1f1b16] font-sans">
-      {/* Header / Profile Section */}
-      <ProfileHeader />
+      {/* Conversion-first portfolio structure */}
+      <ConversionHero />
+
+      {/* Proof Strip */}
+      <ProofStrip />
+
+      {/* Featured Work */}
+      <FeaturedWork projects={featuredProjects} onProjectClick={handleProjectClick} />
 
       {/* Open Source Packages Banner */}
       <OpenSourceBanner />
 
-      {/* Project Grid Section */}
-      <ProjectGrid projects={projects} onProjectClick={handleProjectClick} />
+      {/* Supporting Work */}
+      <ProjectGrid
+        projects={moreWorkProjects}
+        onProjectClick={handleProjectClick}
+        heading={conversionSections.moreWork.heading}
+        description={conversionSections.moreWork.description}
+      />
 
       {/* Footer */}
       <Footer />
