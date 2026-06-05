@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 820" font-family="-apple-system, 'Apple SD Gothic Neo', 'Helvetica Neue', Arial, sans-serif" role="img" aria-labelledby="title desc">
+  <title id="title">mobile_rag_engine problem constraints</title>
+  <desc id="desc">A constraint map for a mobile RAG package: privacy, offline use, latency, and reusable package API.</desc>
+  <defs>
+    <style>
+      .h1 { font-size: 28px; font-weight: 700; fill: #0f172a; letter-spacing: -0.2px; }
+      .lead { font-size: 13px; fill: #475569; }
+      .tag { font-size: 12px; font-weight: 700; fill: #ffffff; letter-spacing: 1.1px; }
+      .card-title { font-size: 17px; font-weight: 700; fill: #0f172a; }
+      .body { font-size: 13px; fill: #475569; }
+      .note { font-size: 12px; fill: #64748b; font-style: italic; }
+      .center { font-size: 18px; font-weight: 700; fill: #ffffff; }
+      .center-small { font-size: 12.5px; fill: #ccfbf1; }
+      .connector { stroke: #94a3b8; stroke-width: 1.8; fill: none; stroke-dasharray: 6 5; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="820" fill="#f8fafc"/>
+  <text x="60" y="58" class="h1">mobile_rag_engine - why this is an engine case, not an app UI case</text>
+  <text x="60" y="84" class="lead">The core portfolio proof is the package architecture needed to keep document RAG local on mobile devices.</text>
+
+  <g>
+    <rect x="60" y="126" width="140" height="30" rx="15" fill="#0f766e"/>
+    <text x="130" y="146" text-anchor="middle" class="tag">CONSTRAINTS</text>
+    <text x="218" y="148" class="card-title">Client requirements that drove the design</text>
+  </g>
+
+  <g>
+    <rect x="60" y="190" width="320" height="132" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <rect x="80" y="214" width="92" height="26" rx="13" fill="#0f766e"/>
+    <text x="126" y="232" text-anchor="middle" class="tag">PRIVACY</text>
+    <text x="80" y="266" class="card-title">Files stay on the device</text>
+    <text x="80" y="294" class="body">PDF, DOCX, Markdown, and notes can contain</text>
+    <text x="80" y="312" class="body">contracts, legal memos, or internal documents.</text>
+  </g>
+
+  <g>
+    <rect x="420" y="190" width="320" height="132" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <rect x="440" y="214" width="88" height="26" rx="13" fill="#0369a1"/>
+    <text x="484" y="232" text-anchor="middle" class="tag">OFFLINE</text>
+    <text x="440" y="266" class="card-title">No hosted vector database</text>
+    <text x="440" y="294" class="body">Search has to work without Milvus, Qdrant,</text>
+    <text x="440" y="312" class="body">or a backend RAG service in the request path.</text>
+  </g>
+
+  <g>
+    <rect x="780" y="190" width="320" height="132" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <rect x="800" y="214" width="88" height="26" rx="13" fill="#7c3aed"/>
+    <text x="844" y="232" text-anchor="middle" class="tag">LATENCY</text>
+    <text x="800" y="266" class="card-title">Mobile hardware is the budget</text>
+    <text x="800" y="294" class="body">Embedding, storage, and search need separate</text>
+    <text x="800" y="312" class="body">timing evidence instead of UI screenshots.</text>
+  </g>
+
+  <path class="connector" d="M224 324 C224 386 470 398 550 438"/>
+  <path class="connector" d="M580 324 C580 374 585 394 596 438"/>
+  <path class="connector" d="M936 324 C936 386 720 398 650 438"/>
+
+  <g>
+    <rect x="438" y="438" width="324" height="148" rx="18" fill="#0f172a"/>
+    <text x="600" y="486" text-anchor="middle" class="center">Package-level proof</text>
+    <text x="600" y="516" text-anchor="middle" class="center-small">architecture + native bridge + local indexes</text>
+    <text x="600" y="538" text-anchor="middle" class="center-small">benchmark files, not demo screens</text>
+  </g>
+
+  <g>
+    <rect x="150" y="640" width="900" height="96" rx="14" fill="#ecfeff" stroke="#67e8f9" stroke-width="1.5"/>
+    <rect x="178" y="668" width="92" height="26" rx="13" fill="#0891b2"/>
+    <text x="224" y="686" text-anchor="middle" class="tag">PACKAGE</text>
+    <text x="292" y="682" class="card-title">The artifact is a reusable Flutter package</text>
+    <text x="292" y="710" class="body">Evidence should show the API boundary, Rust FFI hot path, ONNX embedding runtime, SQLite storage, and retrieval quality/latency reports.</text>
+  </g>
+
+  <text x="600" y="780" text-anchor="middle" class="note">Portfolio implication: lead with design constraints and engine evidence; keep app screenshots for product-style projects.</text>
+</svg>

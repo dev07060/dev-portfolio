@@ -1,6 +1,6 @@
 'use client';
 
-import { Smartphone, Monitor, Tablet, Maximize2, Mouse } from 'lucide-react';
+import { Smartphone, Monitor, Tablet, Maximize2, Mouse, Package as PackageIcon } from 'lucide-react';
 import { useRef, useEffect } from 'react';
 import { Project } from '@/types/project';
 import { useLocale } from '@/i18n';
@@ -22,7 +22,9 @@ const DeviceFrame = ({
   currentScreenIndex = 0,
 }: DeviceFrameProps) => {
   if (variant === 'presentation') {
-    if (project.type === 'mobile') {
+    if (project.type === 'package') {
+      return <PackagePresentationFrame project={project} currentScreenIndex={currentScreenIndex} />;
+    } else if (project.type === 'mobile') {
       return <MobilePresentationFrame project={project} currentScreenIndex={currentScreenIndex} />;
     } else if (project.type === 'tablet') {
       return <TabletPresentationFrame project={project} currentScreenIndex={currentScreenIndex} />;
@@ -44,7 +46,9 @@ const DeviceFrame = ({
         className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r ${project.color} rounded-full blur-[100px] opacity-30 pointer-events-none`}
       />
 
-      {project.type === 'mobile' ? (
+      {project.type === 'package' ? (
+        <PackageFrame project={project} onClick={onEnterPresentation} />
+      ) : project.type === 'mobile' ? (
         <MobileFrame project={project} onClick={onEnterPresentation} />
       ) : project.type === 'tablet' ? (
         <TabletFrame project={project} onClick={onEnterPresentation} />
@@ -52,6 +56,64 @@ const DeviceFrame = ({
         <WebFrame project={project} onClick={onEnterPresentation} />
       )}
     </div>
+  );
+};
+
+// Package / Engine Frame Component
+const PackageFrame = ({
+  project,
+  onClick,
+}: {
+  project: Project;
+  onClick: (e: PresentationTriggerEvent) => void;
+}) => {
+  const { t } = useLocale();
+  const title = t(project.title);
+  const firstScreen = project.screens[0];
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    e.preventDefault();
+    onClick(e);
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      onKeyDown={handleKeyDown}
+      aria-label={`Open ${title} package case study`}
+      className="relative w-full max-w-md lg:max-w-xl aspect-[16/10] bg-white rounded-xl shadow-2xl border border-white/90 transform transition-transform duration-500 hover:scale-[1.03] cursor-pointer overflow-hidden appearance-none p-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f766e]/70 focus-visible:ring-offset-4 focus-visible:ring-offset-[#f2ede4]"
+    >
+      <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between border-b border-[#d9e4e1] bg-white/95 px-4 py-2">
+        <div className="flex items-center gap-2">
+          <PackageIcon size={14} className="text-[#0f766e]" />
+          <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-[#0f766e]">
+            Package architecture
+          </span>
+        </div>
+        <span className="rounded-full border border-[#d9e4e1] px-2 py-0.5 text-[10px] font-mono text-[#4a4339]">
+          pub.dev
+        </span>
+      </div>
+      <div className="absolute inset-0 pt-10">
+        {firstScreen?.imagePath ? (
+          <ScreenImage
+            variant="fill"
+            src={firstScreen.imagePath}
+            alt={`${title} architecture`}
+            fallbackGradient={project.color}
+            fit="contain"
+          />
+        ) : (
+          <div
+            className={`w-full h-full bg-gradient-to-br ${project.color} flex flex-col items-center justify-center text-white p-6 text-center`}
+          >
+            <PackageIcon size={56} className="mb-4 opacity-85" />
+            <h3 className="text-2xl font-bold">{title}</h3>
+          </div>
+        )}
+      </div>
+    </button>
   );
 };
 
@@ -250,12 +312,13 @@ const WebPresentationFrame = ({
 
   return (
     <div
-      className={`relative bg-[#faf7f2] rounded-lg shadow-2xl border-t-[20px] md:border-t-[24px] border-white/90 flex flex-col w-[92vw] max-w-[calc((100vh-200px)*16/9)] overflow-hidden ${isScrollable ? '' : ''}`}
+      className="relative bg-[#faf7f2] rounded-lg shadow-2xl border-t-[20px] md:border-t-[24px] border-white/90 flex flex-col overflow-hidden"
       style={{
-        aspectRatio: isScrollable ? undefined : '16/9',
-        height: isScrollable ? 'min(58dvh, 620px)' : undefined,
-        width: isScrollable ? '92vw' : undefined,
-        maxWidth: isScrollable ? 'min(92vw, calc((58dvh) * 16 / 9))' : undefined,
+        aspectRatio: isScrollable ? undefined : '16 / 10',
+        height: isScrollable ? 'min(68dvh, 760px)' : undefined,
+        width: isScrollable
+          ? 'min(92vw, 1180px)'
+          : 'min(92vw, 1280px, calc(68dvh * 1.6))',
       }}
     >
       <div className="absolute -top-[16px] left-4 flex gap-2 z-10">
@@ -290,6 +353,58 @@ const WebPresentationFrame = ({
             <h2 className="text-4xl font-bold text-white">
               {t(currentScreen.title)}
             </h2>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// Package / Engine Presentation Frame
+const PackagePresentationFrame = ({
+  project,
+  currentScreenIndex,
+}: {
+  project: Project;
+  currentScreenIndex: number;
+}) => {
+  const { t } = useLocale();
+  const currentScreen = project.screens[currentScreenIndex];
+
+  return (
+    <div
+      className="relative bg-white rounded-xl shadow-2xl border-t-[20px] md:border-t-[24px] border-white/90 flex flex-col overflow-hidden"
+      style={{
+        aspectRatio: '16 / 10',
+        width: 'min(92vw, 1280px, calc(68dvh * 1.6))',
+      }}
+    >
+      <div className="absolute -top-[16px] left-4 flex gap-2 z-10">
+        <div className="w-3 h-3 rounded-full bg-[#0f766e]" />
+        <div className="w-3 h-3 rounded-full bg-[#38bdf8]" />
+        <div className="w-3 h-3 rounded-full bg-[#b8543a]" />
+      </div>
+      <div className="h-full w-full bg-[#f8faf9]">
+        {currentScreen?.imagePath ? (
+          <ScreenImage
+            variant="fill"
+            src={currentScreen.imagePath}
+            alt={t(currentScreen.title)}
+            fallbackGradient={project.color}
+            fit="contain"
+            priority
+          />
+        ) : (
+          <div className="flex h-full flex-col justify-center px-8 py-8 md:px-14">
+            <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.28em] text-[#0f766e]">
+              mobile_rag_engine case study
+            </p>
+            <h2 className="font-serif text-3xl md:text-5xl font-light text-[#1f1b16]">
+              {t(currentScreen.title)}
+            </h2>
+            <p className="mt-5 max-w-3xl text-base md:text-xl leading-relaxed text-[#4a4339]">
+              {t(currentScreen.desc)}
+            </p>
           </div>
         )}
       </div>

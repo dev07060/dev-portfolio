@@ -358,74 +358,90 @@ export const projects: Project[] = [
   },
   {
     id: 'local-mobile-rag-gemma',
-    type: 'mobile',
-    title: { en: 'Local Mobile RAG Gemma', ko: 'Local Mobile RAG Gemma' },
-    releaseLabel: { en: 'Released v0.18.5', ko: 'v0.18.5 배포' },
-    subtitle: { en: 'Local On-device Mobile RAG Engine with Gemma 3n (Released to v0.18.5)', ko: 'Gemma 3n 기반 로컬 온디바이스 모바일 RAG 엔진 (v0.18.5 배포)' },
+    type: 'package',
+    title: { en: 'mobile_rag_engine', ko: 'mobile_rag_engine' },
+    releaseLabel: { en: 'pub.dev 0.18.6', ko: 'pub.dev 0.18.6' },
+    subtitle: {
+      en: 'Published Flutter package for fully local RAG on mobile',
+      ko: '모바일에서 완전 로컬 RAG를 실행하는 Flutter 패키지',
+    },
     description: {
-      en: 'Implemented a mobile RAG engine that runs fast on local devices and released it through v0.18.5. Uses Gemma 3n to store models locally and provides answers to user questions.',
-      ko: '로컬 디바이스에서 빠르게 실행되는 모바일 RAG 엔진을 구현하고 v0.18.5까지 배포했습니다. Gemma 3n을 사용하여 모델을 로컬에 저장하고, 사용자의 질문에 대한 답변을 제공합니다.',
+      en: 'A published Flutter package that keeps document ingestion, ONNX embeddings, SQLite-backed indexes, HNSW/BM25 retrieval, and LLM-ready context assembly on the device.',
+      ko: '문서 인제스션, ONNX 임베딩, SQLite 기반 색인, HNSW/BM25 검색, LLM-ready context 구성을 디바이스 안에서 처리하는 공개 Flutter 패키지입니다.',
     },
     implementationPoints: [
       {
-        en: 'Connected Flutter and Rust through FFI for on-device RAG orchestration.',
-        ko: 'Flutter와 Rust FFI를 연결해 온디바이스 RAG 실행 파이프라인을 구성했습니다.',
+        en: 'Published mobile_rag_engine 0.18.6 with Flutter-facing APIs, examples, docs, and release packaging.',
+        ko: 'Flutter 공개 API, 예제, 문서, 릴리스 패키징을 포함해 mobile_rag_engine 0.18.6을 배포했습니다.',
       },
       {
-        en: 'Ran local inference with ONNX Runtime and optimized tokenization path.',
-        ko: 'ONNX Runtime 기반 로컬 추론과 토크나이징 경로 최적화를 적용했습니다.',
+        en: 'Split product-facing API work from the native hot path: Flutter facade, Dart orchestration, and Rust FFI core.',
+        ko: '제품 API 계층과 네이티브 hot path를 분리해 Flutter facade, Dart orchestration, Rust FFI core로 구성했습니다.',
       },
       {
-        en: 'Implemented SQLite + HNSW + BM25 hybrid retrieval with PDF/DOCX ingestion for fast local document search.',
-        ko: 'SQLite + HNSW + BM25 하이브리드 검색과 PDF/DOCX 추출 파이프라인으로 빠른 로컬 문서 검색을 구현했습니다.',
+        en: 'Built the ingest path: document parsing, chunk metadata, ONNX embeddings, SQLite persistence, and index writes.',
+        ko: '문서 파싱, 청크 메타데이터, ONNX 임베딩, SQLite 저장, 색인 write까지 인제스트 경로를 구현했습니다.',
       },
       {
-        en: 'Optimized retrieval hot path with zero-copy embedding transport (TransferableTypedData) and preserved BM25 rankings through term indexes.',
-        ko: 'Zero-copy 임베딩 전송(TransferableTypedData)과 term index 기반 BM25 랭킹 보존으로 검색 hot path를 최적화했습니다.',
+        en: 'Built the query path: query embedding, HNSW vector search, BM25 sparse retrieval, fusion, and context assembly.',
+        ko: '질의 임베딩, HNSW 벡터 검색, BM25 sparse 검색, 후보 결합, context assembly까지 쿼리 경로를 구현했습니다.',
       },
       {
-        en: 'Packaged and released mobile_rag_engine up to v0.18.5 on pub.dev.',
-        ko: 'mobile_rag_engine을 pub.dev에 v0.18.5까지 패키징 및 배포했습니다.',
+        en: 'Separated evidence by purpose: PR-P5-1 for recall quality, PR-P3/PR-P4 for device latency, and caveats for hybrid ranking.',
+        ko: 'PR-P5-1은 recall 품질, PR-P3/PR-P4는 디바이스 latency, hybrid ranking은 caveat로 나눠 증거를 정리했습니다.',
       },
     ],
-    techStack: ['Flutter', 'Rust', 'ONNX Runtime', 'SQLite', 'HNSW', 'BM25'],
+    techStack: ['Flutter', 'Dart', 'Rust FFI', 'ONNX Runtime', 'SQLite', 'HNSW/BM25'],
+    evidenceBadges: ['pub.dev', 'GitHub', 'Rust FFI', 'ONNX', 'HNSW/BM25'],
     color: 'from-blue-500 to-cyan-400',
     iconType: 'brain',
     screens: [
       {
-        title: { en: 'Start Chat', ko: '채팅 시작' },
-        desc: { en: 'Start a new chat.', ko: '새로운 채팅을 시작' },
-        imagePath: '/images/local-mobile-rag-gemma/start-new-chat.png',
+        title: { en: 'Problem', ko: '문제 정의' },
+        desc: {
+          en: 'Mobile teams need private retrieval over privacy-sensitive PDFs, DOCX files, and notes without uploading the source documents or depending on a server round trip.',
+          ko: '모바일 팀은 민감한 PDF, DOCX, 노트를 서버에 업로드하거나 매번 네트워크 왕복에 의존하지 않고 로컬에서 검색해야 했습니다.',
+        },
+        imagePath: {
+          en: '/images/mobile-rag-engine/problem.svg',
+          ko: '/images/mobile-rag-engine/problem.ko.svg',
+        },
       },
       {
-        title: { en: 'Add Document', ko: '문서 추가' },
-        desc: { en: 'Add documents to generate vector embeddings for model training.', ko: '문서를 추가하여 모델 학습을 위해 vector embedding을 생성합니다.' },
-        imagePath: '/images/local-mobile-rag-gemma/add-document.png',
+        title: { en: 'Architecture', ko: '아키텍처' },
+        desc: {
+          en: 'The engine is split into Flutter facade, Dart task queue, Rust FFI search core, ONNX embedding runtime, SQLite chunk store, and HNSW/BM25 indexes that return LLM-ready context.',
+          ko: '엔진은 Flutter facade, Dart task queue, Rust FFI search core, ONNX embedding runtime, SQLite chunk store, HNSW/BM25 indexes로 나뉘고 LLM-ready context를 반환합니다.',
+        },
+        imagePath: {
+          en: '/images/mobile-rag-engine/architecture.svg',
+          ko: '/images/mobile-rag-engine/architecture.ko.svg',
+        },
       },
       {
-        title: { en: 'Chat Response', ko: '채팅 응답' },
-        desc: { en: 'Provides answers using the local model.', ko: '로컬 모델을 사용하여 사용자의 질문에 대한 답변을 제공합니다.' },
-        imagePath: '/images/local-mobile-rag-gemma/output-1.png',
+        title: { en: 'What I built', ko: '구현 범위' },
+        desc: {
+          en: 'I shipped the package API, native bridge, loader/chunker, local embedding and index writes, hybrid query flow, example app, docs, and pub.dev release path.',
+          ko: '패키지 API, 네이티브 브릿지, loader/chunker, 로컬 임베딩과 색인 write, 하이브리드 쿼리 흐름, 예제 앱, 문서, pub.dev 릴리스 경로를 구현했습니다.',
+        },
+        imagePath: {
+          en: '/images/mobile-rag-engine/retrieval-flows.svg',
+          ko: '/images/mobile-rag-engine/retrieval-flows.ko.svg',
+        },
       },
       {
-        title: { en: 'Chat Response', ko: '채팅 응답' },
-        desc: { en: 'Provides answers using the local model.', ko: '로컬 모델을 사용하여 사용자의 질문에 대한 답변을 제공합니다.' },
-        imagePath: '/images/local-mobile-rag-gemma/output-2.png',
+        title: { en: 'Evidence', ko: '증거' },
+        desc: {
+          en: 'Evidence is file-routed: pub.dev 0.18.6 release, docs/perf/ondevice-query-profiler/PR-P5-1.html for recall_vectoronly@10 mean 1.00, and PR-P4.md / PR-P3.md for pure_cold activate 247.3ms, warm embed 26.7ms, and Rust search 1-2ms.',
+          ko: '증거는 파일별로 분리했습니다. pub.dev 0.18.6 릴리스, docs/perf/ondevice-query-profiler/PR-P5-1.html의 recall_vectoronly@10 mean 1.00, PR-P4.md / PR-P3.md의 pure_cold activate 247.3ms, warm embed 26.7ms, Rust search 1-2ms를 근거로 둡니다.',
+        },
       },
       {
-        title: { en: 'RAG Search Test', ko: 'RAG 검색 테스트' },
-        desc: { en: 'Tests the document search functionality of the RAG engine.', ko: 'RAG 엔진의 문서 검색 기능을 테스트합니다.' },
-        imagePath: '/images/local-mobile-rag-gemma/rag-search-test.png',
-      },
-      {
-        title: { en: 'RAG Quality Test', ko: 'RAG 품질 테스트' },
-        desc: { en: 'Evaluates the response quality of the RAG engine.', ko: 'RAG 엔진의 응답 품질을 평가합니다.' },
-        imagePath: '/images/local-mobile-rag-gemma/rag-qulity-test.png',
-      },
-      {
-        title: { en: 'RAG Performance Benchmark', ko: 'RAG 성능 벤치마크' },
-        desc: { en: 'Benchmarks the performance of the RAG engine.', ko: 'RAG 엔진의 성능을 벤치마크합니다.' },
-        imagePath: '/images/local-mobile-rag-gemma/rag-performance-benchmark.png',
+        title: { en: 'Trade-off', ko: '트레이드오프' },
+        desc: {
+          en: 'Caveats stay explicit: OCR-required PDFs are out of scope, complex PDF/DOCX extraction can fail at the parser layer, and recall_hybrid@10 mean 0.08 points to ranking fusion behavior rather than broken vector recall.',
+          ko: 'caveat는 명확히 둡니다. OCR이 필요한 PDF는 범위 밖이고, 복잡한 PDF/DOCX 추출은 파서 계층에서 실패할 수 있으며, recall_hybrid@10 mean 0.08은 벡터 recall 실패가 아니라 ranking fusion 동작으로 해석해야 합니다.',
+        },
       },
     ],
     links: [

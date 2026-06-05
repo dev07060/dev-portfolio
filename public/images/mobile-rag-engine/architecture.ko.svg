@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 980" font-family="-apple-system, 'Apple SD Gothic Neo', 'Helvetica Neue', Arial, sans-serif" role="img" aria-labelledby="title desc">
+  <title id="title">mobile_rag_engine 계층형 아키텍처</title>
+  <desc id="desc">Flutter 패키지의 앱 API, 인제스트, 네이티브 코어, 검색 계층, 출력 증거를 계층별로 보여준다.</desc>
+  <defs>
+    <style>
+      .h1 { font-size: 27px; font-weight: 700; fill: #0f172a; letter-spacing: -0.3px; }
+      .lead { font-size: 13px; fill: #475569; }
+      .h2 { font-size: 12px; font-weight: 700; fill: #ffffff; letter-spacing: 0.8px; }
+      .layer { font-size: 17px; font-weight: 700; fill: #0f172a; }
+      .step { font-size: 14.5px; font-weight: 650; fill: #0f172a; }
+      .desc { font-size: 12.2px; fill: #475569; }
+      .note { font-size: 11.5px; fill: #64748b; font-style: italic; }
+      .arrow { stroke: #0f172a; stroke-width: 2.1; fill: none; marker-end: url(#arr); }
+    </style>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#0f172a"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="980" fill="#f8fafc"/>
+  <text x="60" y="56" class="h1">mobile_rag_engine - 계층형 시스템 아키텍처</text>
+  <text x="60" y="82" class="lead">Flutter 패키지 facade가 Dart 서비스, Rust FFI, ONNX, SQLite, 하이브리드 색인으로 로컬 RAG 경로를 위임한다.</text>
+
+  <rect x="60" y="116" width="100" height="28" rx="14" fill="#0f766e"/>
+  <text x="110" y="135" text-anchor="middle" class="h2">앱 API</text>
+  <text x="176" y="137" class="layer">Flutter 제품에 노출되는 패키지 경계</text>
+
+  <g>
+    <rect x="60" y="160" width="340" height="94" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="80" y="187" class="step">Flutter facade</text>
+    <text x="80" y="212" class="desc">ingest, query, context assembly용 typed API</text>
+    <text x="80" y="232" class="note">앱은 네이티브 내부가 아니라 패키지 메서드를 호출</text>
+  </g>
+  <g>
+    <rect x="430" y="160" width="340" height="94" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="450" y="187" class="step">예제 앱 + 문서</text>
+    <text x="450" y="212" class="desc">패키지 도입자가 따라갈 수 있는 실행 경로</text>
+    <text x="450" y="232" class="note">pub.dev 0.18.6 릴리스 증거</text>
+  </g>
+  <g>
+    <rect x="800" y="160" width="340" height="94" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="820" y="187" class="step">Dart task queue</text>
+    <text x="820" y="212" class="desc">인제스트 작업, 질의 호출, 진행 상태 조율</text>
+    <text x="820" y="232" class="note">UI 계층과 엔진 상태를 분리</text>
+  </g>
+
+  <path class="arrow" d="M600 258 L600 292"/>
+
+  <rect x="60" y="306" width="100" height="28" rx="14" fill="#b45309"/>
+  <text x="110" y="325" text-anchor="middle" class="h2">인제스트</text>
+  <text x="176" y="327" class="layer">로컬 색인 전 문서 준비</text>
+
+  <g>
+    <rect x="60" y="350" width="340" height="118" rx="12" fill="#fef3c7" stroke="#b45309" stroke-width="1.5"/>
+    <text x="80" y="376" class="step">소스 파일 로드</text>
+    <text x="80" y="400" class="desc">PDF, DOCX, Markdown, 텍스트 메모</text>
+    <text x="80" y="419" class="desc">chunking 전 정규화</text>
+    <text x="80" y="444" class="note">OCR이 필요한 PDF는 범위 밖</text>
+  </g>
+  <g>
+    <rect x="430" y="350" width="340" height="118" rx="12" fill="#fefce8" stroke="#ca8a04" stroke-width="1.5"/>
+    <text x="450" y="376" class="step">청크 + 메타데이터</text>
+    <text x="450" y="400" class="desc">stable chunk id, source ref, offset</text>
+    <text x="450" y="419" class="desc">검색과 recall 비교에 사용</text>
+    <text x="450" y="444" class="note">복잡한 파서 실패는 명시적 caveat</text>
+  </g>
+  <g>
+    <rect x="800" y="350" width="340" height="118" rx="12" fill="#ecfeff" stroke="#0891b2" stroke-width="1.5"/>
+    <text x="820" y="376" class="step">로컬 코퍼스 저장</text>
+    <text x="820" y="400" class="desc">SQLite row에 text, metadata, embedding 저장</text>
+    <text x="820" y="419" class="desc">디바이스 안의 단일 소스</text>
+    <text x="820" y="444" class="note">원격 Vector DB 의존 없음</text>
+  </g>
+  <path class="arrow" d="M402 409 L428 409"/>
+  <path class="arrow" d="M772 409 L798 409"/>
+
+  <path class="arrow" d="M600 472 L600 506"/>
+
+  <rect x="60" y="520" width="130" height="28" rx="14" fill="#4338ca"/>
+  <text x="125" y="539" text-anchor="middle" class="h2">네이티브 코어</text>
+  <text x="206" y="541" class="layer">Flutter UI 아래에 두어야 하는 런타임 작업</text>
+
+  <g>
+    <rect x="60" y="564" width="340" height="118" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
+    <text x="80" y="590" class="step">Rust FFI search core</text>
+    <text x="80" y="614" class="desc">색인과 검색 hot path를 native로 처리</text>
+    <text x="80" y="633" class="desc">패키지 bridge를 통해 호출</text>
+    <text x="80" y="658" class="note">Rust search는 약 1-2ms로 측정</text>
+  </g>
+  <g>
+    <rect x="430" y="564" width="340" height="118" rx="12" fill="#eff6ff" stroke="#0284c7" stroke-width="1.5"/>
+    <text x="450" y="590" class="step">ONNX embedding runtime</text>
+    <text x="450" y="614" class="desc">청크와 질의를 로컬에서 임베딩</text>
+    <text x="450" y="633" class="desc">외부 embedding API 호출 없음</text>
+    <text x="450" y="658" class="note">warm embed는 약 26.7ms로 측정</text>
+  </g>
+  <g>
+    <rect x="800" y="564" width="340" height="118" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+    <text x="820" y="590" class="step">SQLite chunk store</text>
+    <text x="820" y="614" class="desc">text, metadata, vector를 앱 sandbox에 저장</text>
+    <text x="820" y="633" class="desc">검색과 activation의 기반 데이터</text>
+    <text x="820" y="658" class="note">activation timing은 별도 측정</text>
+  </g>
+
+  <path class="arrow" d="M600 686 L600 720"/>
+
+  <rect x="60" y="734" width="110" height="28" rx="14" fill="#7c3aed"/>
+  <text x="115" y="753" text-anchor="middle" class="h2">검색 계층</text>
+  <text x="186" y="755" class="layer">두 후보 경로를 합쳐 context로 변환</text>
+
+  <g>
+    <rect x="60" y="778" width="530" height="106" rx="12" fill="#faf5ff" stroke="#a855f7" stroke-width="1.5"/>
+    <text x="80" y="805" class="step">HNSW 벡터 경로</text>
+    <text x="80" y="830" class="desc">임베딩된 청크에서 의미 기반 후보 수집</text>
+    <text x="80" y="851" class="note">vector-only recall은 PR-P5-1.html에서 검증</text>
+  </g>
+  <g>
+    <rect x="610" y="778" width="530" height="106" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
+    <text x="630" y="805" class="step">BM25 희소 검색 경로</text>
+    <text x="630" y="830" class="desc">정확한 키워드와 용어 근거를 보강</text>
+    <text x="630" y="851" class="note">hybrid ranking caveat를 별도 문서화</text>
+  </g>
+
+  <path class="arrow" d="M600 888 L600 922"/>
+
+  <rect x="60" y="936" width="110" height="28" rx="14" fill="#0f172a"/>
+  <text x="115" y="955" text-anchor="middle" class="h2">출력</text>
+  <text x="190" y="957" class="layer">Flutter 제품으로 반환되는 LLM-ready context + 벤치마크 증거</text>
+</svg>

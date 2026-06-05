@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 820" font-family="-apple-system, 'Apple SD Gothic Neo', 'Helvetica Neue', Arial, sans-serif" role="img" aria-labelledby="title desc">
+  <title id="title">mobile_rag_engine 문제 제약 조건</title>
+  <desc id="desc">모바일 RAG 패키지의 핵심 제약 조건인 개인정보, 오프라인, 지연 시간, 재사용 가능한 패키지 API를 보여준다.</desc>
+  <defs>
+    <style>
+      .h1 { font-size: 28px; font-weight: 700; fill: #0f172a; letter-spacing: -0.2px; }
+      .lead { font-size: 13px; fill: #475569; }
+      .tag { font-size: 12px; font-weight: 700; fill: #ffffff; letter-spacing: 0.8px; }
+      .card-title { font-size: 17px; font-weight: 700; fill: #0f172a; }
+      .body { font-size: 13px; fill: #475569; }
+      .note { font-size: 12px; fill: #64748b; font-style: italic; }
+      .center { font-size: 18px; font-weight: 700; fill: #ffffff; }
+      .center-small { font-size: 12.5px; fill: #ccfbf1; }
+      .connector { stroke: #94a3b8; stroke-width: 1.8; fill: none; stroke-dasharray: 6 5; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="820" fill="#f8fafc"/>
+  <text x="60" y="58" class="h1">mobile_rag_engine - 앱 화면보다 엔진 증거가 중요한 이유</text>
+  <text x="60" y="84" class="lead">핵심 가치는 모바일 안에서 문서 RAG를 로컬로 돌리기 위한 패키지 구조와 검증 근거에 있다.</text>
+
+  <g>
+    <rect x="60" y="126" width="140" height="30" rx="15" fill="#0f766e"/>
+    <text x="130" y="146" text-anchor="middle" class="tag">제약 조건</text>
+    <text x="218" y="148" class="card-title">설계를 결정한 의뢰 요구사항</text>
+  </g>
+
+  <g>
+    <rect x="60" y="190" width="320" height="132" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <rect x="80" y="214" width="92" height="26" rx="13" fill="#0f766e"/>
+    <text x="126" y="232" text-anchor="middle" class="tag">개인정보</text>
+    <text x="80" y="266" class="card-title">파일은 디바이스에 남긴다</text>
+    <text x="80" y="294" class="body">PDF, DOCX, Markdown, 메모에는</text>
+    <text x="80" y="312" class="body">계약서나 내부 문서가 포함될 수 있다.</text>
+  </g>
+
+  <g>
+    <rect x="420" y="190" width="320" height="132" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <rect x="440" y="214" width="88" height="26" rx="13" fill="#0369a1"/>
+    <text x="484" y="232" text-anchor="middle" class="tag">오프라인</text>
+    <text x="440" y="266" class="card-title">호스팅 Vector DB 없음</text>
+    <text x="440" y="294" class="body">Milvus, Qdrant, 백엔드 RAG 없이</text>
+    <text x="440" y="312" class="body">앱 내부 저장소와 색인으로 검색한다.</text>
+  </g>
+
+  <g>
+    <rect x="780" y="190" width="320" height="132" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <rect x="800" y="214" width="92" height="26" rx="13" fill="#7c3aed"/>
+    <text x="846" y="232" text-anchor="middle" class="tag">성능 예산</text>
+    <text x="800" y="266" class="card-title">모바일 하드웨어가 한계</text>
+    <text x="800" y="294" class="body">임베딩, 저장, 검색은 UI가 아니라</text>
+    <text x="800" y="312" class="body">별도 latency 근거로 증명해야 한다.</text>
+  </g>
+
+  <path class="connector" d="M224 324 C224 386 470 398 550 438"/>
+  <path class="connector" d="M580 324 C580 374 585 394 596 438"/>
+  <path class="connector" d="M936 324 C936 386 720 398 650 438"/>
+
+  <g>
+    <rect x="438" y="438" width="324" height="148" rx="18" fill="#0f172a"/>
+    <text x="600" y="486" text-anchor="middle" class="center">패키지 증거</text>
+    <text x="600" y="516" text-anchor="middle" class="center-small">아키텍처 + 네이티브 브릿지 + 로컬 색인</text>
+    <text x="600" y="538" text-anchor="middle" class="center-small">데모 화면보다 벤치마크 파일이 핵심</text>
+  </g>
+
+  <g>
+    <rect x="150" y="640" width="900" height="96" rx="14" fill="#ecfeff" stroke="#67e8f9" stroke-width="1.5"/>
+    <rect x="178" y="668" width="92" height="26" rx="13" fill="#0891b2"/>
+    <text x="224" y="686" text-anchor="middle" class="tag">패키지</text>
+    <text x="292" y="682" class="card-title">결과물은 재사용 가능한 Flutter 패키지</text>
+    <text x="292" y="710" class="body">API 경계, Rust FFI hot path, ONNX 런타임, SQLite 저장소, 검색 품질·latency 리포트가 증거다.</text>
+  </g>
+
+  <text x="600" y="780" text-anchor="middle" class="note">포트폴리오 방향: 앱 스크린샷보다 설계 제약과 엔진 검증을 먼저 보여준다.</text>
+</svg>

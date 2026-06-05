@@ -15,6 +15,7 @@ export type LocaleText = {
 export const ui = {
   // ProjectModal
   projectOverview: { en: 'Project Overview', ko: '프로젝트 개요' },
+  caseStudyFlow: { en: 'Case Study Flow', ko: '케이스 스터디 흐름' },
   keyImplementations: { en: 'Key Implementations', ko: '핵심 구현' },
   technologiesUsed: { en: 'Technologies Used', ko: '사용 기술' },
   mobileApplication: { en: 'MOBILE APPLICATION', ko: '모바일 앱' },
@@ -23,9 +24,12 @@ export const ui = {
 
   // ProjectCard
   coreStack: { en: 'Core Stack', ko: '핵심 기술 스택' },
+  evidenceBadges: { en: 'Evidence', ko: '증거' },
   deviceApp: { en: 'APP', ko: '앱' },
   deviceTablet: { en: 'TABLET', ko: '태블릿' },
   deviceWeb: { en: 'WEB', ko: '웹' },
+  devicePackage: { en: 'PACKAGE', ko: '패키지' },
+  packageProject: { en: 'PACKAGE / ENGINE', ko: '패키지 / 엔진' },
 
   // Footer
   footerCopyright: { en: '© 2025 Byeonghee Oh', ko: '© 2025 오병희' },

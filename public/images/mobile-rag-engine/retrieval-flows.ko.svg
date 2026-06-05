@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" font-family="-apple-system, 'Apple SD Gothic Neo', 'Helvetica Neue', Arial, sans-serif" role="img" aria-labelledby="title desc">
+  <title id="title">mobile_rag_engine 인제스트와 쿼리 경로</title>
+  <desc id="desc">패키지 안의 두 처리 흐름인 문서 인제스트 경로와 사용자 쿼리 경로를 보여준다.</desc>
+  <defs>
+    <style>
+      .h1 { font-size: 27px; font-weight: 700; fill: #0f172a; letter-spacing: -0.3px; }
+      .lead { font-size: 13px; fill: #475569; }
+      .h2 { font-size: 18px; font-weight: 700; fill: #0f172a; }
+      .tag { font-size: 12px; font-weight: 700; fill: #ffffff; letter-spacing: 0.8px; }
+      .step { font-size: 15px; font-weight: 650; fill: #0f172a; }
+      .desc { font-size: 12.5px; fill: #475569; }
+      .note { font-size: 11.5px; fill: #64748b; font-style: italic; }
+      .phase { font-size: 14px; font-weight: 700; letter-spacing: 0.2px; }
+      .arrow-teal { stroke: #0f766e; stroke-width: 2; fill: none; marker-end: url(#arr-t); }
+      .arrow-indigo { stroke: #4f46e5; stroke-width: 2; fill: none; marker-end: url(#arr-i); }
+      .arrow-soft { stroke: #a5b4fc; stroke-width: 1.8; fill: none; marker-end: url(#arr-i); stroke-dasharray: 6 5; }
+    </style>
+    <marker id="arr-t" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#0f766e"/>
+    </marker>
+    <marker id="arr-i" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#4f46e5"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="900" fill="#f8fafc"/>
+  <text x="60" y="56" class="h1">mobile_rag_engine - 인제스트와 쿼리 경로</text>
+  <text x="60" y="82" class="lead">패키지 구현 범위는 쓰기 경로와 읽기 경로를 분리해 보여줄 때 더 명확하다.</text>
+
+  <rect x="60" y="120" width="160" height="32" rx="16" fill="#0f766e"/>
+  <text x="140" y="141" text-anchor="middle" class="tag">인제스트 경로</text>
+  <text x="236" y="143" class="h2">문서에서 검색 가능한 로컬 코퍼스까지</text>
+
+  <g>
+    <rect x="60" y="180" width="170" height="118" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <circle cx="86" cy="208" r="16" fill="#0f766e"/>
+    <text x="86" y="213" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">1</text>
+    <text x="112" y="213" class="step">파일 로드</text>
+    <text x="76" y="244" class="desc">PDF, DOCX, Markdown</text>
+    <text x="76" y="262" class="desc">또는 텍스트 메모</text>
+    <text x="76" y="282" class="note">로컬 소스만 사용</text>
+  </g>
+  <g>
+    <rect x="270" y="180" width="170" height="118" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <circle cx="296" cy="208" r="16" fill="#0f766e"/>
+    <text x="296" y="213" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">2</text>
+    <text x="322" y="213" class="step">청크 분리</text>
+    <text x="286" y="244" class="desc">stable chunk id</text>
+    <text x="286" y="262" class="desc">source metadata</text>
+    <text x="286" y="282" class="note">parser caveat 명시</text>
+  </g>
+  <g>
+    <rect x="480" y="180" width="170" height="118" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <circle cx="506" cy="208" r="16" fill="#0f766e"/>
+    <text x="506" y="213" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">3</text>
+    <text x="532" y="213" class="step">임베딩</text>
+    <text x="496" y="244" class="desc">ONNX embeddings</text>
+    <text x="496" y="262" class="desc">앱 내부에서 실행</text>
+    <text x="496" y="282" class="note">외부 API 호출 없음</text>
+  </g>
+  <g>
+    <rect x="690" y="180" width="170" height="118" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <circle cx="716" cy="208" r="16" fill="#0f766e"/>
+    <text x="716" y="213" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">4</text>
+    <text x="742" y="213" class="step">저장</text>
+    <text x="706" y="244" class="desc">SQLite chunks</text>
+    <text x="706" y="262" class="desc">and vectors</text>
+    <text x="706" y="282" class="note">모바일 sandbox</text>
+  </g>
+  <g>
+    <rect x="900" y="180" width="170" height="118" rx="12" fill="#ecfeff" stroke="#0f766e" stroke-width="2.3"/>
+    <circle cx="926" cy="208" r="16" fill="#0f766e"/>
+    <text x="926" y="213" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">5</text>
+    <text x="952" y="213" class="step">색인 쓰기</text>
+    <text x="916" y="244" class="desc">HNSW 벡터</text>
+    <text x="916" y="262" class="desc">BM25 희소 검색</text>
+    <text x="916" y="282" class="note">쿼리 준비 완료</text>
+  </g>
+
+  <path class="arrow-teal" d="M232 239 L268 239"/>
+  <path class="arrow-teal" d="M442 239 L478 239"/>
+  <path class="arrow-teal" d="M652 239 L688 239"/>
+  <path class="arrow-teal" d="M862 239 L898 239"/>
+
+  <text x="600" y="338" text-anchor="middle" class="note">인제스트는 느리고 상태를 갖는 경로다. parse, embed, persist, index build를 먼저 끝낸다.</text>
+
+  <line x1="60" y1="382" x2="1140" y2="382" stroke="#e2e8f0" stroke-width="1"/>
+
+  <rect x="60" y="420" width="160" height="32" rx="16" fill="#4f46e5"/>
+  <text x="140" y="441" text-anchor="middle" class="tag">쿼리 경로</text>
+  <text x="236" y="443" class="h2">사용자 질문에서 LLM-ready context까지</text>
+
+  <text x="60" y="486" class="phase" fill="#4338ca">PHASE A - 후보 검색</text>
+  <text x="60" y="506" class="note">query embedding과 lexical search를 별도 경로로 실행한다</text>
+
+  <g>
+    <rect x="60" y="526" width="168" height="110" rx="12" fill="#ffffff" stroke="#c7d2fe" stroke-width="1.5"/>
+    <text x="78" y="555" class="step">질문 입력</text>
+    <text x="78" y="584" class="desc">자연어 질문</text>
+    <text x="78" y="602" class="desc">또는 프롬프트</text>
+  </g>
+  <g>
+    <rect x="268" y="526" width="168" height="110" rx="12" fill="#ffffff" stroke="#c7d2fe" stroke-width="1.5"/>
+    <text x="286" y="555" class="step">질의 임베딩</text>
+    <text x="286" y="584" class="desc">ONNX runtime</text>
+    <text x="286" y="602" class="desc">동일 로컬 모델</text>
+  </g>
+  <g>
+    <rect x="476" y="526" width="168" height="110" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.8"/>
+    <text x="494" y="555" class="step">HNSW 벡터</text>
+    <text x="494" y="584" class="desc">의미 기반 근접</text>
+    <text x="494" y="602" class="desc">청크 후보</text>
+  </g>
+  <g>
+    <rect x="684" y="526" width="168" height="110" rx="12" fill="#eef2ff" stroke="#4f46e5" stroke-width="1.8"/>
+    <text x="702" y="555" class="step">BM25 희소 검색</text>
+    <text x="702" y="584" class="desc">정확 용어와</text>
+    <text x="702" y="602" class="desc">키워드 후보</text>
+  </g>
+  <g>
+    <rect x="892" y="526" width="208" height="110" rx="12" fill="#eef2ff" stroke="#4f46e5" stroke-width="2.3"/>
+    <text x="912" y="555" class="step">후보 결합</text>
+    <text x="912" y="584" class="desc">ranking fusion으로</text>
+    <text x="912" y="602" class="desc">context 청크 생성</text>
+  </g>
+
+  <path class="arrow-indigo" d="M230 581 L266 581"/>
+  <path class="arrow-indigo" d="M438 581 L474 581"/>
+  <path class="arrow-indigo" d="M646 581 L682 581"/>
+  <path class="arrow-indigo" d="M854 581 L890 581"/>
+
+  <text x="60" y="704" class="phase" fill="#4338ca">PHASE B - 응답 패키징과 증거</text>
+  <text x="60" y="724" class="note">vector recall과 hybrid ranking 동작을 분리해서 해석한다</text>
+
+  <g>
+    <rect x="60" y="746" width="330" height="88" rx="12" fill="#ffffff" stroke="#c7d2fe" stroke-width="1.5"/>
+    <text x="82" y="776" class="step">LLM-ready context</text>
+    <text x="82" y="802" class="desc">선택 청크, 출처 ref, score 반환</text>
+  </g>
+  <g>
+    <rect x="430" y="746" width="330" height="88" rx="12" fill="#ffffff" stroke="#c7d2fe" stroke-width="1.5"/>
+    <text x="452" y="776" class="step">Recall 품질 리포트</text>
+    <text x="452" y="802" class="desc">PR-P5-1.html: vector-only mean 1.00</text>
+  </g>
+  <g>
+    <rect x="800" y="746" width="330" height="88" rx="12" fill="#ffffff" stroke="#c7d2fe" stroke-width="1.5"/>
+    <text x="822" y="776" class="step">Latency 리포트</text>
+    <text x="822" y="802" class="desc">PR-P3 / PR-P4: activate와 embed timing</text>
+  </g>
+
+  <path class="arrow-soft" d="M998 638 L998 692 L225 692 L225 744"/>
+  <path class="arrow-soft" d="M998 638 L998 692 L595 692 L595 744"/>
+  <path class="arrow-soft" d="M998 638 L998 692 L965 692 L965 744"/>
+
+  <text x="600" y="870" text-anchor="middle" class="note">이 카드는 Gemma 데모 화면이 아니라 엔진 구현과 검증 증거로 읽혀야 한다.</text>
+</svg>

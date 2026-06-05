@@ -1,9 +1,9 @@
-import { LocaleText } from '@/i18n';
+import { LocaleText, LocalizedString } from '@/i18n';
 
 export interface Screen {
   title: LocaleText;
   desc: LocaleText;
-  imagePath?: string;
+  imagePath?: LocalizedString;
   scrollable?: boolean; // true면 긴 이미지를 스크롤 가능하게 표시
 }
 
@@ -14,11 +14,12 @@ export interface ProjectLink {
 
 export interface Project {
   id: string;
-  type: 'mobile' | 'web' | 'tablet';
+  type: 'mobile' | 'web' | 'tablet' | 'package';
   title: LocaleText;
   subtitle: LocaleText;
   description: LocaleText;
   techStack: string[];
+  evidenceBadges?: string[];
   implementationPoints?: LocaleText[];
   releaseLabel?: LocaleText;
   color: string;

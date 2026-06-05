@@ -92,6 +92,7 @@ const ProjectInfoPanel = ({
   const { t } = useLocale();
 
   const getTypeLabel = () => {
+    if (project.type === 'package') return t(ui.packageProject);
     if (project.type === 'mobile') return t(ui.mobileApplication);
     if (project.type === 'tablet') return t(ui.tabletApplication);
     return t(ui.webPlatform);
@@ -113,6 +114,11 @@ const ProjectInfoPanel = ({
           <p className="text-base text-[#8a7f70] italic font-serif mb-6">
             {t(project.subtitle)}
           </p>
+          {project.releaseLabel && (
+            <span className="inline-flex rounded-full border border-[#0f766e]/30 bg-[#eef7f5] px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider text-[#0f766e]">
+              {t(project.releaseLabel)}
+            </span>
+          )}
         </div>
 
         <div className="space-y-6">
@@ -127,6 +133,10 @@ const ProjectInfoPanel = ({
               {t(project.description)}
             </p>
           </div>
+
+          {project.type === 'package' && (
+            <PackageCaseStudyFlow project={project} />
+          )}
 
           {project.implementationPoints && project.implementationPoints.length > 0 && (
             <div>
@@ -186,6 +196,35 @@ const ProjectInfoPanel = ({
           )}
         </div>
       </div>
+    </div>
+  );
+};
+
+const PackageCaseStudyFlow = ({ project }: { project: Project }) => {
+  const { t } = useLocale();
+
+  return (
+    <div>
+      <h4 className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#8a7f70] mb-3">
+        — {t(ui.caseStudyFlow)}
+      </h4>
+      <ol className="space-y-2.5">
+        {project.screens.map((screen, index) => (
+          <li key={screen.title.en} className="rounded-lg border border-[#e8dfd0] bg-[#faf7f2] px-3 py-2.5">
+            <div className="flex items-baseline gap-2">
+              <span className="font-mono text-[10px] text-[#0f766e]">
+                {String(index + 1).padStart(2, '0')}
+              </span>
+              <strong className="text-sm font-semibold text-[#1f1b16]">
+                {t(screen.title)}
+              </strong>
+            </div>
+            <p className="mt-1 text-xs leading-relaxed text-[#4a4339]">
+              {t(screen.desc)}
+            </p>
+          </li>
+        ))}
+      </ol>
     </div>
   );
 };

@@ -1,10 +1,10 @@
 'use client';
 
-import { Smartphone, Monitor, Tablet } from 'lucide-react';
+import { Smartphone, Monitor, Tablet, Package as PackageIcon } from 'lucide-react';
 import { Project } from '@/types/project';
 import ProjectIcon from './ProjectIcon';
 import ScreenImage from './ScreenImage';
-import { useLocale, ui } from '@/i18n';
+import { LocalizedString, useLocale, ui } from '@/i18n';
 
 interface ProjectCardProps {
   project: Project;
@@ -14,17 +14,20 @@ interface ProjectCardProps {
 
 const ProjectCard = ({ project, index, onClick }: ProjectCardProps) => {
   const { t } = useLocale();
-  const visibleTechStack = project.techStack.slice(0, 4);
-  const remainingTechCount = Math.max(0, project.techStack.length - visibleTechStack.length);
+  const cardBadges = project.evidenceBadges ?? project.techStack;
+  const visibleTechStack = cardBadges.slice(0, 4);
+  const remainingTechCount = Math.max(0, cardBadges.length - visibleTechStack.length);
   const title = t(project.title).replace(/\s+/g, ' ');
 
   const getDeviceIcon = () => {
+    if (project.type === 'package') return <PackageIcon size={12} />;
     if (project.type === 'mobile') return <Smartphone size={12} />;
     if (project.type === 'tablet') return <Tablet size={12} />;
     return <Monitor size={12} />;
   };
 
   const getDeviceLabel = () => {
+    if (project.type === 'package') return t(ui.devicePackage);
     if (project.type === 'mobile') return t(ui.deviceApp);
     if (project.type === 'tablet') return t(ui.deviceTablet);
     return t(ui.deviceWeb);
@@ -35,7 +38,7 @@ const ProjectCard = ({ project, index, onClick }: ProjectCardProps) => {
       type="button"
       onClick={() => onClick(project)}
       aria-label={`Open ${title} project details`}
-      className="group relative w-full appearance-none bg-white rounded-2xl overflow-hidden border border-[#e8dfd0] text-left hover:border-[#b8543a]/60 transition-all duration-300 cursor-pointer hover:shadow-[0_20px_50px_-20px_rgba(184,84,58,0.25)] hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b8543a]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#faf7f2]"
+      className="group relative flex w-full flex-col appearance-none bg-white rounded-2xl overflow-hidden border border-[#e8dfd0] text-left hover:border-[#b8543a]/60 transition-all duration-300 cursor-pointer hover:shadow-[0_20px_50px_-20px_rgba(184,84,58,0.25)] hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b8543a]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#faf7f2]"
     >
       {/* Thumbnail Area */}
       <div
@@ -70,7 +73,7 @@ const ProjectCard = ({ project, index, onClick }: ProjectCardProps) => {
           {t(project.description)}
         </p>
         <p className="text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.25em] text-[#8a7f70] font-mono mb-2">
-          — {t(ui.coreStack)}
+          — {project.evidenceBadges ? t(ui.evidenceBadges) : t(ui.coreStack)}
         </p>
         <div className="flex flex-wrap items-center gap-2">
           {visibleTechStack.map((tech) => (
@@ -105,6 +108,16 @@ const ProjectThumbnail = ({ project, alt }: { project: Project; alt: string }) =
       <div className="relative z-[1] transform group-hover:scale-105 transition-transform duration-500">
         <ProjectIcon iconType={project.iconType} size={44} />
       </div>
+    );
+  }
+
+  if (project.type === 'package') {
+    return (
+      <PackageArchitectureThumbnail
+        project={project}
+        imagePath={firstScreen.imagePath}
+        alt={`${alt} architecture`}
+      />
     );
   }
 
@@ -155,5 +168,33 @@ const ProjectThumbnail = ({ project, alt }: { project: Project; alt: string }) =
     </div>
   );
 };
+
+const PackageArchitectureThumbnail = ({
+  project,
+  imagePath,
+  alt,
+}: {
+  project: Project;
+  imagePath: LocalizedString;
+  alt: string;
+}) => (
+  <div className="relative z-[1] w-[84%] max-w-[290px] aspect-[16/10] rounded-xl border border-white/80 bg-white/95 shadow-2xl overflow-hidden transform group-hover:scale-105 transition-transform duration-500">
+    <div className="absolute left-0 right-0 top-0 z-10 flex items-center justify-between border-b border-[#d9e4e1] bg-white/90 px-3 py-1.5">
+      <span className="font-mono text-[8px] uppercase tracking-[0.2em] text-[#0f766e]">
+        RAG Pipeline
+      </span>
+      <span className="h-1.5 w-1.5 rounded-full bg-[#0f766e]" />
+    </div>
+    <div className="absolute inset-0 pt-6">
+      <ScreenImage
+        variant="fill"
+        src={imagePath}
+        alt={alt}
+        fallbackGradient={project.color}
+        fit="contain"
+      />
+    </div>
+  </div>
+);
 
 export default ProjectCard;

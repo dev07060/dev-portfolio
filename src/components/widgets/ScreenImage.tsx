@@ -3,11 +3,13 @@
 import Image from 'next/image';
 import { ImageOff, Loader2 } from 'lucide-react';
 import { useState } from 'react';
+import { LocalizedString, localize, useLocale } from '@/i18n';
 
 type BaseProps = {
-  src: string;
+  src: LocalizedString;
   alt: string;
   fallbackGradient?: string;
+  fit?: 'cover' | 'contain';
   priority?: boolean;
 };
 
@@ -18,7 +20,9 @@ type Props =
 const DEFAULT_GRADIENT = 'from-slate-700 to-slate-900';
 
 const ScreenImage = (props: Props) => {
-  const { src, alt, fallbackGradient = DEFAULT_GRADIENT, priority, variant } = props;
+  const { locale } = useLocale();
+  const { src: rawSrc, alt, fallbackGradient = DEFAULT_GRADIENT, fit = 'cover', priority, variant } = props;
+  const src = localize(rawSrc, locale);
   const [imageState, setImageState] = useState({
     src,
     loaded: false,
@@ -59,7 +63,7 @@ const ScreenImage = (props: Props) => {
           priority={priority}
           onLoad={() => setImageState({ src, loaded: true, error: false })}
           onError={() => setImageState({ src, loaded: false, error: true })}
-          className={`object-cover transition-opacity duration-300 ${
+          className={`${fit === 'contain' ? 'object-contain p-3' : 'object-cover'} transition-opacity duration-300 ${
             loaded ? 'opacity-100' : 'opacity-0'
           }`}
         />

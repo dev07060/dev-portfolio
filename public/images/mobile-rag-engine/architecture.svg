@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 980" font-family="-apple-system, 'Apple SD Gothic Neo', 'Helvetica Neue', Arial, sans-serif" role="img" aria-labelledby="title desc">
+  <title id="title">mobile_rag_engine layered architecture</title>
+  <desc id="desc">Layered architecture for the Flutter package: app API, ingest, native core, retrieval, and output evidence.</desc>
+  <defs>
+    <style>
+      .h1 { font-size: 27px; font-weight: 700; fill: #0f172a; letter-spacing: -0.3px; }
+      .lead { font-size: 13px; fill: #475569; }
+      .h2 { font-size: 12px; font-weight: 700; fill: #ffffff; letter-spacing: 1.1px; }
+      .layer { font-size: 17px; font-weight: 700; fill: #0f172a; }
+      .step { font-size: 14.5px; font-weight: 650; fill: #0f172a; }
+      .desc { font-size: 12.2px; fill: #475569; }
+      .note { font-size: 11.5px; fill: #64748b; font-style: italic; }
+      .arrow { stroke: #0f172a; stroke-width: 2.1; fill: none; marker-end: url(#arr); }
+    </style>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#0f172a"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="980" fill="#f8fafc"/>
+  <text x="60" y="56" class="h1">mobile_rag_engine - layered system architecture</text>
+  <text x="60" y="82" class="lead">A Flutter package facade delegates the heavy local RAG path to Dart services, Rust FFI, ONNX, SQLite, and hybrid indexes.</text>
+
+  <rect x="60" y="116" width="100" height="28" rx="14" fill="#0f766e"/>
+  <text x="110" y="135" text-anchor="middle" class="h2">APP API</text>
+  <text x="176" y="137" class="layer">Package boundary exposed to Flutter products</text>
+
+  <g>
+    <rect x="60" y="160" width="340" height="94" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="80" y="187" class="step">Flutter facade</text>
+    <text x="80" y="212" class="desc">Typed API for ingest, query, and context assembly</text>
+    <text x="80" y="232" class="note">client apps call package methods, not native internals</text>
+  </g>
+  <g>
+    <rect x="430" y="160" width="340" height="94" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="450" y="187" class="step">Example app + docs</text>
+    <text x="450" y="212" class="desc">Runnable integration path for package adopters</text>
+    <text x="450" y="232" class="note">pub.dev 0.18.6 release evidence</text>
+  </g>
+  <g>
+    <rect x="800" y="160" width="340" height="94" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="820" y="187" class="step">Dart task queue</text>
+    <text x="820" y="212" class="desc">Coordinates ingest jobs, query calls, and progress</text>
+    <text x="820" y="232" class="note">keeps UI layer separate from engine state</text>
+  </g>
+
+  <path class="arrow" d="M600 258 L600 292"/>
+
+  <rect x="60" y="306" width="100" height="28" rx="14" fill="#b45309"/>
+  <text x="110" y="325" text-anchor="middle" class="h2">INGEST</text>
+  <text x="176" y="327" class="layer">Document preparation before local indexing</text>
+
+  <g>
+    <rect x="60" y="350" width="340" height="118" rx="12" fill="#fef3c7" stroke="#b45309" stroke-width="1.5"/>
+    <text x="80" y="376" class="step">Load source files</text>
+    <text x="80" y="400" class="desc">PDF, DOCX, Markdown, text notes</text>
+    <text x="80" y="419" class="desc">normalization before chunking</text>
+    <text x="80" y="444" class="note">OCR-required PDFs remain out of scope</text>
+  </g>
+  <g>
+    <rect x="430" y="350" width="340" height="118" rx="12" fill="#fefce8" stroke="#ca8a04" stroke-width="1.5"/>
+    <text x="450" y="376" class="step">Chunk + metadata</text>
+    <text x="450" y="400" class="desc">stable chunk ids, source refs, offsets</text>
+    <text x="450" y="419" class="desc">for retrieval and recall comparison</text>
+    <text x="450" y="444" class="note">complex parser failures are isolated caveats</text>
+  </g>
+  <g>
+    <rect x="800" y="350" width="340" height="118" rx="12" fill="#ecfeff" stroke="#0891b2" stroke-width="1.5"/>
+    <text x="820" y="376" class="step">Write local corpus</text>
+    <text x="820" y="400" class="desc">SQLite rows keep text, metadata, embeddings</text>
+    <text x="820" y="419" class="desc">as the single on-device source</text>
+    <text x="820" y="444" class="note">no remote vector DB dependency</text>
+  </g>
+  <path class="arrow" d="M402 409 L428 409"/>
+  <path class="arrow" d="M772 409 L798 409"/>
+
+  <path class="arrow" d="M600 472 L600 506"/>
+
+  <rect x="60" y="520" width="130" height="28" rx="14" fill="#4338ca"/>
+  <text x="125" y="539" text-anchor="middle" class="h2">NATIVE CORE</text>
+  <text x="206" y="541" class="layer">Runtime work that belongs below the Flutter UI layer</text>
+
+  <g>
+    <rect x="60" y="564" width="340" height="118" rx="12" fill="#eef2ff" stroke="#6366f1" stroke-width="1.5"/>
+    <text x="80" y="590" class="step">Rust FFI search core</text>
+    <text x="80" y="614" class="desc">native hot path for index and retrieval work</text>
+    <text x="80" y="633" class="desc">called through the package bridge</text>
+    <text x="80" y="658" class="note">Rust search measured around 1-2ms</text>
+  </g>
+  <g>
+    <rect x="430" y="564" width="340" height="118" rx="12" fill="#eff6ff" stroke="#0284c7" stroke-width="1.5"/>
+    <text x="450" y="590" class="step">ONNX embedding runtime</text>
+    <text x="450" y="614" class="desc">local embedding for chunks and queries</text>
+    <text x="450" y="633" class="desc">without external embedding API calls</text>
+    <text x="450" y="658" class="note">warm embed measured around 26.7ms</text>
+  </g>
+  <g>
+    <rect x="800" y="564" width="340" height="118" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+    <text x="820" y="590" class="step">SQLite chunk store</text>
+    <text x="820" y="614" class="desc">text, metadata, and vectors are persisted</text>
+    <text x="820" y="633" class="desc">inside the mobile app sandbox</text>
+    <text x="820" y="658" class="note">activation timing tracked separately</text>
+  </g>
+
+  <path class="arrow" d="M600 686 L600 720"/>
+
+  <rect x="60" y="734" width="110" height="28" rx="14" fill="#7c3aed"/>
+  <text x="115" y="753" text-anchor="middle" class="h2">RETRIEVAL</text>
+  <text x="186" y="755" class="layer">Two candidate paths merged into context</text>
+
+  <g>
+    <rect x="60" y="778" width="530" height="106" rx="12" fill="#faf5ff" stroke="#a855f7" stroke-width="1.5"/>
+    <text x="80" y="805" class="step">HNSW vector path</text>
+    <text x="80" y="830" class="desc">semantic nearest-neighbor candidates from embedded chunks</text>
+    <text x="80" y="851" class="note">vector-only recall validated in PR-P5-1.html</text>
+  </g>
+  <g>
+    <rect x="610" y="778" width="530" height="106" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
+    <text x="630" y="805" class="step">BM25 sparse path</text>
+    <text x="630" y="830" class="desc">keyword evidence path for exact term matches</text>
+    <text x="630" y="851" class="note">fusion caveat documented for hybrid ranking</text>
+  </g>
+
+  <path class="arrow" d="M600 888 L600 922"/>
+
+  <rect x="60" y="936" width="110" height="28" rx="14" fill="#0f172a"/>
+  <text x="115" y="955" text-anchor="middle" class="h2">OUTPUT</text>
+  <text x="190" y="957" class="layer">LLM-ready context + benchmark evidence, returned to the Flutter product</text>
+</svg>
