@@ -1,7 +1,6 @@
 // Widget Components
 export { default as ProfileHeader } from './ProfileHeader';
 export { default as ConversionHero } from './ConversionHero';
-export { default as ProofStrip } from './ProofStrip';
 export { default as FeaturedWork } from './FeaturedWork';
 export { default as ProjectCard } from './ProjectCard';
 export { default as ProjectGrid } from './ProjectGrid';

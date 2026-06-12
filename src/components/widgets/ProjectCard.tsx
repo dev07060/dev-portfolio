@@ -1,20 +1,40 @@
 'use client';
 
 import { Smartphone, Monitor, Tablet, Package as PackageIcon } from 'lucide-react';
-import { Project } from '@/types/project';
+import { Project, Screen } from '@/types/project';
 import ProjectIcon from './ProjectIcon';
 import ScreenImage from './ScreenImage';
 import { LocalizedString, useLocale, ui } from '@/i18n';
+import { Audience } from '@/data/conversion';
 
 interface ProjectCardProps {
   project: Project;
+  audience?: Audience;
   index?: number;
   onClick: (project: Project) => void;
 }
 
-const ProjectCard = ({ project, index, onClick }: ProjectCardProps) => {
+export const resolveProjectCard = (project: Project, audience: Audience) => {
+  const override = project.audienceOverrides?.[audience];
+  const fallbackScreen = project.screens[0];
+  const thumbnailScreen =
+    typeof override?.thumbnailScreenIndex === 'number'
+      ? project.screens[override.thumbnailScreenIndex] ?? fallbackScreen
+      : fallbackScreen;
+
+  return {
+    variant: override?.variant ?? 'default',
+    description: override?.description ?? project.description,
+    evidenceBadges: override?.evidenceBadges ?? project.evidenceBadges,
+    highlight: override?.highlight ?? project.implementationPoints?.[0],
+    thumbnailScreen,
+  };
+};
+
+const ProjectCard = ({ project, audience = 'client', index, onClick }: ProjectCardProps) => {
   const { t } = useLocale();
-  const cardBadges = project.evidenceBadges ?? project.techStack;
+  const card = resolveProjectCard(project, audience);
+  const cardBadges = card.evidenceBadges ?? project.techStack;
   const visibleTechStack = cardBadges.slice(0, 4);
   const remainingTechCount = Math.max(0, cardBadges.length - visibleTechStack.length);
   const title = t(project.title).replace(/\s+/g, ' ');
@@ -50,7 +70,7 @@ const ProjectCard = ({ project, index, onClick }: ProjectCardProps) => {
             {String(index + 1).padStart(2, '0')}
           </span>
         )}
-        <ProjectThumbnail project={project} alt={title} />
+        <ProjectThumbnail project={project} screen={card.thumbnailScreen} alt={title} />
         <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-md px-2 py-1 rounded-full text-[11px] font-mono text-[#4a4339] flex items-center gap-1">
           {getDeviceIcon()}
           {getDeviceLabel()}
@@ -70,10 +90,10 @@ const ProjectCard = ({ project, index, onClick }: ProjectCardProps) => {
           </div>
         )}
         <p className="text-sm text-[#4a4339] mb-5 line-clamp-2 leading-relaxed">
-          {t(project.description)}
+          {t(card.description)}
         </p>
         <p className="text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.25em] text-[#8a7f70] font-mono mb-2">
-          — {project.evidenceBadges ? t(ui.evidenceBadges) : t(ui.coreStack)}
+          — {card.evidenceBadges ? t(ui.evidenceBadges) : t(ui.coreStack)}
         </p>
         <div className="flex flex-wrap items-center gap-2">
           {visibleTechStack.map((tech) => (
@@ -90,9 +110,9 @@ const ProjectCard = ({ project, index, onClick }: ProjectCardProps) => {
             </span>
           )}
         </div>
-        {project.implementationPoints && project.implementationPoints.length > 0 && (
+        {card.highlight && (
           <p className="mt-4 pt-4 border-t border-[#e8dfd0] text-xs text-[#8a7f70] italic line-clamp-2 leading-relaxed">
-            “{t(project.implementationPoints[0])}”
+            “{t(card.highlight)}”
           </p>
         )}
       </div>
@@ -100,8 +120,16 @@ const ProjectCard = ({ project, index, onClick }: ProjectCardProps) => {
   );
 };
 
-const ProjectThumbnail = ({ project, alt }: { project: Project; alt: string }) => {
-  const firstScreen = project.screens[0];
+const ProjectThumbnail = ({
+  project,
+  screen,
+  alt,
+}: {
+  project: Project;
+  screen?: Screen;
+  alt: string;
+}) => {
+  const firstScreen = screen;
 
   if (!firstScreen?.imagePath) {
     return (
@@ -141,9 +169,9 @@ const ProjectThumbnail = ({ project, alt }: { project: Project; alt: string }) =
 
   if (project.type === 'tablet') {
     return (
-      <div className="relative z-[1] h-[116px] w-[82px] sm:h-[146px] sm:w-[102px] rounded-[1.35rem] border-[6px] border-white/85 bg-white/85 shadow-2xl overflow-hidden transform group-hover:scale-105 transition-transform duration-500">
+      <div className="relative z-[1] h-[116px] w-[82px] sm:h-[146px] sm:w-[102px] rounded-[1rem] border-[6px] border-white/85 bg-white/85 shadow-2xl overflow-hidden transform group-hover:scale-105 transition-transform duration-500">
         <div className="absolute top-1 left-1/2 z-10 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-white/80" />
-        <div className="relative h-full w-full rounded-[1rem] overflow-hidden bg-slate-800">
+        <div className="relative h-full w-full rounded-[0.75rem] overflow-hidden bg-slate-800">
           <ScreenImage
             variant="fill"
             src={firstScreen.imagePath}
@@ -156,8 +184,8 @@ const ProjectThumbnail = ({ project, alt }: { project: Project; alt: string }) =
   }
 
   return (
-    <div className="relative z-[1] h-[118px] w-[58px] sm:h-[148px] sm:w-[72px] rounded-[1.35rem] border-[5px] border-white/85 bg-white/85 shadow-2xl overflow-hidden transform group-hover:scale-105 transition-transform duration-500">
-      <div className="relative h-full w-full rounded-[1rem] overflow-hidden bg-slate-800">
+    <div className="relative z-[1] h-[118px] w-[58px] sm:h-[148px] sm:w-[72px] rounded-[1rem] border-[5px] border-white/85 bg-white/85 shadow-2xl overflow-hidden transform group-hover:scale-105 transition-transform duration-500">
+      <div className="relative h-full w-full rounded-[0.75rem] overflow-hidden bg-slate-800">
         <ScreenImage
           variant="fill"
           src={firstScreen.imagePath}

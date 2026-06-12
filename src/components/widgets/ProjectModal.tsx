@@ -11,6 +11,7 @@ interface ProjectModalProps {
   project: Project;
   isAnimating: boolean;
   isPresentationMode: boolean;
+  currentScreenIndex: number;
   onClose: () => void;
   onEnterPresentation: (e: React.MouseEvent | React.KeyboardEvent) => void;
 }
@@ -19,6 +20,7 @@ const ProjectModal = ({
   project,
   isAnimating,
   isPresentationMode,
+  currentScreenIndex,
   onClose,
   onEnterPresentation,
 }: ProjectModalProps) => {
@@ -72,6 +74,7 @@ const ProjectModal = ({
         {/* Right Side: The Device Frame (now larger) */}
         <DeviceFrame
           project={project}
+          currentScreenIndex={currentScreenIndex}
           onEnterPresentation={onEnterPresentation}
         />
       </div>
@@ -202,12 +205,34 @@ const ProjectInfoPanel = ({
 
 const PackageCaseStudyFlow = ({ project }: { project: Project }) => {
   const { t } = useLocale();
+  const architectureScreen =
+    project.screens.find((screen) => screen.title.en === 'Architecture') ?? project.screens[0];
 
   return (
-    <div>
+    <div data-package-detail="architecture-first">
       <h4 className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#8a7f70] mb-3">
         — {t(ui.caseStudyFlow)}
       </h4>
+      {architectureScreen && (
+        <div className="mb-3 rounded-lg border border-[#0f766e]/25 bg-[#eef7f5] px-3 py-2.5">
+          <div className="flex items-baseline justify-between gap-3">
+            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#0f766e]">
+              {t({ en: 'Package focus', ko: '패키지 초점' })}
+            </span>
+            {project.releaseLabel && (
+              <span className="shrink-0 font-mono text-[10px] uppercase tracking-[0.14em] text-[#0f766e]">
+                {t(project.releaseLabel)}
+              </span>
+            )}
+          </div>
+          <strong className="mt-2 block text-sm font-semibold text-[#1f1b16]">
+            {t(architectureScreen.title)}
+          </strong>
+          <p className="mt-1 text-xs leading-relaxed text-[#4a4339]">
+            {t(architectureScreen.desc)}
+          </p>
+        </div>
+      )}
       <ol className="space-y-2.5">
         {project.screens.map((screen, index) => (
           <li key={screen.title.en} className="rounded-lg border border-[#e8dfd0] bg-[#faf7f2] px-3 py-2.5">

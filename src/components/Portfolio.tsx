@@ -6,7 +6,6 @@ import { projects } from '@/data/projects';
 import { localize, useLocale } from '@/i18n';
 import {
   ConversionHero,
-  ProofStrip,
   FeaturedWork,
   ProjectGrid,
   ProjectModal,
@@ -14,28 +13,67 @@ import {
   Footer,
   OpenSourceBanner,
 } from './widgets';
-import { conversionSections, featuredProjectIds } from '@/data/conversion';
+import {
+  allWorkProjectIds,
+  audienceContent,
+  Audience,
+  featuredProjectIds,
+} from '@/data/conversion';
 
-const Portfolio = () => {
+interface PortfolioProps {
+  initialAudience?: Audience;
+}
+
+const Portfolio = ({ initialAudience = 'client' }: PortfolioProps) => {
   const { locale } = useLocale();
+  const audience = initialAudience;
+  const sectionCopy = audienceContent[audience];
   // State
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
   const [isPresentationMode, setIsPresentationMode] = useState(false);
   const [currentScreenIndex, setCurrentScreenIndex] = useState(0);
-  const featuredProjectSet = new Set<string>(featuredProjectIds);
   const featuredProjects = featuredProjectIds
     .map((id) => projects.find((project) => project.id === id))
     .filter((project): project is Project => Boolean(project));
-  const moreWorkProjects = projects.filter((project) => !featuredProjectSet.has(project.id));
+  const allWorkProjects = allWorkProjectIds
+    .map((id) => projects.find((project) => project.id === id))
+    .filter((project): project is Project => Boolean(project));
 
   // Handlers
   const handleProjectClick = (project: Project) => {
+    const preferredScreenIndex =
+      project.type === 'package'
+        ? project.audienceOverrides?.[audience]?.thumbnailScreenIndex ?? 0
+        : 0;
+
     setSelectedProject(project);
     setIsAnimating(true);
-    setCurrentScreenIndex(0);
+    setCurrentScreenIndex(preferredScreenIndex);
     setIsPresentationMode(false);
   };
+  const allWorkSection = (
+    <ProjectGrid
+      projects={allWorkProjects}
+      audience={audience}
+      onProjectClick={handleProjectClick}
+      heading={sectionCopy.moreWork.heading}
+      description={sectionCopy.moreWork.description}
+    />
+  );
+  const openSourceSection = <OpenSourceBanner />;
+  const clientSupportingSections = (
+    <>
+      {allWorkSection}
+      {openSourceSection}
+    </>
+  );
+  const developerSupportingSections = (
+    <>
+      {openSourceSection}
+      {allWorkSection}
+    </>
+  );
 
   const closeModal = () => {
     setIsAnimating(false);
@@ -128,24 +166,17 @@ const Portfolio = () => {
   return (
     <div className="min-h-screen bg-[#faf7f2] text-[#1f1b16] font-sans">
       {/* Conversion-first portfolio structure */}
-      <ConversionHero />
-
-      {/* Proof Strip */}
-      <ProofStrip />
+      <ConversionHero audience={audience} />
 
       {/* Featured Work */}
-      <FeaturedWork projects={featuredProjects} onProjectClick={handleProjectClick} />
-
-      {/* Open Source Packages Banner */}
-      <OpenSourceBanner />
+      <FeaturedWork
+        projects={featuredProjects}
+        audience={audience}
+        onProjectClick={handleProjectClick}
+      />
 
       {/* Supporting Work */}
-      <ProjectGrid
-        projects={moreWorkProjects}
-        onProjectClick={handleProjectClick}
-        heading={conversionSections.moreWork.heading}
-        description={conversionSections.moreWork.description}
-      />
+      {audience === 'client' ? clientSupportingSections : developerSupportingSections}
 
       {/* Footer */}
       <Footer />
@@ -156,6 +187,7 @@ const Portfolio = () => {
           project={selectedProject}
           isAnimating={isAnimating}
           isPresentationMode={isPresentationMode}
+          currentScreenIndex={currentScreenIndex}
           onClose={closeModal}
           onEnterPresentation={enterPresentationMode}
         />

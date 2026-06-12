@@ -35,7 +35,7 @@ const packages: PackageInfo[] = [
         ko: 'Rust 코어 기반 Zero-copy 임베딩 전송',
       },
     ],
-    version: '0.18.5',
+    version: '0.18.6',
     techStack: ['Rust', 'Flutter FFI', 'ONNX Runtime', 'HNSW', 'BM25', 'SQLite'],
     pubDevUrl: 'https://pub.dev/packages/mobile_rag_engine',
     githubUrl: 'https://github.com/dev07060/mobile_rag_engine',

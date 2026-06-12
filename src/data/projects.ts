@@ -31,6 +31,34 @@ export const projects: Project[] = [
         ko: 'golden_retrieval_v1(74 dev / 30 holdout) nDCG@5 / MRR@10 / Recall@10 회귀 게이트로 릴리스 차단.',
       },
     ],
+    audienceOverrides: {
+      client: {
+        variant: 'live-query',
+        thumbnailScreenIndex: 2,
+        description: {
+          en: 'citation-grounded legal RAG API that returns statute chunks, citations, and live query results for legal-domain LLM products.',
+          ko: '법률 도메인 LLM 제품에 조문 chunk, citation, live query 결과를 반환하는 citation 기반 법령 RAG API입니다.',
+        },
+        evidenceBadges: ['FastAPI', 'Milvus', 'Citations', 'Bronze/Silver/Gold', 'evaluation'],
+        highlight: {
+          en: 'Built citation-grounded legal RAG with FastAPI, Milvus, Bronze/Silver/Gold data layers, and evaluation gates.',
+          ko: 'FastAPI, Milvus, Bronze/Silver/Gold 데이터 계층, evaluation gate를 갖춘 citation 기반 legal RAG를 구축했습니다.',
+        },
+      },
+      developer: {
+        variant: 'architecture',
+        thumbnailScreenIndex: 3,
+        description: {
+          en: 'Hybrid retrieval backend with Bronze/Silver/Gold lake, Milvus dense/sparse ranking, citation metadata, and evaluation gates.',
+          ko: 'Bronze/Silver/Gold 레이크, Milvus dense/sparse ranking, citation metadata, evaluation gate를 갖춘 hybrid retrieval 백엔드입니다.',
+        },
+        evidenceBadges: ['FastAPI', 'Milvus', 'RRFRanker', 'Bronze/Silver/Gold', 'evaluation'],
+        highlight: {
+          en: 'Gated releases on nDCG@5 / MRR@10 / Recall@10 against a golden retrieval set.',
+          ko: 'golden retrieval set 기준 nDCG@5 / MRR@10 / Recall@10으로 릴리스를 게이트했습니다.',
+        },
+      },
+    },
     techStack: ['Python', 'FastAPI', 'PostgreSQL', 'Milvus', 'SBERT', 'Docker'],
     color: 'from-amber-500 to-orange-600',
     iconType: 'scale',
@@ -122,6 +150,34 @@ export const projects: Project[] = [
         ko: '동의 기반 AI 요약 생성, 서버 readiness 확인, 클라이언트 세션 처리, 로컬 fallback 요약 흐름을 구축했습니다.',
       },
     ],
+    audienceOverrides: {
+      client: {
+        variant: 'product-screenshot',
+        thumbnailScreenIndex: 0,
+        description: {
+          en: 'Flutter product flow for PDF import, local indexing, clause analysis, source highlight, and productization of insurance contract review.',
+          ko: '보험 약관 검토를 위한 PDF import, local indexing, clause analysis, source highlight, productization 흐름을 갖춘 Flutter 제품입니다.',
+        },
+        evidenceBadges: ['PDF import', 'local indexing', 'clause analysis', 'source highlight', 'productization'],
+        highlight: {
+          en: 'Connected review cards back to exact PDF evidence so users can inspect the original clause.',
+          ko: '검토 카드를 정확한 PDF 근거 위치로 연결해 사용자가 원문 조항을 확인할 수 있게 했습니다.',
+        },
+      },
+      developer: {
+        variant: 'product-screenshot',
+        thumbnailScreenIndex: 7,
+        description: {
+          en: 'Flutter app using pdfrx, mobile_rag_engine, local SQLite/HNSW/BM25 search, clause ranking, and consent-gated AI summaries.',
+          ko: 'pdfrx, mobile_rag_engine, 로컬 SQLite/HNSW/BM25 검색, 조항 랭킹, 동의 기반 AI 요약을 연결한 Flutter 앱입니다.',
+        },
+        evidenceBadges: ['Flutter', 'pdfrx', 'mobile_rag_engine', 'PDF highlights', 'QA'],
+        highlight: {
+          en: 'Preserved page rectangles during ingestion so search and analysis results can reopen the exact source highlight.',
+          ko: '인제스션 단계에서 페이지 좌표를 보존해 검색·분석 결과가 정확한 원문 하이라이트로 돌아가게 했습니다.',
+        },
+      },
+    },
     techStack: ['Flutter', 'Dart', 'Riverpod', 'GoRouter', 'pdfrx', 'mobile_rag_engine'],
     color: 'from-sky-500 to-emerald-500',
     iconType: 'layers',
@@ -366,8 +422,8 @@ export const projects: Project[] = [
       ko: '모바일에서 완전 로컬 RAG를 실행하는 Flutter 패키지',
     },
     description: {
-      en: 'A published Flutter package that keeps document ingestion, ONNX embeddings, SQLite-backed indexes, HNSW/BM25 retrieval, and LLM-ready context assembly on the device.',
-      ko: '문서 인제스션, ONNX 임베딩, SQLite 기반 색인, HNSW/BM25 검색, LLM-ready context 구성을 디바이스 안에서 처리하는 공개 Flutter 패키지입니다.',
+      en: 'A published Flutter package that adds on-device document search and RAG to Flutter apps without uploading documents to a server.',
+      ko: 'Flutter 앱에 서버 업로드 없는 온디바이스 문서 검색과 RAG 기능을 붙일 수 있는 공개 Flutter 패키지입니다.',
     },
     implementationPoints: [
       {
@@ -387,20 +443,48 @@ export const projects: Project[] = [
         ko: '질의 임베딩, HNSW 벡터 검색, BM25 sparse 검색, 후보 결합, context assembly까지 쿼리 경로를 구현했습니다.',
       },
       {
-        en: 'Separated evidence by purpose: PR-P5-1 for recall quality, PR-P3/PR-P4 for device latency, and caveats for hybrid ranking.',
-        ko: 'PR-P5-1은 recall 품질, PR-P3/PR-P4는 디바이스 latency, hybrid ranking은 caveat로 나눠 증거를 정리했습니다.',
+        en: 'Kept the package reusable for product work such as Easy Contract Viewer, where local indexing and source-grounded context are core features.',
+        ko: 'Easy Contract Viewer 같은 제품에서 로컬 색인과 원문 기반 context 생성을 재사용할 수 있는 기반 기술로 구성했습니다.',
       },
     ],
+    audienceOverrides: {
+      client: {
+        variant: 'architecture',
+        thumbnailScreenIndex: 1,
+        description: {
+          en: 'A published Flutter package for adding private, product-ready local retrieval and RAG to mobile apps without uploading documents to a server.',
+          ko: '문서를 서버에 업로드하지 않고 모바일 앱에 비공개 로컬 검색과 제품화 가능한 RAG 기능을 붙이는 공개 Flutter 패키지입니다.',
+        },
+        evidenceBadges: ['pub.dev 0.18.6', 'GitHub', 'on-device RAG', 'product-ready local retrieval'],
+        highlight: {
+          en: 'Reusable foundation for products like Easy Contract Viewer: local document indexing, retrieval, and LLM-ready context inside the app.',
+          ko: 'Easy Contract Viewer 같은 제품에 재사용 가능한 기반 기술입니다. 앱 내부에서 로컬 문서 색인, 검색, LLM-ready context 생성을 처리합니다.',
+        },
+      },
+      developer: {
+        variant: 'architecture',
+        thumbnailScreenIndex: 1,
+        description: {
+          en: 'On-device RAG package architecture: Flutter facade, Dart orchestration, Rust FFI core, ONNX runtime, SQLite store, and HNSW/BM25 retrieval paths.',
+          ko: 'Flutter facade, Dart orchestration, Rust FFI core, ONNX runtime, SQLite store, HNSW/BM25 검색 경로로 나뉜 온디바이스 RAG 패키지 아키텍처입니다.',
+        },
+        evidenceBadges: ['Flutter API', 'Dart orchestration', 'Rust FFI', 'ONNX', 'SQLite', 'HNSW/BM25'],
+        highlight: {
+          en: 'Flutter API over Dart orchestration, Rust FFI search core, ONNX embeddings, SQLite storage, and HNSW/BM25 retrieval paths.',
+          ko: 'Flutter API, Dart orchestration, Rust FFI 검색 코어, ONNX 임베딩, SQLite 저장소, HNSW/BM25 검색 경로로 구성했습니다.',
+        },
+      },
+    },
     techStack: ['Flutter', 'Dart', 'Rust FFI', 'ONNX Runtime', 'SQLite', 'HNSW/BM25'],
     evidenceBadges: ['pub.dev', 'GitHub', 'Rust FFI', 'ONNX', 'HNSW/BM25'],
     color: 'from-blue-500 to-cyan-400',
     iconType: 'brain',
     screens: [
       {
-        title: { en: 'Problem', ko: '문제 정의' },
+        title: { en: 'Package Overview', ko: '패키지 개요' },
         desc: {
-          en: 'Mobile teams need private retrieval over privacy-sensitive PDFs, DOCX files, and notes without uploading the source documents or depending on a server round trip.',
-          ko: '모바일 팀은 민감한 PDF, DOCX, 노트를 서버에 업로드하거나 매번 네트워크 왕복에 의존하지 않고 로컬에서 검색해야 했습니다.',
+          en: 'mobile_rag_engine is a pub.dev package for Flutter apps that need local document search, retrieval, and LLM-ready context on the device.',
+          ko: 'mobile_rag_engine은 Flutter 앱 안에서 로컬 문서 검색, retrieval, LLM-ready context 생성을 처리하는 pub.dev 공개 패키지입니다.',
         },
         imagePath: {
           en: '/images/mobile-rag-engine/problem.svg',
@@ -410,8 +494,8 @@ export const projects: Project[] = [
       {
         title: { en: 'Architecture', ko: '아키텍처' },
         desc: {
-          en: 'The engine is split into Flutter facade, Dart task queue, Rust FFI search core, ONNX embedding runtime, SQLite chunk store, and HNSW/BM25 indexes that return LLM-ready context.',
-          ko: '엔진은 Flutter facade, Dart task queue, Rust FFI search core, ONNX embedding runtime, SQLite chunk store, HNSW/BM25 indexes로 나뉘고 LLM-ready context를 반환합니다.',
+          en: 'The package is split into Flutter facade, Dart orchestration, Rust FFI search core, ONNX embedding runtime, SQLite chunk/index store, and HNSW/BM25 retrieval paths.',
+          ko: '패키지는 Flutter facade, Dart orchestration, Rust FFI search core, ONNX embedding runtime, SQLite chunk/index store, HNSW/BM25 retrieval path로 나뉩니다.',
         },
         imagePath: {
           en: '/images/mobile-rag-engine/architecture.svg',
@@ -419,28 +503,14 @@ export const projects: Project[] = [
         },
       },
       {
-        title: { en: 'What I built', ko: '구현 범위' },
+        title: { en: 'Integration Flow', ko: '연동 흐름' },
         desc: {
-          en: 'I shipped the package API, native bridge, loader/chunker, local embedding and index writes, hybrid query flow, example app, docs, and pub.dev release path.',
-          ko: '패키지 API, 네이티브 브릿지, loader/chunker, 로컬 임베딩과 색인 write, 하이브리드 쿼리 흐름, 예제 앱, 문서, pub.dev 릴리스 경로를 구현했습니다.',
+          en: 'It enables apps to ingest documents locally, write chunks and indexes, run HNSW/BM25 retrieval, and pass grounded context into product features.',
+          ko: '앱이 문서를 로컬에서 인제스트하고, chunk/index를 저장하고, HNSW/BM25 검색을 실행한 뒤 제품 기능에 근거 context를 넘길 수 있게 합니다.',
         },
         imagePath: {
           en: '/images/mobile-rag-engine/retrieval-flows.svg',
           ko: '/images/mobile-rag-engine/retrieval-flows.ko.svg',
-        },
-      },
-      {
-        title: { en: 'Evidence', ko: '증거' },
-        desc: {
-          en: 'Evidence is file-routed: pub.dev 0.18.6 release, docs/perf/ondevice-query-profiler/PR-P5-1.html for recall_vectoronly@10 mean 1.00, and PR-P4.md / PR-P3.md for pure_cold activate 247.3ms, warm embed 26.7ms, and Rust search 1-2ms.',
-          ko: '증거는 파일별로 분리했습니다. pub.dev 0.18.6 릴리스, docs/perf/ondevice-query-profiler/PR-P5-1.html의 recall_vectoronly@10 mean 1.00, PR-P4.md / PR-P3.md의 pure_cold activate 247.3ms, warm embed 26.7ms, Rust search 1-2ms를 근거로 둡니다.',
-        },
-      },
-      {
-        title: { en: 'Trade-off', ko: '트레이드오프' },
-        desc: {
-          en: 'Caveats stay explicit: OCR-required PDFs are out of scope, complex PDF/DOCX extraction can fail at the parser layer, and recall_hybrid@10 mean 0.08 points to ranking fusion behavior rather than broken vector recall.',
-          ko: 'caveat는 명확히 둡니다. OCR이 필요한 PDF는 범위 밖이고, 복잡한 PDF/DOCX 추출은 파서 계층에서 실패할 수 있으며, recall_hybrid@10 mean 0.08은 벡터 recall 실패가 아니라 ranking fusion 동작으로 해석해야 합니다.',
         },
       },
     ],

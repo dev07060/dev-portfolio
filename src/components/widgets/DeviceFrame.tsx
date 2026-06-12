@@ -47,7 +47,11 @@ const DeviceFrame = ({
       />
 
       {project.type === 'package' ? (
-        <PackageFrame project={project} onClick={onEnterPresentation} />
+        <PackageFrame
+          project={project}
+          currentScreenIndex={currentScreenIndex}
+          onClick={onEnterPresentation}
+        />
       ) : project.type === 'mobile' ? (
         <MobileFrame project={project} onClick={onEnterPresentation} />
       ) : project.type === 'tablet' ? (
@@ -63,13 +67,15 @@ const DeviceFrame = ({
 const PackageFrame = ({
   project,
   onClick,
+  currentScreenIndex,
 }: {
   project: Project;
   onClick: (e: PresentationTriggerEvent) => void;
+  currentScreenIndex: number;
 }) => {
   const { t } = useLocale();
   const title = t(project.title);
-  const firstScreen = project.screens[0];
+  const featuredScreen = project.screens[currentScreenIndex] ?? project.screens[0];
   const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
     if (e.key !== 'Enter' && e.key !== ' ') return;
     e.preventDefault();
@@ -96,11 +102,11 @@ const PackageFrame = ({
         </span>
       </div>
       <div className="absolute inset-0 pt-10">
-        {firstScreen?.imagePath ? (
+        {featuredScreen?.imagePath ? (
           <ScreenImage
             variant="fill"
-            src={firstScreen.imagePath}
-            alt={`${title} architecture`}
+            src={featuredScreen.imagePath}
+            alt={`${title} ${t(featuredScreen.title)}`}
             fallbackGradient={project.color}
             fit="contain"
           />

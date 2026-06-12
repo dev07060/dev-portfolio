@@ -11,6 +11,7 @@ type BaseProps = {
   fallbackGradient?: string;
   fit?: 'cover' | 'contain';
   priority?: boolean;
+  sizes?: string;
 };
 
 type Props =
@@ -18,10 +19,19 @@ type Props =
   | (BaseProps & { variant: 'scroll' });
 
 const DEFAULT_GRADIENT = 'from-slate-700 to-slate-900';
+const DEFAULT_FILL_SIZES = '(max-width: 640px) 90vw, (max-width: 1024px) 50vw, 33vw';
 
 const ScreenImage = (props: Props) => {
   const { locale } = useLocale();
-  const { src: rawSrc, alt, fallbackGradient = DEFAULT_GRADIENT, fit = 'cover', priority, variant } = props;
+  const {
+    src: rawSrc,
+    alt,
+    fallbackGradient = DEFAULT_GRADIENT,
+    fit = 'cover',
+    priority,
+    sizes = DEFAULT_FILL_SIZES,
+    variant,
+  } = props;
   const src = localize(rawSrc, locale);
   const [imageState, setImageState] = useState({
     src,
@@ -60,6 +70,7 @@ const ScreenImage = (props: Props) => {
           src={src}
           alt={alt}
           fill
+          sizes={sizes}
           priority={priority}
           onLoad={() => setImageState({ src, loaded: true, error: false })}
           onError={() => setImageState({ src, loaded: false, error: true })}
