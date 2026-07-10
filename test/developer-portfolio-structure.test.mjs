@@ -1,10 +1,22 @@
 import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
+import { homedir } from 'node:os';
+import { join } from 'node:path';
 import test from 'node:test';
+import { fileURLToPath } from 'node:url';
 
 const read = (path) => {
   const url = new URL(`../${path}`, import.meta.url);
   return existsSync(url) ? readFileSync(url, 'utf8') : '';
+};
+
+const pdfToTextBinary = () => {
+  const bundled = join(
+    homedir(),
+    '.cache/codex-runtimes/codex-primary-runtime/dependencies/native/poppler/poppler/bin/pdftotext'
+  );
+  return process.env.PDFTOTEXT_BIN || (existsSync(bundled) ? bundled : 'pdftotext');
 };
 
 test('root shell is server-rendered in Korean without locale controls', () => {
@@ -160,7 +172,7 @@ test('verified resume input populates six latest-first experience entries withou
   ];
 
   assert.match(data, /총 5년 5개월/);
-  assert.doesNotMatch(data, /resumeUrl:/);
+  assert.match(data, /resumeUrl: '\/oh-byeonghee-resume-ko\.pdf'/);
 
   let previous = -1;
   for (const company of companies) {
@@ -168,7 +180,39 @@ test('verified resume input populates six latest-first experience entries withou
     assert.ok(current > previous, `${company} must appear in latest-first order`);
     previous = current;
   }
-  assert.doesNotMatch(data, /010-9113-3496|경기 광주시|연봉/);
+  assert.doesNotMatch(data, /\b01[016789][-.\s]?\d{3,4}[-.\s]?\d{4}\b/);
+  assert.doesNotMatch(data, /(?:휴대폰|주소|거주지|생년월일|희망\s*(?:연봉|급여|근무지)|병역)\s*[:：]?/);
+});
+
+test('public resume PDF is extractable and contains only approved public profile fields', () => {
+  const pdf = new URL('../public/oh-byeonghee-resume-ko.pdf', import.meta.url);
+
+  assert.ok(existsSync(pdf), 'sanitized public resume PDF must exist');
+  assert.equal(readFileSync(pdf).subarray(0, 5).toString(), '%PDF-');
+
+  const text = execFileSync(pdfToTextBinary(), [fileURLToPath(pdf), '-'], {
+    encoding: 'utf8',
+  })
+    .normalize('NFKC')
+    .replace(/\s+/g, ' ');
+
+  for (const expected of [
+    '오병희',
+    'byeongheeoh51@gmail.com',
+    'github.com/dev07060',
+    '크로스플랫폼 개발자',
+    '메리츠화재해상보험',
+    'mobile_rag_engine',
+  ]) {
+    assert.match(text, new RegExp(expected));
+  }
+
+  assert.doesNotMatch(text, /\b01[016789][-.\s]?\d{3,4}[-.\s]?\d{4}\b/);
+  assert.doesNotMatch(
+    text,
+    /(?:휴대폰|주소|거주지|생년월일|학력|희망\s*(?:연봉|급여|근무지)|병역|보훈|장애)\s*[:：]?/
+  );
+  assert.doesNotMatch(text, /(?:연봉|급여)\s*[:：]?\s*[\d,]+\s*만?원/);
 });
 
 test('experience timeline resolves project ids to readable linked project names', () => {
@@ -378,7 +422,7 @@ test('modal order and screenshot regions follow reading and keyboard order', () 
   assert.doesNotMatch(device, /scrollbar-hide/);
 });
 
-test('unverified profile facts and empty resume action are not rendered', () => {
+test('unverified profile facts stay hidden and resume actions remain data-driven', () => {
   const recruitment = read('src/data/recruitment.ts');
   const hero = read('src/components/widgets/DeveloperHero.tsx');
 

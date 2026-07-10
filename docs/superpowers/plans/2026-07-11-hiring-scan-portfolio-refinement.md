@@ -176,11 +176,11 @@ export interface RecruitmentCase {
 - Produces `resumeUrl: '/oh-byeonghee-resume-ko.pdf'`.
 - The PDF includes only site-public name, email, GitHub, role, skills, career, and project evidence.
 
-- [ ] Load and follow the PDF skill; render the original resume for source validation without copying private facts.
-- [ ] Add failing tests requiring the public URL and forbidding the original phone, address, and salary strings in source and extracted public-PDF text.
-- [ ] Generate the Korean PDF, render every page, visually inspect it, and extract text to verify content and privacy exclusions.
-- [ ] Link the same URL from Hero and CTA; keep the app bar resume-free at 320px and update Playwright expectations to those two surfaces.
-- [ ] Run focused/full tests and build; commit as `feat: add sanitized public developer resume`.
+- [x] Load and follow the PDF skill; render the original resume for source validation without copying private facts.
+- [x] Add failing tests requiring the public URL and forbidding phone, address, salary, and other non-public fields in source and extracted public-PDF text.
+- [x] Generate the Korean PDF, render every page, visually inspect it, and extract text to verify content and privacy exclusions.
+- [x] Link the same URL from Hero and CTA; keep the app bar resume-free at 320px and update Playwright expectations to those two surfaces.
+- [x] Run focused/full tests and build; commit as `feat: add sanitized public developer resume`.
 
 ### Task 8: Final responsive and release verification
 

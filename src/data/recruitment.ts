@@ -12,6 +12,7 @@ export const recruitmentProfile: RecruitmentProfile = {
     '모바일 제품과 로컬 검색 엔진을 설계·구현하고 평가와 운영까지 연결합니다.',
   email: 'byeongheeoh51@gmail.com',
   githubUrl: 'https://github.com/dev07060',
+  resumeUrl: '/oh-byeonghee-resume-ko.pdf',
   proofItems: [
     {
       label: '공개 패키지',

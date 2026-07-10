@@ -39,9 +39,15 @@ test('한국어 단일 홈과 skip link, 대표 사례 순서를 제공한다', 
   await expect(page.getByText('Client', { exact: true })).toHaveCount(0);
   await expect(page.getByText('Developer', { exact: true })).toHaveCount(0);
   const experienceLink = page.getByRole('link', { name: '경력', exact: true });
-  const resumeLink = page.getByRole('link', { name: '이력서', exact: true });
+  const resumeLink = page.getByRole('link', { name: '이력서 보기', exact: true });
   await expect(experienceLink).toHaveCount(1);
-  await expect(resumeLink).toHaveCount(0);
+  await expect(resumeLink).toHaveCount(2);
+  for (const link of await resumeLink.all()) {
+    await expect(link).toHaveAttribute('href', '/oh-byeonghee-resume-ko.pdf');
+    await expect(link).toHaveAttribute('target', '_blank');
+    await expect(link).toHaveAttribute('rel', /noopener/);
+    await expect(link).toHaveAttribute('rel', /noreferrer/);
+  }
 
   await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
   const skipLink = page.getByRole('link', { name: '본문으로 건너뛰기' });
@@ -72,6 +78,7 @@ test('320px 앱바가 모든 링크와 44px 터치 영역을 처음부터 제공
 
   const nav = page.getByRole('navigation', { name: '주요 탐색' });
   const links = nav.getByRole('link');
+  await expect(nav.getByRole('link', { name: '이력서 보기', exact: true })).toHaveCount(0);
   const labels = await links.evaluateAll((items) =>
     items.map((item) => item.textContent?.trim())
   );
