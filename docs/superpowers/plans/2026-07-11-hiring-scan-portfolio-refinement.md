@@ -191,10 +191,10 @@ export interface RecruitmentCase {
 **Interfaces:**
 - Produces fresh evidence for the approved final state.
 
-- [ ] Run `npm run test`, `npm run lint`, `npx tsc --noEmit --incremental false`, `npm run test:a11y`, and `npm run build`.
-- [ ] Verify localhost HTTP 200 and zero browser console warnings/errors.
-- [ ] Capture 1440×900, 390×844, and 320×800 screenshots for Hero, featured cases, experience, archive, CTA, and modal.
-- [ ] Measure 320px document/nav overflow and 390px total page height; require zero overflow and at most 8,000px height.
-- [ ] Confirm private resume strings and removed component/copy names are absent with `rg` and PDF text extraction.
-- [ ] Update the verification report with exact commands, counts, measurements, and known non-goals.
-- [ ] Commit as `docs: verify hiring scan portfolio release` and leave the local server running on the final `main`.
+- [x] Run `npm run test`, `npm run lint`, `npx tsc --noEmit --incremental false`, `npm run test:a11y`, and `npm run build`.
+- [x] Verify localhost HTTP 200 and zero browser console warnings/errors.
+- [x] Capture 1440×900, 390×844, and 320×800 screenshots for Hero, featured cases, experience, archive, CTA, and modal.
+- [x] Measure 320px document/nav overflow and 390px total page height; require zero overflow and at most 8,000px height.
+- [x] Confirm private resume strings and removed component/copy names are absent with `rg` and PDF text extraction.
+- [x] Update the verification report with exact commands, counts, measurements, and known non-goals.
+- [x] Commit as `docs: verify hiring scan portfolio release` and leave the local server running on the final `main`.

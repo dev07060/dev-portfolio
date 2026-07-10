@@ -1,0 +1,48 @@
+{
+  "capturedOn": "2026-07-11",
+  "runtime": "Playwright CLI / Chromium / document.fonts.ready",
+  "screenshotCount": 18,
+  "thresholds": {
+    "max390DocumentHeight": 8000,
+    "maxHorizontalOverflow": 0,
+    "minNavLinkHeight": 44
+  },
+  "viewports": {
+    "1440x900": {
+      "documentHeight": 4163,
+      "documentOverflow": 0,
+      "navOverflow": 0,
+      "navOverflowingDescendants": 0,
+      "navLinks": [
+        { "label": "DEV PORTFOLIO", "x": 104, "right": 247, "height": 44 },
+        { "label": "기술 사례", "x": 1189, "right": 1244, "height": 44 },
+        { "label": "경력", "x": 1264, "right": 1290, "height": 44 },
+        { "label": "연락", "x": 1310, "right": 1336, "height": 44 }
+      ]
+    },
+    "390x844": {
+      "documentHeight": 6723,
+      "documentOverflow": 0,
+      "navOverflow": 0,
+      "navOverflowingDescendants": 0,
+      "navLinks": [
+        { "label": "DEV PORTFOLIO", "x": 20, "right": 142, "height": 44 },
+        { "label": "기술 사례", "x": 254, "right": 302, "height": 44 },
+        { "label": "경력", "x": 314, "right": 336, "height": 44 },
+        { "label": "연락", "x": 348, "right": 370, "height": 44 }
+      ]
+    },
+    "320x800": {
+      "documentHeight": 7595,
+      "documentOverflow": 0,
+      "navOverflow": 0,
+      "navOverflowingDescendants": 0,
+      "navLinks": [
+        { "label": "DEV PORTFOLIO", "x": 20, "right": 142, "height": 44 },
+        { "label": "기술 사례", "x": 184, "right": 232, "height": 44 },
+        { "label": "경력", "x": 244, "right": 266, "height": 44 },
+        { "label": "연락", "x": 278, "right": 300, "height": 44 }
+      ]
+    }
+  }
+}

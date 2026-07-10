@@ -1,69 +1,114 @@
 # 한국어 개발자 채용 포트폴리오 릴리스 검증 기록
 
 - 검증일: 2026-07-11
-- 브랜치: `feats/korean-developer-recruitment-portfolio`
-- 기준 설계: `docs/superpowers/specs/2026-07-10-korean-developer-recruitment-portfolio-design.md`
-- 상태: 사용자 제공 이력서 기반 경력 반영 및 자동 검증 완료
+- 브랜치: `main` (로컬 전용, push하지 않음)
+- 기준 설계: `docs/superpowers/specs/2026-07-11-hiring-scan-portfolio-refinement-design.md`
+- 구현 계획: `docs/superpowers/plans/2026-07-11-hiring-scan-portfolio-refinement.md`
+- 상태: 채용 스캔형 레이아웃, 공개용 이력서, 반응형·브라우저 검증 완료
+
+## 확정된 정보 구조
+
+페이지 순서는 다음과 같다.
+
+1. `DEV PORTFOLIO` 앱바와 기술 사례·경력·연락 탐색
+2. 한국어 Hero, 프로젝트 근거가 붙은 핵심 역량 4개, 채용 CTA
+3. 엔진 → Flutter 제품 적용 → 검색 백엔드로 이어지는 대표 사례 3개
+4. 최신순 경력 6개와 native disclosure 상세
+5. 썸네일을 제거한 추가 프로젝트 archive 5개
+6. 이력서·이메일·GitHub 연락 CTA
+
+대표 사례는 공개 근거 유무를 구분하고 `mobile_rag_engine` 안에 보완 패키지 `rag_engine_flutter`를 통합했다. 모바일 프로젝트 상세은 제목 → 시각 근거 → 문제와 제약 순으로 제공한다.
 
 ## 자동 검증
 
-다음 명령은 현재 브랜치에서 통과해야 한다.
+최종 상태에서 다음 명령을 실행한다.
 
 ```bash
+npm run test
 npm run lint
 npx tsc --noEmit --incremental false
-npm run test
 npm run test:a11y
 npm run build
 ```
 
-`npm run test:a11y`는 Chromium과 WebKit에서 동일한 14개 시나리오를 실행한다.
+결과:
 
-- 한국어 app shell, skip link, 대표 사례 순서
-- dialog focus trap, Escape, trigger focus 복원
-- presentation live status와 trigger focus 복원
-- 실제 긴 screenshot region의 keyboard scroll
-- reduced motion
-- home, modal, presentation의 axe critical/serious finding 0개
-- home, modal, presentation의 browser console warning/error 0개
-- 360×740, 390×844, 768×1024, 1024×600, 1440×900
-- 640 CSS px의 200% zoom reflow proxy
-- 320 CSS px의 400% zoom reflow proxy
-- 각 viewport의 horizontal overflow, Hero CTA, 카드 제목·근거 링크, modal 정보·preview 접근성
-- Featured/Additional grid의 1→2→3열 전환
+- Node 구조·콘텐츠 테스트: 27/27 통과
+- ESLint: 통과
+- TypeScript: 통과
+- Playwright: Chromium·WebKit 합계 42/42 통과
+- Next.js 프로덕션 빌드: 통과, `/` 정적 생성
 
-WebKit 검증에서 발견한 presentation focus 복원 순서 차이는 trigger를 명시적으로 저장하고 부모 modal의 `inert` 해제 후 복원하도록 수정했다.
+Playwright는 다음 계약을 포함한다.
 
-## 의존성 감사
+- Hero와 연락 섹션의 동일 공개 이력서 링크 2개, 앱바 이력서 링크 0개
+- 320px 앱바 링크 4개의 44px 터치 영역과 모든 하위 요소 overflow 0
+- 390px 전체 문서 높이 8,000px 이하
+- 경력 disclosure와 추가 프로젝트 archive 상세 연결
+- 모바일 모달의 제목 → eager 시각 근거 → 문제 순서와 320px 긴 기술 제목 무손실
+- Chromium·WebKit dialog focus trap, Escape, trigger focus 복원
+- presentation 상태와 focus 복원, screenshot region keyboard scroll
+- reduced motion, axe critical/serious finding 0개
+- home·modal·presentation console warning/error 0개
+- `/#featured-work` 직접 진입 시 LCP 이미지 우선순위 경고 0개
+- 360×740, 390×844, 640×900, 768×1024, 1024×600, 1440×900, 320×800 reflow
 
-- Next.js와 `eslint-config-next`를 16.0.10에서 16.2.10으로 업데이트했다.
-- `npm audit fix`로 자동 수정 가능한 개발 의존성 finding을 정리했다.
-- high finding은 0개다.
-- Next.js 16.2.10이 내부 고정한 PostCSS 8.4.31에서 moderate 2건이 남는다. 프레임워크 내부 의존성을 강제 override하거나 breaking downgrade하지 않고 upstream 패치를 추적한다.
+WebKit은 일반 `Tab`에서 링크를 건너뛸 수 있다. focus trap은 브라우저의 실제 탭 정책을 유지하되 기본 이동 뒤 dialog 밖으로 포커스가 이탈하면 처음 또는 마지막 내부 요소로 복원하도록 검증했다.
 
-## 브라우저 시각 확인
+## 반응형 실측
 
-Chromium 프로덕션 화면에서 다음 상태를 데스크톱, 태블릿, 모바일로 확인했다.
+측정 원본은 `output/hiring-scan-verification-2026-07-11/measurements.json`에 저장했다. Chromium에서 `document.fonts.ready` 이후 측정했다.
 
-- Hero와 대표 사례
-- 프로젝트 상세의 정보 우선 DOM/시각 순서
-- presentation과 긴 법령 검색 결과 화면의 내부 scroll
-- 390px modal과 768px 2열 grid
-- 1440px 경력 6건의 최신순 timeline과 390px 첫 경력 카드 reflow
-- 경력의 관련 프로젝트 링크가 대응하는 대표·추가 프로젝트 카드로 이동
-- 브라우저 console error와 warning 0개
+| 뷰포트 | 문서 높이 | 문서 overflow | 앱바 overflow | overflow 하위 요소 | 앱바 링크 높이 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 1440×900 | 4,163px | 0 | 0 | 0 | 모두 44px |
+| 390×844 | 6,723px | 0 | 0 | 0 | 모두 44px |
+| 320×800 | 7,595px | 0 | 0 | 0 | 모두 44px |
 
-초기 검토 캡처는 `/tmp/dev-portfolio-korean-recruitment-audit-2026-07-10/`, 경력 검토 캡처는 `output/playwright/resume-timeline/`에 생성했으며 저장소에는 포함하지 않는다.
+390px 문서는 목표 상한 8,000px보다 1,277px 짧다. 320px 앱바의 마지막 `연락` 링크 오른쪽 좌표는 300px로 뷰포트 안에 남는다.
 
-## 수동 release gate
+## 시각 검증
 
-다음 항목은 자동화 결과로 대체하지 않는다.
+`output/hiring-scan-verification-2026-07-11/`에 18개 PNG를 저장했다.
 
-- Safari keyboard-only 탐색 확인. 기본 설정에서는 link 탐색에 `Option+Tab`을 사용한다.
-- 실제 Safari 200%와 400% page zoom에서 콘텐츠와 control 도달 가능성 확인
+- 1440×900: Hero, 대표 사례, 경력, archive, 연락 CTA, modal
+- 390×844: Hero, 대표 사례, 경력, archive, 연락 CTA, modal
+- 320×800: Hero, 대표 사례, 경력, archive, 연락 CTA, modal
 
-## 공개 릴리스 콘텐츠 gate
+각 이미지를 직접 확인해 텍스트 잘림, 컨트롤 겹침, 빈 이미지, 가로 유실이 없음을 확인했다. 320px 긴 `mobile_rag_engine` 제목은 닫기 버튼 공간을 보존하면서 한 줄로 표시되고, 모바일 modal은 시각 근거를 상세 설명보다 먼저 제공한다.
 
-사용자가 제공한 2026-06-30 수정 이력서를 기준으로 최신순 경력 6건과 총 경력 5년 5개월을 반영했다. 각 항목은 회사, 역할, 고용 형태, 기간, 담당 범위, 결과 최대 2개, 확인 가능한 관련 프로젝트만 포함한다.
+## 공개용 이력서 gate
 
-원본 이력서에는 휴대폰, 거주지, 연봉 정보가 있으므로 public asset으로 복사하지 않는다. `resumeUrl`은 계속 비워 두고 이력서 CTA를 숨긴다.
+`public/oh-byeonghee-resume-ko.pdf`는 A4 2페이지이며 다음 공개 정보만 포함한다.
+
+- 이름, 공개 이메일, GitHub
+- 역할·기술 포지셔닝과 핵심 기술
+- 사이트에 공개한 최신순 경력 6개
+- 대표 기술 사례 3개와 공개 근거 링크
+
+Hero와 연락 CTA의 `이력서 보기`가 같은 PDF를 새 탭으로 연다. 앱바에는 이력서 링크를 넣지 않았다. PDF는 한글 폰트를 포함하고 텍스트 추출이 가능하며, 생성 스크립트를 연속 실행해도 동일한 SHA-256을 만든다.
+
+- SHA-256: `a7ab2f3bb5e8ea4739968a7f5399f5d043f54d22fb5c2c3df7d2ccea8d04ce2c`
+
+검증에서는 국내 휴대전화 형식과 주소·거주지·생년월일·학력·보상·희망조건·병역·보훈·장애 레이블을 일반 패턴으로 차단했다. 테스트나 생성 소스에도 원본의 실제 개인정보 값을 복사하지 않았다.
+
+## 콘텐츠·개인정보 검색 gate
+
+다음 항목을 현재 활성 소스와 추출한 공개 PDF에서 확인한다.
+
+- 제거된 `CoreCapabilities`, `OpenSourceBanner`, `ProjectGrid` 렌더링·export 없음
+- `Byeonghee Oh`, `Engineering capabilities`, `Experience`, `Project archive`, `Open source support`, `Contact`, `Trade-off` 활성 문구 없음
+- 공개 데이터와 PDF에 전화번호 형식, 주소·보상·희망조건 등 비공개 레이블 없음
+- PDF에 이름, 공개 이메일, GitHub, 대표 경력, `mobile_rag_engine` 존재
+
+## localhost gate
+
+- `http://localhost:3000/`: HTTP 200
+- `http://localhost:3000/oh-byeonghee-resume-ko.pdf`: HTTP 200, `application/pdf`
+- 최종 `main`에서 개발 서버를 유지한다.
+
+## 범위 밖 항목
+
+- 사용자 요청에 따라 별도 보조기기 수동 검증은 범위에 포함하지 않는다.
+- 외부 GitHub·pub.dev·운영 서비스의 지속 가용성은 이번 로컬 릴리스 gate에 포함하지 않는다.
+- Lighthouse 점수 자체는 gate가 아니다. 대신 LCP 이미지 경고, 가로 overflow, 문서 길이, console warning/error를 자동 검증한다.
