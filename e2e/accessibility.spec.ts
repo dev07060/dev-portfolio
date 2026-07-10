@@ -147,6 +147,39 @@ test('320px 추가 프로젝트 archive가 다섯 행과 기존 상세를 제공
   ).toBeVisible();
 });
 
+test('390px 프로젝트 상세은 제목 다음에 eager 시각 근거를 제공한다', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/#featured-work');
+  await page
+    .getByRole('button', { name: 'mobile_rag_engine 프로젝트 상세 열기' })
+    .click();
+
+  const dialog = page.getByRole('dialog', { name: /mobile_rag_engine/ });
+  const title = dialog.getByRole('heading', { name: 'mobile_rag_engine' });
+  const preview = dialog.getByRole('button', {
+    name: 'mobile_rag_engine 프레젠테이션 열기',
+  });
+  const problem = dialog.getByRole('heading', { name: '— 문제와 제약' });
+
+  await expect(preview).toHaveCount(1);
+  const [titleBox, previewBox, problemBox] = await Promise.all([
+    title.boundingBox(),
+    preview.boundingBox(),
+    problem.boundingBox(),
+  ]);
+  expect(titleBox).not.toBeNull();
+  expect(previewBox).not.toBeNull();
+  expect(problemBox).not.toBeNull();
+  expect(titleBox?.y ?? Infinity).toBeLessThan(previewBox?.y ?? -Infinity);
+  expect(previewBox?.y ?? Infinity).toBeLessThan(problemBox?.y ?? -Infinity);
+
+  const previewImage = preview.locator('img');
+  await expect(previewImage).toHaveCount(1);
+  await expect(previewImage).toHaveAttribute('loading', 'eager');
+});
+
 test('카드 dialog가 focus trap, Escape, focus restoration을 제공한다', async ({ page }) => {
   await page.goto('/');
   const detailButton = page.getByRole('button', {

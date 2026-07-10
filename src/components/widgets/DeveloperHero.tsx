@@ -19,9 +19,6 @@ const DeveloperHero = ({ profile, capabilities }: DeveloperHeroProps) => (
           <h1 className="font-serif text-5xl font-light leading-none tracking-tight text-[#1f1b16] sm:text-6xl md:text-7xl">
             {profile.name}
           </h1>
-          <p className="mt-2 font-[family-name:var(--font-fraunces)] text-base italic text-[#756b60] sm:text-lg">
-            {profile.englishName}
-          </p>
           <p className="mt-6 text-lg font-semibold leading-snug text-[#0f766e] break-keep sm:text-xl">
             {profile.role}
           </p>

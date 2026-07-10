@@ -6,7 +6,6 @@ import type {
 
 export const recruitmentProfile: RecruitmentProfile = {
   name: '오병희',
-  englishName: 'Byeonghee Oh',
   role: '크로스플랫폼 개발자 · 로컬 RAG 엔지니어',
   position: 'Flutter · 온디바이스 Retrieval/RAG · LLM 백엔드',
   positioning:

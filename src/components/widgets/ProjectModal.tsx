@@ -55,7 +55,7 @@ const ProjectModal = ({
         onClick={onClose}
       />
 
-      <div className="accessible-scrollbar relative flex max-h-[calc(100dvh-1rem)] w-full max-w-6xl flex-col overflow-y-auto rounded-2xl border border-[#e8dfd0] bg-[#faf7f2] shadow-[0_30px_80px_-20px_rgba(31,27,22,0.25)] md:rounded-3xl lg:h-[720px] lg:max-h-[calc(100vh-2rem)] lg:flex-row lg:overflow-hidden">
+      <div className="accessible-scrollbar relative grid max-h-[calc(100dvh-1rem)] w-full max-w-6xl grid-cols-1 overflow-y-auto rounded-2xl border border-[#e8dfd0] bg-[#faf7f2] shadow-[0_30px_80px_-20px_rgba(31,27,22,0.25)] md:rounded-3xl lg:h-[720px] lg:max-h-[calc(100vh-2rem)] lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:grid-rows-[auto_minmax(0,1fr)] lg:overflow-hidden">
         <button
           ref={closeButtonRef}
           type="button"
@@ -66,17 +66,24 @@ const ProjectModal = ({
           <X size={20} aria-hidden="true" />
         </button>
 
-        <ProjectInfoPanel
+        <ProjectInfoHeader
           project={project}
           recruitmentCase={recruitmentCase}
           titleId={titleId}
-          descriptionId={descriptionId}
         />
 
-        <DeviceFrame
+        <div className="lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:min-h-0">
+          <DeviceFrame
+            project={project}
+            currentScreenIndex={currentScreenIndex}
+            onEnterPresentation={onEnterPresentation}
+          />
+        </div>
+
+        <ProjectInfoDetails
           project={project}
-          currentScreenIndex={currentScreenIndex}
-          onEnterPresentation={onEnterPresentation}
+          recruitmentCase={recruitmentCase}
+          descriptionId={descriptionId}
         />
       </div>
     </div>
@@ -90,16 +97,14 @@ const getTypeLabel = (project: Project) => {
   return '웹 플랫폼';
 };
 
-const ProjectInfoPanel = ({
+const ProjectInfoHeader = ({
   project,
   recruitmentCase,
   titleId,
-  descriptionId,
 }: {
   project: Project;
   recruitmentCase?: RecruitmentCase;
   titleId: string;
-  descriptionId: string;
 }) => {
   const allLinks = [
     ...(recruitmentCase?.evidenceLinks ?? []),
@@ -112,9 +117,7 @@ const ProjectInfoPanel = ({
     : [];
 
   return (
-    <div className="accessible-scrollbar w-full bg-white lg:w-2/5 lg:overflow-y-auto lg:border-r lg:border-[#e8dfd0]">
-      <div className="flex min-h-full flex-col justify-start p-6 sm:p-8">
-        <header className="mb-7 border-b border-[#e8dfd0] pb-6">
+    <header className="border-b border-[#e8dfd0] bg-white p-6 sm:p-8 lg:col-start-1 lg:row-start-1 lg:border-r">
           <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] text-[#9d4530]">
             — {recruitmentCase?.statusLabel ?? getTypeLabel(project)}
           </p>
@@ -153,9 +156,21 @@ const ProjectInfoPanel = ({
               ))}
             </div>
           )}
-        </header>
+    </header>
+  );
+};
 
-        <div className="space-y-7">
+const ProjectInfoDetails = ({
+  project,
+  recruitmentCase,
+  descriptionId,
+}: {
+  project: Project;
+  recruitmentCase?: RecruitmentCase;
+  descriptionId: string;
+}) => (
+  <div className="accessible-scrollbar bg-white p-6 sm:p-8 lg:col-start-1 lg:row-start-2 lg:min-h-0 lg:overflow-y-auto lg:border-r lg:border-[#e8dfd0]">
+    <div className="space-y-7">
           <section aria-labelledby={`problem-${project.id}`}>
             <h3
               id={`problem-${project.id}`}
@@ -259,12 +274,12 @@ const ProjectInfoPanel = ({
                 id={`boundaries-${project.id}`}
                 className="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] text-[#756b60]"
               >
-                — Trade-off와 비목표
+                — 트레이드오프와 비목표
               </h3>
               <div className="space-y-3 text-sm leading-relaxed text-[#4a4339]">
                 {recruitmentCase.tradeoffs.map((item) => (
                   <p key={item}>
-                    <strong className="font-semibold text-[#1f1b16]">Trade-off.</strong>{' '}
+                    <strong className="font-semibold text-[#1f1b16]">트레이드오프.</strong>{' '}
                     {item}
                   </p>
                 ))}
@@ -277,11 +292,9 @@ const ProjectInfoPanel = ({
               </div>
             </section>
           ) : null}
-        </div>
-      </div>
     </div>
-  );
-};
+  </div>
+);
 
 const SupportingPackages = ({ items }: { items: SupportingPackage[] }) => (
   <section aria-labelledby="supporting-packages-heading">

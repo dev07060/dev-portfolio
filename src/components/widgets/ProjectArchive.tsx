@@ -27,7 +27,7 @@ const ProjectArchive = ({
   <section id="additional-projects" className="scroll-mt-8 pb-16 sm:pb-20">
     <SectionContainer>
       <SectionHeader
-        eyebrow="Project archive"
+        eyebrow="프로젝트"
         title={heading}
         description={description}
         count={projects.length}

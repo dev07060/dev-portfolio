@@ -10,6 +10,7 @@ type BaseProps = {
   fallbackGradient?: string;
   fit?: 'cover' | 'contain';
   priority?: boolean;
+  loading?: 'eager' | 'lazy';
   sizes?: string;
 };
 
@@ -27,6 +28,7 @@ const ScreenImage = (props: Props) => {
     fallbackGradient = DEFAULT_GRADIENT,
     fit = 'cover',
     priority,
+    loading,
     sizes = DEFAULT_FILL_SIZES,
     variant,
   } = props;
@@ -69,6 +71,7 @@ const ScreenImage = (props: Props) => {
           fill
           sizes={sizes}
           priority={priority}
+          loading={loading}
           onLoad={() => setImageState({ src, loaded: true, error: false })}
           onError={() => setImageState({ src, loaded: false, error: true })}
           className={`${fit === 'contain' ? 'object-contain p-3' : 'object-cover'} transition-opacity duration-300 ${
@@ -88,7 +91,7 @@ const ScreenImage = (props: Props) => {
         src={src}
         alt={alt}
         decoding="async"
-        loading={priority ? 'eager' : 'lazy'}
+        loading={loading ?? (priority ? 'eager' : 'lazy')}
         onLoad={() => setImageState({ src, loaded: true, error: false })}
         onError={() => setImageState({ src, loaded: false, error: true })}
         className={`relative z-10 w-full h-auto transition-opacity duration-300 ${

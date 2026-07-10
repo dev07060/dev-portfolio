@@ -40,7 +40,6 @@ export interface ExperienceItem {
 
 export interface RecruitmentProfile {
   name: string;
-  englishName: string;
   role: string;
   position: string;
   positioning: string;

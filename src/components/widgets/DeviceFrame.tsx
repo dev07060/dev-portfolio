@@ -33,7 +33,7 @@ const DeviceFrame = ({
   }
 
   return (
-    <div className="group relative flex min-h-[360px] w-full items-center justify-center overflow-hidden bg-gradient-to-b from-[#f2ede4] to-[#e8dfd0] p-4 sm:min-h-[460px] sm:p-6 lg:min-h-[500px] lg:w-3/5 lg:p-8">
+    <div className="group relative flex min-h-[360px] w-full items-center justify-center overflow-hidden bg-gradient-to-b from-[#f2ede4] to-[#e8dfd0] p-4 sm:min-h-[460px] sm:p-6 lg:h-full lg:min-h-[500px] lg:p-8">
       {/* Always-visible affordance badge — also works on touch devices */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 bg-[#1f1b16]/75 backdrop-blur-sm px-3 py-1.5 rounded-full text-[10px] uppercase tracking-[0.2em] text-[#faf7f2] flex items-center gap-1.5 pointer-events-none font-mono shadow-sm group-hover:bg-[#1f1b16]/90 transition-colors">
         <Maximize2 size={10} />
@@ -107,6 +107,7 @@ const PackageFrame = ({
             alt={featuredScreen.imageAlt}
             fallbackGradient={project.color}
             fit="contain"
+            loading="eager"
           />
         ) : (
           <div

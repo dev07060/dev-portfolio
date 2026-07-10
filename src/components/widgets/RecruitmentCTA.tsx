@@ -15,7 +15,7 @@ const RecruitmentCTA = ({ profile }: RecruitmentCTAProps) => (
       <div className="rounded-2xl bg-[#1f1b16] px-6 py-9 text-[#faf7f2] sm:px-9 sm:py-12 lg:flex lg:items-end lg:justify-between lg:gap-10">
         <div>
           <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#8fc4bd]">
-            Contact
+            연락
           </p>
           <h2 className="mt-3 max-w-2xl font-serif text-3xl font-light leading-tight sm:text-4xl">
             모바일 제품과 로컬 검색 기술을 함께 다룰 개발자를 찾고 계신가요?

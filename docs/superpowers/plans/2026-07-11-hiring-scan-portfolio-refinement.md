@@ -156,12 +156,12 @@ export interface RecruitmentCase {
 - Keeps `DEV PORTFOLIO` as the only decorative English brand exception.
 - Preserves the desktop modal two-column layout while moving `DeviceFrame` between header and details below `lg`.
 
-- [ ] Add failing tests that forbid `Byeonghee Oh`, `Engineering capabilities`, `Experience`, `Project archive`, `Open source support`, `Contact`, and `Trade-off` in active UI source.
-- [ ] Add a mobile modal Playwright order assertion: dialog header → presentation button/image → `문제와 제약`.
-- [ ] Remove `englishName` from the recruitment type/data/Hero and translate section eyebrows and `트레이드오프` labels.
-- [ ] Split modal header/details so the mobile visual appears immediately after header; retain one visual instance and the desktop 2-column behavior.
-- [ ] Keep the first featured thumbnail `priority={true}` and ensure its `ScreenImage` emits eager/priority loading without console warnings.
-- [ ] Run Node, Playwright console, modal, and responsive tests; commit as `refactor: finish Korean responsive case flow`.
+- [x] Add failing tests that forbid `Byeonghee Oh`, `Engineering capabilities`, `Experience`, `Project archive`, `Open source support`, `Contact`, and `Trade-off` in active UI source.
+- [x] Add a mobile modal Playwright order assertion: dialog header → presentation button/image → `문제와 제약`.
+- [x] Remove `englishName` from the recruitment type/data/Hero and translate section eyebrows and `트레이드오프` labels.
+- [x] Split modal header/details so the mobile visual appears immediately after header; retain one visual instance and the desktop 2-column behavior.
+- [x] Keep the first featured thumbnail `priority={true}` and ensure its `ScreenImage` emits eager/priority loading without console warnings.
+- [x] Run Node, Playwright console, modal, and responsive tests; commit as `refactor: finish Korean responsive case flow`.
 
 ### Task 7: Generate and link a sanitized public resume
 

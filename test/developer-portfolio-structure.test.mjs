@@ -221,13 +221,41 @@ test('case detail separates verification, outcomes, trade-offs, and non-goals', 
     '— 구조와 핵심 기술',
     '— 테스트·평가·운영 검증',
     '— 결과와 영향',
-    '— Trade-off와 비목표',
+    '— 트레이드오프와 비목표',
   ];
   let previous = -1;
   for (const marker of detailOrder) {
     const current = modal.indexOf(marker);
     assert.ok(current > previous, `${marker} must appear in approved detail order`);
     previous = current;
+  }
+});
+
+test('active recruitment UI keeps decorative copy Korean', () => {
+  const activeUi = [
+    'src/data/recruitment.ts',
+    'src/components/widgets/DeveloperHero.tsx',
+    'src/components/widgets/FeaturedWork.tsx',
+    'src/components/widgets/ExperienceTimeline.tsx',
+    'src/components/widgets/ProjectArchive.tsx',
+    'src/components/widgets/ProjectModal.tsx',
+    'src/components/widgets/RecruitmentCTA.tsx',
+    'src/components/widgets/Footer.tsx',
+  ]
+    .map(read)
+    .join('\n');
+
+  for (const pattern of [
+    /Byeonghee Oh/,
+    /Engine → Product → Backend/,
+    /eyebrow="Engineering capabilities"/,
+    /eyebrow="Experience"/,
+    /eyebrow="Project archive"/,
+    /Open source support/,
+    />\s*Contact\s*</,
+    /Trade-off/,
+  ]) {
+    assert.doesNotMatch(activeUi, pattern);
   }
 });
 
@@ -339,6 +367,11 @@ test('modal order and screenshot regions follow reading and keyboard order', () 
 
   assert.doesNotMatch(modal, /order-1|order-2/);
   assert.doesNotMatch(modal, /<h4/);
+  const header = modal.indexOf('<ProjectInfoHeader');
+  const visual = modal.indexOf('<DeviceFrame');
+  const details = modal.indexOf('<ProjectInfoDetails');
+  assert.ok(header > -1 && header < visual, 'modal header must precede visual evidence');
+  assert.ok(visual < details, 'visual evidence must precede detailed copy on mobile');
   assert.match(device, /tabIndex=\{isScrollable \? 0 : undefined\}/);
   assert.match(device, /role=\{isScrollable \? 'region' : undefined\}/);
   assert.match(device, /스크린샷 스크롤 영역/);

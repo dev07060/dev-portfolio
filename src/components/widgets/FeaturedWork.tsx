@@ -17,7 +17,7 @@ const FeaturedWork = ({ projects, cases, onProjectClick }: FeaturedWorkProps) =>
   <section id="featured-work" className="scroll-mt-8 pb-16 sm:pb-20">
     <SectionContainer>
       <SectionHeader
-        eyebrow="Engine → Product → Backend"
+        eyebrow="대표 흐름"
         title={portfolioCopy.featuredHeading}
         description={portfolioCopy.featuredDescription}
         count={projects.length}
