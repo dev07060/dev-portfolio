@@ -4,7 +4,6 @@ import { Smartphone, Monitor, Tablet, Package as PackageIcon } from 'lucide-reac
 import { Project, Screen } from '@/types/project';
 import ProjectIcon from './ProjectIcon';
 import ScreenImage from './ScreenImage';
-import { LocalizedString, useLocale, ui } from '@/i18n';
 
 interface ProjectCardProps {
   project: Project;
@@ -30,12 +29,11 @@ export const resolveProjectCard = (project: Project) => {
 };
 
 const ProjectCard = ({ project, index, onClick }: ProjectCardProps) => {
-  const { t } = useLocale();
   const card = resolveProjectCard(project);
   const cardBadges = card.evidenceBadges ?? project.techStack;
   const visibleTechStack = cardBadges.slice(0, 4);
   const remainingTechCount = Math.max(0, cardBadges.length - visibleTechStack.length);
-  const title = t(project.title).replace(/\s+/g, ' ');
+  const title = project.title.replace(/\s+/g, ' ');
 
   const getDeviceIcon = () => {
     if (project.type === 'package') return <PackageIcon size={12} />;
@@ -45,17 +43,17 @@ const ProjectCard = ({ project, index, onClick }: ProjectCardProps) => {
   };
 
   const getDeviceLabel = () => {
-    if (project.type === 'package') return t(ui.devicePackage);
-    if (project.type === 'mobile') return t(ui.deviceApp);
-    if (project.type === 'tablet') return t(ui.deviceTablet);
-    return t(ui.deviceWeb);
+    if (project.type === 'package') return '패키지';
+    if (project.type === 'mobile') return '모바일 앱';
+    if (project.type === 'tablet') return '태블릿 앱';
+    return '웹';
   };
 
   return (
     <button
       type="button"
       onClick={() => onClick(project)}
-      aria-label={`Open ${title} project details`}
+      aria-label={`${title} 프로젝트 상세 보기`}
       className="group relative flex w-full flex-col appearance-none bg-white rounded-2xl overflow-hidden border border-[#e8dfd0] text-left hover:border-[#b8543a]/60 transition-all duration-300 cursor-pointer hover:shadow-[0_20px_50px_-20px_rgba(184,84,58,0.25)] hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b8543a]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#faf7f2]"
     >
       {/* Thumbnail Area */}
@@ -68,7 +66,7 @@ const ProjectCard = ({ project, index, onClick }: ProjectCardProps) => {
             {String(index + 1).padStart(2, '0')}
           </span>
         )}
-        <ProjectThumbnail project={project} screen={card.thumbnailScreen} alt={title} />
+        <ProjectThumbnail project={project} screen={card.thumbnailScreen} />
         <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-md px-2 py-1 rounded-full text-[11px] font-mono text-[#4a4339] flex items-center gap-1">
           {getDeviceIcon()}
           {getDeviceLabel()}
@@ -83,15 +81,15 @@ const ProjectCard = ({ project, index, onClick }: ProjectCardProps) => {
         {project.releaseLabel && (
           <div className="mb-2">
             <span className="inline-flex items-center rounded-full border border-[#b8543a]/30 bg-[#b8543a]/8 px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider text-[#b8543a]">
-              {t(project.releaseLabel)}
+              {project.releaseLabel}
             </span>
           </div>
         )}
         <p className="text-sm text-[#4a4339] mb-5 line-clamp-2 leading-relaxed">
-          {t(card.description)}
+          {card.description}
         </p>
         <p className="text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.25em] text-[#756b60] font-mono mb-2">
-          — {card.evidenceBadges ? t(ui.evidenceBadges) : t(ui.coreStack)}
+          — {card.evidenceBadges ? '검증 근거' : '핵심 기술'}
         </p>
         <div className="flex flex-wrap items-center gap-2">
           {visibleTechStack.map((tech) => (
@@ -110,7 +108,7 @@ const ProjectCard = ({ project, index, onClick }: ProjectCardProps) => {
         </div>
         {card.highlight && (
           <p className="mt-4 pt-4 border-t border-[#e8dfd0] text-xs text-[#756b60] italic line-clamp-2 leading-relaxed">
-            “{t(card.highlight)}”
+            “{card.highlight}”
           </p>
         )}
       </div>
@@ -121,11 +119,9 @@ const ProjectCard = ({ project, index, onClick }: ProjectCardProps) => {
 const ProjectThumbnail = ({
   project,
   screen,
-  alt,
 }: {
   project: Project;
   screen?: Screen;
-  alt: string;
 }) => {
   const firstScreen = screen;
 
@@ -142,7 +138,7 @@ const ProjectThumbnail = ({
       <PackageArchitectureThumbnail
         project={project}
         imagePath={firstScreen.imagePath}
-        alt={`${alt} architecture`}
+        alt={firstScreen.imageAlt}
       />
     );
   }
@@ -158,7 +154,7 @@ const ProjectThumbnail = ({
         <ScreenImage
           variant="fill"
           src={firstScreen.imagePath}
-          alt={`${alt} preview`}
+          alt={firstScreen.imageAlt}
           fallbackGradient={project.color}
         />
       </div>
@@ -173,7 +169,7 @@ const ProjectThumbnail = ({
           <ScreenImage
             variant="fill"
             src={firstScreen.imagePath}
-            alt={`${alt} preview`}
+            alt={firstScreen.imageAlt}
             fallbackGradient={project.color}
           />
         </div>
@@ -187,7 +183,7 @@ const ProjectThumbnail = ({
         <ScreenImage
           variant="fill"
           src={firstScreen.imagePath}
-          alt={`${alt} preview`}
+          alt={firstScreen.imageAlt}
           fallbackGradient={project.color}
         />
       </div>
@@ -201,13 +197,13 @@ const PackageArchitectureThumbnail = ({
   alt,
 }: {
   project: Project;
-  imagePath: LocalizedString;
+  imagePath: string;
   alt: string;
 }) => (
   <div className="relative z-[1] w-[84%] max-w-[290px] aspect-[16/10] rounded-xl border border-white/80 bg-white/95 shadow-2xl overflow-hidden transform group-hover:scale-105 transition-transform duration-500">
     <div className="absolute left-0 right-0 top-0 z-10 flex items-center justify-between border-b border-[#d9e4e1] bg-white/90 px-3 py-1.5">
       <span className="font-mono text-[8px] uppercase tracking-[0.2em] text-[#0f766e]">
-        RAG Pipeline
+        RAG 파이프라인
       </span>
       <span className="h-1.5 w-1.5 rounded-full bg-[#0f766e]" />
     </div>

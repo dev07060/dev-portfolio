@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Project } from '@/types/project';
 import { projects } from '@/data/projects';
-import { localize, useLocale } from '@/i18n';
 import {
   ConversionHero,
   FeaturedWork,
@@ -20,7 +19,6 @@ import {
 } from '@/data/portfolio';
 
 const Portfolio = () => {
-  const { locale } = useLocale();
   // State
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -103,9 +101,9 @@ const Portfolio = () => {
       if (!screen.imagePath) return;
       const img = new window.Image();
       img.decoding = 'async';
-      img.src = localize(screen.imagePath, locale);
+      img.src = screen.imagePath;
     });
-  }, [selectedProject, locale]);
+  }, [selectedProject]);
 
   // Lock background scroll while a modal/overlay is open
   useEffect(() => {

@@ -1,10 +1,10 @@
-import { LocaleText, LocalizedString } from '@/i18n';
-
 export interface Screen {
-  title: LocaleText;
-  desc: LocaleText;
-  imagePath?: LocalizedString;
-  scrollable?: boolean; // true면 긴 이미지를 스크롤 가능하게 표시
+  id: string;
+  title: string;
+  desc: string;
+  imageAlt: string;
+  imagePath?: string;
+  scrollable?: boolean;
 }
 
 export interface ProjectLink {
@@ -12,29 +12,44 @@ export interface ProjectLink {
   url: string;
 }
 
-export type ProjectCardVariant = 'architecture' | 'live-query' | 'product-screenshot' | 'default';
+export type ProjectCardVariant =
+  | 'architecture'
+  | 'live-query'
+  | 'product-screenshot'
+  | 'default';
 
 export interface ProjectCardPresentation {
   variant?: ProjectCardVariant;
-  description?: LocaleText;
+  description?: string;
   evidenceBadges?: string[];
   thumbnailScreenIndex?: number;
-  highlight?: LocaleText;
+  highlight?: string;
 }
 
 export interface Project {
   id: string;
   type: 'mobile' | 'web' | 'tablet' | 'package';
-  title: LocaleText;
-  subtitle: LocaleText;
-  description: LocaleText;
+  title: string;
+  subtitle: string;
+  description: string;
   techStack: string[];
   evidenceBadges?: string[];
-  implementationPoints?: LocaleText[];
-  releaseLabel?: LocaleText;
+  implementationPoints?: string[];
+  releaseLabel?: string;
   cardPresentation?: ProjectCardPresentation;
   color: string;
-  iconType: 'zap' | 'globe' | 'smartphone' | 'layers' | 'tablet' | 'brain' | 'utensils' | 'activity' | 'heart' | 'dumbbell' | 'scale';
+  iconType:
+    | 'zap'
+    | 'globe'
+    | 'smartphone'
+    | 'layers'
+    | 'tablet'
+    | 'brain'
+    | 'utensils'
+    | 'activity'
+    | 'heart'
+    | 'dumbbell'
+    | 'scale';
   screens: Screen[];
   links?: ProjectLink[];
 }

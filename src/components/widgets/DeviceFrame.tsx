@@ -3,7 +3,6 @@
 import { Smartphone, Monitor, Tablet, Maximize2, Mouse, Package as PackageIcon } from 'lucide-react';
 import { useRef, useEffect } from 'react';
 import { Project } from '@/types/project';
-import { useLocale } from '@/i18n';
 import ScreenImage from './ScreenImage';
 
 interface DeviceFrameProps {
@@ -38,7 +37,7 @@ const DeviceFrame = ({
       {/* Always-visible affordance badge — also works on touch devices */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 bg-[#1f1b16]/75 backdrop-blur-sm px-3 py-1.5 rounded-full text-[10px] uppercase tracking-[0.2em] text-[#faf7f2] flex items-center gap-1.5 pointer-events-none font-mono shadow-sm group-hover:bg-[#1f1b16]/90 transition-colors">
         <Maximize2 size={10} />
-        <span>Tap to open</span>
+        <span>눌러서 크게 보기</span>
       </div>
 
       {/* Background Glow Effect */}
@@ -73,8 +72,7 @@ const PackageFrame = ({
   onClick: (e: PresentationTriggerEvent) => void;
   currentScreenIndex: number;
 }) => {
-  const { t } = useLocale();
-  const title = t(project.title);
+  const title = project.title;
   const featuredScreen = project.screens[currentScreenIndex] ?? project.screens[0];
   const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
     if (e.key !== 'Enter' && e.key !== ' ') return;
@@ -87,14 +85,14 @@ const PackageFrame = ({
       type="button"
       onClick={onClick}
       onKeyDown={handleKeyDown}
-      aria-label={`Open ${title} package case study`}
+      aria-label={`${title} 패키지 사례 크게 보기`}
       className="relative w-full max-w-md lg:max-w-xl aspect-[16/10] bg-white rounded-xl shadow-2xl border border-white/90 transform transition-transform duration-500 hover:scale-[1.03] cursor-pointer overflow-hidden appearance-none p-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f766e]/70 focus-visible:ring-offset-4 focus-visible:ring-offset-[#f2ede4]"
     >
       <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between border-b border-[#d9e4e1] bg-white/95 px-4 py-2">
         <div className="flex items-center gap-2">
           <PackageIcon size={14} className="text-[#0f766e]" />
           <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-[#0f766e]">
-            Package architecture
+            패키지 아키텍처
           </span>
         </div>
         <span className="rounded-full border border-[#d9e4e1] px-2 py-0.5 text-[10px] font-mono text-[#4a4339]">
@@ -106,7 +104,7 @@ const PackageFrame = ({
           <ScreenImage
             variant="fill"
             src={featuredScreen.imagePath}
-            alt={`${title} ${t(featuredScreen.title)}`}
+            alt={featuredScreen.imageAlt}
             fallbackGradient={project.color}
             fit="contain"
           />
@@ -131,8 +129,7 @@ const MobileFrame = ({
   project: Project;
   onClick: (e: PresentationTriggerEvent) => void;
 }) => {
-  const { t } = useLocale();
-  const title = t(project.title);
+  const title = project.title;
   const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
     if (e.key !== 'Enter' && e.key !== ' ') return;
     e.preventDefault();
@@ -144,7 +141,7 @@ const MobileFrame = ({
       type="button"
       onClick={onClick}
       onKeyDown={handleKeyDown}
-      aria-label={`Open ${title} presentation view`}
+      aria-label={`${title} 화면 크게 보기`}
       className="relative mx-auto cursor-pointer border-gray-100 bg-gray-100 border-[8px] rounded-[2.5rem] h-[340px] w-[188px] sm:h-[400px] sm:w-[220px] md:h-[500px] md:w-[280px] lg:h-[560px] lg:w-[310px] shadow-xl flex flex-col transform transition-transform duration-500 hover:scale-105 appearance-none p-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b8543a]/70 focus-visible:ring-offset-4 focus-visible:ring-offset-[#f2ede4]"
     >
       <div className="h-[32px] w-[3px] bg-gray-100 absolute -left-[10px] top-[72px] rounded-l-lg" />
@@ -164,7 +161,7 @@ const MobileFrame = ({
           >
             <Smartphone size={48} className="mb-4 opacity-80" />
             <h3 className="text-xl font-bold">{title}</h3>
-            <p className="text-xs opacity-75 mt-2">Tap to view screens</p>
+            <p className="text-xs opacity-75 mt-2">눌러서 화면 보기</p>
           </div>
         )}
       </div>
@@ -180,8 +177,7 @@ const WebFrame = ({
   project: Project;
   onClick: (e: PresentationTriggerEvent) => void;
 }) => {
-  const { t } = useLocale();
-  const title = t(project.title);
+  const title = project.title;
   const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
     if (e.key !== 'Enter' && e.key !== ' ') return;
     e.preventDefault();
@@ -193,7 +189,7 @@ const WebFrame = ({
       type="button"
       onClick={onClick}
       onKeyDown={handleKeyDown}
-      aria-label={`Open ${title} presentation view`}
+      aria-label={`${title} 화면 크게 보기`}
       className="relative w-full max-w-md lg:max-w-xl aspect-video bg-[#faf7f2] rounded-lg shadow-2xl border-t-[20px] border-white/90 transform transition-transform duration-500 hover:scale-105 cursor-pointer overflow-hidden appearance-none p-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b8543a]/70 focus-visible:ring-offset-4 focus-visible:ring-offset-[#f2ede4]"
     >
       <div className="absolute -top-[14px] left-3 flex gap-1.5 z-10">
@@ -217,7 +213,7 @@ const WebFrame = ({
           <div className="text-white text-center">
             <Monitor size={48} className="mx-auto mb-2 opacity-80" />
             <span className="font-bold text-xl">{title}</span>
-            <p className="text-xs mt-2 opacity-80">Click to browse</p>
+            <p className="text-xs mt-2 opacity-80">눌러서 화면 보기</p>
           </div>
         </div>
       )}
@@ -233,7 +229,6 @@ const MobilePresentationFrame = ({
   project: Project;
   currentScreenIndex: number;
 }) => {
-  const { t } = useLocale();
   const currentScreen = project.screens[currentScreenIndex];
   const isScrollable = currentScreen?.scrollable;
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -255,7 +250,7 @@ const MobilePresentationFrame = ({
                 <ScreenImage
                   variant="scroll"
                   src={currentScreen.imagePath}
-                  alt={t(currentScreen.title)}
+                  alt={currentScreen.imageAlt}
                   fallbackGradient={project.color}
                   priority
                 />
@@ -264,7 +259,7 @@ const MobilePresentationFrame = ({
               <ScreenImage
                 variant="fill"
                 src={currentScreen.imagePath}
-                alt={t(currentScreen.title)}
+                alt={currentScreen.imageAlt}
                 fallbackGradient={project.color}
                 priority
               />
@@ -275,11 +270,11 @@ const MobilePresentationFrame = ({
             >
               <div className="absolute top-10 left-0 right-0 text-center">
                 <span className="text-xs uppercase tracking-widest opacity-50">
-                  {t(currentScreen.title)}
+                  {currentScreen.title}
                 </span>
               </div>
               <Smartphone size={64} className="mb-6 opacity-90" />
-              <h2 className="text-3xl font-bold mb-2">{t(project.title)}</h2>
+              <h2 className="text-3xl font-bold mb-2">{project.title}</h2>
             </div>
           )}
         </div>
@@ -289,7 +284,7 @@ const MobilePresentationFrame = ({
       {isScrollable && (
         <div className="absolute -right-16 top-1/2 -translate-y-1/2 hidden sm:flex flex-col items-center gap-2 text-white/60 animate-bounce">
           <Mouse size={20} />
-          <span className="text-xs whitespace-nowrap">Scroll</span>
+          <span className="text-xs whitespace-nowrap">스크롤</span>
         </div>
       )}
     </div>
@@ -304,7 +299,6 @@ const WebPresentationFrame = ({
   project: Project;
   currentScreenIndex: number;
 }) => {
-  const { t } = useLocale();
   const currentScreen = project.screens[currentScreenIndex];
   const isScrollable = currentScreen?.scrollable;
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -338,7 +332,7 @@ const WebPresentationFrame = ({
             <ScreenImage
               variant="scroll"
               src={currentScreen.imagePath}
-              alt={t(currentScreen.title)}
+              alt={currentScreen.imageAlt}
               fallbackGradient={project.color}
               priority
             />
@@ -346,7 +340,7 @@ const WebPresentationFrame = ({
             <ScreenImage
               variant="fill"
               src={currentScreen.imagePath}
-              alt={t(currentScreen.title)}
+              alt={currentScreen.imageAlt}
               fallbackGradient={project.color}
               priority
             />
@@ -357,7 +351,7 @@ const WebPresentationFrame = ({
           >
             <Monitor size={80} className="mb-6 text-white opacity-80" />
             <h2 className="text-4xl font-bold text-white">
-              {t(currentScreen.title)}
+              {currentScreen.title}
             </h2>
           </div>
         )}
@@ -374,7 +368,6 @@ const PackagePresentationFrame = ({
   project: Project;
   currentScreenIndex: number;
 }) => {
-  const { t } = useLocale();
   const currentScreen = project.screens[currentScreenIndex];
 
   return (
@@ -395,7 +388,7 @@ const PackagePresentationFrame = ({
           <ScreenImage
             variant="fill"
             src={currentScreen.imagePath}
-            alt={t(currentScreen.title)}
+            alt={currentScreen.imageAlt}
             fallbackGradient={project.color}
             fit="contain"
             priority
@@ -403,13 +396,13 @@ const PackagePresentationFrame = ({
         ) : (
           <div className="flex h-full flex-col justify-center px-8 py-8 md:px-14">
             <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.28em] text-[#0f766e]">
-              mobile_rag_engine case study
+              mobile_rag_engine 기술 사례
             </p>
             <h2 className="font-serif text-3xl md:text-5xl font-light text-[#1f1b16]">
-              {t(currentScreen.title)}
+              {currentScreen.title}
             </h2>
             <p className="mt-5 max-w-3xl text-base md:text-xl leading-relaxed text-[#4a4339]">
-              {t(currentScreen.desc)}
+              {currentScreen.desc}
             </p>
           </div>
         )}
@@ -426,8 +419,7 @@ const TabletFrame = ({
   project: Project;
   onClick: (e: PresentationTriggerEvent) => void;
 }) => {
-  const { t } = useLocale();
-  const title = t(project.title);
+  const title = project.title;
   const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
     if (e.key !== 'Enter' && e.key !== ' ') return;
     e.preventDefault();
@@ -439,7 +431,7 @@ const TabletFrame = ({
       type="button"
       onClick={onClick}
       onKeyDown={handleKeyDown}
-      aria-label={`Open ${title} presentation view`}
+      aria-label={`${title} 화면 크게 보기`}
       className="relative mx-auto cursor-pointer border-gray-100 bg-gray-100 border-[10px] rounded-[2rem] shadow-xl flex flex-col transform transition-transform duration-500 hover:scale-105 w-[236px] h-[336px] sm:w-[280px] sm:h-[400px] lg:w-[360px] lg:h-[510px] appearance-none p-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b8543a]/70 focus-visible:ring-offset-4 focus-visible:ring-offset-[#f2ede4]"
     >
       {/* 태블릿 상단 카메라 */}
@@ -458,7 +450,7 @@ const TabletFrame = ({
           >
             <Tablet size={48} className="mb-4 opacity-80" />
             <h3 className="text-xl font-bold">{title}</h3>
-            <p className="text-xs opacity-75 mt-2">Tap to view screens</p>
+            <p className="text-xs opacity-75 mt-2">눌러서 화면 보기</p>
           </div>
         )}
       </div>
@@ -474,7 +466,6 @@ const TabletPresentationFrame = ({
   project: Project;
   currentScreenIndex: number;
 }) => {
-  const { t } = useLocale();
   const currentScreen = project.screens[currentScreenIndex];
   const isScrollable = currentScreen?.scrollable;
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -502,7 +493,7 @@ const TabletPresentationFrame = ({
                 <ScreenImage
                   variant="scroll"
                   src={currentScreen.imagePath}
-                  alt={t(currentScreen.title)}
+                  alt={currentScreen.imageAlt}
                   fallbackGradient={project.color}
                   priority
                 />
@@ -511,7 +502,7 @@ const TabletPresentationFrame = ({
               <ScreenImage
                 variant="fill"
                 src={currentScreen.imagePath}
-                alt={t(currentScreen.title)}
+                alt={currentScreen.imageAlt}
                 fallbackGradient={project.color}
                 priority
               />
@@ -522,11 +513,11 @@ const TabletPresentationFrame = ({
             >
               <div className="absolute top-10 left-0 right-0 text-center">
                 <span className="text-xs uppercase tracking-widest opacity-50">
-                  {t(currentScreen.title)}
+                  {currentScreen.title}
                 </span>
               </div>
               <Tablet size={64} className="mb-6 opacity-90" />
-              <h2 className="text-3xl font-bold mb-2">{t(project.title)}</h2>
+              <h2 className="text-3xl font-bold mb-2">{project.title}</h2>
             </div>
           )}
         </div>
@@ -536,7 +527,7 @@ const TabletPresentationFrame = ({
       {isScrollable && (
         <div className="absolute -right-16 top-1/2 -translate-y-1/2 hidden sm:flex flex-col items-center gap-2 text-white/60 animate-bounce">
           <Mouse size={20} />
-          <span className="text-xs whitespace-nowrap">Scroll</span>
+          <span className="text-xs whitespace-nowrap">스크롤</span>
         </div>
       )}
     </div>

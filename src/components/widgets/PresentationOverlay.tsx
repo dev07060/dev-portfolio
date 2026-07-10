@@ -4,7 +4,6 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useRef } from 'react';
 import { Project } from '@/types/project';
 import DeviceFrame from './DeviceFrame';
-import { useLocale } from '@/i18n';
 import { useFocusTrap } from './useFocusTrap';
 
 interface PresentationOverlayProps {
@@ -68,7 +67,7 @@ const PresentationOverlay = ({
       <button
         ref={closeButtonRef}
         onClick={onExit}
-        aria-label="Exit presentation mode"
+        aria-label="프레젠테이션 모드 닫기"
         className="absolute top-6 right-6 p-3 bg-white/10 rounded-full hover:bg-white/20 text-white z-50 transition-colors"
       >
         <X size={24} />
@@ -106,7 +105,7 @@ const PresentationOverlay = ({
         <button
           onClick={onPrevSlide}
           disabled={isFirst}
-          aria-label="Go to previous screen"
+          aria-label="이전 화면"
           className={`p-3 md:p-3.5 rounded-full text-white border border-white/20 transition-all ${
             isFirst
               ? 'bg-white/[0.03] opacity-25 cursor-not-allowed'
@@ -123,7 +122,7 @@ const PresentationOverlay = ({
         <button
           onClick={onNextSlide}
           disabled={isLast}
-          aria-label="Go to next screen"
+          aria-label="다음 화면"
           className={`p-3 md:p-3.5 rounded-full text-white border border-white/20 transition-all ${
             isLast
               ? 'bg-white/[0.03] opacity-25 cursor-not-allowed'
@@ -157,8 +156,6 @@ const CaptionArea = ({
   titleId: string;
   descriptionId: string;
 }) => {
-  const { t } = useLocale();
-  
   return (
     <div className="w-full shrink-0 bg-[#1f1b16]/90 backdrop-blur-md p-3 md:p-8 border-t border-white/10 text-center">
       <div className="max-w-4xl mx-auto">
@@ -166,13 +163,13 @@ const CaptionArea = ({
           id={titleId}
           className="font-serif text-lg md:text-3xl font-light text-[#faf7f2] mb-1 md:mb-2"
         >
-          {t(project.screens[currentScreenIndex].title)}
+          {project.screens[currentScreenIndex].title}
         </h3>
         <p
           id={descriptionId}
           className="text-[#cfc4b2] text-xs md:text-base leading-relaxed"
         >
-          {t(project.screens[currentScreenIndex].desc)}
+          {project.screens[currentScreenIndex].desc}
         </p>
       </div>
     </div>

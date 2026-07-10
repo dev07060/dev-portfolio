@@ -20,18 +20,17 @@
   --color-border: var(--border);
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-noto-sans-kr);
   --font-mono: var(--font-geist-mono);
-  --font-serif: var(--font-fraunces);
+  --font-serif: var(--font-noto-serif-kr);
 }
 
 body {
   background: var(--background);
   color: var(--body);
-  font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+  font-family: var(--font-noto-sans-kr), system-ui, -apple-system, sans-serif;
 }
 
-body[data-portfolio-overlay="true"] .language-switcher,
 body[data-portfolio-overlay="true"] .skip-link {
   display: none;
 }

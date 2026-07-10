@@ -1,14 +1,13 @@
 'use client';
 
 import { Project } from '@/types/project';
-import { LocaleText, useLocale } from '@/i18n';
 import ProjectCard from './ProjectCard';
 
 interface ProjectGridProps {
   projects: Project[];
   onProjectClick: (project: Project) => void;
-  heading: LocaleText;
-  description: LocaleText;
+  heading: string;
+  description: string;
 }
 
 const ProjectGrid = ({
@@ -17,8 +16,6 @@ const ProjectGrid = ({
   heading,
   description,
 }: ProjectGridProps) => {
-  const { t } = useLocale();
-
   return (
     <section
       id="all-work"
@@ -27,10 +24,10 @@ const ProjectGrid = ({
       <div className="mb-5 flex flex-col gap-4 border-b border-[#e8dfd0] pb-5 sm:mb-7 sm:pb-6 lg:flex-row lg:items-end lg:justify-between lg:gap-6">
         <div className="min-w-0">
           <h2 className="font-serif text-2xl font-light tracking-tight text-[#1f1b16] sm:text-3xl md:text-4xl">
-            {t(heading)}
+            {heading}
           </h2>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[#4a4339] break-keep sm:text-base">
-            {t(description)}
+            {description}
           </p>
         </div>
         <span className="shrink-0 font-mono text-[11px] uppercase tracking-[0.18em] text-[#756b60] sm:text-xs sm:tracking-[0.25em]">

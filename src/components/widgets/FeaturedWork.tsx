@@ -1,7 +1,6 @@
 'use client';
 
 import { Project } from '@/types/project';
-import { useLocale } from '@/i18n';
 import { portfolioCopy } from '@/data/portfolio';
 import ProjectCard from './ProjectCard';
 
@@ -11,8 +10,6 @@ interface FeaturedWorkProps {
 }
 
 const FeaturedWork = ({ projects, onProjectClick }: FeaturedWorkProps) => {
-  const { t } = useLocale();
-
   return (
     <section id="featured-work" className="max-w-7xl mx-auto px-5 sm:px-6 pb-10 sm:pb-14 relative z-20 scroll-mt-8">
       <div className="mb-6 sm:mb-8 pb-5 sm:pb-6 border-b border-[#e8dfd0] flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
@@ -21,11 +18,11 @@ const FeaturedWork = ({ projects, onProjectClick }: FeaturedWorkProps) => {
             03 Proof Points
           </p>
           <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-light text-[#1f1b16] tracking-tight">
-            {t(portfolioCopy.featuredHeading)}
+            {portfolioCopy.featuredHeading}
           </h2>
         </div>
         <p className="max-w-xl text-sm sm:text-base text-[#4a4339] leading-relaxed break-keep">
-          {t(portfolioCopy.featuredDescription)}
+          {portfolioCopy.featuredDescription}
         </p>
       </div>
 

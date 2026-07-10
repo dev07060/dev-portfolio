@@ -4,7 +4,6 @@ import { X, ExternalLink } from 'lucide-react';
 import { useRef } from 'react';
 import { Project } from '@/types/project';
 import DeviceFrame from './DeviceFrame';
-import { useLocale, ui } from '@/i18n';
 import { useFocusTrap } from './useFocusTrap';
 
 interface ProjectModalProps {
@@ -24,7 +23,6 @@ const ProjectModal = ({
   onClose,
   onEnterPresentation,
 }: ProjectModalProps) => {
-  const { t } = useLocale();
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const titleId = `project-modal-title-${project.id}`;
@@ -62,7 +60,7 @@ const ProjectModal = ({
         <button
           ref={closeButtonRef}
           onClick={onClose}
-          aria-label={`Close ${t(project.title)} project details`}
+          aria-label={`${project.title} 프로젝트 상세 닫기`}
           className="fixed lg:absolute top-5 right-5 lg:top-4 lg:right-4 z-[70] p-2 bg-white/90 border border-[#e8dfd0] rounded-full hover:bg-white text-[#4a4339] shadow-sm transition-colors"
         >
           <X size={20} />
@@ -96,13 +94,11 @@ const ProjectInfoPanel = ({
   titleId: string;
   descriptionId: string;
 }) => {
-  const { t } = useLocale();
-
   const getTypeLabel = () => {
-    if (project.type === 'package') return t(ui.packageProject);
-    if (project.type === 'mobile') return t(ui.mobileApplication);
-    if (project.type === 'tablet') return t(ui.tabletApplication);
-    return t(ui.webPlatform);
+    if (project.type === 'package') return '오픈소스 패키지';
+    if (project.type === 'mobile') return '모바일 애플리케이션';
+    if (project.type === 'tablet') return '태블릿 애플리케이션';
+    return '웹 플랫폼';
   };
 
   return (
@@ -116,14 +112,14 @@ const ProjectInfoPanel = ({
             id={titleId}
             className="font-serif text-3xl md:text-4xl font-light text-[#1f1b16] mb-2 leading-tight"
           >
-            {t(project.title)}
+            {project.title}
           </h2>
           <p className="text-base text-[#756b60] italic font-serif mb-6">
-            {t(project.subtitle)}
+            {project.subtitle}
           </p>
           {project.releaseLabel && (
             <span className="inline-flex rounded-full border border-[#0f766e]/30 bg-[#eef7f5] px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider text-[#0f766e]">
-              {t(project.releaseLabel)}
+              {project.releaseLabel}
             </span>
           )}
         </div>
@@ -131,13 +127,13 @@ const ProjectInfoPanel = ({
         <div className="space-y-6">
           <div>
             <h4 className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#756b60] mb-2">
-              — {t(ui.projectOverview)}
+              — 프로젝트 개요
             </h4>
             <p
               id={descriptionId}
               className="text-[#4a4339] leading-relaxed text-sm"
             >
-              {t(project.description)}
+              {project.description}
             </p>
           </div>
 
@@ -148,7 +144,7 @@ const ProjectInfoPanel = ({
           {project.implementationPoints && project.implementationPoints.length > 0 && (
             <div>
               <h4 className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#756b60] mb-3">
-                — {t(ui.keyImplementations)}
+                — 핵심 구현
               </h4>
               <ul className="space-y-2">
                 {project.implementationPoints.map((point, index) => (
@@ -157,7 +153,7 @@ const ProjectInfoPanel = ({
                     className="flex gap-2 text-sm text-[#4a4339] leading-relaxed"
                   >
                     <span className="text-[#b8543a] mt-[2px]">·</span>
-                    <span>{t(point)}</span>
+                    <span>{point}</span>
                   </li>
                 ))}
               </ul>
@@ -166,7 +162,7 @@ const ProjectInfoPanel = ({
 
           <div>
             <h4 className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#756b60] mb-3">
-              — {t(ui.technologiesUsed)}
+              — 사용 기술
             </h4>
             <div className="flex flex-wrap gap-2">
               {project.techStack.map((tech, index) => (
@@ -208,48 +204,47 @@ const ProjectInfoPanel = ({
 };
 
 const PackageCaseStudyFlow = ({ project }: { project: Project }) => {
-  const { t } = useLocale();
   const architectureScreen =
-    project.screens.find((screen) => screen.title.en === 'Architecture') ?? project.screens[0];
+    project.screens.find((screen) => screen.id === 'architecture') ?? project.screens[0];
 
   return (
     <div data-package-detail="architecture-first">
       <h4 className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#756b60] mb-3">
-        — {t(ui.caseStudyFlow)}
+        — 사례 구성
       </h4>
       {architectureScreen && (
         <div className="mb-3 rounded-lg border border-[#0f766e]/25 bg-[#eef7f5] px-3 py-2.5">
           <div className="flex items-baseline justify-between gap-3">
             <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#0f766e]">
-              {t({ en: 'Package focus', ko: '패키지 초점' })}
+              패키지 초점
             </span>
             {project.releaseLabel && (
               <span className="shrink-0 font-mono text-[10px] uppercase tracking-[0.14em] text-[#0f766e]">
-                {t(project.releaseLabel)}
+                {project.releaseLabel}
               </span>
             )}
           </div>
           <strong className="mt-2 block text-sm font-semibold text-[#1f1b16]">
-            {t(architectureScreen.title)}
+            {architectureScreen.title}
           </strong>
           <p className="mt-1 text-xs leading-relaxed text-[#4a4339]">
-            {t(architectureScreen.desc)}
+            {architectureScreen.desc}
           </p>
         </div>
       )}
       <ol className="space-y-2.5">
         {project.screens.map((screen, index) => (
-          <li key={screen.title.en} className="rounded-lg border border-[#e8dfd0] bg-[#faf7f2] px-3 py-2.5">
+          <li key={screen.id} className="rounded-lg border border-[#e8dfd0] bg-[#faf7f2] px-3 py-2.5">
             <div className="flex items-baseline gap-2">
               <span className="font-mono text-[10px] text-[#0f766e]">
                 {String(index + 1).padStart(2, '0')}
               </span>
               <strong className="text-sm font-semibold text-[#1f1b16]">
-                {t(screen.title)}
+                {screen.title}
               </strong>
             </div>
             <p className="mt-1 text-xs leading-relaxed text-[#4a4339]">
-              {t(screen.desc)}
+              {screen.desc}
             </p>
           </li>
         ))}

@@ -1,11 +1,10 @@
 'use client';
 
 import { ExternalLink, Github } from 'lucide-react';
-import { useLocale, ui } from '@/i18n';
 
 interface PackageInfo {
   name: string;
-  bullets: { en: string; ko: string }[];
+  bullets: string[];
   version: string;
   techStack: string[];
   pubDevUrl: string;
@@ -18,22 +17,10 @@ const packages: PackageInfo[] = [
   {
     name: 'mobile_rag_engine',
     bullets: [
-      {
-        en: '100% on-device — fully offline semantic search',
-        ko: '완전 온디바이스 · 100% 오프라인 시맨틱 검색',
-      },
-      {
-        en: 'Hybrid retrieval — HNSW dense + BM25 sparse',
-        ko: '하이브리드 검색 — HNSW 벡터 + BM25 키워드',
-      },
-      {
-        en: 'PDF · DOCX ingestion via fast-path file API',
-        ko: 'PDF · DOCX 추출 + Fast-path 인제스션 API',
-      },
-      {
-        en: 'Zero-copy embedding transport over Rust core',
-        ko: 'Rust 코어 기반 Zero-copy 임베딩 전송',
-      },
+      '완전 온디바이스 · 오프라인 시맨틱 검색',
+      '하이브리드 검색 — HNSW 벡터 + BM25 키워드',
+      'PDF · DOCX 추출 + Fast-path 인제스션 API',
+      'Rust 코어 기반 임베딩 전송',
     ],
     version: '0.18.6',
     techStack: ['Rust', 'Flutter FFI', 'ONNX Runtime', 'HNSW', 'BM25', 'SQLite'],
@@ -45,22 +32,10 @@ const packages: PackageInfo[] = [
   {
     name: 'rag_engine_flutter',
     bullets: [
-      {
-        en: 'Native Rust FFI via flutter_rust_bridge',
-        ko: 'flutter_rust_bridge 기반 네이티브 Rust FFI',
-      },
-      {
-        en: '10–100× faster tokenization than pure Dart',
-        ko: 'Pure Dart 대비 10~100× 빠른 토크나이징',
-      },
-      {
-        en: 'HuggingFace Tokenizers (BPE · WordPiece) compatible',
-        ko: 'HuggingFace Tokenizers (BPE · WordPiece) 호환',
-      },
-      {
-        en: 'iOS · Android · Desktop packaging via cargokit',
-        ko: 'cargokit으로 iOS · Android · Desktop 크로스플랫폼',
-      },
+      'flutter_rust_bridge 기반 네이티브 Rust FFI',
+      'HuggingFace Tokenizers 기반 네이티브 토크나이징',
+      'BPE · WordPiece 토크나이저 호환',
+      'cargokit으로 iOS · Android · Desktop 패키징',
     ],
     version: '0.18.3',
     techStack: ['Rust', 'flutter_rust_bridge', 'cargokit', 'HuggingFace Tokenizers'],
@@ -72,21 +47,19 @@ const packages: PackageInfo[] = [
 ];
 
 const OpenSourceBanner = () => {
-  const { t, locale } = useLocale();
-
   return (
     <section className="max-w-7xl mx-auto px-5 sm:px-6 pb-10 sm:pb-14 relative z-20">
       {/* Section Header */}
       <div className="mb-6 sm:mb-8 pb-5 sm:pb-6 border-b border-[#e8dfd0] flex flex-col sm:flex-row items-start sm:items-baseline justify-between gap-2 sm:gap-0">
         <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-light text-[#1f1b16] tracking-tight">
-          {t(ui.openSourcePackages)}
+          오픈소스 패키지
         </h2>
         <span className="font-mono text-[11px] sm:text-xs uppercase tracking-[0.18em] sm:tracking-[0.25em] text-[#756b60]">
           pub.dev
         </span>
       </div>
       <p className="text-[#4a4339] text-sm md:text-base mb-6 sm:mb-8 max-w-2xl leading-relaxed">
-        {t(ui.openSourceDesc)}
+        Flutter 앱에서 재사용할 수 있는 로컬 검색 기반 기술을 패키지로 공개하고 릴리스합니다.
       </p>
 
       {/* Package Cards */}
@@ -120,6 +93,7 @@ const OpenSourceBanner = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     title="pub.dev"
+                    aria-label={`${pkg.name} pub.dev 페이지 열기`}
                     className="p-2 text-[#b8543a] hover:bg-[#b8543a]/10 rounded-lg border border-[#b8543a]/30 hover:border-[#b8543a] transition-all"
                   >
                     <ExternalLink size={15} />
@@ -129,6 +103,7 @@ const OpenSourceBanner = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     title="GitHub"
+                    aria-label={`${pkg.name} GitHub 저장소 열기`}
                     className="p-2 text-[#4a4339] hover:text-[#1f1b16] hover:bg-[#f2ede4] rounded-lg border border-[#e8dfd0] hover:border-[#756b60] transition-all"
                   >
                     <Github size={15} />
@@ -138,10 +113,10 @@ const OpenSourceBanner = () => {
 
               {/* Spec bullets - flex-grow pushes badges to bottom */}
               <ul className="text-sm text-[#4a4339] mb-4 leading-relaxed flex-grow space-y-1.5">
-                {pkg.bullets.map((b, i) => (
-                  <li key={i} className="flex gap-2">
+                {pkg.bullets.map((bullet) => (
+                  <li key={bullet} className="flex gap-2">
                     <span className="text-[#b8543a] mt-[2px] leading-none">·</span>
-                    <span>{b[locale]}</span>
+                    <span>{bullet}</span>
                   </li>
                 ))}
               </ul>

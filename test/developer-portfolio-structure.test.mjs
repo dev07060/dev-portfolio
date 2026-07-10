@@ -10,7 +10,7 @@ const read = (path) => {
 test('root shell is server-rendered in Korean without locale controls', () => {
   const layout = read('src/app/layout.tsx');
 
-  assert.match(layout, /<html lang="ko"/);
+  assert.match(layout, /<html[\s\S]*?lang="ko"/);
   assert.match(layout, /오병희 \| Flutter · 온디바이스 RAG 개발자/);
   assert.match(layout, /본문으로 건너뛰기/);
   assert.doesNotMatch(layout, /ClientWrapper|LanguageSwitcher|LocaleProvider/);
@@ -92,6 +92,16 @@ test('active source has no locale runtime', () => {
     const source = read(file);
     assert.doesNotMatch(source, /useLocale|LocaleText|LocalizedString|localize\(/);
   }
+});
+
+test('project data uses Korean strings and stable screen identifiers', () => {
+  const types = read('src/types/project.ts');
+  const projects = read('src/data/projects.ts');
+
+  assert.match(types, /id: string;/);
+  assert.doesNotMatch(types, /LocaleText|LocalizedString/);
+  assert.doesNotMatch(projects, /\ben:\s*['`]/);
+  assert.match(projects, /architecture\.ko\.svg/);
 });
 
 test('unverified profile facts and empty resume action are not rendered', () => {

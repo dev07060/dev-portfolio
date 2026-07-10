@@ -3,10 +3,9 @@
 import Image from 'next/image';
 import { ImageOff, Loader2 } from 'lucide-react';
 import { useState } from 'react';
-import { LocalizedString, localize, useLocale } from '@/i18n';
 
 type BaseProps = {
-  src: LocalizedString;
+  src: string;
   alt: string;
   fallbackGradient?: string;
   fit?: 'cover' | 'contain';
@@ -22,9 +21,8 @@ const DEFAULT_GRADIENT = 'from-slate-700 to-slate-900';
 const DEFAULT_FILL_SIZES = '(max-width: 640px) 90vw, (max-width: 1024px) 50vw, 33vw';
 
 const ScreenImage = (props: Props) => {
-  const { locale } = useLocale();
   const {
-    src: rawSrc,
+    src,
     alt,
     fallbackGradient = DEFAULT_GRADIENT,
     fit = 'cover',
@@ -32,7 +30,6 @@ const ScreenImage = (props: Props) => {
     sizes = DEFAULT_FILL_SIZES,
     variant,
   } = props;
-  const src = localize(rawSrc, locale);
   const [imageState, setImageState] = useState({
     src,
     loaded: false,
@@ -57,7 +54,7 @@ const ScreenImage = (props: Props) => {
       className={`pointer-events-none absolute inset-0 z-0 bg-gradient-to-br ${fallbackGradient} flex flex-col items-center justify-center gap-2 text-white/70`}
     >
       <ImageOff size={28} />
-      <span className="text-[11px] tracking-wide">Image unavailable</span>
+      <span className="text-[11px] tracking-wide">이미지를 불러올 수 없습니다</span>
     </div>
   );
 
