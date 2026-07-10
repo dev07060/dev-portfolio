@@ -66,9 +66,10 @@ const PresentationOverlay = ({
       {/* Navigation Controls */}
       <button
         ref={closeButtonRef}
+        type="button"
         onClick={onExit}
-        aria-label="프레젠테이션 모드 닫기"
-        className="absolute top-6 right-6 p-3 bg-white/10 rounded-full hover:bg-white/20 text-white z-50 transition-colors"
+        aria-label="프레젠테이션 닫기"
+        className="absolute right-6 top-6 z-50 inline-flex min-h-11 min-w-11 items-center justify-center rounded-full bg-white/10 p-3 text-white transition-colors hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#faf7f2]"
       >
         <X size={24} />
       </button>
@@ -90,6 +91,11 @@ const PresentationOverlay = ({
         ))}
       </div>
 
+      <p aria-live="polite" aria-atomic="true" className="sr-only">
+        화면 {currentScreenIndex + 1} / {project.screens.length}:{' '}
+        {project.screens[currentScreenIndex].title}
+      </p>
+
       {/* Main Visual Area */}
       <div className="flex-1 min-h-0 w-full flex items-center justify-center px-3 pt-12 pb-2 md:p-10 overflow-hidden">
         <DeviceFrame
@@ -103,10 +109,11 @@ const PresentationOverlay = ({
       {/* Unified Navigation Bar - Below Device Frame */}
       <div className="w-full shrink-0 flex items-center justify-center gap-4 md:gap-6 py-3 md:py-5">
         <button
+          type="button"
           onClick={onPrevSlide}
           disabled={isFirst}
           aria-label="이전 화면"
-          className={`p-3 md:p-3.5 rounded-full text-white border border-white/20 transition-all ${
+          className={`inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-white/20 p-3 text-white transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#faf7f2] md:p-3.5 ${
             isFirst
               ? 'bg-white/[0.03] opacity-25 cursor-not-allowed'
               : 'bg-white/10 hover:bg-white/20 hover:border-white/40 hover:scale-105 active:scale-95'
@@ -120,10 +127,11 @@ const PresentationOverlay = ({
         </span>
 
         <button
+          type="button"
           onClick={onNextSlide}
           disabled={isLast}
           aria-label="다음 화면"
-          className={`p-3 md:p-3.5 rounded-full text-white border border-white/20 transition-all ${
+          className={`inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-white/20 p-3 text-white transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#faf7f2] md:p-3.5 ${
             isLast
               ? 'bg-white/[0.03] opacity-25 cursor-not-allowed'
               : 'bg-white/10 hover:bg-white/20 hover:border-white/40 hover:scale-105 active:scale-95'
@@ -159,12 +167,12 @@ const CaptionArea = ({
   return (
     <div className="w-full shrink-0 bg-[#1f1b16]/90 backdrop-blur-md p-3 md:p-8 border-t border-white/10 text-center">
       <div className="max-w-4xl mx-auto">
-        <h3
+        <h2
           id={titleId}
           className="font-serif text-lg md:text-3xl font-light text-[#faf7f2] mb-1 md:mb-2"
         >
           {project.screens[currentScreenIndex].title}
-        </h3>
+        </h2>
         <p
           id={descriptionId}
           className="text-[#cfc4b2] text-xs md:text-base leading-relaxed"

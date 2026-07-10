@@ -1,13 +1,15 @@
 'use client';
 
-import { X, ExternalLink } from 'lucide-react';
+import { ExternalLink, X } from 'lucide-react';
 import { useRef } from 'react';
-import { Project } from '@/types/project';
+import type { Project } from '@/types/project';
+import type { RecruitmentCase } from '@/types/recruitment';
 import DeviceFrame from './DeviceFrame';
 import { useFocusTrap } from './useFocusTrap';
 
 interface ProjectModalProps {
   project: Project;
+  recruitmentCase?: RecruitmentCase;
   isAnimating: boolean;
   isPresentationMode: boolean;
   currentScreenIndex: number;
@@ -17,6 +19,7 @@ interface ProjectModalProps {
 
 const ProjectModal = ({
   project,
+  recruitmentCase,
   isAnimating,
   isPresentationMode,
   currentScreenIndex,
@@ -43,37 +46,34 @@ const ProjectModal = ({
       aria-describedby={isPresentationMode ? undefined : descriptionId}
       inert={isPresentationMode ? true : undefined}
       tabIndex={-1}
-      className={`fixed inset-0 z-50 flex items-center justify-center px-3 sm:px-4 md:px-8 py-2 md:py-4 transition-opacity duration-300 ${
+      className={`fixed inset-0 z-50 flex items-center justify-center px-3 py-2 transition-opacity duration-300 sm:px-4 md:px-8 md:py-4 ${
         isAnimating ? 'opacity-100' : 'opacity-0'
       }`}
     >
-      {/* Backdrop */}
       <div
         aria-hidden="true"
         className="absolute inset-0 bg-[#1f1b16]/40 backdrop-blur-sm"
         onClick={onClose}
       />
 
-      {/* Modal Content Container */}
-      <div className="relative w-full max-w-6xl h-auto lg:h-[720px] max-h-[calc(100dvh-1rem)] lg:max-h-[calc(100vh-2rem)] bg-[#faf7f2] border border-[#e8dfd0] rounded-2xl md:rounded-3xl shadow-[0_30px_80px_-20px_rgba(31,27,22,0.25)] overflow-y-auto lg:overflow-hidden flex flex-col lg:flex-row scrollbar-hide">
-        {/* Close Button */}
+      <div className="accessible-scrollbar relative flex max-h-[calc(100dvh-1rem)] w-full max-w-6xl flex-col overflow-y-auto rounded-2xl border border-[#e8dfd0] bg-[#faf7f2] shadow-[0_30px_80px_-20px_rgba(31,27,22,0.25)] md:rounded-3xl lg:h-[720px] lg:max-h-[calc(100vh-2rem)] lg:flex-row lg:overflow-hidden">
         <button
           ref={closeButtonRef}
+          type="button"
           onClick={onClose}
           aria-label={`${project.title} 프로젝트 상세 닫기`}
-          className="fixed lg:absolute top-5 right-5 lg:top-4 lg:right-4 z-[70] p-2 bg-white/90 border border-[#e8dfd0] rounded-full hover:bg-white text-[#4a4339] shadow-sm transition-colors"
+          className="fixed right-5 top-5 z-[70] inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-[#d9e4e1] bg-white text-[#4a4339] shadow-sm transition-colors hover:bg-[#f2ede4] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f766e] lg:absolute lg:right-4 lg:top-4"
         >
-          <X size={20} />
+          <X size={20} aria-hidden="true" />
         </button>
 
-        {/* Left Side: Project Info (with tech chips + links) */}
         <ProjectInfoPanel
           project={project}
+          recruitmentCase={recruitmentCase}
           titleId={titleId}
           descriptionId={descriptionId}
         />
 
-        {/* Right Side: The Device Frame (now larger) */}
         <DeviceFrame
           project={project}
           currentScreenIndex={currentScreenIndex}
@@ -84,119 +84,151 @@ const ProjectModal = ({
   );
 };
 
-// Project Info Panel — single side panel containing all metadata
+const getTypeLabel = (project: Project) => {
+  if (project.type === 'package') return '오픈소스 패키지';
+  if (project.type === 'mobile') return '모바일 애플리케이션';
+  if (project.type === 'tablet') return '태블릿 애플리케이션';
+  return '웹 플랫폼';
+};
+
 const ProjectInfoPanel = ({
   project,
+  recruitmentCase,
   titleId,
   descriptionId,
 }: {
   project: Project;
+  recruitmentCase?: RecruitmentCase;
   titleId: string;
   descriptionId: string;
 }) => {
-  const getTypeLabel = () => {
-    if (project.type === 'package') return '오픈소스 패키지';
-    if (project.type === 'mobile') return '모바일 애플리케이션';
-    if (project.type === 'tablet') return '태블릿 애플리케이션';
-    return '웹 플랫폼';
-  };
+  const allLinks = [
+    ...(recruitmentCase?.evidenceLinks ?? []),
+    ...(project.links ?? []),
+  ].filter(
+    (link, index, links) => links.findIndex((item) => item.url === link.url) === index
+  );
+  const metadata = recruitmentCase
+    ? [recruitmentCase.role, recruitmentCase.period, recruitmentCase.team].filter(Boolean)
+    : [];
 
   return (
-    <div className="w-full lg:w-2/5 lg:overflow-y-auto scrollbar-hide lg:border-r border-[#e8dfd0] order-2 lg:order-1 bg-white">
-      <div className="p-6 sm:p-8 flex flex-col justify-start lg:justify-center min-h-full">
-        <div className="mb-6">
-          <span className="inline-block font-mono text-[10px] uppercase tracking-[0.25em] text-[#b8543a] mb-4">
-            — {getTypeLabel()}
-          </span>
+    <div className="accessible-scrollbar w-full bg-white lg:w-2/5 lg:overflow-y-auto lg:border-r lg:border-[#e8dfd0]">
+      <div className="flex min-h-full flex-col justify-start p-6 sm:p-8">
+        <header className="mb-7 border-b border-[#e8dfd0] pb-6">
+          <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] text-[#9d4530]">
+            — {recruitmentCase?.publicStatus ?? getTypeLabel(project)}
+          </p>
           <h2
             id={titleId}
-            className="font-serif text-3xl md:text-4xl font-light text-[#1f1b16] mb-2 leading-tight"
+            className="pr-10 font-serif text-3xl font-light leading-tight text-[#1f1b16] md:text-4xl"
           >
             {project.title}
           </h2>
-          <p className="text-base text-[#756b60] italic font-serif mb-6">
+          <p className="mt-2 font-serif text-base italic text-[#756b60]">
             {project.subtitle}
           </p>
+          {metadata.length > 0 && (
+            <p className="mt-3 text-xs leading-relaxed text-[#4a4339]">
+              {metadata.join(' · ')}
+            </p>
+          )}
           {project.releaseLabel && (
-            <span className="inline-flex rounded-full border border-[#0f766e]/30 bg-[#eef7f5] px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider text-[#0f766e]">
+            <span className="mt-4 inline-flex rounded-full border border-[#0f766e]/30 bg-[#eef7f5] px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-[#0f766e]">
               {project.releaseLabel}
             </span>
           )}
-        </div>
-
-        <div className="space-y-6">
-          <div>
-            <h4 className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#756b60] mb-2">
-              — 프로젝트 개요
-            </h4>
-            <p
-              id={descriptionId}
-              className="text-[#4a4339] leading-relaxed text-sm"
-            >
-              {project.description}
-            </p>
-          </div>
-
-          {project.type === 'package' && (
-            <PackageCaseStudyFlow project={project} />
-          )}
-
-          {project.implementationPoints && project.implementationPoints.length > 0 && (
-            <div>
-              <h4 className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#756b60] mb-3">
-                — 핵심 구현
-              </h4>
-              <ul className="space-y-2">
-                {project.implementationPoints.map((point, index) => (
-                  <li
-                    key={index}
-                    className="flex gap-2 text-sm text-[#4a4339] leading-relaxed"
-                  >
-                    <span className="text-[#b8543a] mt-[2px]">·</span>
-                    <span>{point}</span>
-                  </li>
-                ))}
-              </ul>
+          {allLinks.length > 0 && (
+            <div className="mt-5 flex flex-wrap gap-2" aria-label="프로젝트 공개 근거">
+              {allLinks.map((link) => (
+                <a
+                  key={link.url}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-[#d9e4e1] bg-[#faf7f2] px-3 py-2.5 text-xs font-semibold text-[#0f766e] hover:border-[#0f766e]/50 hover:bg-[#eef7f5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f766e]"
+                >
+                  {link.label}
+                  <ExternalLink size={13} aria-hidden="true" />
+                </a>
+              ))}
             </div>
           )}
+        </header>
 
-          <div>
-            <h4 className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#756b60] mb-3">
-              — 사용 기술
-            </h4>
+        <div className="space-y-7">
+          <section aria-labelledby={`problem-${project.id}`}>
+            <h3
+              id={`problem-${project.id}`}
+              className="mb-2 font-mono text-[10px] uppercase tracking-[0.25em] text-[#756b60]"
+            >
+              — 문제와 제약
+            </h3>
+            <p id={descriptionId} className="text-sm leading-relaxed text-[#4a4339] break-keep">
+              {recruitmentCase?.problem ?? project.description}
+            </p>
+          </section>
+
+          {(recruitmentCase?.contributions.length || project.implementationPoints?.length) && (
+            <section aria-labelledby={`contribution-${project.id}`}>
+              <h3
+                id={`contribution-${project.id}`}
+                className="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] text-[#756b60]"
+              >
+                — 직접 설계·구현한 범위
+              </h3>
+              <ul className="space-y-2">
+                {(recruitmentCase?.contributions ?? project.implementationPoints ?? []).map(
+                  (point) => (
+                    <li key={point} className="flex gap-2 text-sm leading-relaxed text-[#4a4339]">
+                      <span aria-hidden="true" className="mt-[2px] text-[#9d4530]">·</span>
+                      <span>{point}</span>
+                    </li>
+                  )
+                )}
+              </ul>
+            </section>
+          )}
+
+          {project.type === 'package' && <PackageCaseStudyFlow project={project} />}
+
+          <section aria-labelledby={`technology-${project.id}`}>
+            <h3
+              id={`technology-${project.id}`}
+              className="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] text-[#756b60]"
+            >
+              — 구조와 핵심 기술
+            </h3>
             <div className="flex flex-wrap gap-2">
-              {project.techStack.map((tech, index) => (
+              {project.techStack.map((tech) => (
                 <span
-                  key={index}
-                  className="px-2.5 py-1 text-xs font-medium bg-[#f2ede4] text-[#4a4339] rounded-full border border-[#e8dfd0]"
+                  key={tech}
+                  className="rounded-full border border-[#e8dfd0] bg-[#f2ede4] px-2.5 py-1 text-xs font-medium text-[#4a4339]"
                 >
                   {tech}
                 </span>
               ))}
             </div>
-          </div>
+          </section>
 
-          {project.links && project.links.length > 0 && (
-            <div className="pt-2 flex flex-wrap gap-2">
-              {project.links.map((link, index) => (
-                <a
-                  key={index}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#faf7f2] hover:bg-[#f2ede4] transition-colors group border border-[#e8dfd0] hover:border-[#b8543a]/40"
-                >
-                  <span className="font-semibold text-[#1f1b16] text-xs">
-                    {link.label}
-                  </span>
-                  <ExternalLink
-                    size={12}
-                    className="text-[#756b60] group-hover:text-[#b8543a] transition-colors"
-                  />
-                </a>
-              ))}
-            </div>
-          )}
+          {recruitmentCase?.outcomes.length ? (
+            <section aria-labelledby={`outcomes-${project.id}`}>
+              <h3
+                id={`outcomes-${project.id}`}
+                className="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] text-[#756b60]"
+              >
+                — 결과와 검증
+              </h3>
+              <ul className="space-y-2">
+                {recruitmentCase.outcomes.map((outcome) => (
+                  <li key={outcome} className="flex gap-2 text-sm leading-relaxed text-[#4a4339]">
+                    <span aria-hidden="true" className="mt-[2px] text-[#0f766e]">·</span>
+                    <span>{outcome}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
         </div>
       </div>
     </div>
@@ -208,23 +240,16 @@ const PackageCaseStudyFlow = ({ project }: { project: Project }) => {
     project.screens.find((screen) => screen.id === 'architecture') ?? project.screens[0];
 
   return (
-    <div data-package-detail="architecture-first">
-      <h4 className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#756b60] mb-3">
-        — 사례 구성
-      </h4>
+    <section aria-labelledby={`case-flow-${project.id}`} data-package-detail="architecture-first">
+      <h3
+        id={`case-flow-${project.id}`}
+        className="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] text-[#756b60]"
+      >
+        — 아키텍처와 데이터 흐름
+      </h3>
       {architectureScreen && (
-        <div className="mb-3 rounded-lg border border-[#0f766e]/25 bg-[#eef7f5] px-3 py-2.5">
-          <div className="flex items-baseline justify-between gap-3">
-            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#0f766e]">
-              패키지 초점
-            </span>
-            {project.releaseLabel && (
-              <span className="shrink-0 font-mono text-[10px] uppercase tracking-[0.14em] text-[#0f766e]">
-                {project.releaseLabel}
-              </span>
-            )}
-          </div>
-          <strong className="mt-2 block text-sm font-semibold text-[#1f1b16]">
+        <div className="rounded-lg border border-[#0f766e]/25 bg-[#eef7f5] px-3 py-2.5">
+          <strong className="block text-sm font-semibold text-[#1f1b16]">
             {architectureScreen.title}
           </strong>
           <p className="mt-1 text-xs leading-relaxed text-[#4a4339]">
@@ -232,24 +257,7 @@ const PackageCaseStudyFlow = ({ project }: { project: Project }) => {
           </p>
         </div>
       )}
-      <ol className="space-y-2.5">
-        {project.screens.map((screen, index) => (
-          <li key={screen.id} className="rounded-lg border border-[#e8dfd0] bg-[#faf7f2] px-3 py-2.5">
-            <div className="flex items-baseline gap-2">
-              <span className="font-mono text-[10px] text-[#0f766e]">
-                {String(index + 1).padStart(2, '0')}
-              </span>
-              <strong className="text-sm font-semibold text-[#1f1b16]">
-                {screen.title}
-              </strong>
-            </div>
-            <p className="mt-1 text-xs leading-relaxed text-[#4a4339]">
-              {screen.desc}
-            </p>
-          </li>
-        ))}
-      </ol>
-    </div>
+    </section>
   );
 };
 

@@ -150,6 +150,34 @@ test('empty experience and missing resume actions stay hidden', () => {
   }
 });
 
+test('project detail and presentation actions use Korean accessible names', () => {
+  const card = read('src/components/widgets/ProjectCard.tsx');
+  const modal = read('src/components/widgets/ProjectModal.tsx');
+  const device = read('src/components/widgets/DeviceFrame.tsx');
+  const presentation = read('src/components/widgets/PresentationOverlay.tsx');
+
+  assert.match(card, /aria-haspopup="dialog"/);
+  assert.match(card, /\$\{title\} 프로젝트 상세 열기/);
+  assert.match(modal, /\$\{project\.title\} 프로젝트 상세 닫기/);
+  assert.match(device, /\$\{title\} 프레젠테이션 열기/);
+  assert.match(presentation, /aria-label="프레젠테이션 닫기"/);
+  assert.match(presentation, /aria-label="이전 화면"/);
+  assert.match(presentation, /aria-label="다음 화면"/);
+  assert.match(presentation, /aria-live="polite"/);
+});
+
+test('modal order and screenshot regions follow reading and keyboard order', () => {
+  const modal = read('src/components/widgets/ProjectModal.tsx');
+  const device = read('src/components/widgets/DeviceFrame.tsx');
+
+  assert.doesNotMatch(modal, /order-1|order-2/);
+  assert.doesNotMatch(modal, /<h4/);
+  assert.match(device, /tabIndex=\{isScrollable \? 0 : undefined\}/);
+  assert.match(device, /role=\{isScrollable \? 'region' : undefined\}/);
+  assert.match(device, /스크린샷 스크롤 영역/);
+  assert.doesNotMatch(device, /scrollbar-hide/);
+});
+
 test('unverified profile facts and empty resume action are not rendered', () => {
   const recruitment = read('src/data/recruitment.ts');
   const hero = read('src/components/widgets/DeveloperHero.tsx');

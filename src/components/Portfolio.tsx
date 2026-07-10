@@ -179,6 +179,9 @@ const Portfolio = () => {
       {selectedProject && (
         <ProjectModal
           project={selectedProject}
+          recruitmentCase={recruitmentCases.find(
+            (item) => item.projectId === selectedProject.id
+          )}
           isAnimating={isAnimating}
           isPresentationMode={isPresentationMode}
           currentScreenIndex={currentScreenIndex}

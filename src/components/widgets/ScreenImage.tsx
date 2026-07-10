@@ -50,11 +50,11 @@ const ScreenImage = (props: Props) => {
 
   const errorState = error && (
     <div
-      aria-hidden
+      role="status"
       className={`pointer-events-none absolute inset-0 z-0 bg-gradient-to-br ${fallbackGradient} flex flex-col items-center justify-center gap-2 text-white/70`}
     >
-      <ImageOff size={28} />
-      <span className="text-[11px] tracking-wide">이미지를 불러올 수 없습니다</span>
+      <ImageOff size={28} aria-hidden="true" />
+      <span className="text-[11px] tracking-wide">이미지를 불러오지 못했습니다.</span>
     </div>
   );
 

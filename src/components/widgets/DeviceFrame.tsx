@@ -33,7 +33,7 @@ const DeviceFrame = ({
   }
 
   return (
-    <div className="w-full lg:w-3/5 bg-gradient-to-b from-[#f2ede4] to-[#e8dfd0] flex items-center justify-center p-4 sm:p-6 lg:p-8 order-1 lg:order-2 overflow-hidden relative min-h-[360px] sm:min-h-[460px] lg:min-h-[500px] group">
+    <div className="group relative flex min-h-[360px] w-full items-center justify-center overflow-hidden bg-gradient-to-b from-[#f2ede4] to-[#e8dfd0] p-4 sm:min-h-[460px] sm:p-6 lg:min-h-[500px] lg:w-3/5 lg:p-8">
       {/* Always-visible affordance badge — also works on touch devices */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 bg-[#1f1b16]/75 backdrop-blur-sm px-3 py-1.5 rounded-full text-[10px] uppercase tracking-[0.2em] text-[#faf7f2] flex items-center gap-1.5 pointer-events-none font-mono shadow-sm group-hover:bg-[#1f1b16]/90 transition-colors">
         <Maximize2 size={10} />
@@ -85,8 +85,8 @@ const PackageFrame = ({
       type="button"
       onClick={onClick}
       onKeyDown={handleKeyDown}
-      aria-label={`${title} 패키지 사례 크게 보기`}
-      className="relative w-full max-w-md lg:max-w-xl aspect-[16/10] bg-white rounded-xl shadow-2xl border border-white/90 transform transition-transform duration-500 hover:scale-[1.03] cursor-pointer overflow-hidden appearance-none p-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f766e]/70 focus-visible:ring-offset-4 focus-visible:ring-offset-[#f2ede4]"
+      aria-label={`${title} 프레젠테이션 열기`}
+      className="relative aspect-[16/10] w-full max-w-md cursor-pointer appearance-none overflow-hidden rounded-xl border border-white/90 bg-white p-0 text-left shadow-2xl transition-transform duration-500 hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f766e] focus-visible:ring-offset-4 focus-visible:ring-offset-[#f2ede4] lg:max-w-xl"
     >
       <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between border-b border-[#d9e4e1] bg-white/95 px-4 py-2">
         <div className="flex items-center gap-2">
@@ -141,8 +141,8 @@ const MobileFrame = ({
       type="button"
       onClick={onClick}
       onKeyDown={handleKeyDown}
-      aria-label={`${title} 화면 크게 보기`}
-      className="relative mx-auto cursor-pointer border-gray-100 bg-gray-100 border-[8px] rounded-[2.5rem] h-[340px] w-[188px] sm:h-[400px] sm:w-[220px] md:h-[500px] md:w-[280px] lg:h-[560px] lg:w-[310px] shadow-xl flex flex-col transform transition-transform duration-500 hover:scale-105 appearance-none p-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b8543a]/70 focus-visible:ring-offset-4 focus-visible:ring-offset-[#f2ede4]"
+      aria-label={`${title} 프레젠테이션 열기`}
+      className="relative mx-auto flex h-[340px] w-[188px] cursor-pointer flex-col appearance-none rounded-[2.5rem] border-[8px] border-gray-100 bg-gray-100 p-0 text-left shadow-xl transition-transform duration-500 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f766e] focus-visible:ring-offset-4 focus-visible:ring-offset-[#f2ede4] sm:h-[400px] sm:w-[220px] md:h-[500px] md:w-[280px] lg:h-[560px] lg:w-[310px]"
     >
       <div className="h-[32px] w-[3px] bg-gray-100 absolute -left-[10px] top-[72px] rounded-l-lg" />
       <div className="h-[46px] w-[3px] bg-gray-100 absolute -left-[10px] top-[124px] rounded-l-lg" />
@@ -189,8 +189,8 @@ const WebFrame = ({
       type="button"
       onClick={onClick}
       onKeyDown={handleKeyDown}
-      aria-label={`${title} 화면 크게 보기`}
-      className="relative w-full max-w-md lg:max-w-xl aspect-video bg-[#faf7f2] rounded-lg shadow-2xl border-t-[20px] border-white/90 transform transition-transform duration-500 hover:scale-105 cursor-pointer overflow-hidden appearance-none p-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b8543a]/70 focus-visible:ring-offset-4 focus-visible:ring-offset-[#f2ede4]"
+      aria-label={`${title} 프레젠테이션 열기`}
+      className="relative aspect-video w-full max-w-md cursor-pointer appearance-none overflow-hidden rounded-lg border-t-[20px] border-white/90 bg-[#faf7f2] p-0 text-left shadow-2xl transition-transform duration-500 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f766e] focus-visible:ring-offset-4 focus-visible:ring-offset-[#f2ede4] lg:max-w-xl"
     >
       <div className="absolute -top-[14px] left-3 flex gap-1.5 z-10">
         <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
@@ -243,7 +243,17 @@ const MobilePresentationFrame = ({
   return (
     <div className="relative">
       <div className="relative border-gray-100 bg-gray-100 border-[8px] rounded-[2.5rem] h-[min(58dvh,540px)] md:h-[70vh] aspect-[9/19] shadow-2xl flex flex-col">
-        <div ref={scrollRef} className={`rounded-[2rem] w-full h-full bg-slate-800 relative ${isScrollable ? 'overflow-y-auto overflow-x-hidden scrollbar-hide' : 'overflow-hidden'}`}>
+        <div
+          ref={scrollRef}
+          tabIndex={isScrollable ? 0 : undefined}
+          role={isScrollable ? 'region' : undefined}
+          aria-label={isScrollable ? `${currentScreen.title} 스크린샷 스크롤 영역` : undefined}
+          className={`relative h-full w-full rounded-[2rem] bg-slate-800 ${
+            isScrollable
+              ? 'accessible-scrollbar overflow-x-hidden overflow-y-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#faf7f2]'
+              : 'overflow-hidden'
+          }`}
+        >
           {currentScreen?.imagePath ? (
             isScrollable ? (
               <div className="w-full relative">
@@ -326,7 +336,17 @@ const WebPresentationFrame = ({
         <div className="w-3 h-3 rounded-full bg-yellow-400" />
         <div className="w-3 h-3 rounded-full bg-green-400" />
       </div>
-      <div ref={scrollRef} className={`w-full h-full relative ${isScrollable ? 'overflow-y-auto overflow-x-hidden scrollbar-hide' : ''}`}>
+      <div
+        ref={scrollRef}
+        tabIndex={isScrollable ? 0 : undefined}
+        role={isScrollable ? 'region' : undefined}
+        aria-label={isScrollable ? `${currentScreen.title} 스크린샷 스크롤 영역` : undefined}
+        className={`relative h-full w-full ${
+          isScrollable
+            ? 'accessible-scrollbar overflow-x-hidden overflow-y-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#faf7f2]'
+            : ''
+        }`}
+      >
         {currentScreen?.imagePath ? (
           isScrollable ? (
             <ScreenImage
@@ -431,8 +451,8 @@ const TabletFrame = ({
       type="button"
       onClick={onClick}
       onKeyDown={handleKeyDown}
-      aria-label={`${title} 화면 크게 보기`}
-      className="relative mx-auto cursor-pointer border-gray-100 bg-gray-100 border-[10px] rounded-[2rem] shadow-xl flex flex-col transform transition-transform duration-500 hover:scale-105 w-[236px] h-[336px] sm:w-[280px] sm:h-[400px] lg:w-[360px] lg:h-[510px] appearance-none p-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b8543a]/70 focus-visible:ring-offset-4 focus-visible:ring-offset-[#f2ede4]"
+      aria-label={`${title} 프레젠테이션 열기`}
+      className="relative mx-auto flex h-[336px] w-[236px] cursor-pointer flex-col appearance-none rounded-[2rem] border-[10px] border-gray-100 bg-gray-100 p-0 text-left shadow-xl transition-transform duration-500 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f766e] focus-visible:ring-offset-4 focus-visible:ring-offset-[#f2ede4] sm:h-[400px] sm:w-[280px] lg:h-[510px] lg:w-[360px]"
     >
       {/* 태블릿 상단 카메라 */}
       <div className="absolute top-3 left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-300 rounded-full" />
@@ -486,7 +506,17 @@ const TabletPresentationFrame = ({
         {/* 태블릿 상단 카메라 */}
         <div className="absolute top-4 left-1/2 -translate-x-1/2 w-3 h-3 bg-gray-300 rounded-full z-10" />
         
-        <div ref={scrollRef} className={`rounded-[2rem] w-full h-full bg-slate-800 relative mt-2 ${isScrollable ? 'overflow-y-auto overflow-x-hidden scrollbar-hide' : 'overflow-hidden'}`}>
+        <div
+          ref={scrollRef}
+          tabIndex={isScrollable ? 0 : undefined}
+          role={isScrollable ? 'region' : undefined}
+          aria-label={isScrollable ? `${currentScreen.title} 스크린샷 스크롤 영역` : undefined}
+          className={`relative mt-2 h-full w-full rounded-[2rem] bg-slate-800 ${
+            isScrollable
+              ? 'accessible-scrollbar overflow-x-hidden overflow-y-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#faf7f2]'
+              : 'overflow-hidden'
+          }`}
+        >
           {currentScreen?.imagePath ? (
             isScrollable ? (
               <div className="w-full relative">

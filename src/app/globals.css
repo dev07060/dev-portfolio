@@ -8,6 +8,7 @@
   --muted: #756b60;
   --border: #e8dfd0;
   --accent: #b8543a;
+  --accent-text: #9d4530;
   --accent-hover: #9d4530;
 }
 
@@ -19,6 +20,7 @@
   --color-muted: var(--muted);
   --color-border: var(--border);
   --color-accent: var(--accent);
+  --color-accent-text: var(--accent-text);
   --color-accent-hover: var(--accent-hover);
   --font-sans: var(--font-noto-sans-kr);
   --font-mono: var(--font-geist-mono);
@@ -64,17 +66,40 @@ body[data-portfolio-overlay="true"] .skip-link {
   animation: fadeIn 0.3s ease-out forwards;
 }
 
-/* Hide Scrollbar */
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
+.accessible-scrollbar {
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: #756b60 #f2ede4;
 }
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+
+.accessible-scrollbar::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.accessible-scrollbar::-webkit-scrollbar-track {
+  background: #f2ede4;
+}
+
+.accessible-scrollbar::-webkit-scrollbar-thumb {
+  border: 2px solid #f2ede4;
+  border-radius: 999px;
+  background: #756b60;
 }
 
 /* Selection Color */
 ::selection {
   background-color: #b8543a;
   color: #faf7f2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
