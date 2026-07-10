@@ -20,9 +20,9 @@ const RecruitmentNav = ({ profile, hasExperience }: RecruitmentNavProps) => (
     <SectionContainer className="flex min-h-16 items-center justify-between gap-5 py-3">
       <a
         href="#about"
-        className="shrink-0 font-serif text-lg font-semibold text-[#1f1b16] focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f766e]"
+        className="shrink-0 text-xs font-semibold tracking-[0.18em] text-[#1f1b16] focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f766e] sm:text-sm"
       >
-        오병희
+        DEV PORTFOLIO
       </a>
       <div className="flex min-w-0 items-center gap-3 overflow-x-auto py-1 sm:gap-5">
         {navigation.map((item) => (

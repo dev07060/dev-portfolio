@@ -244,6 +244,14 @@ test('empty experience and missing resume actions stay hidden', () => {
   }
 });
 
+test('app bar uses a portfolio brand label instead of repeating the hero name', () => {
+  const navigation = read('src/components/widgets/RecruitmentNav.tsx');
+
+  assert.match(navigation, />\s*DEV PORTFOLIO\s*</);
+  assert.doesNotMatch(navigation, />\s*오병희\s*</);
+  assert.match(navigation, /href="#about"/);
+});
+
 test('project detail and presentation actions use Korean accessible names', () => {
   const card = read('src/components/widgets/ProjectCard.tsx');
   const modal = read('src/components/widgets/ProjectModal.tsx');

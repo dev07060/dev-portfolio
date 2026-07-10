@@ -27,7 +27,7 @@
 - Consumes: the existing `RecruitmentNav` source and `#about` anchor behavior.
 - Produces: a `DEV PORTFOLIO` brand link that still targets `#about`.
 
-- [ ] **Step 1: Write the failing source-contract test**
+- [x] **Step 1: Write the failing source-contract test**
 
 Add this test:
 
@@ -41,13 +41,13 @@ test('app bar uses a portfolio brand label instead of repeating the hero name', 
 });
 ```
 
-- [ ] **Step 2: Run the focused test and verify RED**
+- [x] **Step 2: Run the focused test and verify RED**
 
 Run: `node --test --test-name-pattern="app bar uses" test/developer-portfolio-structure.test.mjs`
 
 Expected: FAIL because `RecruitmentNav.tsx` still renders `오병희`.
 
-- [ ] **Step 3: Apply the minimal UI change**
+- [x] **Step 3: Apply the minimal UI change**
 
 In `RecruitmentNav.tsx`, keep `href="#about"` and replace the brand link content and typography with:
 
@@ -59,7 +59,7 @@ className="shrink-0 text-xs font-semibold tracking-[0.18em] text-[#1f1b16] focus
 DEV PORTFOLIO
 ```
 
-- [ ] **Step 4: Verify GREEN and regressions**
+- [x] **Step 4: Verify GREEN and regressions**
 
 Run:
 
@@ -73,7 +73,7 @@ npm run build
 
 Expected: all commands exit 0; the full test suite reports 23 passing tests.
 
-- [ ] **Step 5: Verify localhost output**
+- [x] **Step 5: Verify localhost output**
 
 Run: `curl -sS http://localhost:3000 | rg -o 'DEV PORTFOLIO|오병희' | sort -u`
 
