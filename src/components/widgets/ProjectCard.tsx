@@ -64,7 +64,10 @@ const ProjectCard = ({
     : [];
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-[#e8dfd0] bg-white transition-all duration-300 hover:-translate-y-1 hover:border-[#0f766e]/45 hover:shadow-[0_20px_50px_-20px_rgba(15,118,110,0.2)]">
+    <article
+      id={`project-${project.id}`}
+      className="group flex h-full scroll-mt-6 flex-col overflow-hidden rounded-2xl border border-[#e8dfd0] bg-white transition-all duration-300 hover:-translate-y-1 hover:border-[#0f766e]/45 hover:shadow-[0_20px_50px_-20px_rgba(15,118,110,0.2)]"
+    >
       <div
         className={`relative flex h-40 items-center justify-center overflow-hidden bg-gradient-to-br ${project.color} sm:h-44`}
       >

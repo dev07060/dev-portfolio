@@ -1,9 +1,9 @@
 # 한국어 개발자 채용 포트폴리오 릴리스 검증 기록
 
-- 검증일: 2026-07-10
+- 검증일: 2026-07-11
 - 브랜치: `feats/korean-developer-recruitment-portfolio`
 - 기준 설계: `docs/superpowers/specs/2026-07-10-korean-developer-recruitment-portfolio-design.md`
-- 상태: 구현 및 자동 검증 완료, 공개 릴리스 입력과 Safari + VoiceOver 수동 확인 대기
+- 상태: 사용자 제공 이력서 기반 경력 반영 및 자동 검증 완료
 
 ## 자동 검증
 
@@ -49,32 +49,21 @@ Chromium 프로덕션 화면에서 다음 상태를 데스크톱, 태블릿, 모
 - 프로젝트 상세의 정보 우선 DOM/시각 순서
 - presentation과 긴 법령 검색 결과 화면의 내부 scroll
 - 390px modal과 768px 2열 grid
+- 1440px 경력 6건의 최신순 timeline과 390px 첫 경력 카드 reflow
+- 경력의 관련 프로젝트 링크가 대응하는 대표·추가 프로젝트 카드로 이동
 - 브라우저 console error와 warning 0개
 
-검토 캡처는 작업 당시 `/tmp/dev-portfolio-korean-recruitment-audit-2026-07-10/`에 생성했으며 저장소에는 포함하지 않는다.
+초기 검토 캡처는 `/tmp/dev-portfolio-korean-recruitment-audit-2026-07-10/`, 경력 검토 캡처는 `output/playwright/resume-timeline/`에 생성했으며 저장소에는 포함하지 않는다.
 
-## 남은 수동 release gate
+## 수동 release gate
 
 다음 항목은 자동화 결과로 대체하지 않는다.
 
-- Safari + VoiceOver에서 landmark, heading, link, button, dialog 이름과 읽기 순서 확인
 - Safari keyboard-only 탐색 확인. 기본 설정에서는 link 탐색에 `Option+Tab`을 사용한다.
 - 실제 Safari 200%와 400% page zoom에서 콘텐츠와 control 도달 가능성 확인
 
-VoiceOver 활성화는 macOS 보조 기능 상태를 변경하므로 사용자 확인 후 실행하고, 검증 후 원래 상태로 되돌린다.
-
 ## 공개 릴리스 콘텐츠 gate
 
-`experienceItems`가 비어 있으므로 빈 timeline과 `경력` navigation은 렌더링하지 않는다. 승인된 설계에 따라 공개 릴리스에는 최소 1개의 사용자 확인 경력 항목이 필요하다.
+사용자가 제공한 2026-06-30 수정 이력서를 기준으로 최신순 경력 6건과 총 경력 5년 5개월을 반영했다. 각 항목은 회사, 역할, 고용 형태, 기간, 담당 범위, 결과 최대 2개, 확인 가능한 관련 프로젝트만 포함한다.
 
-필수 입력:
-
-- 회사 또는 팀
-- 직책
-- 고용 형태
-- 시작일과 종료일
-- 담당 범위 한 문장
-- 검증 가능한 결과 최대 2개
-- 관련 대표 사례
-
-`resumeUrl`은 선택 사항이며 제공되기 전까지 CTA를 숨긴다.
+원본 이력서에는 휴대폰, 거주지, 연봉 정보가 있으므로 public asset으로 복사하지 않는다. `resumeUrl`은 계속 비워 두고 이력서 CTA를 숨긴다.

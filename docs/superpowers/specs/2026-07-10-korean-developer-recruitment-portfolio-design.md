@@ -421,7 +421,7 @@ interface RecruitmentProfile {
 - Playwright와 axe 기반 E2E gate를 추가한다.
 - `@playwright/test`와 `@axe-core/playwright`를 개발 의존성으로 추가한다.
 - `npm run test`는 구조/데이터 계약 테스트를, `npm run test:a11y`는 home/modal/presentation E2E 접근성 테스트를 실행하게 한다.
-- 수동 VoiceOver와 zoom 검증 기록을 남긴다.
+- 수동 keyboard와 zoom 검증 기록을 남긴다.
 
 한 단계에서 다음 단계의 dead code를 선제적으로 삭제하지 않는다. 각 단계는 독립적으로 review와 rollback이 가능해야 한다.
 
@@ -452,7 +452,7 @@ npm run test:a11y
 npm run build
 ```
 
-수동 release gate는 Safari + VoiceOver, keyboard-only, 200%/400% zoom, mobile/tablet/desktop 화면 검증이다.
+수동 release gate는 Safari keyboard-only, 200%/400% zoom, mobile/tablet/desktop 화면 검증이다.
 
 ## 14. 오류와 빈 상태
 
@@ -482,5 +482,5 @@ npm run build
 - 주 포지셔닝과 대표 사례가 실제 저장소 경계를 넘지 않는다.
 - 채용 담당자가 역할, 근거, 경력, 연락 경로를 하나의 직선형 흐름으로 확인할 수 있다.
 - 모바일, 태블릿, 데스크톱에서 horizontal overflow와 정보 손실이 없다.
-- dialog, presentation, screenshot 탐색을 keyboard와 screen reader로 사용할 수 있다.
+- dialog, presentation, screenshot 탐색을 keyboard로 사용할 수 있다.
 - 미확인 데이터는 숨겨지고 검증된 사실만 공개된다.

@@ -19,6 +19,10 @@ export const recruitmentProfile: RecruitmentProfile = {
       value: 'mobile_rag_engine · pub.dev 0.18.6',
       evidence: 'https://pub.dev/packages/mobile_rag_engine',
     },
+    {
+      label: '경력',
+      value: '총 5년 5개월',
+    },
   ],
 };
 
@@ -124,4 +128,83 @@ export const recruitmentCases: RecruitmentCase[] = [
   },
 ];
 
-export const experienceItems: ExperienceItem[] = [];
+export const experienceItems: ExperienceItem[] = [
+  {
+    company: '메리츠화재해상보험',
+    role: '보험 판매자용 태블릿 RAG 개발',
+    employmentType: '외주·프리랜서',
+    period: '2025.12 - 2026.02',
+    summary:
+      '보험 판매자용 태블릿 앱에서 약관 RAG 탐색과 온디바이스 조항 요약 흐름을 개발했습니다.',
+    highlights: [
+      'mobile_rag_engine 기반 BM25+HNSW Hybrid Search에 RRF 융합 랭킹과 질의 유형별 가중치·Source Filter를 적용했습니다.',
+      'PDF 조항 추출, 검색 결과 하이라이트, 원문 위치 점프 탐색 UX와 온디바이스 요약 카드를 구현했습니다.',
+    ],
+    relatedProjectIds: ['local-mobile-rag-gemma'],
+  },
+  {
+    company: '㈜피에트',
+    role: 'App Frontend 파트장',
+    employmentType: '회사 근무',
+    period: '2024.06 - 2025.05',
+    summary:
+      'FIET MEDI, FIET Partner, MVM Fitness 등 Flutter iOS·Android 앱 개발과 운영 안정화를 담당했습니다.',
+    highlights: [
+      'BLE Notify jitter와 packet drop을 반영한 sample interval·timestamp 기반 ROM 계산으로 장시간 누적 drift를 70% 이상 줄였습니다.',
+      '펌웨어별 characteristic 누락을 실패 가능한 파서로 개선하고 Sentry 분석과 Fastlane·GitHub Actions 배포 자동화를 운영했습니다.',
+    ],
+    relatedProjectIds: ['fiet-fitness-trainer', 'fiet-fitness-user'],
+  },
+  {
+    company: '㈜인피니티익스체인지코리아',
+    role: '가상자산 거래소 모바일 개발',
+    employmentType: '외주·상주',
+    period: '2024.03 - 2024.06',
+    summary:
+      'Flutter·GetX·MVC 기반 가상자산 거래소 앱의 핵심 기능과 인증 흐름을 개발했습니다.',
+    highlights: [
+      '실시간 시세 WebSocket의 연결 생명주기와 화면 반영 흐름을 최적화했습니다.',
+      '회원정보 등록·관리와 KYC 인증 프로세스의 상태·네트워크 예외 처리를 구현했습니다.',
+    ],
+    relatedProjectIds: [],
+  },
+  {
+    company: '튜링바이오',
+    role: '앱개발·연구개발 주임연구원',
+    employmentType: '회사 근무',
+    period: '2021.09 - 2024.03',
+    summary:
+      '헬스케어·정신건강 도메인의 Flutter 앱과 연구 과제 앱을 운영 안정성 관점에서 개발했습니다.',
+    highlights: [
+      'VitalTracker의 위치·자이로·가속도·조도 센서 수집과 MethodChannel 네이티브 처리, 백그라운드 lifecycle을 안정화했습니다.',
+      'Weedool과 CAER-Scope에서 상담·CBT 흐름, ML Kit·STT/TTS 기능과 AES256·JWT·RBAC 보호 구조를 구현했습니다.',
+    ],
+    relatedProjectIds: ['weedool'],
+  },
+  {
+    company: '㈜영우',
+    role: 'React Native·Node.js 개발',
+    employmentType: '원격 외주',
+    period: '2020.01 - 2020.04',
+    summary:
+      'React Native 기반 원단 재고 조회 앱과 Node.js API 서버를 원격 외주로 개발했습니다.',
+    highlights: [
+      '음성인식과 QR Code 기반 원단 정보 조회 흐름을 구현했습니다.',
+      'Google BigQuery 기반 원단 정보 저장과 추천 기능을 개발했습니다.',
+    ],
+    relatedProjectIds: [],
+  },
+  {
+    company: '한국와콤',
+    role: '개발팀 사원',
+    employmentType: '회사 근무',
+    period: '2017.08 - 2018.08',
+    summary:
+      'Node.js(Express)와 MySQL 기반 고객 상담 시스템을 설계·구축했습니다.',
+    highlights: [
+      '상담 문의 등록·답변·관리 UI와 텍스트 유사도 기반 답변 추천, 자동 메일 발송을 구현했습니다.',
+      '트랜잭션과 Row Lock으로 동시 요청 충돌을 방지하고 실행 계획 분석으로 다중 JOIN 구간을 개선했습니다.',
+    ],
+    relatedProjectIds: [],
+  },
+];

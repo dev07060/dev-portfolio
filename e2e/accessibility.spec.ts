@@ -38,7 +38,10 @@ test('한국어 단일 홈과 skip link, 대표 사례 순서를 제공한다', 
   await expect(page.getByText('English', { exact: true })).toHaveCount(0);
   await expect(page.getByText('Client', { exact: true })).toHaveCount(0);
   await expect(page.getByText('Developer', { exact: true })).toHaveCount(0);
-  await expect(page.getByRole('link', { name: '경력', exact: true })).toHaveCount(0);
+  const experienceLink = page.getByRole('link', { name: '경력', exact: true });
+  const resumeLink = page.getByRole('link', { name: '이력서', exact: true });
+  await expect(experienceLink).toHaveCount(1);
+  await expect(resumeLink).toHaveCount(0);
 
   await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
   const skipLink = page.getByRole('link', { name: '본문으로 건너뛰기' });
@@ -54,6 +57,11 @@ test('한국어 단일 홈과 skip link, 대표 사례 순서를 제공한다', 
     .locator('#featured-work article h3')
     .evaluateAll((items) => items.map((item) => item.textContent?.trim()));
   expect(headings).toEqual(['mobile_rag_engine', 'Easy Contract Viewer', 'Swifty-law']);
+
+  await experienceLink.click();
+  await expect(page).toHaveURL(/#experience$/);
+  await expect(page.getByRole('heading', { name: '경력과 역할' })).toBeInViewport();
+  await expect(page.locator('#experience > div ol > li')).toHaveCount(6);
 });
 
 test('카드 dialog가 focus trap, Escape, focus restoration을 제공한다', async ({ page }) => {

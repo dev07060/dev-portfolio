@@ -121,6 +121,51 @@ test('recruitment data separates project assets from hiring evidence', () => {
   assert.doesNotMatch(data, /MAU 1만|5년 4개월|10–100×/);
 });
 
+test('verified resume input populates six latest-first experience entries without private data', () => {
+  const data = read('src/data/recruitment.ts');
+  const companies = [
+    '메리츠화재해상보험',
+    '㈜피에트',
+    '㈜인피니티익스체인지코리아',
+    '튜링바이오',
+    '㈜영우',
+    '한국와콤',
+  ];
+
+  assert.match(data, /총 5년 5개월/);
+  assert.doesNotMatch(data, /resumeUrl:/);
+
+  let previous = -1;
+  for (const company of companies) {
+    const current = data.indexOf(company);
+    assert.ok(current > previous, `${company} must appear in latest-first order`);
+    previous = current;
+  }
+  assert.doesNotMatch(data, /010-9113-3496|경기 광주시|연봉/);
+});
+
+test('experience timeline resolves project ids to readable linked project names', () => {
+  const timeline = read('src/components/widgets/ExperienceTimeline.tsx');
+  const portfolio = read('src/components/Portfolio.tsx');
+
+  assert.match(timeline, /projects: Project\[\]/);
+  assert.match(timeline, /projects\.find/);
+  assert.match(timeline, /relatedProject\.title/);
+  assert.match(timeline, /href=\{relatedProjectHref/);
+  assert.match(portfolio, /<ExperienceTimeline[\s\S]*?projects=\{projects\}/);
+});
+
+test('manual release documentation does not require VoiceOver or screen readers', () => {
+  const report = read('docs/reports/2026-07-10-korean-portfolio-release-verification.md');
+  const design = read(
+    'docs/superpowers/specs/2026-07-10-korean-developer-recruitment-portfolio-design.md'
+  );
+
+  for (const source of [report, design]) {
+    assert.doesNotMatch(source, /VoiceOver|screen reader|스크린리더/);
+  }
+});
+
 test('case detail separates verification, outcomes, trade-offs, and non-goals', () => {
   const types = read('src/types/recruitment.ts');
   const data = read('src/data/recruitment.ts');

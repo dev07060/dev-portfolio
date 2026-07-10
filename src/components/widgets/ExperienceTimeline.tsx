@@ -1,12 +1,14 @@
 import type { ExperienceItem } from '@/types/recruitment';
+import type { Project } from '@/types/project';
 import SectionContainer from './SectionContainer';
 import SectionHeader from './SectionHeader';
 
 interface ExperienceTimelineProps {
   items: ExperienceItem[];
+  projects: Project[];
 }
 
-const ExperienceTimeline = ({ items }: ExperienceTimelineProps) => {
+const ExperienceTimeline = ({ items, projects }: ExperienceTimelineProps) => {
   if (!items.length) return null;
 
   return (
@@ -48,14 +50,23 @@ const ExperienceTimeline = ({ items }: ExperienceTimelineProps) => {
               )}
               {item.relatedProjectIds.length > 0 && (
                 <div className="mt-4 flex flex-wrap gap-2">
-                  {item.relatedProjectIds.map((projectId) => (
-                    <span
-                      key={projectId}
-                      className="rounded-full border border-[#d9e4e1] bg-[#eef7f5] px-2.5 py-1 font-mono text-[10px] text-[#164e4a]"
-                    >
-                      {projectId}
-                    </span>
-                  ))}
+                  {item.relatedProjectIds.map((projectId) => {
+                    const relatedProject = projects.find(
+                      (project) => project.id === projectId
+                    );
+                    if (!relatedProject) return null;
+
+                    const relatedProjectHref = `#project-${projectId}`;
+                    return (
+                      <a
+                        key={projectId}
+                        href={relatedProjectHref}
+                        className="rounded-full border border-[#d9e4e1] bg-[#eef7f5] px-2.5 py-1 font-mono text-[10px] text-[#164e4a] transition-colors hover:border-[#0f766e] hover:bg-[#dff1ed] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f766e]"
+                      >
+                        {relatedProject.title.replace(/\s+/g, ' ')}
+                      </a>
+                    );
+                  })}
                 </div>
               )}
             </li>

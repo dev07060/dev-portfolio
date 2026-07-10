@@ -170,7 +170,7 @@ const Portfolio = () => {
 
           <CoreCapabilities items={capabilities} />
 
-          <ExperienceTimeline items={experienceItems} />
+          <ExperienceTimeline items={experienceItems} projects={projects} />
 
           <ProjectGrid
             projects={additionalProjects}
