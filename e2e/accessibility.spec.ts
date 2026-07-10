@@ -16,6 +16,7 @@ test('한국어 단일 홈과 skip link, 대표 사례 순서를 제공한다', 
   await expect(page.getByText('English', { exact: true })).toHaveCount(0);
   await expect(page.getByText('Client', { exact: true })).toHaveCount(0);
   await expect(page.getByText('Developer', { exact: true })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: '경력', exact: true })).toHaveCount(0);
 
   await page.keyboard.press('Tab');
   const skipLink = page.getByRole('link', { name: '본문으로 건너뛰기' });

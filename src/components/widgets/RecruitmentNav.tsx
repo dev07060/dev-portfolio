@@ -4,16 +4,18 @@ import SectionContainer from './SectionContainer';
 
 interface RecruitmentNavProps {
   profile: RecruitmentProfile;
+  hasExperience: boolean;
 }
 
 const navigation = [
   { label: '소개', href: '#about' },
   { label: '대표 기술 사례', href: '#featured-work' },
-  { label: '경력', href: '#experience' },
-  { label: '연락', href: '#contact' },
 ] as const;
 
-const RecruitmentNav = ({ profile }: RecruitmentNavProps) => (
+const linkClass =
+  'shrink-0 text-xs font-medium text-[#4a4339] hover:text-[#0f766e] focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f766e] sm:text-sm';
+
+const RecruitmentNav = ({ profile, hasExperience }: RecruitmentNavProps) => (
   <nav aria-label="주요 탐색" className="border-b border-[#e8dfd0] bg-[#faf7f2]">
     <SectionContainer className="flex min-h-16 items-center justify-between gap-5 py-3">
       <a
@@ -27,11 +29,19 @@ const RecruitmentNav = ({ profile }: RecruitmentNavProps) => (
           <a
             key={item.href}
             href={item.href}
-            className="shrink-0 text-xs font-medium text-[#4a4339] hover:text-[#0f766e] focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f766e] sm:text-sm"
+            className={linkClass}
           >
             {item.label}
           </a>
         ))}
+        {hasExperience && (
+          <a href="#experience" className={linkClass}>
+            경력
+          </a>
+        )}
+        <a href="#contact" className={linkClass}>
+          연락
+        </a>
         {profile.resumeUrl && (
           <a
             href={profile.resumeUrl}

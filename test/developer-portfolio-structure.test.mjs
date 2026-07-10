@@ -138,6 +138,8 @@ test('recruitment flow has explicit component boundaries', () => {
 
 test('empty experience and missing resume actions stay hidden', () => {
   const timeline = read('src/components/widgets/ExperienceTimeline.tsx');
+  const navigation = read('src/components/widgets/RecruitmentNav.tsx');
+  const portfolio = read('src/components/Portfolio.tsx');
   const resumeSurfaces = [
     read('src/components/widgets/RecruitmentNav.tsx'),
     read('src/components/widgets/DeveloperHero.tsx'),
@@ -145,6 +147,8 @@ test('empty experience and missing resume actions stay hidden', () => {
   ];
 
   assert.match(timeline, /if \(!items\.length\) return null/);
+  assert.match(navigation, /hasExperience\s*&&/);
+  assert.match(portfolio, /hasExperience=\{experienceItems\.length > 0\}/);
   for (const source of resumeSurfaces) {
     assert.match(source, /profile\.resumeUrl\s*&&/);
   }
