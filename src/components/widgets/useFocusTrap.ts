@@ -46,6 +46,7 @@ export const useFocusTrap = (
       document.activeElement instanceof HTMLElement
         ? document.activeElement
         : null;
+    let containmentFrameId: number | null = null;
 
     const focusInitialElement = () => {
       const target =
@@ -76,7 +77,20 @@ export const useFocusTrap = (
       if (!event.shiftKey && activeElement === lastElement) {
         event.preventDefault();
         firstElement.focus({ preventScroll: true });
+        return;
       }
+
+      const moveBackward = event.shiftKey;
+      containmentFrameId = window.requestAnimationFrame(() => {
+        containmentFrameId = null;
+        if (container.contains(document.activeElement)) return;
+
+        const currentElements = getFocusableElements(container);
+        const fallback = moveBackward
+          ? currentElements[currentElements.length - 1]
+          : currentElements[0];
+        (fallback ?? container).focus({ preventScroll: true });
+      });
     };
 
     const frameId = window.requestAnimationFrame(focusInitialElement);
@@ -84,6 +98,9 @@ export const useFocusTrap = (
 
     return () => {
       window.cancelAnimationFrame(frameId);
+      if (containmentFrameId !== null) {
+        window.cancelAnimationFrame(containmentFrameId);
+      }
       container.removeEventListener('keydown', handleKeyDown);
       if (restoreFocus && previousFocus?.isConnected) {
         previousFocus.focus({ preventScroll: true });

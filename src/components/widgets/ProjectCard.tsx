@@ -81,6 +81,7 @@ const ProjectCard = ({
           project={project}
           screen={card.thumbnailScreen}
           priority={Boolean(recruitmentCase) && index === 0}
+          loading={Boolean(recruitmentCase) && index !== 0 ? 'eager' : undefined}
         />
         <span className="absolute bottom-3 right-3 flex items-center gap-1 rounded-full bg-white/90 px-2 py-1 font-mono text-[11px] text-[#4a4339] backdrop-blur-md">
           {type.icon}
@@ -198,10 +199,12 @@ const ProjectThumbnail = ({
   project,
   screen,
   priority,
+  loading,
 }: {
   project: Project;
   screen?: Screen;
   priority?: boolean;
+  loading?: 'eager' | 'lazy';
 }) => {
   if (!screen?.imagePath) {
     return (
@@ -228,6 +231,7 @@ const ProjectThumbnail = ({
             fallbackGradient={project.color}
             fit="contain"
             priority={priority}
+            loading={loading}
           />
         </div>
       </div>
@@ -243,6 +247,7 @@ const ProjectThumbnail = ({
           alt=""
           fallbackGradient={project.color}
           priority={priority}
+          loading={loading}
         />
       </div>
     );
@@ -262,6 +267,7 @@ const ProjectThumbnail = ({
           alt=""
           fallbackGradient={project.color}
           priority={priority}
+          loading={loading}
         />
       </div>
     </div>

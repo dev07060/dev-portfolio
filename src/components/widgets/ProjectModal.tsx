@@ -123,7 +123,7 @@ const ProjectInfoHeader = ({
           </p>
           <h2
             id={titleId}
-            className="pr-10 font-serif text-3xl font-light leading-tight text-[#1f1b16] md:text-4xl"
+            className="break-all pr-10 font-serif text-xl font-light leading-tight text-[#1f1b16] min-[360px]:text-3xl md:text-4xl"
           >
             {project.title}
           </h2>
