@@ -4,19 +4,29 @@ import { useState, useEffect, useCallback } from 'react';
 import { Project } from '@/types/project';
 import { projects } from '@/data/projects';
 import {
-  ConversionHero,
+  RecruitmentNav,
+  DeveloperHero,
   FeaturedWork,
+  CoreCapabilities,
+  ExperienceTimeline,
   ProjectGrid,
+  OpenSourceBanner,
+  RecruitmentCTA,
+  Footer,
   ProjectModal,
   PresentationOverlay,
-  Footer,
-  OpenSourceBanner,
 } from './widgets';
 import {
   additionalProjectIds,
+  capabilities,
   featuredProjectIds,
   portfolioCopy,
 } from '@/data/portfolio';
+import {
+  experienceItems,
+  recruitmentCases,
+  recruitmentProfile,
+} from '@/data/recruitment';
 
 const Portfolio = () => {
   // State
@@ -130,33 +140,40 @@ const Portfolio = () => {
 
   return (
     <>
-      <main
-        id="main-content"
-        tabIndex={-1}
+      <div
         inert={selectedProject ? true : undefined}
         aria-hidden={selectedProject ? true : undefined}
         className="min-h-screen bg-[#faf7f2] text-[#1f1b16] font-sans outline-none"
       >
-        <ConversionHero />
+        <RecruitmentNav profile={recruitmentProfile} />
 
-        {/* Featured Work */}
-        <FeaturedWork
-          projects={featuredProjects}
-          onProjectClick={handleProjectClick}
-        />
+        <main id="main-content" tabIndex={-1} className="outline-none">
+          <DeveloperHero profile={recruitmentProfile} />
 
-        <OpenSourceBanner />
+          <FeaturedWork
+            projects={featuredProjects}
+            cases={recruitmentCases}
+            onProjectClick={handleProjectClick}
+          />
 
-        <ProjectGrid
-          projects={additionalProjects}
-          onProjectClick={handleProjectClick}
-          heading={portfolioCopy.additionalHeading}
-          description={portfolioCopy.additionalDescription}
-        />
+          <CoreCapabilities items={capabilities} />
 
-        {/* Footer */}
+          <ExperienceTimeline items={experienceItems} />
+
+          <ProjectGrid
+            projects={additionalProjects}
+            onProjectClick={handleProjectClick}
+            heading={portfolioCopy.additionalHeading}
+            description={portfolioCopy.additionalDescription}
+          />
+
+          <OpenSourceBanner />
+
+          <RecruitmentCTA profile={recruitmentProfile} />
+        </main>
+
         <Footer />
-      </main>
+      </div>
 
       {/* Project Detail Modal */}
       {selectedProject && (

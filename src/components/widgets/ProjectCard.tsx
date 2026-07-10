@@ -1,12 +1,20 @@
 'use client';
 
-import { Smartphone, Monitor, Tablet, Package as PackageIcon } from 'lucide-react';
-import { Project, Screen } from '@/types/project';
+import {
+  ExternalLink,
+  Monitor,
+  Package as PackageIcon,
+  Smartphone,
+  Tablet,
+} from 'lucide-react';
+import type { Project, Screen } from '@/types/project';
+import type { RecruitmentCase } from '@/types/recruitment';
 import ProjectIcon from './ProjectIcon';
 import ScreenImage from './ScreenImage';
 
 interface ProjectCardProps {
   project: Project;
+  recruitmentCase?: RecruitmentCase;
   index?: number;
   onClick: (project: Project) => void;
 }
@@ -28,91 +36,129 @@ export const resolveProjectCard = (project: Project) => {
   };
 };
 
-const ProjectCard = ({ project, index, onClick }: ProjectCardProps) => {
+const getProjectType = (project: Project) => {
+  if (project.type === 'package') {
+    return { icon: <PackageIcon size={12} aria-hidden="true" />, label: '패키지' };
+  }
+  if (project.type === 'mobile') {
+    return { icon: <Smartphone size={12} aria-hidden="true" />, label: '모바일 앱' };
+  }
+  if (project.type === 'tablet') {
+    return { icon: <Tablet size={12} aria-hidden="true" />, label: '태블릿 앱' };
+  }
+  return { icon: <Monitor size={12} aria-hidden="true" />, label: '웹' };
+};
+
+const ProjectCard = ({
+  project,
+  recruitmentCase,
+  index,
+  onClick,
+}: ProjectCardProps) => {
   const card = resolveProjectCard(project);
-  const cardBadges = card.evidenceBadges ?? project.techStack;
-  const visibleTechStack = cardBadges.slice(0, 4);
-  const remainingTechCount = Math.max(0, cardBadges.length - visibleTechStack.length);
+  const type = getProjectType(project);
   const title = project.title.replace(/\s+/g, ' ');
-
-  const getDeviceIcon = () => {
-    if (project.type === 'package') return <PackageIcon size={12} />;
-    if (project.type === 'mobile') return <Smartphone size={12} />;
-    if (project.type === 'tablet') return <Tablet size={12} />;
-    return <Monitor size={12} />;
-  };
-
-  const getDeviceLabel = () => {
-    if (project.type === 'package') return '패키지';
-    if (project.type === 'mobile') return '모바일 앱';
-    if (project.type === 'tablet') return '태블릿 앱';
-    return '웹';
-  };
+  const visibleTechStack = project.techStack.slice(0, recruitmentCase ? 3 : 2);
+  const metadata = recruitmentCase
+    ? [recruitmentCase.role, recruitmentCase.period, recruitmentCase.team].filter(Boolean)
+    : [];
 
   return (
-    <button
-      type="button"
-      onClick={() => onClick(project)}
-      aria-label={`${title} 프로젝트 상세 보기`}
-      className="group relative flex w-full flex-col appearance-none bg-white rounded-2xl overflow-hidden border border-[#e8dfd0] text-left hover:border-[#b8543a]/60 transition-all duration-300 cursor-pointer hover:shadow-[0_20px_50px_-20px_rgba(184,84,58,0.25)] hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b8543a]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#faf7f2]"
-    >
-      {/* Thumbnail Area */}
+    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-[#e8dfd0] bg-white transition-all duration-300 hover:-translate-y-1 hover:border-[#0f766e]/45 hover:shadow-[0_20px_50px_-20px_rgba(15,118,110,0.2)]">
       <div
-        className={`h-36 sm:h-44 bg-gradient-to-br ${project.color} flex items-center justify-center relative overflow-hidden`}
+        className={`relative flex h-40 items-center justify-center overflow-hidden bg-gradient-to-br ${project.color} sm:h-44`}
       >
-        <div className="absolute inset-0 bg-[#1f1b16]/15 group-hover:bg-[#1f1b16]/5 transition-colors duration-300" />
+        <div className="absolute inset-0 bg-[#1f1b16]/15 transition-colors duration-300 group-hover:bg-[#1f1b16]/5" />
         {typeof index === 'number' && (
-          <span className="absolute top-3 left-4 font-mono text-[11px] uppercase tracking-[0.25em] text-white/80">
+          <span className="absolute left-4 top-3 font-mono text-[11px] uppercase tracking-[0.25em] text-white/80">
             {String(index + 1).padStart(2, '0')}
           </span>
         )}
         <ProjectThumbnail project={project} screen={card.thumbnailScreen} />
-        <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-md px-2 py-1 rounded-full text-[11px] font-mono text-[#4a4339] flex items-center gap-1">
-          {getDeviceIcon()}
-          {getDeviceLabel()}
-        </div>
+        <span className="absolute bottom-3 right-3 flex items-center gap-1 rounded-full bg-white/90 px-2 py-1 font-mono text-[11px] text-[#4a4339] backdrop-blur-md">
+          {type.icon}
+          {type.label}
+        </span>
       </div>
 
-      {/* Content Area */}
-      <div className="p-5 sm:p-6">
-        <h3 className="font-serif text-xl sm:text-2xl font-light text-[#1f1b16] mb-1 group-hover:text-[#b8543a] transition-colors leading-tight">
+      <div className="flex flex-1 flex-col p-5 sm:p-6">
+        {recruitmentCase && (
+          <p className="mb-2 font-mono text-[10px] leading-relaxed tracking-[0.16em] text-[#0f766e]">
+            {recruitmentCase.publicStatus}
+          </p>
+        )}
+        <h3 className="font-serif text-xl font-light leading-tight text-[#1f1b16] sm:text-2xl">
           {title}
         </h3>
-        {project.releaseLabel && (
-          <div className="mb-2">
-            <span className="inline-flex items-center rounded-full border border-[#b8543a]/30 bg-[#b8543a]/8 px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider text-[#b8543a]">
-              {project.releaseLabel}
-            </span>
+        <p className="mt-2 text-sm font-medium leading-relaxed text-[#756b60] break-keep">
+          {project.subtitle}
+        </p>
+
+        {metadata.length > 0 && (
+          <dl className="mt-4 flex flex-wrap gap-x-3 gap-y-1 text-xs text-[#4a4339]">
+            {recruitmentCase?.role && (
+              <div className="flex gap-1"><dt className="sr-only">역할</dt><dd>{recruitmentCase.role}</dd></div>
+            )}
+            {recruitmentCase?.period && (
+              <div className="flex gap-1"><dt className="sr-only">기간</dt><dd>{recruitmentCase.period}</dd></div>
+            )}
+            {recruitmentCase?.team && (
+              <div className="flex gap-1"><dt className="sr-only">팀</dt><dd>{recruitmentCase.team}</dd></div>
+            )}
+          </dl>
+        )}
+
+        <p className="mt-4 line-clamp-3 text-sm leading-relaxed text-[#4a4339] break-keep">
+          {recruitmentCase?.problem ?? card.description}
+        </p>
+
+        {recruitmentCase?.outcomes[0] && (
+          <div className="mt-4 border-l-2 border-[#0f766e] pl-3">
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#756b60]">
+              검증 가능한 결과
+            </p>
+            <p className="mt-1 line-clamp-3 text-xs leading-relaxed text-[#4a4339] break-keep">
+              {recruitmentCase.outcomes[0]}
+            </p>
           </div>
         )}
-        <p className="text-sm text-[#4a4339] mb-5 line-clamp-2 leading-relaxed">
-          {card.description}
-        </p>
-        <p className="text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.25em] text-[#756b60] font-mono mb-2">
-          — {card.evidenceBadges ? '검증 근거' : '핵심 기술'}
-        </p>
-        <div className="flex flex-wrap items-center gap-2">
+
+        <div className="mt-5 flex flex-wrap gap-2">
           {visibleTechStack.map((tech) => (
             <span
               key={tech}
-              className="text-xs font-medium text-[#4a4339] bg-[#f2ede4] px-2.5 py-1 rounded-full border border-[#e8dfd0]"
+              className="rounded-full border border-[#e8dfd0] bg-[#f2ede4] px-2.5 py-1 text-xs font-medium text-[#4a4339]"
             >
               {tech}
             </span>
           ))}
-          {remainingTechCount > 0 && (
-            <span className="text-xs font-medium text-[#b8543a] bg-[#b8543a]/8 px-2.5 py-1 rounded-full border border-[#b8543a]/30">
-              +{remainingTechCount}
-            </span>
-          )}
         </div>
-        {card.highlight && (
-          <p className="mt-4 pt-4 border-t border-[#e8dfd0] text-xs text-[#756b60] italic line-clamp-2 leading-relaxed">
-            “{card.highlight}”
-          </p>
-        )}
+
+        <div className="mt-auto flex flex-wrap items-center gap-2 pt-6">
+          <button
+            type="button"
+            onClick={() => onClick(project)}
+            aria-haspopup="dialog"
+            aria-label={`${title} 프로젝트 상세 열기`}
+            className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#1f1b16] px-4 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-[#0f766e] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f766e] focus-visible:ring-offset-2"
+          >
+            사례 자세히
+          </button>
+          {recruitmentCase?.evidenceLinks.map((link) => (
+            <a
+              key={link.url}
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-[#d9e4e1] px-3 py-2.5 text-xs font-semibold text-[#0f766e] hover:border-[#0f766e]/50 hover:bg-[#eef7f5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f766e]"
+            >
+              {link.label}
+              <ExternalLink size={13} aria-hidden="true" />
+            </a>
+          ))}
+        </div>
       </div>
-    </button>
+    </article>
   );
 };
 
@@ -123,11 +169,9 @@ const ProjectThumbnail = ({
   project: Project;
   screen?: Screen;
 }) => {
-  const firstScreen = screen;
-
-  if (!firstScreen?.imagePath) {
+  if (!screen?.imagePath) {
     return (
-      <div className="relative z-[1] transform group-hover:scale-105 transition-transform duration-500">
+      <div className="relative z-[1] transition-transform duration-500 group-hover:scale-105">
         <ProjectIcon iconType={project.iconType} size={44} />
       </div>
     );
@@ -135,88 +179,46 @@ const ProjectThumbnail = ({
 
   if (project.type === 'package') {
     return (
-      <PackageArchitectureThumbnail
-        project={project}
-        imagePath={firstScreen.imagePath}
-        alt={firstScreen.imageAlt}
-      />
-    );
-  }
-
-  if (project.type === 'web') {
-    return (
-      <div className="relative z-[1] w-[78%] max-w-[270px] aspect-video rounded-lg border-t-[14px] border-white/90 bg-[#faf7f2] shadow-2xl overflow-hidden transform group-hover:scale-105 transition-transform duration-500">
-        <div className="absolute -top-[9px] left-2 flex gap-1 z-10">
-          <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
-          <span className="w-1.5 h-1.5 rounded-full bg-yellow-400" />
-          <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
+      <div className="relative z-[1] aspect-[16/10] w-[84%] max-w-[290px] overflow-hidden rounded-xl border border-white/80 bg-white/95 shadow-2xl transition-transform duration-500 group-hover:scale-105">
+        <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between border-b border-[#d9e4e1] bg-white/90 px-3 py-1.5">
+          <span className="font-mono text-[8px] uppercase tracking-[0.2em] text-[#0f766e]">
+            RAG 파이프라인
+          </span>
+          <span className="h-1.5 w-1.5 rounded-full bg-[#0f766e]" />
         </div>
-        <ScreenImage
-          variant="fill"
-          src={firstScreen.imagePath}
-          alt={firstScreen.imageAlt}
-          fallbackGradient={project.color}
-        />
-      </div>
-    );
-  }
-
-  if (project.type === 'tablet') {
-    return (
-      <div className="relative z-[1] h-[116px] w-[82px] sm:h-[146px] sm:w-[102px] rounded-[1rem] border-[6px] border-white/85 bg-white/85 shadow-2xl overflow-hidden transform group-hover:scale-105 transition-transform duration-500">
-        <div className="absolute top-1 left-1/2 z-10 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-white/80" />
-        <div className="relative h-full w-full rounded-[0.75rem] overflow-hidden bg-slate-800">
+        <div className="absolute inset-0 pt-6">
           <ScreenImage
             variant="fill"
-            src={firstScreen.imagePath}
-            alt={firstScreen.imageAlt}
+            src={screen.imagePath}
+            alt=""
             fallbackGradient={project.color}
+            fit="contain"
           />
         </div>
       </div>
     );
   }
 
+  if (project.type === 'web') {
+    return (
+      <div className="relative z-[1] aspect-video w-[78%] max-w-[270px] overflow-hidden rounded-lg border-t-[14px] border-white/90 bg-[#faf7f2] shadow-2xl transition-transform duration-500 group-hover:scale-105">
+        <ScreenImage variant="fill" src={screen.imagePath} alt="" fallbackGradient={project.color} />
+      </div>
+    );
+  }
+
+  const sizeClass =
+    project.type === 'tablet'
+      ? 'h-[116px] w-[82px] sm:h-[146px] sm:w-[102px]'
+      : 'h-[118px] w-[58px] sm:h-[148px] sm:w-[72px]';
+
   return (
-    <div className="relative z-[1] h-[118px] w-[58px] sm:h-[148px] sm:w-[72px] rounded-[1rem] border-[5px] border-white/85 bg-white/85 shadow-2xl overflow-hidden transform group-hover:scale-105 transition-transform duration-500">
-      <div className="relative h-full w-full rounded-[0.75rem] overflow-hidden bg-slate-800">
-        <ScreenImage
-          variant="fill"
-          src={firstScreen.imagePath}
-          alt={firstScreen.imageAlt}
-          fallbackGradient={project.color}
-        />
+    <div className={`relative z-[1] overflow-hidden rounded-[1rem] border-[5px] border-white/85 bg-white/85 shadow-2xl transition-transform duration-500 group-hover:scale-105 ${sizeClass}`}>
+      <div className="relative h-full w-full overflow-hidden rounded-[0.75rem] bg-slate-800">
+        <ScreenImage variant="fill" src={screen.imagePath} alt="" fallbackGradient={project.color} />
       </div>
     </div>
   );
 };
-
-const PackageArchitectureThumbnail = ({
-  project,
-  imagePath,
-  alt,
-}: {
-  project: Project;
-  imagePath: string;
-  alt: string;
-}) => (
-  <div className="relative z-[1] w-[84%] max-w-[290px] aspect-[16/10] rounded-xl border border-white/80 bg-white/95 shadow-2xl overflow-hidden transform group-hover:scale-105 transition-transform duration-500">
-    <div className="absolute left-0 right-0 top-0 z-10 flex items-center justify-between border-b border-[#d9e4e1] bg-white/90 px-3 py-1.5">
-      <span className="font-mono text-[8px] uppercase tracking-[0.2em] text-[#0f766e]">
-        RAG 파이프라인
-      </span>
-      <span className="h-1.5 w-1.5 rounded-full bg-[#0f766e]" />
-    </div>
-    <div className="absolute inset-0 pt-6">
-      <ScreenImage
-        variant="fill"
-        src={imagePath}
-        alt={alt}
-        fallbackGradient={project.color}
-        fit="contain"
-      />
-    </div>
-  </div>
-);
 
 export default ProjectCard;

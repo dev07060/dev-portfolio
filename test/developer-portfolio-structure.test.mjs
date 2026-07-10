@@ -121,6 +121,35 @@ test('recruitment data separates project assets from hiring evidence', () => {
   assert.doesNotMatch(data, /MAU 1만|5년 4개월|10–100×/);
 });
 
+test('recruitment flow has explicit component boundaries', () => {
+  for (const component of [
+    'RecruitmentNav',
+    'DeveloperHero',
+    'CoreCapabilities',
+    'ExperienceTimeline',
+    'RecruitmentCTA',
+    'SectionContainer',
+    'SectionHeader',
+  ]) {
+    const source = read(`src/components/widgets/${component}.tsx`);
+    assert.ok(source.length > 0, `${component} must exist`);
+  }
+});
+
+test('empty experience and missing resume actions stay hidden', () => {
+  const timeline = read('src/components/widgets/ExperienceTimeline.tsx');
+  const resumeSurfaces = [
+    read('src/components/widgets/RecruitmentNav.tsx'),
+    read('src/components/widgets/DeveloperHero.tsx'),
+    read('src/components/widgets/RecruitmentCTA.tsx'),
+  ];
+
+  assert.match(timeline, /if \(!items\.length\) return null/);
+  for (const source of resumeSurfaces) {
+    assert.match(source, /profile\.resumeUrl\s*&&/);
+  }
+});
+
 test('unverified profile facts and empty resume action are not rendered', () => {
   const recruitment = read('src/data/recruitment.ts');
   const hero = read('src/components/widgets/DeveloperHero.tsx');

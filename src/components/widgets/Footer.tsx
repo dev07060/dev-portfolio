@@ -1,14 +1,16 @@
-const Footer = () => {
-  return (
-    <footer className="max-w-7xl mx-auto px-6 py-12 mt-8 border-t border-[#e8dfd0] flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-sm text-[#756b60]">
+import SectionContainer from './SectionContainer';
+
+const Footer = () => (
+  <footer className="border-t border-[#e8dfd0] py-8 text-sm text-[#756b60]">
+    <SectionContainer className="flex flex-col items-start justify-between gap-3 md:flex-row md:items-center">
       <span className="font-serif italic">
-        © 2024 Byeonghee Oh
+        © {new Date().getFullYear()} 오병희
       </span>
-      <span className="font-mono text-xs uppercase tracking-[0.25em]">
-        Designed & Built with Next.js
+      <span className="font-mono text-xs tracking-[0.18em]">
+        Next.js로 설계하고 구현했습니다
       </span>
-    </footer>
-  );
-};
+    </SectionContainer>
+  </footer>
+);
 
 export default Footer;

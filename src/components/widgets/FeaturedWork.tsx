@@ -1,43 +1,40 @@
 'use client';
 
-import { Project } from '@/types/project';
+import type { Project } from '@/types/project';
+import type { RecruitmentCase } from '@/types/recruitment';
 import { portfolioCopy } from '@/data/portfolio';
 import ProjectCard from './ProjectCard';
+import SectionContainer from './SectionContainer';
+import SectionHeader from './SectionHeader';
 
 interface FeaturedWorkProps {
   projects: Project[];
+  cases: RecruitmentCase[];
   onProjectClick: (project: Project) => void;
 }
 
-const FeaturedWork = ({ projects, onProjectClick }: FeaturedWorkProps) => {
-  return (
-    <section id="featured-work" className="max-w-7xl mx-auto px-5 sm:px-6 pb-10 sm:pb-14 relative z-20 scroll-mt-8">
-      <div className="mb-6 sm:mb-8 pb-5 sm:pb-6 border-b border-[#e8dfd0] flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.25em] text-[#0f766e]">
-            03 Proof Points
-          </p>
-          <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-light text-[#1f1b16] tracking-tight">
-            {portfolioCopy.featuredHeading}
-          </h2>
-        </div>
-        <p className="max-w-xl text-sm sm:text-base text-[#4a4339] leading-relaxed break-keep">
-          {portfolioCopy.featuredDescription}
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-7">
-        {projects.map((project, idx) => (
+const FeaturedWork = ({ projects, cases, onProjectClick }: FeaturedWorkProps) => (
+  <section id="featured-work" className="scroll-mt-8 pb-16 sm:pb-20">
+    <SectionContainer>
+      <SectionHeader
+        eyebrow="Engine → Product → Backend"
+        title={portfolioCopy.featuredHeading}
+        description={portfolioCopy.featuredDescription}
+        count={projects.length}
+      />
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-7 lg:grid-cols-3">
+        {projects.map((project, index) => (
           <ProjectCard
             key={project.id}
             project={project}
-            index={idx}
+            recruitmentCase={cases.find((item) => item.projectId === project.id)}
+            index={index}
             onClick={onProjectClick}
           />
         ))}
       </div>
-    </section>
-  );
-};
+    </SectionContainer>
+  </section>
+);
 
 export default FeaturedWork;
