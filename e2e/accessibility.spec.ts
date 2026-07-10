@@ -64,6 +64,38 @@ test('한국어 단일 홈과 skip link, 대표 사례 순서를 제공한다', 
   await expect(page.locator('#experience > div ol > li')).toHaveCount(6);
 });
 
+test('320px 앱바가 모든 링크와 44px 터치 영역을 처음부터 제공한다', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 320, height: 800 });
+  await page.goto('/');
+
+  const nav = page.getByRole('navigation', { name: '주요 탐색' });
+  const links = nav.getByRole('link');
+  const labels = await links.evaluateAll((items) =>
+    items.map((item) => item.textContent?.trim())
+  );
+  expect(labels).toEqual(['DEV PORTFOLIO', '기술 사례', '경력', '연락']);
+
+  const boxes = await links.evaluateAll((items) =>
+    items.map((item) => {
+      const box = item.getBoundingClientRect();
+      return { x: box.x, width: box.width, height: box.height };
+    })
+  );
+  for (const box of boxes) {
+    expect(box.x).toBeGreaterThanOrEqual(0);
+    expect(box.x + box.width).toBeLessThanOrEqual(320);
+    expect(box.height).toBeGreaterThanOrEqual(44);
+  }
+
+  const internalOverflow = await nav.evaluate((element) => {
+    const scroller = element.querySelector('div > div');
+    return scroller ? scroller.scrollWidth - scroller.clientWidth : 0;
+  });
+  expect(internalOverflow).toBe(0);
+});
+
 test('카드 dialog가 focus trap, Escape, focus restoration을 제공한다', async ({ page }) => {
   await page.goto('/');
   const detailButton = page.getByRole('button', {

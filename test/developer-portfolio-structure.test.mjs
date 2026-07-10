@@ -231,7 +231,6 @@ test('empty experience and missing resume actions stay hidden', () => {
   const navigation = read('src/components/widgets/RecruitmentNav.tsx');
   const portfolio = read('src/components/Portfolio.tsx');
   const resumeSurfaces = [
-    read('src/components/widgets/RecruitmentNav.tsx'),
     read('src/components/widgets/DeveloperHero.tsx'),
     read('src/components/widgets/RecruitmentCTA.tsx'),
   ];
@@ -250,6 +249,9 @@ test('app bar uses a portfolio brand label instead of repeating the hero name', 
   assert.match(navigation, />\s*DEV PORTFOLIO\s*</);
   assert.doesNotMatch(navigation, />\s*오병희\s*</);
   assert.match(navigation, /href="#about"/);
+  assert.doesNotMatch(navigation, /label: '소개'/);
+  assert.match(navigation, /label: '기술 사례', href: '#featured-work'/);
+  assert.match(navigation, /inline-flex min-h-11 items-center/);
 });
 
 test('project detail and presentation actions use Korean accessible names', () => {

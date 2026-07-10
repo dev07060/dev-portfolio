@@ -33,17 +33,17 @@
 - Consumes: `hasExperience` and the existing in-page anchors.
 - Produces: `DEV PORTFOLIO`, `기술 사례`, conditional `경력`, and `연락` links with 44px touch height.
 
-- [ ] Add a structure test that asserts `소개` is absent, `기술 사례` targets `#featured-work`, and the shared link class contains `min-h-11`.
-- [ ] Add a 320px Playwright assertion that every nav link is horizontally reachable and at least 44px tall.
-- [ ] Run the focused Node test and 320px Playwright test; confirm they fail on the current nav.
-- [ ] Change the navigation data to:
+- [x] Add a structure test that asserts `소개` is absent, `기술 사례` targets `#featured-work`, and the shared link class contains `min-h-11`.
+- [x] Add a 320px Playwright assertion that every nav link is horizontally reachable and at least 44px tall.
+- [x] Run the focused Node test and 320px Playwright test; confirm they fail on the current nav.
+- [x] Change the navigation data to:
 
 ```tsx
 const navigation = [{ label: '기술 사례', href: '#featured-work' }] as const;
 ```
 
-- [ ] Make the nav links `inline-flex min-h-11 items-center` without horizontal padding that reintroduces overflow, and reduce container gaps only as needed.
-- [ ] Re-run focused and full structural tests; commit as `fix: make recruitment nav fit narrow screens`.
+- [x] Make the nav links `inline-flex min-h-11 items-center` without horizontal padding that reintroduces overflow, and reduce container gaps only as needed.
+- [x] Re-run focused and full structural tests; commit as `fix: make recruitment nav fit narrow screens`.
 
 ### Task 2: Absorb capabilities into the Hero
 

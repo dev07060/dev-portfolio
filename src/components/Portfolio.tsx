@@ -154,10 +154,7 @@ const Portfolio = () => {
         aria-hidden={selectedProject ? true : undefined}
         className="min-h-screen bg-[#faf7f2] text-[#1f1b16] font-sans outline-none"
       >
-        <RecruitmentNav
-          profile={recruitmentProfile}
-          hasExperience={experienceItems.length > 0}
-        />
+        <RecruitmentNav hasExperience={experienceItems.length > 0} />
 
         <main id="main-content" tabIndex={-1} className="outline-none">
           <DeveloperHero profile={recruitmentProfile} />
