@@ -59,11 +59,11 @@ const navigation = [{ label: '기술 사례', href: '#featured-work' }] as const
 - Consumes: `Capability[]` from `src/data/portfolio.ts`.
 - Produces: `<DeveloperHero profile={recruitmentProfile} capabilities={capabilities} />` and a compact four-item list.
 
-- [ ] Add a failing structure test requiring `DeveloperHero` to consume `capabilities`, requiring four project-backed capability items, and forbidding `<CoreCapabilities` plus the component export/file.
-- [ ] Change `Capability` to `{ title: string; evidence: string }` and shorten the four entries to the approved titles and project names.
-- [ ] Add `capabilities: Capability[]` to `DeveloperHeroProps`; render a two-column list after the positioning sentence and before CTA buttons.
-- [ ] Remove the independent section call, export, and file.
-- [ ] Run focused/full tests and TypeScript; commit as `refactor: move capability summary into hero`.
+- [x] Add a failing structure test requiring `DeveloperHero` to consume `capabilities`, requiring four project-backed capability items, and forbidding `<CoreCapabilities` plus the component export/file.
+- [x] Change `Capability` to `{ title: string; evidence: string }` and shorten the four entries to the approved titles and project names.
+- [x] Add `capabilities: Capability[]` to `DeveloperHeroProps`; render a two-column list after the positioning sentence and before CTA buttons.
+- [x] Remove the independent section call, export, and file.
+- [x] Run focused/full tests and TypeScript; commit as `refactor: move capability summary into hero`.
 
 ### Task 3: Separate evidence tiers and integrate the supporting package
 

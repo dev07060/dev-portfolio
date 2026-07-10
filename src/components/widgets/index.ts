@@ -2,7 +2,6 @@
 export { default as RecruitmentNav } from './RecruitmentNav';
 export { default as DeveloperHero } from './DeveloperHero';
 export { default as FeaturedWork } from './FeaturedWork';
-export { default as CoreCapabilities } from './CoreCapabilities';
 export { default as ExperienceTimeline } from './ExperienceTimeline';
 export { default as ProjectCard } from './ProjectCard';
 export { default as ProjectGrid } from './ProjectGrid';

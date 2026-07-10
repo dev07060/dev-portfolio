@@ -1,12 +1,14 @@
 import { ArrowDown, ExternalLink, FileText, Mail } from 'lucide-react';
+import type { Capability } from '@/data/portfolio';
 import type { RecruitmentProfile } from '@/types/recruitment';
 import SectionContainer from './SectionContainer';
 
 interface DeveloperHeroProps {
   profile: RecruitmentProfile;
+  capabilities: Capability[];
 }
 
-const DeveloperHero = ({ profile }: DeveloperHeroProps) => (
+const DeveloperHero = ({ profile, capabilities }: DeveloperHeroProps) => (
   <section id="about" className="py-12 sm:py-16 lg:py-20">
     <SectionContainer>
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.65fr)] lg:items-end lg:gap-14">
@@ -29,6 +31,25 @@ const DeveloperHero = ({ profile }: DeveloperHeroProps) => (
           <p className="mt-5 max-w-2xl text-xl leading-relaxed text-[#2f2a23] break-keep sm:text-2xl">
             {profile.positioning}
           </p>
+
+          <div
+            aria-label="핵심 개발 역량 요약"
+            className="mt-6 grid max-w-2xl grid-cols-1 gap-x-5 gap-y-2 sm:grid-cols-2"
+          >
+            {capabilities.map((capability) => (
+              <div
+                key={capability.title}
+                className="flex min-w-0 items-baseline gap-2 border-l-2 border-[#d9e4e1] pl-3"
+              >
+                <strong className="text-sm font-semibold text-[#1f1b16] break-keep">
+                  {capability.title}
+                </strong>
+                <span className="truncate font-mono text-[10px] text-[#756b60]">
+                  {capability.evidence}
+                </span>
+              </div>
+            ))}
+          </div>
 
           <div className="mt-7 flex flex-wrap gap-3">
             <a

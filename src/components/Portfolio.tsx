@@ -7,7 +7,6 @@ import {
   RecruitmentNav,
   DeveloperHero,
   FeaturedWork,
-  CoreCapabilities,
   ExperienceTimeline,
   ProjectGrid,
   OpenSourceBanner,
@@ -157,15 +156,16 @@ const Portfolio = () => {
         <RecruitmentNav hasExperience={experienceItems.length > 0} />
 
         <main id="main-content" tabIndex={-1} className="outline-none">
-          <DeveloperHero profile={recruitmentProfile} />
+          <DeveloperHero
+            profile={recruitmentProfile}
+            capabilities={capabilities}
+          />
 
           <FeaturedWork
             projects={featuredProjects}
             cases={recruitmentCases}
             onProjectClick={handleProjectClick}
           />
-
-          <CoreCapabilities items={capabilities} />
 
           <ExperienceTimeline items={experienceItems} projects={projects} />
 

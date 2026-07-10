@@ -31,7 +31,6 @@ test('portfolio follows the approved recruitment section order', () => {
     '<RecruitmentNav',
     '<DeveloperHero',
     '<FeaturedWork',
-    '<CoreCapabilities',
     '<ExperienceTimeline',
     '<ProjectGrid',
     '<OpenSourceBanner',
@@ -192,15 +191,27 @@ test('case detail separates verification, outcomes, trade-offs, and non-goals', 
   }
 });
 
-test('capability descriptions name their supporting representative cases', () => {
+test('hero owns compact project-backed capabilities without a standalone section', () => {
+  const portfolio = read('src/components/Portfolio.tsx');
   const portfolioData = read('src/data/portfolio.ts');
+  const hero = read('src/components/widgets/DeveloperHero.tsx');
+  const widgets = read('src/components/widgets/index.ts');
+  const standalone = read('src/components/widgets/CoreCapabilities.tsx');
 
-  for (const projectName of [
-    'mobile_rag_engine',
-    'Easy Contract Viewer',
-    'Swifty-law',
+  assert.match(portfolio, /<DeveloperHero[\s\S]*?capabilities=\{capabilities\}/);
+  assert.doesNotMatch(portfolio, /<CoreCapabilities/);
+  assert.match(hero, /capabilities: Capability\[\]/);
+  assert.match(hero, /capabilities\.map/);
+  assert.doesNotMatch(widgets, /CoreCapabilities/);
+  assert.equal(standalone, '');
+
+  for (const [title, evidence] of [
+    ['Flutter 제품화·릴리스', 'Easy Contract Viewer'],
+    ['온디바이스 Retrieval/RAG', 'mobile_rag_engine'],
+    ['Rust FFI·네이티브 검색', 'mobile_rag_engine'],
+    ['검색 백엔드·평가 운영', 'Swifty-law'],
   ]) {
-    assert.match(portfolioData, new RegExp(projectName));
+    assert.match(portfolioData, new RegExp(`title: '${title}'[\\s\\S]*?evidence: '${evidence}'`));
   }
 });
 
@@ -215,7 +226,6 @@ test('recruitment flow has explicit component boundaries', () => {
   for (const component of [
     'RecruitmentNav',
     'DeveloperHero',
-    'CoreCapabilities',
     'ExperienceTimeline',
     'RecruitmentCTA',
     'SectionContainer',

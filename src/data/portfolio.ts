@@ -1,6 +1,6 @@
 export interface Capability {
   title: string;
-  detail: string;
+  evidence: string;
 }
 
 export const featuredProjectIds = [
@@ -35,23 +35,19 @@ export const portfolioCopy = {
 
 export const capabilities: Capability[] = [
   {
-    title: 'Flutter 제품화와 릴리스',
-    detail:
-      'Easy Contract Viewer에서 Flutter UI, Riverpod 상태 흐름, 원문 하이라이트, 동의 기반 AI 요약을 하나의 제품 흐름으로 연결했습니다.',
+    title: 'Flutter 제품화·릴리스',
+    evidence: 'Easy Contract Viewer',
   },
   {
     title: '온디바이스 Retrieval/RAG',
-    detail:
-      'mobile_rag_engine에서 chunking, embedding, vector/sparse 검색과 근거 context 생성을 로컬 ingest/query 경로로 설계했습니다.',
+    evidence: 'mobile_rag_engine',
   },
   {
-    title: 'Rust FFI와 네이티브 검색 경로',
-    detail:
-      'mobile_rag_engine에서 Flutter facade와 Dart orchestration을 Rust FFI, ONNX, SQLite, HNSW/BM25 hot path에 연결했습니다.',
+    title: 'Rust FFI·네이티브 검색',
+    evidence: 'mobile_rag_engine',
   },
   {
-    title: '검색 백엔드와 평가·운영',
-    detail:
-      'Swifty-law에서 FastAPI, PostgreSQL/Milvus, dense+sparse ranking, quota guard와 검색 회귀 평가 게이트를 구성했습니다.',
+    title: '검색 백엔드·평가 운영',
+    evidence: 'Swifty-law',
   },
 ];
