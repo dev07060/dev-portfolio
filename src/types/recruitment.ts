@@ -12,7 +12,10 @@ export interface RecruitmentCase {
   team?: string;
   problem: string;
   contributions: string[];
+  verification: string[];
   outcomes: string[];
+  tradeoffs: string[];
+  nonGoals: string[];
   evidenceLinks: EvidenceLink[];
 }
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Project } from '@/types/project';
 import { projects } from '@/data/projects';
 import {
@@ -34,6 +34,7 @@ const Portfolio = () => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [isPresentationMode, setIsPresentationMode] = useState(false);
   const [currentScreenIndex, setCurrentScreenIndex] = useState(0);
+  const presentationTriggerRef = useRef<HTMLElement | null>(null);
   const featuredProjects = featuredProjectIds
     .map((id) => projects.find((project) => project.id === id))
     .filter((project): project is Project => Boolean(project));
@@ -55,16 +56,24 @@ const Portfolio = () => {
     setTimeout(() => {
       setSelectedProject(null);
       setIsPresentationMode(false);
+      presentationTriggerRef.current = null;
     }, 300);
   };
 
   const enterPresentationMode = (e: React.MouseEvent | React.KeyboardEvent) => {
     e.stopPropagation();
+    presentationTriggerRef.current = e.currentTarget as HTMLElement;
     setIsPresentationMode(true);
   };
 
   const exitPresentationMode = () => {
     setIsPresentationMode(false);
+    window.requestAnimationFrame(() => {
+      const trigger = presentationTriggerRef.current;
+      if (trigger?.isConnected) {
+        trigger.focus({ preventScroll: true });
+      }
+    });
   };
 
   const nextSlide = useCallback(

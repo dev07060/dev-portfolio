@@ -1,5 +1,5 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '@playwright/test';
 
 const seriousViolations = async (page: Page) => {
   await page.waitForTimeout(900);
@@ -9,7 +9,29 @@ const seriousViolations = async (page: Page) => {
   );
 };
 
-test('한국어 단일 홈과 skip link, 대표 사례 순서를 제공한다', async ({ page }) => {
+const expectHorizontallyReachable = async (page: Page, locator: Locator) => {
+  await locator.scrollIntoViewIfNeeded();
+  await expect(locator).toBeVisible();
+
+  const box = await locator.boundingBox();
+  const viewport = page.viewportSize();
+  expect(box).not.toBeNull();
+  expect(viewport).not.toBeNull();
+  expect(box?.x ?? -1).toBeGreaterThanOrEqual(0);
+  expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual(
+    (viewport?.width ?? 0) + 1
+  );
+};
+
+const gridColumnCount = (locator: Locator) =>
+  locator.evaluate((element) =>
+    getComputedStyle(element).gridTemplateColumns.split(' ').filter(Boolean).length
+  );
+
+test('한국어 단일 홈과 skip link, 대표 사례 순서를 제공한다', async ({
+  page,
+  browserName,
+}) => {
   await page.goto('/');
 
   await expect(page.locator('html')).toHaveAttribute('lang', 'ko');
@@ -18,7 +40,7 @@ test('한국어 단일 홈과 skip link, 대표 사례 순서를 제공한다', 
   await expect(page.getByText('Developer', { exact: true })).toHaveCount(0);
   await expect(page.getByRole('link', { name: '경력', exact: true })).toHaveCount(0);
 
-  await page.keyboard.press('Tab');
+  await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
   const skipLink = page.getByRole('link', { name: '본문으로 건너뛰기' });
   await expect(skipLink).toBeFocused();
   await page.keyboard.press('Enter');
@@ -141,23 +163,85 @@ test('home, modal, presentation에 critical/serious axe 위반이 없다', async
   expect(await seriousViolations(page)).toEqual([]);
 });
 
+test('home, modal, presentation에 browser console 경고와 오류가 없다', async ({
+  page,
+}) => {
+  const consoleFailures: string[] = [];
+  page.on('console', (message) => {
+    if (message.type() === 'warning' || message.type() === 'error') {
+      consoleFailures.push(`${message.type()}: ${message.text()}`);
+    }
+  });
+
+  await page.goto('/');
+  await page
+    .getByRole('button', { name: 'mobile_rag_engine 프로젝트 상세 열기' })
+    .click();
+  await page
+    .getByRole('button', { name: 'mobile_rag_engine 프레젠테이션 열기' })
+    .click();
+  await page.getByRole('button', { name: '다음 화면' }).click();
+  await page.waitForTimeout(1_200);
+
+  expect(consoleFailures).toEqual([]);
+});
+
 for (const viewport of [
-  { width: 360, height: 740 },
-  { width: 390, height: 844 },
-  { width: 768, height: 1024 },
-  { width: 1024, height: 600 },
-  { width: 1440, height: 900 },
-  { width: 320, height: 800 },
+  { width: 360, height: 740, columns: 1, label: 'mobile' },
+  { width: 390, height: 844, columns: 1, label: 'mobile' },
+  { width: 640, height: 900, columns: 1, label: '200% zoom reflow proxy' },
+  { width: 768, height: 1024, columns: 2, label: 'tablet' },
+  { width: 1024, height: 600, columns: 3, label: 'desktop' },
+  { width: 1440, height: 900, columns: 3, label: 'desktop' },
+  { width: 320, height: 800, columns: 1, label: '400% zoom reflow proxy' },
 ]) {
-  test(`${viewport.width}×${viewport.height}에서 horizontal page overflow가 없다`, async ({
-    page,
-  }) => {
+  test(`${viewport.width}×${viewport.height} ${viewport.label}에서 콘텐츠와 control을 잃지 않는다`, async ({ page }) => {
     await page.setViewportSize(viewport);
     await page.goto('/');
+
     const dimensions = await page.evaluate(() => ({
       scrollWidth: document.documentElement.scrollWidth,
       clientWidth: document.documentElement.clientWidth,
     }));
     expect(dimensions.scrollWidth).toBe(dimensions.clientWidth);
+
+    await expectHorizontallyReachable(
+      page,
+      page.getByRole('heading', { level: 1, name: '오병희' })
+    );
+    await expectHorizontallyReachable(
+      page,
+      page.getByRole('link', { name: '채용 관련 이메일' }).first()
+    );
+
+    const featuredGrid = page.locator('#featured-work .grid').first();
+    const additionalGrid = page.locator('#additional-projects .grid').first();
+    expect(await gridColumnCount(featuredGrid)).toBe(viewport.columns);
+    expect(await gridColumnCount(additionalGrid)).toBe(viewport.columns);
+
+    const firstCard = page.locator('#featured-work article').first();
+    await expectHorizontallyReachable(
+      page,
+      firstCard.getByRole('heading', { name: 'mobile_rag_engine' })
+    );
+    await expectHorizontallyReachable(
+      page,
+      firstCard.getByRole('link', { name: 'GitHub' })
+    );
+
+    await firstCard
+      .getByRole('button', { name: 'mobile_rag_engine 프로젝트 상세 열기' })
+      .click();
+    const dialog = page.getByRole('dialog', { name: /mobile_rag_engine/ });
+    await expect(dialog).toBeVisible();
+    await expectHorizontallyReachable(
+      page,
+      dialog.getByRole('heading', { name: 'mobile_rag_engine' })
+    );
+    await expectHorizontallyReachable(
+      page,
+      dialog.getByRole('button', { name: 'mobile_rag_engine 프레젠테이션 열기' })
+    );
+    await page.getByRole('button', { name: 'mobile_rag_engine 프로젝트 상세 닫기' }).click();
   });
 }

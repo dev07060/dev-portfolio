@@ -32,7 +32,10 @@ const PresentationOverlay = ({
   const titleId = `presentation-title-${project.id}`;
   const descriptionId = `presentation-description-${project.id}`;
 
-  useFocusTrap(dialogRef, { initialFocusRef: closeButtonRef });
+  useFocusTrap(dialogRef, {
+    initialFocusRef: closeButtonRef,
+    restoreFocus: false,
+  });
 
   const handleTouchStart = (e: React.TouchEvent) => {
     const t = e.touches[0];

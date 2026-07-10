@@ -74,7 +74,11 @@ const ProjectCard = ({
             {String(index + 1).padStart(2, '0')}
           </span>
         )}
-        <ProjectThumbnail project={project} screen={card.thumbnailScreen} />
+        <ProjectThumbnail
+          project={project}
+          screen={card.thumbnailScreen}
+          priority={Boolean(recruitmentCase) && index === 0}
+        />
         <span className="absolute bottom-3 right-3 flex items-center gap-1 rounded-full bg-white/90 px-2 py-1 font-mono text-[11px] text-[#4a4339] backdrop-blur-md">
           {type.icon}
           {type.label}
@@ -123,6 +127,17 @@ const ProjectCard = ({
           </div>
         )}
 
+        {!recruitmentCase && card.highlight && (
+          <div className="mt-4 border-l-2 border-[#b8543a] pl-3">
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#756b60]">
+              담당 범위
+            </p>
+            <p className="mt-1 line-clamp-3 text-xs leading-relaxed text-[#4a4339] break-keep">
+              {card.highlight}
+            </p>
+          </div>
+        )}
+
         <div className="mt-5 flex flex-wrap gap-2">
           {visibleTechStack.map((tech) => (
             <span
@@ -165,9 +180,11 @@ const ProjectCard = ({
 const ProjectThumbnail = ({
   project,
   screen,
+  priority,
 }: {
   project: Project;
   screen?: Screen;
+  priority?: boolean;
 }) => {
   if (!screen?.imagePath) {
     return (
@@ -193,6 +210,7 @@ const ProjectThumbnail = ({
             alt=""
             fallbackGradient={project.color}
             fit="contain"
+            priority={priority}
           />
         </div>
       </div>
@@ -202,7 +220,13 @@ const ProjectThumbnail = ({
   if (project.type === 'web') {
     return (
       <div className="relative z-[1] aspect-video w-[78%] max-w-[270px] overflow-hidden rounded-lg border-t-[14px] border-white/90 bg-[#faf7f2] shadow-2xl transition-transform duration-500 group-hover:scale-105">
-        <ScreenImage variant="fill" src={screen.imagePath} alt="" fallbackGradient={project.color} />
+        <ScreenImage
+          variant="fill"
+          src={screen.imagePath}
+          alt=""
+          fallbackGradient={project.color}
+          priority={priority}
+        />
       </div>
     );
   }
@@ -215,7 +239,13 @@ const ProjectThumbnail = ({
   return (
     <div className={`relative z-[1] overflow-hidden rounded-[1rem] border-[5px] border-white/85 bg-white/85 shadow-2xl transition-transform duration-500 group-hover:scale-105 ${sizeClass}`}>
       <div className="relative h-full w-full overflow-hidden rounded-[0.75rem] bg-slate-800">
-        <ScreenImage variant="fill" src={screen.imagePath} alt="" fallbackGradient={project.color} />
+        <ScreenImage
+          variant="fill"
+          src={screen.imagePath}
+          alt=""
+          fallbackGradient={project.color}
+          priority={priority}
+        />
       </div>
     </div>
   );

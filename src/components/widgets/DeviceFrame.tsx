@@ -403,7 +403,7 @@ const PackagePresentationFrame = ({
         <div className="w-3 h-3 rounded-full bg-[#38bdf8]" />
         <div className="w-3 h-3 rounded-full bg-[#b8543a]" />
       </div>
-      <div className="h-full w-full bg-[#f8faf9]">
+      <div className="relative h-full w-full bg-[#f8faf9]">
         {currentScreen?.imagePath ? (
           <ScreenImage
             variant="fill"

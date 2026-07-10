@@ -210,13 +210,32 @@ const ProjectInfoPanel = ({
             </div>
           </section>
 
+          {recruitmentCase?.verification.length ? (
+            <section aria-labelledby={`verification-${project.id}`}>
+              <h3
+                id={`verification-${project.id}`}
+                className="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] text-[#756b60]"
+              >
+                — 테스트·평가·운영 검증
+              </h3>
+              <ul className="space-y-2">
+                {recruitmentCase.verification.map((item) => (
+                  <li key={item} className="flex gap-2 text-sm leading-relaxed text-[#4a4339]">
+                    <span aria-hidden="true" className="mt-[2px] text-[#0f766e]">·</span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+
           {recruitmentCase?.outcomes.length ? (
             <section aria-labelledby={`outcomes-${project.id}`}>
               <h3
                 id={`outcomes-${project.id}`}
                 className="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] text-[#756b60]"
               >
-                — 결과와 검증
+                — 결과와 영향
               </h3>
               <ul className="space-y-2">
                 {recruitmentCase.outcomes.map((outcome) => (
@@ -226,6 +245,32 @@ const ProjectInfoPanel = ({
                   </li>
                 ))}
               </ul>
+            </section>
+          ) : null}
+
+          {recruitmentCase &&
+          (recruitmentCase.tradeoffs.length > 0 || recruitmentCase.nonGoals.length > 0) ? (
+            <section aria-labelledby={`boundaries-${project.id}`}>
+              <h3
+                id={`boundaries-${project.id}`}
+                className="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] text-[#756b60]"
+              >
+                — Trade-off와 비목표
+              </h3>
+              <div className="space-y-3 text-sm leading-relaxed text-[#4a4339]">
+                {recruitmentCase.tradeoffs.map((item) => (
+                  <p key={item}>
+                    <strong className="font-semibold text-[#1f1b16]">Trade-off.</strong>{' '}
+                    {item}
+                  </p>
+                ))}
+                {recruitmentCase.nonGoals.map((item) => (
+                  <p key={item}>
+                    <strong className="font-semibold text-[#1f1b16]">비목표.</strong>{' '}
+                    {item}
+                  </p>
+                ))}
+              </div>
             </section>
           ) : null}
         </div>

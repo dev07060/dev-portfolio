@@ -121,6 +121,51 @@ test('recruitment data separates project assets from hiring evidence', () => {
   assert.doesNotMatch(data, /MAU 1만|5년 4개월|10–100×/);
 });
 
+test('case detail separates verification, outcomes, trade-offs, and non-goals', () => {
+  const types = read('src/types/recruitment.ts');
+  const data = read('src/data/recruitment.ts');
+  const modal = read('src/components/widgets/ProjectModal.tsx');
+
+  for (const field of ['verification', 'tradeoffs', 'nonGoals']) {
+    assert.match(types, new RegExp(`${field}: string\\[\\];`));
+    assert.match(data, new RegExp(`${field}: \\[`));
+  }
+
+  const detailOrder = [
+    '— 문제와 제약',
+    '— 직접 설계·구현한 범위',
+    '— 구조와 핵심 기술',
+    '— 테스트·평가·운영 검증',
+    '— 결과와 영향',
+    '— Trade-off와 비목표',
+  ];
+  let previous = -1;
+  for (const marker of detailOrder) {
+    const current = modal.indexOf(marker);
+    assert.ok(current > previous, `${marker} must appear in approved detail order`);
+    previous = current;
+  }
+});
+
+test('capability descriptions name their supporting representative cases', () => {
+  const portfolioData = read('src/data/portfolio.ts');
+
+  for (const projectName of [
+    'mobile_rag_engine',
+    'Easy Contract Viewer',
+    'Swifty-law',
+  ]) {
+    assert.match(portfolioData, new RegExp(projectName));
+  }
+});
+
+test('additional project cards expose a concise responsibility boundary', () => {
+  const card = read('src/components/widgets/ProjectCard.tsx');
+
+  assert.match(card, /!recruitmentCase && card\.highlight/);
+  assert.match(card, /담당 범위/);
+});
+
 test('recruitment flow has explicit component boundaries', () => {
   for (const component of [
     'RecruitmentNav',

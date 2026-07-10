@@ -37,21 +37,21 @@ export const capabilities: Capability[] = [
   {
     title: 'Flutter 제품화와 릴리스',
     detail:
-      'Flutter UI 아키텍처, Riverpod 상태 흐름, 릴리스 체크, 모바일 QA 근거까지 다룹니다.',
+      'Easy Contract Viewer에서 Flutter UI, Riverpod 상태 흐름, 원문 하이라이트, 동의 기반 AI 요약을 하나의 제품 흐름으로 연결했습니다.',
   },
   {
     title: '온디바이스 Retrieval/RAG',
     detail:
-      'chunking, embedding, vector/sparse 검색, 근거 context, 회귀 평가를 함께 설계합니다.',
+      'mobile_rag_engine에서 chunking, embedding, vector/sparse 검색과 근거 context 생성을 로컬 ingest/query 경로로 설계했습니다.',
   },
   {
     title: 'Rust FFI와 네이티브 검색 경로',
     detail:
-      'Flutter facade, Dart orchestration, Rust FFI hot path, ONNX, SQLite, HNSW/BM25를 연결합니다.',
+      'mobile_rag_engine에서 Flutter facade와 Dart orchestration을 Rust FFI, ONNX, SQLite, HNSW/BM25 hot path에 연결했습니다.',
   },
   {
     title: '검색 백엔드와 평가·운영',
     detail:
-      'FastAPI 라우팅, PostgreSQL/Milvus 저장소, Docker staging, quota guard, 평가 게이트를 구성합니다.',
+      'Swifty-law에서 FastAPI, PostgreSQL/Milvus, dense+sparse ranking, quota guard와 검색 회귀 평가 게이트를 구성했습니다.',
   },
 ];
