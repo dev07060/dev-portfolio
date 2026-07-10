@@ -83,10 +83,13 @@ Create helpers and focused tests that assert the desired final state:
 
 ```js
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import test from 'node:test';
 
-const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
+const read = (path) => {
+  const url = new URL(`../${path}`, import.meta.url);
+  return existsSync(url) ? readFileSync(url, 'utf8') : '';
+};
 
 test('root shell is server-rendered in Korean without locale controls', () => {
   const layout = read('src/app/layout.tsx');
