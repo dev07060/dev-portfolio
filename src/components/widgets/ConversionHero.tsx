@@ -33,7 +33,7 @@ const ConversionHero = ({ audience }: ConversionHeroProps) => {
     >
       <div className="animate-fade-in-up">
         <div className="min-w-0 max-w-3xl">
-          <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-[#8a7f70] mb-3 font-mono">
+          <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-[#756b60] mb-3 font-mono">
             — {t(content.eyebrow)}
           </p>
           <h1 className="font-serif text-4xl sm:text-5xl md:text-7xl font-light text-[#1f1b16] tracking-tight leading-[0.98]">
@@ -83,7 +83,7 @@ const ConversionHero = ({ audience }: ConversionHeroProps) => {
             >
               {t(content.offerLabel)}
             </h2>
-            <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-[#8a7f70]">
+            <span className="font-mono text-[11px] uppercase tracking-[0.25em] text-[#756b60]">
               04
             </span>
           </div>

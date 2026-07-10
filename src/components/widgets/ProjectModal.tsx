@@ -30,7 +30,10 @@ const ProjectModal = ({
   const titleId = `project-modal-title-${project.id}`;
   const descriptionId = `project-modal-description-${project.id}`;
 
-  useFocusTrap(dialogRef, { initialFocusRef: closeButtonRef });
+  useFocusTrap(dialogRef, {
+    enabled: !isPresentationMode,
+    initialFocusRef: closeButtonRef,
+  });
 
   return (
     <div
@@ -40,6 +43,7 @@ const ProjectModal = ({
       aria-modal={isPresentationMode ? undefined : 'true'}
       aria-labelledby={isPresentationMode ? undefined : titleId}
       aria-describedby={isPresentationMode ? undefined : descriptionId}
+      inert={isPresentationMode ? true : undefined}
       tabIndex={-1}
       className={`fixed inset-0 z-50 flex items-center justify-center px-3 sm:px-4 md:px-8 py-2 md:py-4 transition-opacity duration-300 ${
         isAnimating ? 'opacity-100' : 'opacity-0'
@@ -114,7 +118,7 @@ const ProjectInfoPanel = ({
           >
             {t(project.title)}
           </h2>
-          <p className="text-base text-[#8a7f70] italic font-serif mb-6">
+          <p className="text-base text-[#756b60] italic font-serif mb-6">
             {t(project.subtitle)}
           </p>
           {project.releaseLabel && (
@@ -126,7 +130,7 @@ const ProjectInfoPanel = ({
 
         <div className="space-y-6">
           <div>
-            <h4 className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#8a7f70] mb-2">
+            <h4 className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#756b60] mb-2">
               — {t(ui.projectOverview)}
             </h4>
             <p
@@ -143,7 +147,7 @@ const ProjectInfoPanel = ({
 
           {project.implementationPoints && project.implementationPoints.length > 0 && (
             <div>
-              <h4 className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#8a7f70] mb-3">
+              <h4 className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#756b60] mb-3">
                 — {t(ui.keyImplementations)}
               </h4>
               <ul className="space-y-2">
@@ -161,7 +165,7 @@ const ProjectInfoPanel = ({
           )}
 
           <div>
-            <h4 className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#8a7f70] mb-3">
+            <h4 className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#756b60] mb-3">
               — {t(ui.technologiesUsed)}
             </h4>
             <div className="flex flex-wrap gap-2">
@@ -191,7 +195,7 @@ const ProjectInfoPanel = ({
                   </span>
                   <ExternalLink
                     size={12}
-                    className="text-[#8a7f70] group-hover:text-[#b8543a] transition-colors"
+                    className="text-[#756b60] group-hover:text-[#b8543a] transition-colors"
                   />
                 </a>
               ))}
@@ -210,7 +214,7 @@ const PackageCaseStudyFlow = ({ project }: { project: Project }) => {
 
   return (
     <div data-package-detail="architecture-first">
-      <h4 className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#8a7f70] mb-3">
+      <h4 className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#756b60] mb-3">
         — {t(ui.caseStudyFlow)}
       </h4>
       {architectureScreen && (

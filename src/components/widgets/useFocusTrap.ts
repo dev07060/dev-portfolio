@@ -23,15 +23,22 @@ const getFocusableElements = (container: HTMLElement) =>
   );
 
 interface UseFocusTrapOptions {
+  enabled?: boolean;
   initialFocusRef?: RefObject<HTMLElement | null>;
   restoreFocus?: boolean;
 }
 
 export const useFocusTrap = (
   containerRef: RefObject<HTMLElement | null>,
-  { initialFocusRef, restoreFocus = true }: UseFocusTrapOptions = {}
+  {
+    enabled = true,
+    initialFocusRef,
+    restoreFocus = true,
+  }: UseFocusTrapOptions = {}
 ) => {
   useEffect(() => {
+    if (!enabled) return;
+
     const container = containerRef.current;
     if (!container) return;
 
@@ -82,5 +89,5 @@ export const useFocusTrap = (
         previousFocus.focus({ preventScroll: true });
       }
     };
-  }, [containerRef, initialFocusRef, restoreFocus]);
+  }, [containerRef, enabled, initialFocusRef, restoreFocus]);
 };

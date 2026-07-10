@@ -383,3 +383,70 @@ test('package modal surfaces the case study flow directly after card click', () 
   assert.match(portfolio, /currentScreenIndex=\{currentScreenIndex\}/);
   assert.match(deviceFrame, /featuredScreen = project\.screens\[currentScreenIndex\]/);
 });
+
+test('accessibility keeps the document language synchronized with the selected locale', () => {
+  const localeContext = read('src/i18n/LocaleContext.tsx');
+
+  assert.match(localeContext, /document\.documentElement\.lang\s*=\s*locale/);
+  assert.match(localeContext, /useEffect/);
+});
+
+test('accessibility exposes a keyboard skip link and a focusable main landmark', () => {
+  const clientWrapper = read('src/components/ClientWrapper.tsx');
+  const portfolio = read('src/components/Portfolio.tsx');
+
+  assert.match(clientWrapper, /href="#main-content"/);
+  assert.match(clientWrapper, /Skip to main content/);
+  assert.match(clientWrapper, /본문으로 건너뛰기/);
+  assert.match(portfolio, /<main/);
+  assert.match(portfolio, /id="main-content"/);
+  assert.match(portfolio, /tabIndex=\{-1\}/);
+});
+
+test('accessibility exposes the selected language with aria-pressed', () => {
+  const switcher = read('src/components/LanguageSwitcher.tsx');
+
+  assert.match(switcher, /aria-pressed=\{locale === 'en'\}/);
+  assert.match(switcher, /aria-pressed=\{locale === 'ko'\}/);
+  assert.match(switcher, /type="button"/);
+});
+
+test('accessibility removes page and nested modal backgrounds from interaction', () => {
+  const clientWrapper = read('src/components/ClientWrapper.tsx');
+  const globals = read('src/app/globals.css');
+  const portfolio = read('src/components/Portfolio.tsx');
+  const modal = read('src/components/widgets/ProjectModal.tsx');
+  const focusTrap = read('src/components/widgets/useFocusTrap.ts');
+
+  assert.match(clientWrapper, /className="skip-link/);
+  assert.match(
+    globals,
+    /body\[data-portfolio-overlay="true"\]\s+\.skip-link/
+  );
+  assert.match(portfolio, /inert=\{selectedProject \? true : undefined\}/);
+  assert.match(portfolio, /aria-hidden=\{selectedProject \? true : undefined\}/);
+  assert.match(modal, /inert=\{isPresentationMode \? true : undefined\}/);
+  assert.match(modal, /enabled:\s*!isPresentationMode/);
+  assert.match(focusTrap, /enabled\s*=\s*true/);
+  assert.match(focusTrap, /if \(!enabled\) return/);
+});
+
+test('accessibility uses an AA-safe muted color instead of the low-contrast original', () => {
+  const files = [
+    'src/app/globals.css',
+    'src/components/LanguageSwitcher.tsx',
+    'src/components/widgets/ConversionHero.tsx',
+    'src/components/widgets/Footer.tsx',
+    'src/components/widgets/OpenSourceBanner.tsx',
+    'src/components/widgets/ProfileHeader.tsx',
+    'src/components/widgets/ProjectCard.tsx',
+    'src/components/widgets/ProjectGrid.tsx',
+    'src/components/widgets/ProjectModal.tsx',
+  ];
+
+  for (const file of files) {
+    assert.doesNotMatch(read(file), /#8a7f70/, `${file} still uses the 3.67:1 muted color`);
+  }
+
+  assert.match(read('src/app/globals.css'), /--muted:\s*#756b60/);
+});

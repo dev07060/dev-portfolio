@@ -92,7 +92,7 @@ const ProjectCard = ({ project, audience = 'client', index, onClick }: ProjectCa
         <p className="text-sm text-[#4a4339] mb-5 line-clamp-2 leading-relaxed">
           {t(card.description)}
         </p>
-        <p className="text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.25em] text-[#8a7f70] font-mono mb-2">
+        <p className="text-[10px] uppercase tracking-[0.2em] sm:tracking-[0.25em] text-[#756b60] font-mono mb-2">
           — {card.evidenceBadges ? t(ui.evidenceBadges) : t(ui.coreStack)}
         </p>
         <div className="flex flex-wrap items-center gap-2">
@@ -111,7 +111,7 @@ const ProjectCard = ({ project, audience = 'client', index, onClick }: ProjectCa
           )}
         </div>
         {card.highlight && (
-          <p className="mt-4 pt-4 border-t border-[#e8dfd0] text-xs text-[#8a7f70] italic line-clamp-2 leading-relaxed">
+          <p className="mt-4 pt-4 border-t border-[#e8dfd0] text-xs text-[#756b60] italic line-clamp-2 leading-relaxed">
             “{t(card.highlight)}”
           </p>
         )}

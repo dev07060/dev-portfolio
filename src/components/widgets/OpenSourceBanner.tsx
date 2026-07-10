@@ -81,7 +81,7 @@ const OpenSourceBanner = () => {
         <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-light text-[#1f1b16] tracking-tight">
           {t(ui.openSourcePackages)}
         </h2>
-        <span className="font-mono text-[11px] sm:text-xs uppercase tracking-[0.18em] sm:tracking-[0.25em] text-[#8a7f70]">
+        <span className="font-mono text-[11px] sm:text-xs uppercase tracking-[0.18em] sm:tracking-[0.25em] text-[#756b60]">
           pub.dev
         </span>
       </div>
@@ -108,7 +108,7 @@ const OpenSourceBanner = () => {
                     <h3 className="font-serif text-lg font-normal text-[#1f1b16] group-hover:text-[#b8543a] transition-colors">
                       {pkg.name}
                     </h3>
-                    <span className="text-xs text-[#8a7f70] font-mono">
+                    <span className="text-xs text-[#756b60] font-mono">
                       v{pkg.version}
                     </span>
                   </div>
@@ -129,7 +129,7 @@ const OpenSourceBanner = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     title="GitHub"
-                    className="p-2 text-[#4a4339] hover:text-[#1f1b16] hover:bg-[#f2ede4] rounded-lg border border-[#e8dfd0] hover:border-[#8a7f70] transition-all"
+                    className="p-2 text-[#4a4339] hover:text-[#1f1b16] hover:bg-[#f2ede4] rounded-lg border border-[#e8dfd0] hover:border-[#756b60] transition-all"
                   >
                     <Github size={15} />
                   </a>

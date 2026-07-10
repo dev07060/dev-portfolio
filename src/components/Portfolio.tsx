@@ -164,22 +164,30 @@ const Portfolio = ({ initialAudience = 'client' }: PortfolioProps) => {
   }, [selectedProject]);
 
   return (
-    <div className="min-h-screen bg-[#faf7f2] text-[#1f1b16] font-sans">
-      {/* Conversion-first portfolio structure */}
-      <ConversionHero audience={audience} />
+    <>
+      <main
+        id="main-content"
+        tabIndex={-1}
+        inert={selectedProject ? true : undefined}
+        aria-hidden={selectedProject ? true : undefined}
+        className="min-h-screen bg-[#faf7f2] text-[#1f1b16] font-sans outline-none"
+      >
+        {/* Conversion-first portfolio structure */}
+        <ConversionHero audience={audience} />
 
-      {/* Featured Work */}
-      <FeaturedWork
-        projects={featuredProjects}
-        audience={audience}
-        onProjectClick={handleProjectClick}
-      />
+        {/* Featured Work */}
+        <FeaturedWork
+          projects={featuredProjects}
+          audience={audience}
+          onProjectClick={handleProjectClick}
+        />
 
-      {/* Supporting Work */}
-      {audience === 'client' ? clientSupportingSections : developerSupportingSections}
+        {/* Supporting Work */}
+        {audience === 'client' ? clientSupportingSections : developerSupportingSections}
 
-      {/* Footer */}
-      <Footer />
+        {/* Footer */}
+        <Footer />
+      </main>
 
       {/* Project Detail Modal */}
       {selectedProject && (
@@ -203,7 +211,7 @@ const Portfolio = ({ initialAudience = 'client' }: PortfolioProps) => {
           onNextSlide={nextSlide}
         />
       )}
-    </div>
+    </>
   );
 };
 

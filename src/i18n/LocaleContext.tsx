@@ -1,6 +1,13 @@
 'use client';
 
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+  ReactNode,
+} from 'react';
 import { Locale, LocaleText } from './translations';
 
 // ============================================================
@@ -24,6 +31,10 @@ interface LocaleProviderProps {
 
 export function LocaleProvider({ children, defaultLocale = 'en' }: LocaleProviderProps) {
   const [locale, setLocale] = useState<Locale>(defaultLocale);
+
+  useEffect(() => {
+    document.documentElement.lang = locale;
+  }, [locale]);
 
   // Translation helper - extracts the correct language from LocaleText
   const t = useCallback((text: LocaleText): string => {

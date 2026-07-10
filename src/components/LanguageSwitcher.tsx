@@ -6,23 +6,31 @@ const LanguageSwitcher = () => {
   const { locale, setLocale } = useLocale();
 
   return (
-    <div className="language-switcher fixed top-4 right-4 z-50 flex items-center gap-1 bg-white/90 backdrop-blur-md rounded-full border border-[#e8dfd0] p-1 shadow-sm">
+    <div
+      role="group"
+      aria-label={locale === 'ko' ? '언어 선택' : 'Language selection'}
+      className="language-switcher fixed top-4 right-4 z-50 flex items-center gap-1 bg-white/90 backdrop-blur-md rounded-full border border-[#e8dfd0] p-1 shadow-sm"
+    >
       <button
+        type="button"
+        aria-pressed={locale === 'en'}
         onClick={() => setLocale('en')}
         className={`px-3 py-1.5 text-xs font-mono uppercase tracking-wider rounded-full transition-all ${
           locale === 'en'
             ? 'bg-[#1f1b16] text-[#faf7f2]'
-            : 'text-[#8a7f70] hover:text-[#1f1b16]'
+            : 'text-[#756b60] hover:text-[#1f1b16]'
         }`}
       >
         EN
       </button>
       <button
+        type="button"
+        aria-pressed={locale === 'ko'}
         onClick={() => setLocale('ko')}
         className={`px-3 py-1.5 text-xs font-mono uppercase tracking-wider rounded-full transition-all ${
           locale === 'ko'
             ? 'bg-[#1f1b16] text-[#faf7f2]'
-            : 'text-[#8a7f70] hover:text-[#1f1b16]'
+            : 'text-[#756b60] hover:text-[#1f1b16]'
         }`}
       >
         KO

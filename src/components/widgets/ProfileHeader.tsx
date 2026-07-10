@@ -24,7 +24,7 @@ const ProfileHeader = () => {
 
           {/* Profile Info */}
           <div className="flex-1">
-            <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-[#8a7f70] mb-2 sm:mb-3 font-mono">
+            <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-[#756b60] mb-2 sm:mb-3 font-mono">
               — Portfolio · 2025
             </p>
             <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl font-light text-[#1f1b16] mb-2 tracking-tight leading-[1.05]">
@@ -54,7 +54,7 @@ const ProfileHeader = () => {
                     ))}
                   </ul>
                   <div className="inline-flex max-w-full items-center gap-2 px-3 py-1.5 bg-[#f2ede4] rounded-full border border-[#e8dfd0]">
-                    <span className="text-xs font-medium text-[#8a7f70] leading-snug">
+                    <span className="text-xs font-medium text-[#756b60] leading-snug">
                       {t(profile.experience)}
                     </span>
                   </div>
@@ -75,7 +75,7 @@ const ProfileHeader = () => {
                   ))}
                 </ul>
                 <div className="inline-flex max-w-full items-center gap-2 px-3 py-1.5 bg-[#f2ede4] rounded-full border border-[#e8dfd0]">
-                  <span className="text-xs md:text-sm font-medium text-[#8a7f70] leading-snug">
+                  <span className="text-xs md:text-sm font-medium text-[#756b60] leading-snug">
                     {t(profile.experience)}
                   </span>
                 </div>

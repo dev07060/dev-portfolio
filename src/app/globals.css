@@ -5,7 +5,7 @@
   --surface-alt: #f2ede4;
   --foreground: #1f1b16;
   --body: #4a4339;
-  --muted: #8a7f70;
+  --muted: #756b60;
   --border: #e8dfd0;
   --accent: #b8543a;
   --accent-hover: #9d4530;
@@ -31,7 +31,8 @@ body {
   font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
 }
 
-body[data-portfolio-overlay="true"] .language-switcher {
+body[data-portfolio-overlay="true"] .language-switcher,
+body[data-portfolio-overlay="true"] .skip-link {
   display: none;
 }
 

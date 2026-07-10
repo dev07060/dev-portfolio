@@ -81,7 +81,7 @@ const ProjectGrid = ({
         </div>
         <div className="flex w-full flex-col items-start gap-2 sm:w-auto sm:flex-row sm:items-center lg:flex-col lg:items-end">
           <AudienceDisplaySwitcher audience={audience} />
-          <span className="font-mono text-[11px] sm:text-xs uppercase tracking-[0.18em] sm:tracking-[0.25em] text-[#8a7f70] shrink-0">
+          <span className="font-mono text-[11px] sm:text-xs uppercase tracking-[0.18em] sm:tracking-[0.25em] text-[#756b60] shrink-0">
             {String(projects.length).padStart(2, '0')} {t(ui.projectsSuffix)}
           </span>
         </div>
@@ -163,7 +163,7 @@ const ClientProjectList = ({
                 <h3 className="truncate text-sm font-semibold leading-snug text-[#1f1b16] group-hover:text-[#0f766e] sm:text-base">
                   {title}
                 </h3>
-                <span className="shrink-0 rounded border border-[#d9e4e1] px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-[#8a7f70] sm:hidden">
+                <span className="shrink-0 rounded border border-[#d9e4e1] px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-[#756b60] sm:hidden">
                   {t(type.label)}
                 </span>
               </div>
