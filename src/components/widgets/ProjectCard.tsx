@@ -91,7 +91,7 @@ const ProjectCard = ({
       <div className="flex flex-1 flex-col p-5 sm:p-6">
         {recruitmentCase && (
           <p className="mb-2 font-mono text-[10px] leading-relaxed tracking-[0.16em] text-[#0f766e]">
-            {recruitmentCase.publicStatus}
+            {recruitmentCase.statusLabel}
           </p>
         )}
         <h3 className="font-serif text-xl font-light leading-tight text-[#1f1b16] sm:text-2xl">
@@ -122,10 +122,24 @@ const ProjectCard = ({
         {recruitmentCase?.outcomes[0] && (
           <div className="mt-4 border-l-2 border-[#0f766e] pl-3">
             <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#756b60]">
-              검증 가능한 결과
+              {recruitmentCase.evidenceLinks.length > 0
+                ? '공개 근거가 있는 결과'
+                : '핵심 결과'}
             </p>
             <p className="mt-1 line-clamp-3 text-xs leading-relaxed text-[#4a4339] break-keep">
               {recruitmentCase.outcomes[0]}
+            </p>
+          </div>
+        )}
+
+        {recruitmentCase?.supportingPackages?.[0] && (
+          <div className="mt-4 rounded-lg border border-[#d9e4e1] bg-[#eef7f5] px-3 py-2.5">
+            <p className="font-mono text-[10px] tracking-[0.16em] text-[#0f766e]">
+              관련 공개 패키지
+            </p>
+            <p className="mt-1 text-xs font-semibold text-[#1f1b16]">
+              {recruitmentCase.supportingPackages[0].name} · v
+              {recruitmentCase.supportingPackages[0].version}
             </p>
           </div>
         )}

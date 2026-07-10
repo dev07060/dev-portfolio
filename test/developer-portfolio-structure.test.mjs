@@ -33,7 +33,6 @@ test('portfolio follows the approved recruitment section order', () => {
     '<FeaturedWork',
     '<ExperienceTimeline',
     '<ProjectGrid',
-    '<OpenSourceBanner',
     '<RecruitmentCTA',
     '<Footer',
   ];
@@ -109,6 +108,7 @@ test('recruitment data separates project assets from hiring evidence', () => {
 
   for (const name of [
     'EvidenceLink',
+    'SupportingPackage',
     'RecruitmentCase',
     'ExperienceItem',
     'RecruitmentProfile',
@@ -117,7 +117,35 @@ test('recruitment data separates project assets from hiring evidence', () => {
   }
   assert.match(data, /local-mobile-rag-gemma/);
   assert.match(data, /pub\.dev 0\.18\.6/);
+  assert.match(types, /statusLabel: string;/);
+  assert.doesNotMatch(types, /publicStatus: string;/);
   assert.doesNotMatch(data, /MAU 1만|5년 4개월|10–100×/);
+});
+
+test('featured cases distinguish public evidence and integrate supporting packages', () => {
+  const types = read('src/types/recruitment.ts');
+  const data = read('src/data/recruitment.ts');
+  const card = read('src/components/widgets/ProjectCard.tsx');
+  const modal = read('src/components/widgets/ProjectModal.tsx');
+  const portfolio = read('src/components/Portfolio.tsx');
+  const widgets = read('src/components/widgets/index.ts');
+  const standalone = read('src/components/widgets/OpenSourceBanner.tsx');
+
+  assert.match(types, /supportingPackages\?: SupportingPackage\[\];/);
+  assert.match(
+    data,
+    /projectId: 'local-mobile-rag-gemma'[\s\S]*?supportingPackages: \[[\s\S]*?name: 'rag_engine_flutter'[\s\S]*?version: '0\.18\.3'/
+  );
+  assert.match(card, /evidenceLinks\.length > 0/);
+  assert.match(card, /공개 근거가 있는 결과/);
+  assert.match(card, /핵심 결과/);
+  assert.doesNotMatch(card, /검증 가능한 결과/);
+  assert.match(card, /관련 공개 패키지/);
+  assert.match(modal, /관련 공개 패키지/);
+  assert.match(modal, /supportingPackages/);
+  assert.doesNotMatch(portfolio, /<OpenSourceBanner/);
+  assert.doesNotMatch(widgets, /OpenSourceBanner/);
+  assert.equal(standalone, '');
 });
 
 test('verified resume input populates six latest-first experience entries without private data', () => {

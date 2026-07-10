@@ -9,7 +9,6 @@ import {
   FeaturedWork,
   ExperienceTimeline,
   ProjectGrid,
-  OpenSourceBanner,
   RecruitmentCTA,
   Footer,
   ProjectModal,
@@ -175,8 +174,6 @@ const Portfolio = () => {
             heading={portfolioCopy.additionalHeading}
             description={portfolioCopy.additionalDescription}
           />
-
-          <OpenSourceBanner />
 
           <RecruitmentCTA profile={recruitmentProfile} />
         </main>

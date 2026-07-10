@@ -29,7 +29,7 @@ export const recruitmentProfile: RecruitmentProfile = {
 export const recruitmentCases: RecruitmentCase[] = [
   {
     projectId: 'local-mobile-rag-gemma',
-    publicStatus: 'pub.dev 공개 패키지 · 0.18.6',
+    statusLabel: 'pub.dev 공개 패키지 · 0.18.6',
     problem:
       'Flutter 앱에서 문서를 서버에 업로드하지 않고 로컬 문서 검색과 RAG context 생성을 처리해야 했습니다.',
     contributions: [
@@ -62,10 +62,36 @@ export const recruitmentCases: RecruitmentCase[] = [
         kind: 'pubdev',
       },
     ],
+    supportingPackages: [
+      {
+        name: 'rag_engine_flutter',
+        version: '0.18.3',
+        relationship:
+          'mobile_rag_engine의 네이티브 Rust FFI와 토크나이징 경로를 제공하는 기반 패키지입니다.',
+        techStack: [
+          'Rust',
+          'flutter_rust_bridge',
+          'cargokit',
+          'HuggingFace Tokenizers',
+        ],
+        links: [
+          {
+            label: 'pub.dev',
+            url: 'https://pub.dev/packages/rag_engine_flutter',
+            kind: 'pubdev',
+          },
+          {
+            label: 'GitHub',
+            url: 'https://github.com/dev07060/mobile_rag_engine',
+            kind: 'github',
+          },
+        ],
+      },
+    ],
   },
   {
     projectId: 'easy-contract-viewer',
-    publicStatus: 'Flutter 제품 적용 사례',
+    statusLabel: 'Flutter 제품 적용 사례',
     problem:
       '보험 약관 PDF를 로컬에서 검색하고, 검토 결과를 정확한 원문 근거 위치로 다시 연결해야 했습니다.',
     contributions: [
@@ -91,7 +117,7 @@ export const recruitmentCases: RecruitmentCase[] = [
   },
   {
     projectId: 'law-info-engine',
-    publicStatus: '운영 중인 검색·API',
+    statusLabel: '운영 중인 검색·API',
     problem:
       '공식 법령 데이터를 인용 가능한 단위로 정규화하고, LLM이 검색된 공식 근거 안에서만 답하도록 해야 했습니다.',
     contributions: [

@@ -3,7 +3,7 @@
 import { ExternalLink, X } from 'lucide-react';
 import { useRef } from 'react';
 import type { Project } from '@/types/project';
-import type { RecruitmentCase } from '@/types/recruitment';
+import type { RecruitmentCase, SupportingPackage } from '@/types/recruitment';
 import DeviceFrame from './DeviceFrame';
 import { useFocusTrap } from './useFocusTrap';
 
@@ -116,7 +116,7 @@ const ProjectInfoPanel = ({
       <div className="flex min-h-full flex-col justify-start p-6 sm:p-8">
         <header className="mb-7 border-b border-[#e8dfd0] pb-6">
           <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] text-[#9d4530]">
-            — {recruitmentCase?.publicStatus ?? getTypeLabel(project)}
+            — {recruitmentCase?.statusLabel ?? getTypeLabel(project)}
           </p>
           <h2
             id={titleId}
@@ -190,6 +190,10 @@ const ProjectInfoPanel = ({
           )}
 
           {project.type === 'package' && <PackageCaseStudyFlow project={project} />}
+
+          {recruitmentCase?.supportingPackages?.length ? (
+            <SupportingPackages items={recruitmentCase.supportingPackages} />
+          ) : null}
 
           <section aria-labelledby={`technology-${project.id}`}>
             <h3
@@ -278,6 +282,61 @@ const ProjectInfoPanel = ({
     </div>
   );
 };
+
+const SupportingPackages = ({ items }: { items: SupportingPackage[] }) => (
+  <section aria-labelledby="supporting-packages-heading">
+    <h3
+      id="supporting-packages-heading"
+      className="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] text-[#756b60]"
+    >
+      — 관련 공개 패키지
+    </h3>
+    <div className="space-y-3">
+      {items.map((item) => (
+        <article
+          key={item.name}
+          className="rounded-lg border border-[#0f766e]/25 bg-[#eef7f5] p-3"
+        >
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <strong className="text-sm font-semibold text-[#1f1b16]">
+              {item.name}
+            </strong>
+            <span className="font-mono text-[10px] text-[#0f766e]">
+              v{item.version}
+            </span>
+          </div>
+          <p className="mt-2 text-xs leading-relaxed text-[#4a4339]">
+            {item.relationship}
+          </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {item.links.map((link) => (
+              <a
+                key={link.url}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-[#d9e4e1] bg-white px-3 py-2 text-xs font-semibold text-[#0f766e] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f766e]"
+              >
+                {link.label}
+                <ExternalLink size={13} aria-hidden="true" />
+              </a>
+            ))}
+          </div>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {item.techStack.map((tech) => (
+              <span
+                key={tech}
+                className="rounded-full border border-[#d9e4e1] bg-white px-2.5 py-1 text-[10px] text-[#4a4339]"
+              >
+                {tech}
+              </span>
+            ))}
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+);
 
 const PackageCaseStudyFlow = ({ project }: { project: Project }) => {
   const architectureScreen =

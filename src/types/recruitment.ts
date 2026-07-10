@@ -4,9 +4,17 @@ export interface EvidenceLink {
   kind: 'github' | 'pubdev' | 'live' | 'docs' | 'article';
 }
 
+export interface SupportingPackage {
+  name: string;
+  version: string;
+  relationship: string;
+  techStack: string[];
+  links: EvidenceLink[];
+}
+
 export interface RecruitmentCase {
   projectId: string;
-  publicStatus: string;
+  statusLabel: string;
   role?: string;
   period?: string;
   team?: string;
@@ -17,6 +25,7 @@ export interface RecruitmentCase {
   tradeoffs: string[];
   nonGoals: string[];
   evidenceLinks: EvidenceLink[];
+  supportingPackages?: SupportingPackage[];
 }
 
 export interface ExperienceItem {

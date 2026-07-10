@@ -95,11 +95,11 @@ export interface RecruitmentCase {
 }
 ```
 
-- [ ] Add failing tests requiring evidence-linked cases to render `공개 근거가 있는 결과`, unlinked cases to render `핵심 결과`, and forbidding `검증 가능한 결과`.
-- [ ] Add failing tests requiring `rag_engine_flutter` under the `mobile_rag_engine` recruitment case and forbidding `<OpenSourceBanner` and its export/file.
-- [ ] Add `SupportingPackage`, populate `rag_engine_flutter 0.18.3`, and render its one-line relationship, pub.dev/GitHub links, and tags in the featured card/modal.
-- [ ] Remove the standalone open-source section, export, and component.
-- [ ] Run tests and TypeScript; commit as `refactor: integrate supporting package evidence`.
+- [x] Add failing tests requiring evidence-linked cases to render `공개 근거가 있는 결과`, unlinked cases to render `핵심 결과`, and forbidding `검증 가능한 결과`.
+- [x] Add failing tests requiring `rag_engine_flutter` under the `mobile_rag_engine` recruitment case and forbidding `<OpenSourceBanner` and its export/file.
+- [x] Add `SupportingPackage`, populate `rag_engine_flutter 0.18.3`, and render its one-line relationship, pub.dev/GitHub links, and tags in the featured card/modal.
+- [x] Remove the standalone open-source section, export, and component.
+- [x] Run tests and TypeScript; commit as `refactor: integrate supporting package evidence`.
 
 ### Task 4: Compress the career timeline
 
@@ -179,7 +179,7 @@ export interface RecruitmentCase {
 - [ ] Load and follow the PDF skill; render the original resume for source validation without copying private facts.
 - [ ] Add failing tests requiring the public URL and forbidding the original phone, address, and salary strings in source and extracted public-PDF text.
 - [ ] Generate the Korean PDF, render every page, visually inspect it, and extract text to verify content and privacy exclusions.
-- [ ] Link the same URL from Hero, nav, and CTA; update Playwright expectations from zero resume links to the intended surfaces.
+- [ ] Link the same URL from Hero and CTA; keep the app bar resume-free at 320px and update Playwright expectations to those two surfaces.
 - [ ] Run focused/full tests and build; commit as `feat: add sanitized public developer resume`.
 
 ### Task 8: Final responsive and release verification
