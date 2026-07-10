@@ -32,7 +32,6 @@ const ProjectModal = ({
   const descriptionId = `project-modal-description-${project.id}`;
 
   useFocusTrap(dialogRef, {
-    enabled: !isPresentationMode,
     initialFocusRef: closeButtonRef,
   });
 
