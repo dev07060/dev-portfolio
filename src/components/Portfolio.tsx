@@ -8,7 +8,7 @@ import {
   DeveloperHero,
   FeaturedWork,
   ExperienceTimeline,
-  ProjectGrid,
+  ProjectArchive,
   RecruitmentCTA,
   Footer,
   ProjectModal,
@@ -168,7 +168,7 @@ const Portfolio = () => {
 
           <ExperienceTimeline items={experienceItems} projects={projects} />
 
-          <ProjectGrid
+          <ProjectArchive
             projects={additionalProjects}
             onProjectClick={handleProjectClick}
             heading={portfolioCopy.additionalHeading}

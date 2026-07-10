@@ -4,7 +4,7 @@ export { default as DeveloperHero } from './DeveloperHero';
 export { default as FeaturedWork } from './FeaturedWork';
 export { default as ExperienceTimeline } from './ExperienceTimeline';
 export { default as ProjectCard } from './ProjectCard';
-export { default as ProjectGrid } from './ProjectGrid';
+export { default as ProjectArchive } from './ProjectArchive';
 export { default as RecruitmentCTA } from './RecruitmentCTA';
 export { default as ProjectModal } from './ProjectModal';
 export { default as PresentationOverlay } from './PresentationOverlay';

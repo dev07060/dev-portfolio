@@ -132,11 +132,11 @@ export interface RecruitmentCase {
 - Consumes: `Project[]`, heading, description, and `onProjectClick(project)`.
 - Produces: five `article` rows with number, title, Korean type, `cardPresentation.highlight`, first three tech tags, and a dialog-opening `상세 보기` button.
 
-- [ ] Add failing tests requiring `ProjectArchive`, five rows, `techStack.slice(0, 3)`, responsibility text, and absence of `ProjectGrid`.
-- [ ] Add Playwright assertions that all five archive headings are reachable at 320px and the first archive detail button opens its modal.
-- [ ] Implement `ProjectArchive` with one responsive row per project and no screenshot thumbnail.
-- [ ] Swap the component import/render/export and delete `ProjectGrid`.
-- [ ] Run tests and TypeScript; commit as `refactor: compact additional project archive`.
+- [x] Add failing tests requiring `ProjectArchive`, five rows, `techStack.slice(0, 3)`, responsibility text, and absence of `ProjectGrid`.
+- [x] Add Playwright assertions that all five archive headings are reachable at 320px and the first archive detail button opens its modal.
+- [x] Implement `ProjectArchive` with one responsive row per project and no screenshot thumbnail.
+- [x] Swap the component import/render/export and delete `ProjectGrid`.
+- [x] Run tests and TypeScript; commit as `refactor: compact additional project archive`.
 
 ### Task 6: Finish Korean copy, mobile modal order, and image priority
 

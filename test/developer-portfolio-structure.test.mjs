@@ -32,7 +32,7 @@ test('portfolio follows the approved recruitment section order', () => {
     '<DeveloperHero',
     '<FeaturedWork',
     '<ExperienceTimeline',
-    '<ProjectGrid',
+    '<ProjectArchive',
     '<RecruitmentCTA',
     '<Footer',
   ];
@@ -66,7 +66,7 @@ test('active source has no audience runtime', () => {
     'src/app/page.tsx',
     'src/components/Portfolio.tsx',
     'src/components/widgets/ProjectCard.tsx',
-    'src/components/widgets/ProjectGrid.tsx',
+    'src/components/widgets/ProjectArchive.tsx',
     'src/data/projects.ts',
     'src/types/project.ts',
   ];
@@ -81,7 +81,7 @@ test('active source has no locale runtime', () => {
   const files = [
     'src/components/Portfolio.tsx',
     'src/components/widgets/ProjectCard.tsx',
-    'src/components/widgets/ProjectGrid.tsx',
+    'src/components/widgets/ProjectArchive.tsx',
     'src/data/projects.ts',
     'src/types/project.ts',
   ];
@@ -255,11 +255,23 @@ test('hero owns compact project-backed capabilities without a standalone section
   }
 });
 
-test('additional project cards expose a concise responsibility boundary', () => {
-  const card = read('src/components/widgets/ProjectCard.tsx');
+test('additional projects use a compact archive without thumbnail cards', () => {
+  const archive = read('src/components/widgets/ProjectArchive.tsx');
+  const grid = read('src/components/widgets/ProjectGrid.tsx');
+  const portfolio = read('src/components/Portfolio.tsx');
+  const widgets = read('src/components/widgets/index.ts');
 
-  assert.match(card, /!recruitmentCase && card\.highlight/);
-  assert.match(card, /담당 범위/);
+  assert.match(archive, /projects\.map/);
+  assert.match(archive, /techStack\.slice\(0, 3\)/);
+  assert.match(archive, /담당 범위/);
+  assert.match(archive, /상세 보기/);
+  assert.match(archive, /id=\{`project-\$\{project\.id\}`\}/);
+  assert.doesNotMatch(archive, /ScreenImage|ProjectThumbnail|imagePath/);
+  assert.match(portfolio, /<ProjectArchive/);
+  assert.doesNotMatch(portfolio, /<ProjectGrid/);
+  assert.match(widgets, /ProjectArchive/);
+  assert.doesNotMatch(widgets, /ProjectGrid/);
+  assert.equal(grid, '');
 });
 
 test('recruitment flow has explicit component boundaries', () => {
@@ -267,6 +279,7 @@ test('recruitment flow has explicit component boundaries', () => {
     'RecruitmentNav',
     'DeveloperHero',
     'ExperienceTimeline',
+    'ProjectArchive',
     'RecruitmentCTA',
     'SectionContainer',
     'SectionHeader',
