@@ -104,6 +104,23 @@ test('project data uses Korean strings and stable screen identifiers', () => {
   assert.match(projects, /architecture\.ko\.svg/);
 });
 
+test('recruitment data separates project assets from hiring evidence', () => {
+  const types = read('src/types/recruitment.ts');
+  const data = read('src/data/recruitment.ts');
+
+  for (const name of [
+    'EvidenceLink',
+    'RecruitmentCase',
+    'ExperienceItem',
+    'RecruitmentProfile',
+  ]) {
+    assert.match(types, new RegExp(`interface ${name}`));
+  }
+  assert.match(data, /local-mobile-rag-gemma/);
+  assert.match(data, /pub\.dev 0\.18\.6/);
+  assert.doesNotMatch(data, /MAU 1만|5년 4개월|10–100×/);
+});
+
 test('unverified profile facts and empty resume action are not rendered', () => {
   const recruitment = read('src/data/recruitment.ts');
   const hero = read('src/components/widgets/DeveloperHero.tsx');

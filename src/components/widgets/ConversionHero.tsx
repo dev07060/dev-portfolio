@@ -50,7 +50,7 @@ const ConversionHero = () => {
             <ArrowDown size={16} aria-hidden="true" />
           </a>
           <a
-            href="mailto:contact@okstring.dev"
+            href="mailto:byeongheeoh51@gmail.com"
             className="inline-flex items-center justify-center gap-2 rounded-full border border-[#b8543a]/40 bg-white px-4 py-2.5 text-sm font-semibold text-[#1f1b16] transition-colors hover:border-[#0f766e] hover:text-[#0f766e] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f766e] focus-visible:ring-offset-2 focus-visible:ring-offset-[#faf7f2] sm:px-5 sm:py-3"
           >
             {portfolioCopy.secondaryCta}
