@@ -99,11 +99,17 @@ test('스크롤 가능한 screenshot region을 keyboard로 탐색한다', async 
   await page.goto('/');
   await page.getByRole('button', { name: 'Swifty-law 프로젝트 상세 열기' }).click();
   await page.getByRole('button', { name: 'Swifty-law 프레젠테이션 열기' }).click();
+  await page.getByRole('button', { name: '이전 화면' }).click();
 
   const region = page.getByRole('region', {
-    name: '시스템 구성 스크린샷 스크롤 영역',
+    name: '검색 결과·인용 스크린샷 스크롤 영역',
   });
   await expect(region).toBeVisible();
+  await expect
+    .poll(() =>
+      region.evaluate((element) => element.scrollHeight > element.clientHeight)
+    )
+    .toBe(true);
   await region.focus();
   const before = await region.evaluate((element) => element.scrollTop);
   await page.keyboard.press('PageDown');
