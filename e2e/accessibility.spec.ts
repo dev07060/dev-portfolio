@@ -96,6 +96,23 @@ test('320px 앱바가 모든 링크와 44px 터치 영역을 처음부터 제공
   expect(internalOverflow).toBe(0);
 });
 
+test('경력은 대표 성과만 먼저 보여주고 나머지를 펼쳐 제공한다', async ({ page }) => {
+  await page.goto('/#experience');
+
+  const firstExperience = page.locator('#experience > div ol > li').first();
+  const hiddenSummary = firstExperience.getByText(
+    '보험 판매자용 태블릿 앱에서 약관 RAG 탐색과 온디바이스 조항 요약 흐름을 개발했습니다.',
+    { exact: true }
+  );
+  await expect(hiddenSummary).toBeHidden();
+
+  await firstExperience.getByText('상세 경력 보기', { exact: true }).click();
+  await expect(hiddenSummary).toBeVisible();
+  await expect(
+    firstExperience.getByRole('link', { name: 'mobile_rag_engine', exact: true })
+  ).toBeVisible();
+});
+
 test('카드 dialog가 focus trap, Escape, focus restoration을 제공한다', async ({ page }) => {
   await page.goto('/');
   const detailButton = page.getByRole('button', {

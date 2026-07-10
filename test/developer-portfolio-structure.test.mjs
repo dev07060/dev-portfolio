@@ -182,6 +182,18 @@ test('experience timeline resolves project ids to readable linked project names'
   assert.match(portfolio, /<ExperienceTimeline[\s\S]*?projects=\{projects\}/);
 });
 
+test('experience timeline keeps one result visible and discloses the remaining detail', () => {
+  const timeline = read('src/components/widgets/ExperienceTimeline.tsx');
+
+  assert.match(timeline, /<details/);
+  assert.match(timeline, /<summary[\s\S]*?상세 경력 보기/);
+  assert.match(timeline, /item\.highlights\[0\]/);
+  assert.match(timeline, /item\.highlights\.slice\(1\)/);
+  assert.match(timeline, /item\.employmentType/);
+  assert.match(timeline, /eyebrow="경력"/);
+  assert.match(timeline, /최신순으로 역할과 대표 성과를 요약했습니다\./);
+});
+
 test('manual release documentation does not require VoiceOver or screen readers', () => {
   const report = read('docs/reports/2026-07-10-korean-portfolio-release-verification.md');
   const design = read(

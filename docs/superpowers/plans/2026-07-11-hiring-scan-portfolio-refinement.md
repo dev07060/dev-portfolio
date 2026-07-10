@@ -112,11 +112,11 @@ export interface RecruitmentCase {
 - Consumes: unchanged `ExperienceItem[]` and project lookup.
 - Produces: six compact items with visible company/period/role/employment badge/first highlight and native `details` for remaining information.
 
-- [ ] Add a failing structure test requiring `<details>` and `<summary>상세 경력 보기</summary>`, `highlights[0]` outside details, and `highlights.slice(1)` inside details.
-- [ ] Add a Playwright test that counts six items, expands the first career, and confirms its summary and related project become visible.
-- [ ] Refactor each timeline item to keep the first highlight visible, place employment type in a pill, and move summary, remaining highlights, and related links inside `details`.
-- [ ] Replace the section description with `최신순으로 역할과 대표 성과를 요약했습니다.` and eyebrow with `경력`.
-- [ ] Run tests; commit as `refactor: compact career timeline for hiring scan`.
+- [x] Add a failing structure test requiring `<details>` and `<summary>상세 경력 보기</summary>`, `highlights[0]` outside details, and `highlights.slice(1)` inside details.
+- [x] Add a Playwright test that counts six items, expands the first career, and confirms its summary and related project become visible.
+- [x] Refactor each timeline item to keep the first highlight visible, place employment type in a pill, and move summary, remaining highlights, and related links inside `details`.
+- [x] Replace the section description with `최신순으로 역할과 대표 성과를 요약했습니다.` and eyebrow with `경력`.
+- [x] Run tests; commit as `refactor: compact career timeline for hiring scan`.
 
 ### Task 5: Replace the additional-project grid with a compact archive
 
