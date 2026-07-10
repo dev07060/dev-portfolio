@@ -1,5 +1,4 @@
 import { LocaleText, LocalizedString } from '@/i18n';
-import type { Audience } from '@/data/conversion';
 
 export interface Screen {
   title: LocaleText;
@@ -15,7 +14,7 @@ export interface ProjectLink {
 
 export type ProjectCardVariant = 'architecture' | 'live-query' | 'product-screenshot' | 'default';
 
-export interface ProjectAudienceOverride {
+export interface ProjectCardPresentation {
   variant?: ProjectCardVariant;
   description?: LocaleText;
   evidenceBadges?: string[];
@@ -33,7 +32,7 @@ export interface Project {
   evidenceBadges?: string[];
   implementationPoints?: LocaleText[];
   releaseLabel?: LocaleText;
-  audienceOverrides?: Partial<Record<Audience, ProjectAudienceOverride>>;
+  cardPresentation?: ProjectCardPresentation;
   color: string;
   iconType: 'zap' | 'globe' | 'smartphone' | 'layers' | 'tablet' | 'brain' | 'utensils' | 'activity' | 'heart' | 'dumbbell' | 'scale';
   screens: Screen[];

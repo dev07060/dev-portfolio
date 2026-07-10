@@ -5,35 +5,33 @@ import { Project, Screen } from '@/types/project';
 import ProjectIcon from './ProjectIcon';
 import ScreenImage from './ScreenImage';
 import { LocalizedString, useLocale, ui } from '@/i18n';
-import { Audience } from '@/data/conversion';
 
 interface ProjectCardProps {
   project: Project;
-  audience?: Audience;
   index?: number;
   onClick: (project: Project) => void;
 }
 
-export const resolveProjectCard = (project: Project, audience: Audience) => {
-  const override = project.audienceOverrides?.[audience];
+export const resolveProjectCard = (project: Project) => {
+  const presentation = project.cardPresentation;
   const fallbackScreen = project.screens[0];
   const thumbnailScreen =
-    typeof override?.thumbnailScreenIndex === 'number'
-      ? project.screens[override.thumbnailScreenIndex] ?? fallbackScreen
+    typeof presentation?.thumbnailScreenIndex === 'number'
+      ? project.screens[presentation.thumbnailScreenIndex] ?? fallbackScreen
       : fallbackScreen;
 
   return {
-    variant: override?.variant ?? 'default',
-    description: override?.description ?? project.description,
-    evidenceBadges: override?.evidenceBadges ?? project.evidenceBadges,
-    highlight: override?.highlight ?? project.implementationPoints?.[0],
+    variant: presentation?.variant ?? 'default',
+    description: presentation?.description ?? project.description,
+    evidenceBadges: presentation?.evidenceBadges ?? project.evidenceBadges,
+    highlight: presentation?.highlight ?? project.implementationPoints?.[0],
     thumbnailScreen,
   };
 };
 
-const ProjectCard = ({ project, audience = 'client', index, onClick }: ProjectCardProps) => {
+const ProjectCard = ({ project, index, onClick }: ProjectCardProps) => {
   const { t } = useLocale();
-  const card = resolveProjectCard(project, audience);
+  const card = resolveProjectCard(project);
   const cardBadges = card.evidenceBadges ?? project.techStack;
   const visibleTechStack = cardBadges.slice(0, 4);
   const remainingTechCount = Math.max(0, cardBadges.length - visibleTechStack.length);

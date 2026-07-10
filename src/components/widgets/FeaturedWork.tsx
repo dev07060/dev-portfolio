@@ -2,18 +2,16 @@
 
 import { Project } from '@/types/project';
 import { useLocale } from '@/i18n';
-import { Audience, audienceContent } from '@/data/conversion';
+import { portfolioCopy } from '@/data/portfolio';
 import ProjectCard from './ProjectCard';
 
 interface FeaturedWorkProps {
   projects: Project[];
-  audience: Audience;
   onProjectClick: (project: Project) => void;
 }
 
-const FeaturedWork = ({ projects, audience, onProjectClick }: FeaturedWorkProps) => {
+const FeaturedWork = ({ projects, onProjectClick }: FeaturedWorkProps) => {
   const { t } = useLocale();
-  const copy = audienceContent[audience].featuredWork;
 
   return (
     <section id="featured-work" className="max-w-7xl mx-auto px-5 sm:px-6 pb-10 sm:pb-14 relative z-20 scroll-mt-8">
@@ -23,20 +21,19 @@ const FeaturedWork = ({ projects, audience, onProjectClick }: FeaturedWorkProps)
             03 Proof Points
           </p>
           <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-light text-[#1f1b16] tracking-tight">
-            {t(copy.heading)}
+            {t(portfolioCopy.featuredHeading)}
           </h2>
         </div>
         <p className="max-w-xl text-sm sm:text-base text-[#4a4339] leading-relaxed break-keep">
-          {t(copy.description)}
+          {t(portfolioCopy.featuredDescription)}
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-7">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-7">
         {projects.map((project, idx) => (
           <ProjectCard
             key={project.id}
             project={project}
-            audience={audience}
             index={idx}
             onClick={onProjectClick}
           />

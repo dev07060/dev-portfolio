@@ -31,32 +31,17 @@ export const projects: Project[] = [
         ko: 'golden_retrieval_v1(74 dev / 30 holdout) nDCG@5 / MRR@10 / Recall@10 회귀 게이트로 릴리스 차단.',
       },
     ],
-    audienceOverrides: {
-      client: {
-        variant: 'live-query',
-        thumbnailScreenIndex: 2,
-        description: {
-          en: 'citation-grounded legal RAG API that returns statute chunks, citations, and live query results for legal-domain LLM products.',
-          ko: '법률 도메인 LLM 제품에 조문 chunk, citation, live query 결과를 반환하는 citation 기반 법령 RAG API입니다.',
-        },
-        evidenceBadges: ['FastAPI', 'Milvus', 'Citations', 'Bronze/Silver/Gold', 'evaluation'],
-        highlight: {
-          en: 'Built citation-grounded legal RAG with FastAPI, Milvus, Bronze/Silver/Gold data layers, and evaluation gates.',
-          ko: 'FastAPI, Milvus, Bronze/Silver/Gold 데이터 계층, evaluation gate를 갖춘 citation 기반 legal RAG를 구축했습니다.',
-        },
+    cardPresentation: {
+      variant: 'architecture',
+      thumbnailScreenIndex: 3,
+      description: {
+        en: 'Hybrid retrieval backend with Bronze/Silver/Gold lake, Milvus dense/sparse ranking, citation metadata, and evaluation gates.',
+        ko: 'Bronze/Silver/Gold 레이크, Milvus dense/sparse ranking, citation metadata, evaluation gate를 갖춘 hybrid retrieval 백엔드입니다.',
       },
-      developer: {
-        variant: 'architecture',
-        thumbnailScreenIndex: 3,
-        description: {
-          en: 'Hybrid retrieval backend with Bronze/Silver/Gold lake, Milvus dense/sparse ranking, citation metadata, and evaluation gates.',
-          ko: 'Bronze/Silver/Gold 레이크, Milvus dense/sparse ranking, citation metadata, evaluation gate를 갖춘 hybrid retrieval 백엔드입니다.',
-        },
-        evidenceBadges: ['FastAPI', 'Milvus', 'RRFRanker', 'Bronze/Silver/Gold', 'evaluation'],
-        highlight: {
-          en: 'Gated releases on nDCG@5 / MRR@10 / Recall@10 against a golden retrieval set.',
-          ko: 'golden retrieval set 기준 nDCG@5 / MRR@10 / Recall@10으로 릴리스를 게이트했습니다.',
-        },
+      evidenceBadges: ['FastAPI', 'Milvus', 'RRFRanker', 'Bronze/Silver/Gold', 'evaluation'],
+      highlight: {
+        en: 'Gated releases on nDCG@5 / MRR@10 / Recall@10 against a golden retrieval set.',
+        ko: 'golden retrieval set 기준 nDCG@5 / MRR@10 / Recall@10으로 릴리스를 게이트했습니다.',
       },
     },
     techStack: ['Python', 'FastAPI', 'PostgreSQL', 'Milvus', 'SBERT', 'Docker'],
@@ -150,32 +135,17 @@ export const projects: Project[] = [
         ko: '동의 기반 AI 요약 생성, 서버 readiness 확인, 클라이언트 세션 처리, 로컬 fallback 요약 흐름을 구축했습니다.',
       },
     ],
-    audienceOverrides: {
-      client: {
-        variant: 'product-screenshot',
-        thumbnailScreenIndex: 0,
-        description: {
-          en: 'Flutter product flow for PDF import, local indexing, clause analysis, source highlight, and productization of insurance contract review.',
-          ko: '보험 약관 검토를 위한 PDF import, local indexing, clause analysis, source highlight, productization 흐름을 갖춘 Flutter 제품입니다.',
-        },
-        evidenceBadges: ['PDF import', 'local indexing', 'clause analysis', 'source highlight', 'productization'],
-        highlight: {
-          en: 'Connected review cards back to exact PDF evidence so users can inspect the original clause.',
-          ko: '검토 카드를 정확한 PDF 근거 위치로 연결해 사용자가 원문 조항을 확인할 수 있게 했습니다.',
-        },
+    cardPresentation: {
+      variant: 'product-screenshot',
+      thumbnailScreenIndex: 7,
+      description: {
+        en: 'Flutter app using pdfrx, mobile_rag_engine, local SQLite/HNSW/BM25 search, clause ranking, and consent-gated AI summaries.',
+        ko: 'pdfrx, mobile_rag_engine, 로컬 SQLite/HNSW/BM25 검색, 조항 랭킹, 동의 기반 AI 요약을 연결한 Flutter 앱입니다.',
       },
-      developer: {
-        variant: 'product-screenshot',
-        thumbnailScreenIndex: 7,
-        description: {
-          en: 'Flutter app using pdfrx, mobile_rag_engine, local SQLite/HNSW/BM25 search, clause ranking, and consent-gated AI summaries.',
-          ko: 'pdfrx, mobile_rag_engine, 로컬 SQLite/HNSW/BM25 검색, 조항 랭킹, 동의 기반 AI 요약을 연결한 Flutter 앱입니다.',
-        },
-        evidenceBadges: ['Flutter', 'pdfrx', 'mobile_rag_engine', 'PDF highlights', 'QA'],
-        highlight: {
-          en: 'Preserved page rectangles during ingestion so search and analysis results can reopen the exact source highlight.',
-          ko: '인제스션 단계에서 페이지 좌표를 보존해 검색·분석 결과가 정확한 원문 하이라이트로 돌아가게 했습니다.',
-        },
+      evidenceBadges: ['Flutter', 'pdfrx', 'mobile_rag_engine', 'PDF highlights', 'QA'],
+      highlight: {
+        en: 'Preserved page rectangles during ingestion so search and analysis results can reopen the exact source highlight.',
+        ko: '인제스션 단계에서 페이지 좌표를 보존해 검색·분석 결과가 정확한 원문 하이라이트로 돌아가게 했습니다.',
       },
     },
     techStack: ['Flutter', 'Dart', 'Riverpod', 'GoRouter', 'pdfrx', 'mobile_rag_engine'],
@@ -447,32 +417,17 @@ export const projects: Project[] = [
         ko: 'Easy Contract Viewer 같은 제품에서 로컬 색인과 원문 기반 context 생성을 재사용할 수 있는 기반 기술로 구성했습니다.',
       },
     ],
-    audienceOverrides: {
-      client: {
-        variant: 'architecture',
-        thumbnailScreenIndex: 1,
-        description: {
-          en: 'A published Flutter package for adding private, product-ready local retrieval and RAG to mobile apps without uploading documents to a server.',
-          ko: '문서를 서버에 업로드하지 않고 모바일 앱에 비공개 로컬 검색과 제품화 가능한 RAG 기능을 붙이는 공개 Flutter 패키지입니다.',
-        },
-        evidenceBadges: ['pub.dev 0.18.6', 'GitHub', 'on-device RAG', 'product-ready local retrieval'],
-        highlight: {
-          en: 'Reusable foundation for products like Easy Contract Viewer: local document indexing, retrieval, and LLM-ready context inside the app.',
-          ko: 'Easy Contract Viewer 같은 제품에 재사용 가능한 기반 기술입니다. 앱 내부에서 로컬 문서 색인, 검색, LLM-ready context 생성을 처리합니다.',
-        },
+    cardPresentation: {
+      variant: 'architecture',
+      thumbnailScreenIndex: 1,
+      description: {
+        en: 'On-device RAG package architecture: Flutter facade, Dart orchestration, Rust FFI core, ONNX runtime, SQLite store, and HNSW/BM25 retrieval paths.',
+        ko: 'Flutter facade, Dart orchestration, Rust FFI core, ONNX runtime, SQLite store, HNSW/BM25 검색 경로로 나뉜 온디바이스 RAG 패키지 아키텍처입니다.',
       },
-      developer: {
-        variant: 'architecture',
-        thumbnailScreenIndex: 1,
-        description: {
-          en: 'On-device RAG package architecture: Flutter facade, Dart orchestration, Rust FFI core, ONNX runtime, SQLite store, and HNSW/BM25 retrieval paths.',
-          ko: 'Flutter facade, Dart orchestration, Rust FFI core, ONNX runtime, SQLite store, HNSW/BM25 검색 경로로 나뉜 온디바이스 RAG 패키지 아키텍처입니다.',
-        },
-        evidenceBadges: ['Flutter API', 'Dart orchestration', 'Rust FFI', 'ONNX', 'SQLite', 'HNSW/BM25'],
-        highlight: {
-          en: 'Flutter API over Dart orchestration, Rust FFI search core, ONNX embeddings, SQLite storage, and HNSW/BM25 retrieval paths.',
-          ko: 'Flutter API, Dart orchestration, Rust FFI 검색 코어, ONNX 임베딩, SQLite 저장소, HNSW/BM25 검색 경로로 구성했습니다.',
-        },
+      evidenceBadges: ['Flutter API', 'Dart orchestration', 'Rust FFI', 'ONNX', 'SQLite', 'HNSW/BM25'],
+      highlight: {
+        en: 'Flutter API over Dart orchestration, Rust FFI search core, ONNX embeddings, SQLite storage, and HNSW/BM25 retrieval paths.',
+        ko: 'Flutter API, Dart orchestration, Rust FFI 검색 코어, ONNX 임베딩, SQLite 저장소, HNSW/BM25 검색 경로로 구성했습니다.',
       },
     },
     techStack: ['Flutter', 'Dart', 'Rust FFI', 'ONNX Runtime', 'SQLite', 'HNSW/BM25'],

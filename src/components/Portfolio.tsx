@@ -14,20 +14,13 @@ import {
   OpenSourceBanner,
 } from './widgets';
 import {
-  allWorkProjectIds,
-  audienceContent,
-  Audience,
+  additionalProjectIds,
   featuredProjectIds,
-} from '@/data/conversion';
+  portfolioCopy,
+} from '@/data/portfolio';
 
-interface PortfolioProps {
-  initialAudience?: Audience;
-}
-
-const Portfolio = ({ initialAudience = 'client' }: PortfolioProps) => {
+const Portfolio = () => {
   const { locale } = useLocale();
-  const audience = initialAudience;
-  const sectionCopy = audienceContent[audience];
   // State
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -36,45 +29,19 @@ const Portfolio = ({ initialAudience = 'client' }: PortfolioProps) => {
   const featuredProjects = featuredProjectIds
     .map((id) => projects.find((project) => project.id === id))
     .filter((project): project is Project => Boolean(project));
-  const allWorkProjects = allWorkProjectIds
+  const additionalProjects = additionalProjectIds
     .map((id) => projects.find((project) => project.id === id))
     .filter((project): project is Project => Boolean(project));
 
   // Handlers
   const handleProjectClick = (project: Project) => {
-    const preferredScreenIndex =
-      project.type === 'package'
-        ? project.audienceOverrides?.[audience]?.thumbnailScreenIndex ?? 0
-        : 0;
+    const preferredScreenIndex = project.cardPresentation?.thumbnailScreenIndex ?? 0;
 
     setSelectedProject(project);
     setIsAnimating(true);
     setCurrentScreenIndex(preferredScreenIndex);
     setIsPresentationMode(false);
   };
-  const allWorkSection = (
-    <ProjectGrid
-      projects={allWorkProjects}
-      audience={audience}
-      onProjectClick={handleProjectClick}
-      heading={sectionCopy.moreWork.heading}
-      description={sectionCopy.moreWork.description}
-    />
-  );
-  const openSourceSection = <OpenSourceBanner />;
-  const clientSupportingSections = (
-    <>
-      {allWorkSection}
-      {openSourceSection}
-    </>
-  );
-  const developerSupportingSections = (
-    <>
-      {openSourceSection}
-      {allWorkSection}
-    </>
-  );
-
   const closeModal = () => {
     setIsAnimating(false);
     setTimeout(() => {
@@ -172,18 +139,22 @@ const Portfolio = ({ initialAudience = 'client' }: PortfolioProps) => {
         aria-hidden={selectedProject ? true : undefined}
         className="min-h-screen bg-[#faf7f2] text-[#1f1b16] font-sans outline-none"
       >
-        {/* Conversion-first portfolio structure */}
-        <ConversionHero audience={audience} />
+        <ConversionHero />
 
         {/* Featured Work */}
         <FeaturedWork
           projects={featuredProjects}
-          audience={audience}
           onProjectClick={handleProjectClick}
         />
 
-        {/* Supporting Work */}
-        {audience === 'client' ? clientSupportingSections : developerSupportingSections}
+        <OpenSourceBanner />
+
+        <ProjectGrid
+          projects={additionalProjects}
+          onProjectClick={handleProjectClick}
+          heading={portfolioCopy.additionalHeading}
+          description={portfolioCopy.additionalDescription}
+        />
 
         {/* Footer */}
         <Footer />

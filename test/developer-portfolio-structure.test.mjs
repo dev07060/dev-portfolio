@@ -63,7 +63,7 @@ test('featured cases tell engine product backend story', () => {
   }
 });
 
-test('active source has no audience or locale runtime', () => {
+test('active source has no audience runtime', () => {
   const files = [
     'src/app/page.tsx',
     'src/components/Portfolio.tsx',
@@ -75,10 +75,22 @@ test('active source has no audience or locale runtime', () => {
 
   for (const file of files) {
     const source = read(file);
-    assert.doesNotMatch(
-      source,
-      /Audience|audienceOverrides|audienceContent|useLocale|LocaleText|localize\(/
-    );
+    assert.doesNotMatch(source, /Audience|audienceOverrides|audienceContent/);
+  }
+});
+
+test('active source has no locale runtime', () => {
+  const files = [
+    'src/components/Portfolio.tsx',
+    'src/components/widgets/ProjectCard.tsx',
+    'src/components/widgets/ProjectGrid.tsx',
+    'src/data/projects.ts',
+    'src/types/project.ts',
+  ];
+
+  for (const file of files) {
+    const source = read(file);
+    assert.doesNotMatch(source, /useLocale|LocaleText|LocalizedString|localize\(/);
   }
 });
 
