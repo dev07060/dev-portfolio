@@ -9,6 +9,7 @@ type BaseProps = {
   alt: string;
   fallbackGradient?: string;
   fit?: 'cover' | 'contain';
+  position?: 'center' | 'top';
   priority?: boolean;
   loading?: 'eager' | 'lazy';
   sizes?: string;
@@ -27,6 +28,7 @@ const ScreenImage = (props: Props) => {
     alt,
     fallbackGradient = DEFAULT_GRADIENT,
     fit = 'cover',
+    position = 'center',
     priority,
     loading,
     sizes = DEFAULT_FILL_SIZES,
@@ -74,7 +76,9 @@ const ScreenImage = (props: Props) => {
           loading={loading}
           onLoad={() => setImageState({ src, loaded: true, error: false })}
           onError={() => setImageState({ src, loaded: false, error: true })}
-          className={`${fit === 'contain' ? 'object-contain p-3' : 'object-cover'} transition-opacity duration-300 ${
+          className={`${fit === 'contain' ? 'object-contain p-3' : 'object-cover'} ${
+            position === 'top' ? 'object-top' : 'object-center'
+          } transition-opacity duration-300 ${
             loaded ? 'opacity-100' : 'opacity-0'
           }`}
         />

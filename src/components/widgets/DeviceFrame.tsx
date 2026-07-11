@@ -474,7 +474,8 @@ const TabletFrame = ({
             src={featuredScreen.imagePath}
             alt={featuredScreen.imageAlt}
             fallbackGradient={project.color}
-            fit={featuredScreen.scrollable ? 'contain' : 'cover'}
+            fit="cover"
+            position={featuredScreen.scrollable ? 'top' : 'center'}
           />
         ) : (
           <div

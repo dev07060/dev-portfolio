@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Strengthen the RAG and search-engine developer positioning by removing Motgo and the duplicate FIET user app from the public additional-project archive, retaining three evidence-dense supporting projects, and replacing the FIET trainer splash preview with an implemented report screen.
+**Goal:** Strengthen the RAG and search-engine developer positioning by removing Motgo and the duplicate FIET user app from the public additional-project archive, retaining three evidence-dense supporting projects, and replacing the FIET trainer splash preview with a readable top-aligned report preview.
 
 **Architecture:** Keep all `Project` data and image assets available in `src/data/projects.ts`; change the shared `additionalProjectIds` selection used by `/` and `/freelancer`. Absorb `fiet-fitness-user` into the existing FIET company-level career narrative by removing its standalone related-project link, and make Motgo unlisted because no active route configuration references it. Reuse the existing `cardPresentation.thumbnailScreenIndex` contract and make the tablet modal preview honor that selected index.
 
@@ -18,7 +18,7 @@
 - Keep the three featured projects and their route-specific order unchanged.
 - Keep route metadata, `noindex, nofollow`, cross-route link absence, career ordering, Hero copy, and CTA behavior unchanged.
 - The FIET trainer modal must initially show `/images/fiet-fitness-trainer/report-inbody.png`, not `Splash.png`.
-- Reuse the current report image without cropping or generating a replacement asset; render the scrollable report with `object-contain` in the modal preview.
+- Reuse the current report image without generating or editing an asset; show a readable top-aligned crop in the modal and keep the complete scrollable report in presentation mode.
 - Preserve modal focus trapping, Escape close, trigger-focus restoration, presentation navigation, and 44px minimum interactive targets.
 - Maintain zero horizontal overflow at 320px and 390px.
 - Do not add new metrics, external links, RAG claims, AI claims, or BLE performance values as part of this scope.
@@ -70,7 +70,9 @@
 - Modify: `src/data/projects.ts`
   - Add FIET trainer `cardPresentation` values selecting the InBody report.
 - Modify: `src/components/widgets/DeviceFrame.tsx`
-  - Make `TabletFrame` consume `currentScreenIndex` and use `contain` for scrollable report previews.
+  - Make `TabletFrame` consume `currentScreenIndex` and request a top-aligned report preview.
+- Modify: `src/components/widgets/ScreenImage.tsx`
+  - Add an explicit `position` prop so modal previews can select `object-top` without changing other images.
 - Modify: `test/developer-portfolio-structure.test.mjs`
   - Lock the three-project selection, retained hidden data, single FIET related-project link, and trainer preview configuration.
 - Modify: `e2e/accessibility.spec.ts`
@@ -337,6 +339,15 @@ test('피에트 트레이너 상세는 스플래시 대신 인바디 리포트�
     'alt',
     '피에트 피트니스 트레이너 결과 리포트 - 인바디'
   );
+  expect(
+    await previewImage.evaluate((element) => ({
+      objectFit: getComputedStyle(element).objectFit,
+      objectPosition: getComputedStyle(element).objectPosition,
+    }))
+  ).toEqual({
+    objectFit: 'cover',
+    objectPosition: '50% 0%',
+  });
   await preview.click();
   await expect(page.getByText('화면 2 / 6: 결과 리포트 - 인바디', { exact: true })).toBeVisible();
 });
@@ -421,7 +432,8 @@ const TabletFrame = ({
             src={featuredScreen.imagePath}
             alt={featuredScreen.imageAlt}
             fallbackGradient={project.color}
-            fit={featuredScreen.scrollable ? 'contain' : 'cover'}
+            fit="cover"
+            position={featuredScreen.scrollable ? 'top' : 'center'}
           />
         ) : (
           <div
@@ -467,7 +479,7 @@ Expected: PASS in the Node suite and in both Chromium and WebKit.
 - [ ] **Step 7: Commit the trainer visual evidence**
 
 ```bash
-git add src/data/projects.ts src/components/widgets/DeviceFrame.tsx test/developer-portfolio-structure.test.mjs e2e/accessibility.spec.ts
+git add src/data/projects.ts src/components/widgets/DeviceFrame.tsx src/components/widgets/ScreenImage.tsx test/developer-portfolio-structure.test.mjs e2e/accessibility.spec.ts
 git commit -m "feat: foreground FIET trainer report evidence"
 ```
 
@@ -570,7 +582,7 @@ Accept the captures only when all are true:
 - The archive description says there are three supporting cases.
 - The trainer responsibility line mentions BLE, the analysis report, and delivery automation.
 - The trainer modal initially shows the InBody report rather than the splash screen.
-- The report is contained within the tablet frame without destructive cropping.
+- The modal shows a readable top-aligned report crop; presentation mode still exposes the complete scrollable report.
 - No horizontal clipping occurs at desktop or 390px.
 
 - [ ] **Step 8: Compare the audit and verification evidence**
@@ -617,7 +629,7 @@ git commit -m "test: verify focused additional projects"
 - Motgo is absent from the repository public resume PDF and from the external Wanted resume.
 - The FIET trainer archive summary foregrounds BLE, reporting, and delivery automation.
 - The FIET trainer modal opens on `report-inbody.png`, and presentation opens at `화면 2 / 6`.
-- The report preview is contained rather than cropped.
+- The report preview uses a readable top-aligned crop while presentation retains the complete scrollable report.
 - Featured cases, route metadata, cross-route privacy contract, career ordering, and CTA copy are unchanged.
 - Structure, lint, type, browser, accessibility, responsive, production-build, and diff gates all pass.
 
@@ -625,6 +637,6 @@ git commit -m "test: verify focused additional projects"
 
 - Spec coverage: Motgo removal, strong-three selection, FIET user absorption into the company narrative, trainer visual improvement, and HaruCheck retention each map to an explicit task and test.
 - Placeholder scan: the plan contains no `TBD`, `TODO`, generic error-handling instruction, or unnamed implementation step.
-- Type consistency: `additionalProjectIds`, `cardPresentation.thumbnailScreenIndex`, `currentScreenIndex`, `TabletFrame`, and existing `Screen.scrollable` match current source contracts.
+- Type consistency: `additionalProjectIds`, `cardPresentation.thumbnailScreenIndex`, `currentScreenIndex`, `TabletFrame`, `ScreenImage.position`, and existing `Screen.scrollable` match the planned source contracts.
 - Evidence boundary: no stored project data or asset is deleted, and no new external link, metric, AI claim, RAG claim, or BLE result is added.
 - Scope control: no new route, section, component family, design system, or project-data migration is introduced.
