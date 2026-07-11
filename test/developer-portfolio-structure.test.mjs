@@ -439,6 +439,7 @@ test('public resume PDF is extractable and contains only approved public profile
     /(?:휴대폰|주소|거주지|생년월일|학력|희망\s*(?:연봉|급여|근무지)|병역|보훈|장애)\s*[:：]?/
   );
   assert.doesNotMatch(text, /(?:연봉|급여)\s*[:：]?\s*[\d,]+\s*만?원/);
+  assert.doesNotMatch(text, /Motgo|맛집 투표/);
 });
 
 test('experience timeline resolves project ids to readable linked project names', () => {
