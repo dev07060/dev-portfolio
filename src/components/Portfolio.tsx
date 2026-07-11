@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { Project } from '@/types/project';
+import type { Project } from '@/types/project';
 import type { PortfolioConfig } from '@/types/portfolio';
 import { projects } from '@/data/projects';
+import { resolveProjectIds } from '@/data/resolveProjectIds';
 import {
   RecruitmentNav,
   DeveloperHero,
@@ -37,12 +38,16 @@ const Portfolio = ({ config }: PortfolioProps) => {
   const [isPresentationMode, setIsPresentationMode] = useState(false);
   const [currentScreenIndex, setCurrentScreenIndex] = useState(0);
   const presentationTriggerRef = useRef<HTMLElement | null>(null);
-  const featuredProjects = featuredProjectIds
-    .map((id) => projects.find((project) => project.id === id))
-    .filter((project): project is Project => Boolean(project));
-  const additionalProjects = additionalProjectIds
-    .map((id) => projects.find((project) => project.id === id))
-    .filter((project): project is Project => Boolean(project));
+  const featuredProjects = resolveProjectIds(
+    featuredProjectIds,
+    projects,
+    `${copy.navBrandLabel} featured projects`
+  );
+  const additionalProjects = resolveProjectIds(
+    additionalProjectIds,
+    projects,
+    `${copy.navBrandLabel} additional projects`
+  );
 
   // Handlers
   const handleProjectClick = (project: Project) => {
@@ -175,7 +180,11 @@ const Portfolio = ({ config }: PortfolioProps) => {
             onProjectClick={handleProjectClick}
           />
 
-          <ExperienceTimeline items={experienceItems} projects={projects} />
+          <ExperienceTimeline
+            items={experienceItems}
+            projects={projects}
+            description={copy.experienceDescription}
+          />
 
           <ProjectArchive
             projects={additionalProjects}

@@ -19,6 +19,7 @@ export interface PortfolioCopy {
   featuredEyebrow: string;
   featuredHeading: string;
   featuredDescription: string;
+  experienceDescription: string;
   additionalHeading: string;
   additionalDescription: string;
   contactHeading: string;

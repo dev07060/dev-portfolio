@@ -54,6 +54,7 @@ export interface PortfolioConfig {
 
 - `Portfolio`의 모달, 프레젠테이션, 포커스 관리, 이미지 프리로드 로직은 공통으로 유지한다.
 - `RecruitmentNav`, `DeveloperHero`, `FeaturedWork`, `ExperienceTimeline`, `ProjectArchive`, `RecruitmentCTA`, `ProjectModal`은 설정 props를 받아 두 라우트에서 재사용한다.
+- `PortfolioCopy.experienceDescription`으로 라우트별 경력 정렬 기준을 설명하고, 공개 `/`의 최신순 문구와 프리랜서의 수행 적합도순 문구를 분리한다.
 - 같은 페이지의 섹션 이동은 기존 앵커를 유지한다.
 - 두 라우트 사이를 오가는 `routeLink` 추상화는 두지 않는다.
 
@@ -86,7 +87,7 @@ export interface PortfolioConfig {
 - 역할: 모바일 제품·문서 검색/RAG 프로젝트 수행 개발자
 - 의뢰 가능 범위:
   - 모바일 앱 구축·고도화
-  - BLE·FCM·WebView·MethodChannel 연동
+  - BLE·FCM·Native 연동
   - PDF·문서 온디바이스 검색/RAG
   - FastAPI 검색 백엔드·검색 품질 평가
 - 대표 사례 ID는 의뢰 관점에서 `easy-contract-viewer → local-mobile-rag-gemma → law-info-engine` 순으로 구성한다. Flutter 운영 안정화 경험은 대표 사례를 새로 만들지 않고 경력 섹션에서 ㈜피에트 항목을 우선해 보여준다.
@@ -141,7 +142,7 @@ export const metadata: Metadata = {
 
 ## 오류와 예외 처리
 
-- 설정에 존재하는 프로젝트 ID가 `projects`에서 해석되지 않으면 해당 항목을 렌더링하지 않고 구조 테스트에서 실패시킨다.
+- 설정에 존재하는 프로젝트 ID가 `projects`에서 해석되지 않으면 누락 ID와 선택 문맥을 포함한 오류를 발생시켜 렌더링을 즉시 실패시키고, resolver 실행 테스트와 실제 라우트 브라우저 테스트에서 이 계약을 검증한다.
 - 프리랜서 전용 이력서가 없으면 깨진 링크 대신 이력서 CTA를 숨기거나 기존 공개 이력서를 명시적으로 사용한다.
 - 착수 가능일이나 근무 범위가 확정되지 않으면 추정 문구를 표시하지 않는다.
 - `/freelancer`가 공개 `/`에서 링크되거나 검색 허용 metadata로 변경되면 테스트가 실패해야 한다.

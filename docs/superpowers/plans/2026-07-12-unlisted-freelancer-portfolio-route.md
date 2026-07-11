@@ -62,6 +62,7 @@ export interface PortfolioCopy {
   featuredEyebrow: string;
   featuredHeading: string;
   featuredDescription: string;
+  experienceDescription: string;
   additionalHeading: string;
   additionalDescription: string;
   contactHeading: string;
@@ -112,7 +113,7 @@ Expected: FAIL because `Portfolio` still imports recruitment data internally.
 
 - [ ] **Step 3: Implement minimal configuration injection**
 
-Destructure the config in `Portfolio`, resolve project IDs against the shared `projects` array, and pass explicit `copy`, `profile`, and `capabilities` props to widgets. Keep all modal, presentation, scroll lock, and focus management logic unchanged.
+Destructure the config in `Portfolio`, resolve every configured project ID against the shared `projects` array through a fail-closed resolver, and pass explicit `copy`, `profile`, and `capabilities` props to widgets. The resolver must throw an error containing the missing ID and selection context instead of silently omitting an item. Keep all modal, presentation, scroll lock, and focus management logic unchanged.
 
 - [ ] **Step 4: Run the test and verify GREEN**
 
@@ -165,7 +166,7 @@ const freelancerProfile: RecruitmentProfile = {
 };
 ```
 
-Use featured IDs `easy-contract-viewer`, `local-mobile-rag-gemma`, and `law-info-engine`; reuse the existing cases and experience arrays; do not add cross-route navigation.
+Use featured IDs `easy-contract-viewer`, `local-mobile-rag-gemma`, and `law-info-engine`; reuse the existing cases and reorder references from the shared `experienceItems` so `㈜피에트` appears first without duplicating career fact objects. Set a freelancer-specific `experienceDescription` that truthfully describes project-fit ordering; keep the public route's original latest-first array and copy. Do not add cross-route navigation.
 
 - [ ] **Step 4: Implement the static App Router page**
 
@@ -206,9 +207,10 @@ Expected: PASS with the public route still free of `/freelancer` links.
 
 Add tests that verify:
 
-- `/` has zero links whose `href` is `/freelancer`.
+- Every anchor on `/` is resolved with the URL parser against `document.baseURI`, and none has pathname exactly `/freelancer` (including query, hash, protocol-relative, and absolute URL variants).
 - `/freelancer` contains a robots meta tag with `noindex` and `nofollow`.
-- `/freelancer` has no cross-route link to `/`.
+- Every anchor on `/freelancer` is resolved the same way, and none has pathname exactly `/`; same-page hash anchors remain allowed because their pathname is `/freelancer`.
+- `/sitemap.xml` may return 404 when no sitemap exists; if it exists, it must be valid XML and no normalized `<loc>` URL may have pathname exactly `/freelancer`.
 - Freelancer featured headings are `Easy Contract Viewer`, `mobile_rag_engine`, `Swifty-law`.
 - Freelancer Hero and contact CTA expose `프로젝트 상담` and omit `이력서 보기`.
 - One freelancer project modal opens, closes with Escape, and restores focus.

@@ -5,11 +5,15 @@ import { homedir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
+import ts from 'typescript';
 
 const read = (path) => {
   const url = new URL(`../${path}`, import.meta.url);
   return existsSync(url) ? readFileSync(url, 'utf8') : '';
 };
+
+const unlistedFreelancerRoutePattern =
+  /\/freelancer\/?(?=[?#\s'"`<>,;)}\]]|$)/;
 
 const pdfToTextBinary = () => {
   const bundled = join(
@@ -17,6 +21,27 @@ const pdfToTextBinary = () => {
     '.cache/codex-runtimes/codex-primary-runtime/dependencies/native/poppler/poppler/bin/pdftotext'
   );
   return process.env.PDFTOTEXT_BIN || (existsSync(bundled) ? bundled : 'pdftotext');
+};
+
+const importTypeScriptModule = async (path) => {
+  const source = read(path);
+  assert.notEqual(source, '', `${path} must exist`);
+
+  const { outputText, diagnostics = [] } = ts.transpileModule(source, {
+    compilerOptions: {
+      module: ts.ModuleKind.ESNext,
+      target: ts.ScriptTarget.ES2022,
+    },
+    fileName: path,
+    reportDiagnostics: true,
+  });
+  assert.equal(
+    diagnostics.length,
+    0,
+    diagnostics.map((diagnostic) => diagnostic.messageText).join('\n')
+  );
+
+  return import(`data:text/javascript;base64,${Buffer.from(outputText).toString('base64')}`);
 };
 
 test('root shell is server-rendered in Korean without locale controls', () => {
@@ -104,11 +129,53 @@ test('route pages inject presentation configuration into the shared portfolio', 
   assert.doesNotMatch(featured, /from '@\/data\/portfolio'/);
 });
 
+test('project selection fails closed with the missing id and selection context', async () => {
+  const { resolveProjectIds } = await importTypeScriptModule(
+    'src/data/resolveProjectIds.ts'
+  );
+  const availableProjects = [
+    { id: 'first-project', title: 'First project' },
+    { id: 'second-project', title: 'Second project' },
+  ];
+
+  assert.deepEqual(
+    resolveProjectIds(
+      ['second-project', 'first-project'],
+      availableProjects,
+      'test featured projects'
+    ),
+    [availableProjects[1], availableProjects[0]]
+  );
+  assert.throws(
+    () =>
+      resolveProjectIds(
+        ['first-project', 'missing-project'],
+        availableProjects,
+        'freelancer featured projects'
+      ),
+    /Missing project ID "missing-project" in freelancer featured projects/
+  );
+});
+
+test('portfolio resolves both configured selections through the fail-closed boundary', () => {
+  const portfolio = read('src/components/Portfolio.tsx');
+
+  assert.match(portfolio, /import \{ resolveProjectIds \}/);
+  assert.match(
+    portfolio,
+    /const featuredProjects = resolveProjectIds\(\s*featuredProjectIds,\s*projects,\s*`\$\{copy\.navBrandLabel\} featured projects`\s*\);/
+  );
+  assert.match(
+    portfolio,
+    /const additionalProjects = resolveProjectIds\(\s*additionalProjectIds,\s*projects,\s*`\$\{copy\.navBrandLabel\} additional projects`\s*\);/
+  );
+  assert.doesNotMatch(portfolio, /\.filter\(\(project\): project is Project/);
+});
+
 test('freelancer route is unlisted, purpose-specific, and absent from public navigation', () => {
   const home = read('src/app/page.tsx');
   const freelancerPage = read('src/app/freelancer/page.tsx');
   const freelancerData = read('src/data/freelancer.ts');
-  const sitemap = read('src/app/sitemap.ts');
 
   assert.match(
     freelancerPage,
@@ -119,7 +186,6 @@ test('freelancer route is unlisted, purpose-specific, and absent from public nav
     /<Portfolio config=\{freelancerPortfolioConfig\}/
   );
   assert.doesNotMatch(home, /\/freelancer/);
-  assert.doesNotMatch(sitemap, /\/freelancer/);
   assert.doesNotMatch(freelancerData, /routeLink|일반 포트폴리오로 돌아가기/);
   assert.match(
     freelancerData,
@@ -144,10 +210,40 @@ test('freelancer route is unlisted, purpose-specific, and absent from public nav
   );
   assert.match(freelancerData, /contactCta: '프로젝트 상담'/);
   assert.match(freelancerData, /resumeUrl: undefined/);
+  assert.match(freelancerData, /experienceItems: freelancerExperienceItems/);
+  assert.doesNotMatch(freelancerData, /\bcompany\s*:/);
   assert.doesNotMatch(
     freelancerData,
     /(?:010[-.\s]?\d{3,4}[-.\s]?\d{4}|주소|생년월일|연봉|희망근무)/
   );
+});
+
+test('supported static sitemap sources do not list the freelancer route', () => {
+  const sitemapSources = [
+    'src/app/sitemap.ts',
+    'src/app/sitemap.tsx',
+    'src/app/sitemap.js',
+    'src/app/sitemap.jsx',
+    'src/app/sitemap.xml',
+    'src/app/sitemap.xml/route.ts',
+    'src/app/sitemap.xml/route.tsx',
+    'src/app/sitemap.xml/route.js',
+    'src/app/sitemap.xml/route.jsx',
+    'public/sitemap.xml',
+  ];
+
+  for (const route of ['/freelancer', '/freelancer/', '/freelancer?ref=direct']) {
+    assert.match(route, unlistedFreelancerRoutePattern);
+  }
+  assert.doesNotMatch('/freelancer-case-study', unlistedFreelancerRoutePattern);
+
+  for (const path of sitemapSources) {
+    assert.doesNotMatch(
+      read(path),
+      unlistedFreelancerRoutePattern,
+      `${path} must not list the freelancer route`
+    );
+  }
 });
 
 test('active source has no audience runtime', () => {
@@ -304,15 +400,33 @@ test('experience timeline resolves project ids to readable linked project names'
 });
 
 test('experience timeline keeps one result visible and discloses the remaining detail', () => {
+  const types = read('src/types/portfolio.ts');
+  const portfolioData = read('src/data/portfolio.ts');
+  const freelancerData = read('src/data/freelancer.ts');
+  const portfolio = read('src/components/Portfolio.tsx');
   const timeline = read('src/components/widgets/ExperienceTimeline.tsx');
 
+  assert.match(types, /experienceDescription: string;/);
+  assert.match(
+    portfolioData,
+    /experienceDescription: '최신순으로 역할과 대표 성과를 요약했습니다\.'/
+  );
+  assert.match(
+    freelancerData,
+    /experienceDescription:[\s\S]*?'프로젝트 수행 적합도를 기준으로 역할과 대표 성과를 요약했습니다\.'/
+  );
+  assert.match(
+    portfolio,
+    /<ExperienceTimeline[\s\S]*?description=\{copy\.experienceDescription\}/
+  );
+  assert.match(timeline, /description: string;/);
+  assert.match(timeline, /description=\{description\}/);
   assert.match(timeline, /<details/);
   assert.match(timeline, /<summary[\s\S]*?상세 경력 보기/);
   assert.match(timeline, /item\.highlights\[0\]/);
   assert.match(timeline, /item\.highlights\.slice\(1\)/);
   assert.match(timeline, /item\.employmentType/);
   assert.match(timeline, /eyebrow="경력"/);
-  assert.match(timeline, /최신순으로 역할과 대표 성과를 요약했습니다\./);
 });
 
 test('manual release documentation does not require VoiceOver or screen readers', () => {

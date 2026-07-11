@@ -7,9 +7,14 @@ import SectionHeader from './SectionHeader';
 interface ExperienceTimelineProps {
   items: ExperienceItem[];
   projects: Project[];
+  description: string;
 }
 
-const ExperienceTimeline = ({ items, projects }: ExperienceTimelineProps) => {
+const ExperienceTimeline = ({
+  items,
+  projects,
+  description,
+}: ExperienceTimelineProps) => {
   if (!items.length) return null;
 
   return (
@@ -18,7 +23,7 @@ const ExperienceTimeline = ({ items, projects }: ExperienceTimelineProps) => {
         <SectionHeader
           eyebrow="경력"
           title="경력과 역할"
-          description="최신순으로 역할과 대표 성과를 요약했습니다."
+          description={description}
           count={items.length}
         />
         <ol className="space-y-3 border-l border-[#cbd8d6] pl-5 sm:pl-7">

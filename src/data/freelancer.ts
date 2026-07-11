@@ -25,6 +25,8 @@ const freelancerCopy: PortfolioCopy = {
   featuredEyebrow: '수행 사례',
   featuredHeading: '대표 수행 사례',
   featuredDescription: '모바일 제품, 문서 검색 엔진, 운영 가능한 검색 백엔드로 이어지는 수행 사례입니다.',
+  experienceDescription:
+    '프로젝트 수행 적합도를 기준으로 역할과 대표 성과를 요약했습니다.',
   additionalHeading: '추가 프로젝트',
   additionalDescription:
     '대표 수행 사례를 보완하는 모바일·웹 제품 개발 경험입니다.',
@@ -58,6 +60,16 @@ const freelancerFeaturedProjectIds = [
   'law-info-engine',
 ] as const;
 
+const fietExperience = experienceItems.find(
+  (item) => item.company === '㈜피에트'
+);
+const freelancerExperienceItems = fietExperience
+  ? [
+      fietExperience,
+      ...experienceItems.filter((item) => item !== fietExperience),
+    ]
+  : experienceItems;
+
 export const freelancerPortfolioConfig: PortfolioConfig = {
   profile: freelancerProfile,
   copy: freelancerCopy,
@@ -65,5 +77,5 @@ export const freelancerPortfolioConfig: PortfolioConfig = {
   featuredProjectIds: freelancerFeaturedProjectIds,
   additionalProjectIds,
   cases: recruitmentCases,
-  experienceItems,
+  experienceItems: freelancerExperienceItems,
 };
