@@ -134,6 +134,23 @@ test('additional projects expose three positioning-aligned cases and retain hidd
   );
 });
 
+test('FIET trainer uses report evidence instead of the splash screen', () => {
+  const projects = read('src/data/projects.ts');
+
+  assert.match(
+    projects,
+    /id: ["']fiet-fitness-trainer["'][\s\S]*?cardPresentation:[\s\S]*?thumbnailScreenIndex: 1[\s\S]*?screens:/
+  );
+  assert.match(
+    projects,
+    /highlight:[\s\S]*?["']BLE 실시간 센서 연동, 트레이너용 분석 리포트, Fastlane·GitHub Actions 배포 자동화를 구현했습니다\.["']/
+  );
+  assert.match(
+    projects,
+    /id: ["']report-inbody["'][\s\S]*?imagePath: ["']\/images\/fiet-fitness-trainer\/report-inbody\.png["']/
+  );
+});
+
 test('route configuration has no unused cross-route link abstraction', () => {
   const types = read('src/types/portfolio.ts');
   const portfolioData = read('src/data/portfolio.ts');

@@ -448,12 +448,53 @@ test('320px 추가 프로젝트 archive가 세 행과 기존 상세를 제공한
     );
   }
 
+  const trainerRow = archive.locator('article').filter({
+    hasText: '피에트 피트니스 트레이너',
+  });
+  await expect(trainerRow).toContainText(
+    'BLE 실시간 센서 연동, 트레이너용 분석 리포트, Fastlane·GitHub Actions 배포 자동화를 구현했습니다.'
+  );
+
   const detailButton = archive.getByRole('button', {
     name: 'HaruCheck 프로젝트 상세 열기',
   });
   await expect(detailButton).toHaveText('상세 보기');
   await detailButton.click();
   await expect(page.getByRole('dialog', { name: /HaruCheck/ })).toBeVisible();
+});
+
+test('피에트 트레이너 상세는 스플래시 대신 인바디 리포트를 첫 근거로 제공한다', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/#additional-projects');
+  await page
+    .getByRole('button', {
+      name: '피에트 피트니스 트레이너 프로젝트 상세 열기',
+    })
+    .click();
+
+  const dialog = page.getByRole('dialog', {
+    name: /피에트 피트니스 트레이너/,
+  });
+  const preview = dialog.getByRole('button', {
+    name: '피에트 피트니스 트레이너 결과 리포트 - 인바디 프레젠테이션 열기',
+  });
+
+  const previewImage = preview.locator('img');
+  const previewImageSrc = await previewImage.getAttribute('src');
+  expect(previewImageSrc).not.toBeNull();
+  expect(
+    new URL(previewImageSrc ?? '', page.url()).searchParams.get('url')
+  ).toBe('/images/fiet-fitness-trainer/report-inbody.png');
+  await expect(previewImage).toHaveAttribute(
+    'alt',
+    '피에트 피트니스 트레이너 결과 리포트 - 인바디'
+  );
+  await preview.click();
+  await expect(
+    page.getByText('화면 2 / 6: 결과 리포트 - 인바디', { exact: true })
+  ).toBeVisible();
 });
 
 test('피에트 사용자 앱은 데이터에 남고 공개 프로젝트 링크에서는 제외된다', async ({

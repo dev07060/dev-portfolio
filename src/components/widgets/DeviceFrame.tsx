@@ -54,7 +54,11 @@ const DeviceFrame = ({
       ) : project.type === 'mobile' ? (
         <MobileFrame project={project} onClick={onEnterPresentation} />
       ) : project.type === 'tablet' ? (
-        <TabletFrame project={project} onClick={onEnterPresentation} />
+        <TabletFrame
+          project={project}
+          currentScreenIndex={currentScreenIndex}
+          onClick={onEnterPresentation}
+        />
       ) : (
         <WebFrame project={project} onClick={onEnterPresentation} />
       )}
@@ -435,12 +439,16 @@ const PackagePresentationFrame = ({
 // Tablet Frame Component (Modal 용)
 const TabletFrame = ({
   project,
+  currentScreenIndex,
   onClick,
 }: {
   project: Project;
+  currentScreenIndex: number;
   onClick: (e: PresentationTriggerEvent) => void;
 }) => {
-  const title = project.title;
+  const title = project.title.replace(/\s+/g, ' ');
+  const featuredScreen =
+    project.screens[currentScreenIndex] ?? project.screens[0];
   const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
     if (e.key !== 'Enter' && e.key !== ' ') return;
     e.preventDefault();
@@ -452,26 +460,29 @@ const TabletFrame = ({
       type="button"
       onClick={onClick}
       onKeyDown={handleKeyDown}
-      aria-label={`${title} 프레젠테이션 열기`}
+      aria-label={`${title} ${featuredScreen?.title ?? ''} 프레젠테이션 열기`.replace(
+        /\s+/g,
+        ' '
+      )}
       className="relative mx-auto flex h-[336px] w-[236px] cursor-pointer flex-col appearance-none rounded-[2rem] border-[10px] border-gray-100 bg-gray-100 p-0 text-left shadow-xl transition-transform duration-500 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f766e] focus-visible:ring-offset-4 focus-visible:ring-offset-[#f2ede4] sm:h-[400px] sm:w-[280px] lg:h-[510px] lg:w-[360px]"
     >
-      {/* 태블릿 상단 카메라 */}
-      <div className="absolute top-3 left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-300 rounded-full" />
-      <div className="rounded-[1.5rem] overflow-hidden w-full h-full bg-slate-800 relative mt-2">
-        {project.screens[0]?.imagePath ? (
+      <div className="absolute left-1/2 top-3 h-2 w-2 -translate-x-1/2 rounded-full bg-gray-300" />
+      <div className="relative mt-2 h-full w-full overflow-hidden rounded-[1.5rem] bg-slate-800">
+        {featuredScreen?.imagePath ? (
           <ScreenImage
             variant="fill"
-            src={project.screens[0].imagePath}
-            alt={title}
+            src={featuredScreen.imagePath}
+            alt={featuredScreen.imageAlt}
             fallbackGradient={project.color}
+            fit={featuredScreen.scrollable ? 'contain' : 'cover'}
           />
         ) : (
           <div
-            className={`w-full h-full bg-gradient-to-br ${project.color} flex flex-col items-center justify-center text-white p-4 text-center`}
+            className={`flex h-full w-full flex-col items-center justify-center bg-gradient-to-br ${project.color} p-4 text-center text-white`}
           >
             <Tablet size={48} className="mb-4 opacity-80" />
             <h3 className="text-xl font-bold">{title}</h3>
-            <p className="text-xs opacity-75 mt-2">눌러서 화면 보기</p>
+            <p className="mt-2 text-xs opacity-75">눌러서 화면 보기</p>
           </div>
         )}
       </div>

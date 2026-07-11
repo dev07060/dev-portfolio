@@ -246,6 +246,13 @@ export const projects: Project[] = [
       "체중계와 가속도 센서 연동을 위한 BLE 실시간 데이터 전송 흐름을 구현했습니다.",
       "Fastlane과 GitHub Actions로 모바일 배포 자동화 파이프라인을 구축했습니다.",
     ],
+    cardPresentation: {
+      variant: "product-screenshot",
+      thumbnailScreenIndex: 1,
+      highlight:
+        "BLE 실시간 센서 연동, 트레이너용 분석 리포트, Fastlane·GitHub Actions 배포 자동화를 구현했습니다.",
+      evidenceBadges: ["BLE", "분석 리포트", "CI/CD"],
+    },
     techStack: ["Flutter", "Dart", "Firebase"],
     color: "from-indigo-500 to-purple-500",
     iconType: "dumbbell",
