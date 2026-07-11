@@ -179,7 +179,7 @@ export const experienceItems: ExperienceItem[] = [
       'BLE Notify jitter와 packet drop을 반영한 sample interval·timestamp 기반 ROM 계산으로 장시간 누적 drift를 70% 이상 줄였습니다.',
       '펌웨어별 characteristic 누락을 실패 가능한 파서로 개선하고 Sentry 분석과 Fastlane·GitHub Actions 배포 자동화를 운영했습니다.',
     ],
-    relatedProjectIds: ['fiet-fitness-trainer', 'fiet-fitness-user'],
+    relatedProjectIds: ['fiet-fitness-trainer'],
   },
   {
     company: '㈜인피니티익스체인지코리아',

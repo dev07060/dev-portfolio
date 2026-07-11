@@ -29,7 +29,7 @@ const freelancerCopy: PortfolioCopy = {
     '프로젝트 수행 적합도를 기준으로 역할과 대표 성과를 요약했습니다.',
   additionalHeading: '추가 프로젝트',
   additionalDescription:
-    '대표 수행 사례를 보완하는 모바일·웹 제품 개발 경험입니다.',
+    'AI 기능 제품화와 BLE·모바일 운영 경험을 보여주는 세 가지 수행 사례입니다.',
   contactHeading: '모바일 제품이나 문서 검색 기능을 개발·개선하려고 하시나요?',
   contactDescription:
     '현재 구조와 해결하려는 문제를 알려주시면 직접 수행 가능한 범위와 검증 기준을 관련 구현 근거로 답변드리겠습니다.',

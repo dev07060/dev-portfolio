@@ -12,11 +12,9 @@ export const featuredProjectIds = [
 ] as const;
 
 export const additionalProjectIds = [
-  'motgo',
   'haru-check',
-  'weedool',
   'fiet-fitness-trainer',
-  'fiet-fitness-user',
+  'weedool',
 ] as const;
 
 export const portfolioCopy: PortfolioCopy = {
@@ -31,7 +29,8 @@ export const portfolioCopy: PortfolioCopy = {
     '검색 엔진, Flutter 제품 적용, 운영 가능한 백엔드로 이어지는 세 가지 기술 사례입니다.',
   experienceDescription: '최신순으로 역할과 대표 성과를 요약했습니다.',
   additionalHeading: '추가 프로젝트',
-  additionalDescription: '대표 기술 사례를 보완하는 제품 개발 경험입니다.',
+  additionalDescription:
+    'AI 기능 제품화와 BLE·모바일 운영 경험을 보완하는 세 가지 사례입니다.',
   contactHeading:
     '모바일 제품과 로컬 검색 기술을 함께 다룰 개발자를 찾고 계신가요?',
   contactDescription:

@@ -98,6 +98,42 @@ test('featured cases tell engine product backend story', () => {
   }
 });
 
+test('additional projects expose three positioning-aligned cases and retain hidden data', () => {
+  const portfolioData = read('src/data/portfolio.ts');
+  const freelancerData = read('src/data/freelancer.ts');
+  const projects = read('src/data/projects.ts');
+  const recruitment = read('src/data/recruitment.ts');
+  const selection = portfolioData.match(
+    /export const additionalProjectIds = \[([\s\S]*?)\] as const;/
+  );
+
+  assert.ok(selection, 'additionalProjectIds must exist');
+  assert.match(
+    selection[1],
+    /'haru-check'[\s\S]*?'fiet-fitness-trainer'[\s\S]*?'weedool'/
+  );
+  assert.doesNotMatch(selection[1], /motgo|fiet-fitness-user/);
+  assert.match(projects, /id: ["']motgo["']/);
+  assert.match(projects, /id: ["']fiet-fitness-user["']/);
+  assert.match(freelancerData, /import \{ additionalProjectIds \} from '.\/portfolio';/);
+  assert.match(
+    recruitment,
+    /company: '㈜피에트'[\s\S]*?relatedProjectIds: \['fiet-fitness-trainer'\]/
+  );
+  assert.doesNotMatch(
+    recruitment.match(/company: '㈜피에트'[\s\S]*?\n  \},/)?.[0] ?? '',
+    /fiet-fitness-user/
+  );
+  assert.match(
+    portfolioData,
+    /additionalDescription:[\s\S]*?'AI 기능 제품화와 BLE·모바일 운영 경험을 보완하는 세 가지 사례입니다\.'/
+  );
+  assert.match(
+    freelancerData,
+    /additionalDescription:[\s\S]*?'AI 기능 제품화와 BLE·모바일 운영 경험을 보여주는 세 가지 수행 사례입니다\.'/
+  );
+});
+
 test('route configuration has no unused cross-route link abstraction', () => {
   const types = read('src/types/portfolio.ts');
   const portfolioData = read('src/data/portfolio.ts');
