@@ -136,19 +136,34 @@ test('additional projects expose three positioning-aligned cases and retain hidd
 
 test('FIET trainer uses report evidence instead of the splash screen', () => {
   const projects = read('src/data/projects.ts');
+  const trainerStart = projects.indexOf('id: "fiet-fitness-trainer"');
+  const trainerEnd = projects.indexOf('id: "fiet-fitness-user"', trainerStart);
+
+  assert.notEqual(trainerStart, -1, 'expected FIET trainer project entry');
+  assert.notEqual(trainerEnd, -1, 'expected FIET trainer project boundary');
+
+  const trainer = projects.slice(trainerStart, trainerEnd);
+  const thumbnailIndex = Number(
+    trainer.match(/thumbnailScreenIndex: (\d+)/)?.[1] ?? Number.NaN
+  );
+  const screens = trainer.match(/screens: \[([\s\S]*?)\n    \],/)?.[1] ?? '';
+  const screenIds = [...screens.matchAll(/\bid: ["']([^"']+)["']/g)].map(
+    ([, id]) => id
+  );
 
   assert.match(
-    projects,
-    /id: ["']fiet-fitness-trainer["'][\s\S]*?cardPresentation:[\s\S]*?thumbnailScreenIndex: 1[\s\S]*?screens:/
+    trainer,
+    /cardPresentation:[\s\S]*?thumbnailScreenIndex: 1[\s\S]*?screens:/
   );
   assert.match(
-    projects,
+    trainer,
     /highlight:[\s\S]*?["']BLE 실시간 센서 연동, 트레이너용 분석 리포트, Fastlane·GitHub Actions 배포 자동화를 구현했습니다\.["']/
   );
   assert.match(
-    projects,
+    trainer,
     /id: ["']report-inbody["'][\s\S]*?imagePath: ["']\/images\/fiet-fitness-trainer\/report-inbody\.png["']/
   );
+  assert.equal(screenIds[thumbnailIndex], 'report-inbody');
 });
 
 test('route configuration has no unused cross-route link abstraction', () => {
