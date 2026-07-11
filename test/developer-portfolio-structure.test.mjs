@@ -73,6 +73,83 @@ test('featured cases tell engine product backend story', () => {
   }
 });
 
+test('route configuration has no unused cross-route link abstraction', () => {
+  const types = read('src/types/portfolio.ts');
+  const portfolioData = read('src/data/portfolio.ts');
+  const portfolio = read('src/components/Portfolio.tsx');
+  const navigation = read('src/components/widgets/RecruitmentNav.tsx');
+  const freelancerData = read('src/data/freelancer.ts');
+
+  for (const name of ['Capability', 'PortfolioCopy', 'PortfolioConfig']) {
+    assert.match(types, new RegExp(`interface ${name}`));
+  }
+  assert.match(portfolioData, /export const recruitmentPortfolioConfig/);
+  for (const source of [types, portfolioData, portfolio, navigation, freelancerData]) {
+    assert.doesNotMatch(source, /PortfolioRouteLink|routeLink/);
+    assert.doesNotMatch(source, /일반 포트폴리오로 돌아가기/);
+  }
+  assert.doesNotMatch(navigation, /from 'next\/link'/);
+});
+
+test('route pages inject presentation configuration into the shared portfolio', () => {
+  const home = read('src/app/page.tsx');
+  const portfolio = read('src/components/Portfolio.tsx');
+  const featured = read('src/components/widgets/FeaturedWork.tsx');
+
+  assert.match(home, /import \{ recruitmentPortfolioConfig \}/);
+  assert.match(home, /<Portfolio config=\{recruitmentPortfolioConfig\}/);
+  assert.match(portfolio, /config: PortfolioConfig/);
+  assert.match(portfolio, /const Portfolio = \(\{ config \}/);
+  assert.doesNotMatch(portfolio, /from '@\/data\/recruitment'/);
+  assert.doesNotMatch(featured, /from '@\/data\/portfolio'/);
+});
+
+test('freelancer route is unlisted, purpose-specific, and absent from public navigation', () => {
+  const home = read('src/app/page.tsx');
+  const freelancerPage = read('src/app/freelancer/page.tsx');
+  const freelancerData = read('src/data/freelancer.ts');
+  const sitemap = read('src/app/sitemap.ts');
+
+  assert.match(
+    freelancerPage,
+    /robots:[\s\S]*?index: false[\s\S]*?follow: false/
+  );
+  assert.match(
+    freelancerPage,
+    /<Portfolio config=\{freelancerPortfolioConfig\}/
+  );
+  assert.doesNotMatch(home, /\/freelancer/);
+  assert.doesNotMatch(sitemap, /\/freelancer/);
+  assert.doesNotMatch(freelancerData, /routeLink|일반 포트폴리오로 돌아가기/);
+  assert.match(
+    freelancerData,
+    /'easy-contract-viewer'[\s\S]*?'local-mobile-rag-gemma'[\s\S]*?'law-info-engine'/
+  );
+  for (const copy of [
+    "role: '모바일 제품 · 문서 검색/RAG 프로젝트 수행 개발자'",
+    "position: '크로스플랫폼 앱 · Native 연동 · Retrieval/RAG · FastAPI'",
+    "positioning: '기존 모바일 제품의 고도화부터 문서·PDF 검색 기능과 검색 백엔드까지 구현합니다.'",
+    "contactMailSubject: '[프로젝트 문의] 모바일 제품 · 문서 RAG 개발'",
+    "featuredDescription: '모바일 제품, 문서 검색 엔진, 운영 가능한 검색 백엔드로 이어지는 수행 사례입니다.'",
+    "contactHeading: '모바일 제품이나 문서 검색 기능을 개발·개선하려고 하시나요?'",
+    "title: '모바일 앱 구축·고도화'",
+  ]) {
+    assert.ok(freelancerData.includes(copy), `missing exact freelancer copy: ${copy}`);
+  }
+  assert.ok(
+    freelancerPage.includes(
+      "'모바일 제품화와 문서·PDF 검색/RAG 프로젝트 수행 경험을 정리한 전달용 포트폴리오입니다.'"
+    ),
+    'freelancer metadata must use the approved description'
+  );
+  assert.match(freelancerData, /contactCta: '프로젝트 상담'/);
+  assert.match(freelancerData, /resumeUrl: undefined/);
+  assert.doesNotMatch(
+    freelancerData,
+    /(?:010[-.\s]?\d{3,4}[-.\s]?\d{4}|주소|생년월일|연봉|희망근무)/
+  );
+});
+
 test('active source has no audience runtime', () => {
   const files = [
     'src/app/page.tsx',
@@ -380,8 +457,10 @@ test('empty experience and missing resume actions stay hidden', () => {
 
 test('app bar uses a portfolio brand label instead of repeating the hero name', () => {
   const navigation = read('src/components/widgets/RecruitmentNav.tsx');
+  const portfolioData = read('src/data/portfolio.ts');
 
-  assert.match(navigation, />\s*DEV PORTFOLIO\s*</);
+  assert.match(portfolioData, /navBrandLabel: 'DEV PORTFOLIO'/);
+  assert.match(navigation, /\{brandLabel\}/);
   assert.doesNotMatch(navigation, />\s*오병희\s*</);
   assert.match(navigation, /href="#about"/);
   assert.doesNotMatch(navigation, /label: '소개'/);

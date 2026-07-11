@@ -1,8 +1,8 @@
 'use client';
 
 import type { Project } from '@/types/project';
+import type { PortfolioCopy } from '@/types/portfolio';
 import type { RecruitmentCase } from '@/types/recruitment';
-import { portfolioCopy } from '@/data/portfolio';
 import ProjectCard from './ProjectCard';
 import SectionContainer from './SectionContainer';
 import SectionHeader from './SectionHeader';
@@ -10,16 +10,17 @@ import SectionHeader from './SectionHeader';
 interface FeaturedWorkProps {
   projects: Project[];
   cases: RecruitmentCase[];
+  copy: PortfolioCopy;
   onProjectClick: (project: Project) => void;
 }
 
-const FeaturedWork = ({ projects, cases, onProjectClick }: FeaturedWorkProps) => (
+const FeaturedWork = ({ projects, cases, copy, onProjectClick }: FeaturedWorkProps) => (
   <section id="featured-work" className="scroll-mt-8 pb-16 sm:pb-20">
     <SectionContainer>
       <SectionHeader
-        eyebrow="대표 흐름"
-        title={portfolioCopy.featuredHeading}
-        description={portfolioCopy.featuredDescription}
+        eyebrow={copy.featuredEyebrow}
+        title={copy.featuredHeading}
+        description={copy.featuredDescription}
         count={projects.length}
       />
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-7 lg:grid-cols-3">

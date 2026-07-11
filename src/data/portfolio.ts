@@ -1,7 +1,9 @@
-export interface Capability {
-  title: string;
-  evidence: string;
-}
+import type { Capability, PortfolioConfig, PortfolioCopy } from '@/types/portfolio';
+import {
+  experienceItems,
+  recruitmentCases,
+  recruitmentProfile,
+} from './recruitment';
 
 export const featuredProjectIds = [
   'local-mobile-rag-gemma',
@@ -17,21 +19,23 @@ export const additionalProjectIds = [
   'fiet-fitness-user',
 ] as const;
 
-export const portfolioCopy = {
-  eyebrow: '개발자 포트폴리오',
-  role: '크로스플랫폼 개발자 · 로컬 RAG 엔지니어',
-  position: 'Flutter · 온디바이스 Retrieval/RAG · LLM 백엔드',
-  positioning:
-    '모바일 제품과 로컬 검색 엔진을 설계·구현하고 평가와 운영까지 연결합니다.',
-  primaryCta: '대표 기술 사례 보기',
-  secondaryCta: '채용 관련 이메일',
-  capabilityLabel: '핵심 개발 역량',
+export const portfolioCopy: PortfolioCopy = {
+  navBrandLabel: 'DEV PORTFOLIO',
+  heroEyebrow: '개발자 포트폴리오',
+  capabilityAriaLabel: '핵심 개발 역량 요약',
+  primaryCta: '대표 기술 사례',
+  contactCta: '채용 관련 이메일',
+  featuredEyebrow: '대표 흐름',
   featuredHeading: '대표 기술 사례',
   featuredDescription:
     '검색 엔진, Flutter 제품 적용, 운영 가능한 백엔드로 이어지는 세 가지 기술 사례입니다.',
   additionalHeading: '추가 프로젝트',
   additionalDescription: '대표 기술 사례를 보완하는 제품 개발 경험입니다.',
-} as const;
+  contactHeading:
+    '모바일 제품과 로컬 검색 기술을 함께 다룰 개발자를 찾고 계신가요?',
+  contactDescription:
+    '역할과 해결하려는 문제를 이메일로 알려주시면 포트폴리오의 관련 구현 근거를 기준으로 답변드리겠습니다.',
+};
 
 export const capabilities: Capability[] = [
   {
@@ -51,3 +55,13 @@ export const capabilities: Capability[] = [
     evidence: 'Swifty-law',
   },
 ];
+
+export const recruitmentPortfolioConfig: PortfolioConfig = {
+  profile: recruitmentProfile,
+  copy: portfolioCopy,
+  capabilities,
+  featuredProjectIds,
+  additionalProjectIds,
+  cases: recruitmentCases,
+  experienceItems,
+};

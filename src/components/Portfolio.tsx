@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Project } from '@/types/project';
+import type { PortfolioConfig } from '@/types/portfolio';
 import { projects } from '@/data/projects';
 import {
   RecruitmentNav,
@@ -14,19 +15,22 @@ import {
   ProjectModal,
   PresentationOverlay,
 } from './widgets';
-import {
-  additionalProjectIds,
-  capabilities,
-  featuredProjectIds,
-  portfolioCopy,
-} from '@/data/portfolio';
-import {
-  experienceItems,
-  recruitmentCases,
-  recruitmentProfile,
-} from '@/data/recruitment';
 
-const Portfolio = () => {
+interface PortfolioProps {
+  config: PortfolioConfig;
+}
+
+const Portfolio = ({ config }: PortfolioProps) => {
+  const {
+    profile,
+    copy,
+    capabilities,
+    featuredProjectIds,
+    additionalProjectIds,
+    cases,
+    experienceItems,
+  } = config;
+
   // State
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -152,17 +156,22 @@ const Portfolio = () => {
         aria-hidden={selectedProject ? true : undefined}
         className="min-h-screen bg-[#faf7f2] text-[#1f1b16] font-sans outline-none"
       >
-        <RecruitmentNav hasExperience={experienceItems.length > 0} />
+        <RecruitmentNav
+          hasExperience={experienceItems.length > 0}
+          brandLabel={copy.navBrandLabel}
+        />
 
         <main id="main-content" tabIndex={-1} className="outline-none">
           <DeveloperHero
-            profile={recruitmentProfile}
+            profile={profile}
             capabilities={capabilities}
+            copy={copy}
           />
 
           <FeaturedWork
             projects={featuredProjects}
-            cases={recruitmentCases}
+            cases={cases}
+            copy={copy}
             onProjectClick={handleProjectClick}
           />
 
@@ -171,11 +180,11 @@ const Portfolio = () => {
           <ProjectArchive
             projects={additionalProjects}
             onProjectClick={handleProjectClick}
-            heading={portfolioCopy.additionalHeading}
-            description={portfolioCopy.additionalDescription}
+            heading={copy.additionalHeading}
+            description={copy.additionalDescription}
           />
 
-          <RecruitmentCTA profile={recruitmentProfile} />
+          <RecruitmentCTA profile={profile} copy={copy} />
         </main>
 
         <Footer />
@@ -185,7 +194,7 @@ const Portfolio = () => {
       {selectedProject && (
         <ProjectModal
           project={selectedProject}
-          recruitmentCase={recruitmentCases.find(
+          recruitmentCase={cases.find(
             (item) => item.projectId === selectedProject.id
           )}
           isAnimating={isAnimating}

@@ -1,20 +1,26 @@
 import { ArrowDown, ExternalLink, FileText, Mail } from 'lucide-react';
-import type { Capability } from '@/data/portfolio';
+import type { Capability, PortfolioCopy } from '@/types/portfolio';
 import type { RecruitmentProfile } from '@/types/recruitment';
 import SectionContainer from './SectionContainer';
 
 interface DeveloperHeroProps {
   profile: RecruitmentProfile;
   capabilities: Capability[];
+  copy: PortfolioCopy;
 }
 
-const DeveloperHero = ({ profile, capabilities }: DeveloperHeroProps) => (
-  <section id="about" className="py-12 sm:py-16 lg:py-20">
+const DeveloperHero = ({ profile, capabilities, copy }: DeveloperHeroProps) => {
+  const contactHref = copy.contactMailSubject
+    ? `mailto:${profile.email}?subject=${encodeURIComponent(copy.contactMailSubject)}`
+    : `mailto:${profile.email}`;
+
+  return (
+    <section id="about" className="py-12 sm:py-16 lg:py-20">
     <SectionContainer>
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.65fr)] lg:items-end lg:gap-14">
         <div className="animate-fade-in-up">
           <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] text-[#756b60] sm:text-[11px]">
-            — 개발자 포트폴리오
+            — {copy.heroEyebrow}
           </p>
           <h1 className="font-serif text-5xl font-light leading-none tracking-tight text-[#1f1b16] sm:text-6xl md:text-7xl">
             {profile.name}
@@ -30,7 +36,7 @@ const DeveloperHero = ({ profile, capabilities }: DeveloperHeroProps) => (
           </p>
 
           <div
-            aria-label="핵심 개발 역량 요약"
+            aria-label={copy.capabilityAriaLabel}
             className="mt-6 grid max-w-2xl grid-cols-1 gap-x-5 gap-y-2 sm:grid-cols-2"
           >
             {capabilities.map((capability) => (
@@ -53,7 +59,7 @@ const DeveloperHero = ({ profile, capabilities }: DeveloperHeroProps) => (
               href="#featured-work"
               className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-[#1f1b16] px-5 py-3 text-sm font-semibold text-[#faf7f2] transition-colors hover:bg-[#0f766e] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f766e] focus-visible:ring-offset-2 focus-visible:ring-offset-[#faf7f2]"
             >
-              대표 기술 사례
+              {copy.primaryCta}
               <ArrowDown size={16} aria-hidden="true" />
             </a>
             {profile.resumeUrl && (
@@ -68,11 +74,11 @@ const DeveloperHero = ({ profile, capabilities }: DeveloperHeroProps) => (
               </a>
             )}
             <a
-              href={`mailto:${profile.email}`}
+              href={contactHref}
               className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-[#b8543a]/40 bg-white px-5 py-3 text-sm font-semibold text-[#1f1b16] transition-colors hover:border-[#0f766e] hover:text-[#0f766e] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f766e]"
             >
               <Mail size={16} aria-hidden="true" />
-              채용 관련 이메일
+              {copy.contactCta}
             </a>
           </div>
         </div>
@@ -121,7 +127,8 @@ const DeveloperHero = ({ profile, capabilities }: DeveloperHeroProps) => (
         )}
       </div>
     </SectionContainer>
-  </section>
-);
+    </section>
+  );
+};
 
 export default DeveloperHero;

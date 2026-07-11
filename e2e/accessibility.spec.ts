@@ -70,6 +70,113 @@ test('한국어 단일 홈과 skip link, 대표 사례 순서를 제공한다', 
   await expect(page.locator('#experience > div ol > li')).toHaveCount(6);
 });
 
+test('프리랜서 전달용 라우트는 공개 홈에서 숨겨지고 검색 비노출 계약을 제공한다', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await expect(page.locator('a[href="/freelancer"]')).toHaveCount(0);
+
+  await page.goto('/freelancer');
+
+  const robots = page.locator('meta[name="robots"]');
+  await expect(robots).toHaveAttribute('content', /noindex/);
+  await expect(robots).toHaveAttribute('content', /nofollow/);
+  await expect(page.locator('meta[name="description"]')).toHaveAttribute(
+    'content',
+    '모바일 제품화와 문서·PDF 검색/RAG 프로젝트 수행 경험을 정리한 전달용 포트폴리오입니다.'
+  );
+
+  await expect(
+    page.getByRole('link', {
+      name: '일반 포트폴리오로 돌아가기',
+      exact: true,
+    })
+  ).toHaveCount(0);
+  await expect(
+    page.getByText('일반 포트폴리오로 돌아가기', { exact: true })
+  ).toHaveCount(0);
+
+  for (const copy of [
+    '모바일 제품 · 문서 검색/RAG 프로젝트 수행 개발자',
+    '크로스플랫폼 앱 · Native 연동 · Retrieval/RAG · FastAPI',
+    '기존 모바일 제품의 고도화부터 문서·PDF 검색 기능과 검색 백엔드까지 구현합니다.',
+    '모바일 앱 구축·고도화',
+    '모바일 제품, 문서 검색 엔진, 운영 가능한 검색 백엔드로 이어지는 수행 사례입니다.',
+    '모바일 제품이나 문서 검색 기능을 개발·개선하려고 하시나요?',
+  ]) {
+    await expect(page.getByText(copy, { exact: true })).toBeVisible();
+  }
+
+  await expect(
+    page.getByRole('link', { name: '이력서 보기', exact: true })
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole('link', { name: '프로젝트 상담', exact: true })
+  ).toHaveCount(2);
+  for (const contactLink of await page
+    .getByRole('link', { name: '프로젝트 상담', exact: true })
+    .all()) {
+    await expect(contactLink).toHaveAttribute(
+      'href',
+      `mailto:byeongheeoh51@gmail.com?subject=${encodeURIComponent(
+        '[프로젝트 문의] 모바일 제품 · 문서 RAG 개발'
+      )}`
+    );
+  }
+
+  const headings = await page
+    .locator('#featured-work article h3')
+    .evaluateAll((items) => items.map((item) => item.textContent?.trim()));
+  expect(headings).toEqual([
+    'Easy Contract Viewer',
+    'mobile_rag_engine',
+    'Swifty-law',
+  ]);
+
+  const detailButton = page.getByRole('button', {
+    name: 'Easy Contract Viewer 프로젝트 상세 열기',
+  });
+  await detailButton.focus();
+  await page.keyboard.press('Enter');
+  const dialog = page.getByRole('dialog', { name: /Easy Contract Viewer/ });
+  await expect(dialog).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(dialog).toBeHidden();
+  await expect(detailButton).toBeFocused();
+});
+
+test('프리랜서 전달용 라우트는 390px과 320px에서 가로 유실이 없다', async ({
+  page,
+}) => {
+  for (const viewport of [
+    { width: 390, height: 844 },
+    { width: 320, height: 800 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.goto('/freelancer');
+    await page.evaluate(() => document.fonts.ready);
+
+    const dimensions = await page.evaluate(() => ({
+      height: document.documentElement.scrollHeight,
+      overflow:
+        document.documentElement.scrollWidth -
+        document.documentElement.clientWidth,
+    }));
+    expect(dimensions.overflow).toBe(0);
+    if (viewport.width === 390) {
+      expect(dimensions.height).toBeLessThanOrEqual(8_000);
+    }
+
+    await expect(
+      page.getByText('일반 포트폴리오로 돌아가기', { exact: true })
+    ).toHaveCount(0);
+    await expectHorizontallyReachable(
+      page,
+      page.getByRole('link', { name: '프로젝트 상담', exact: true }).first()
+    );
+  }
+});
+
 test('320px 앱바가 모든 링크와 44px 터치 영역을 처음부터 제공한다', async ({
   page,
 }) => {
