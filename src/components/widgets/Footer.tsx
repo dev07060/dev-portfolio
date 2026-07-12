@@ -7,7 +7,7 @@ const Footer = () => (
         © {new Date().getFullYear()} 오병희
       </span>
       <span className="font-mono text-xs tracking-[0.18em]">
-        Next.js로 설계하고 구현했습니다
+        Powered by Next.js
       </span>
     </SectionContainer>
   </footer>
