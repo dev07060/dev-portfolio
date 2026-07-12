@@ -389,7 +389,7 @@ test('freelancer route is unlisted, purpose-specific, and absent from public nav
   );
   assert.match(freelancerData, /contactCta: '프로젝트 상담'/);
   assert.match(freelancerData, /resumeUrl: undefined/);
-  assert.match(freelancerData, /experienceItems: freelancerExperienceItems/);
+  assert.match(freelancerData, /experienceItems,/);
   assert.doesNotMatch(freelancerData, /\bcompany\s*:/);
   assert.doesNotMatch(
     freelancerData,
@@ -480,7 +480,8 @@ test('recruitment data separates project assets from hiring evidence', () => {
     assert.match(types, new RegExp(`interface ${name}`));
   }
   assert.match(data, /local-mobile-rag-gemma/);
-  assert.match(data, /pub\.dev 0\.18\.6/);
+  assert.match(data, /pub\.dev 0\.20\.0/);
+  assert.doesNotMatch(data, /pub\.dev 0\.18\.6/);
   assert.match(types, /statusLabel: string;/);
   assert.doesNotMatch(types, /publicStatus: string;/);
   assert.doesNotMatch(data, /MAU 1만|5년 4개월|10–100×/);
@@ -593,8 +594,10 @@ test('experience timeline keeps one result visible and discloses the remaining d
   );
   assert.match(
     freelancerData,
-    /experienceDescription:[\s\S]*?'프로젝트 수행 적합도를 기준으로 역할과 대표 성과를 요약했습니다\.'/
+    /experienceDescription:[\s\S]*?'최신순으로 역할과 대표 성과를 요약했습니다\.'/
   );
+  assert.match(freelancerData, /experienceItems,/);
+  assert.doesNotMatch(freelancerData, /freelancerExperienceItems|fietExperience/);
   assert.match(
     portfolio,
     /<ExperienceTimeline[\s\S]*?description=\{copy\.experienceDescription\}/
@@ -607,6 +610,16 @@ test('experience timeline keeps one result visible and discloses the remaining d
   assert.match(timeline, /item\.highlights\.slice\(1\)/);
   assert.match(timeline, /item\.employmentType/);
   assert.match(timeline, /eyebrow="경력"/);
+});
+
+test('active project copy uses the latest stable mobile_rag_engine release', () => {
+  const recruitment = read('src/data/recruitment.ts');
+  const projects = read('src/data/projects.ts');
+
+  for (const source of [recruitment, projects]) {
+    assert.match(source, /0\.20\.0/);
+    assert.doesNotMatch(source, /0\.18\.6/);
+  }
 });
 
 test('manual release documentation does not require VoiceOver or screen readers', () => {

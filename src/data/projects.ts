@@ -456,12 +456,12 @@ export const projects: Project[] = [
     id: "local-mobile-rag-gemma",
     type: "package",
     title: "mobile_rag_engine",
-    releaseLabel: "pub.dev 0.18.6",
+    releaseLabel: "pub.dev 0.20.0",
     subtitle: "모바일에서 완전 로컬 RAG를 실행하는 Flutter 패키지",
     description:
       "Flutter 앱에 서버 업로드 없는 온디바이스 문서 검색과 RAG 기능을 붙일 수 있는 공개 Flutter 패키지입니다.",
     implementationPoints: [
-      "Flutter 공개 API, 예제, 문서, 릴리스 패키징을 포함해 mobile_rag_engine 0.18.6을 배포했습니다.",
+      "Flutter 공개 API, 예제, 문서, 릴리스 패키징을 포함해 mobile_rag_engine 0.20.0을 배포했습니다.",
       "제품 API 계층과 네이티브 hot path를 분리해 Flutter facade, Dart orchestration, Rust FFI core로 구성했습니다.",
       "문서 파싱, 청크 메타데이터, ONNX 임베딩, SQLite 저장, 색인 write까지 인제스트 경로를 구현했습니다.",
       "질의 임베딩, HNSW 벡터 검색, BM25 sparse 검색, 후보 결합, context assembly까지 쿼리 경로를 구현했습니다.",

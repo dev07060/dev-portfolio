@@ -16,7 +16,7 @@ export const recruitmentProfile: RecruitmentProfile = {
   proofItems: [
     {
       label: '공개 패키지',
-      value: 'mobile_rag_engine · pub.dev 0.18.6',
+      value: 'mobile_rag_engine · pub.dev 0.20.0',
       evidence: 'https://pub.dev/packages/mobile_rag_engine',
     },
     {
@@ -29,7 +29,7 @@ export const recruitmentProfile: RecruitmentProfile = {
 export const recruitmentCases: RecruitmentCase[] = [
   {
     projectId: 'local-mobile-rag-gemma',
-    statusLabel: 'pub.dev 공개 패키지 · 0.18.6',
+    statusLabel: 'pub.dev 공개 패키지 · 0.20.0',
     problem:
       'Flutter 앱에서 문서를 서버에 업로드하지 않고 로컬 문서 검색과 RAG context 생성을 처리해야 했습니다.',
     contributions: [
@@ -38,10 +38,10 @@ export const recruitmentCases: RecruitmentCase[] = [
       'HNSW vector search, BM25 sparse retrieval, 후보 결합, context assembly로 이어지는 query 경로를 구현했습니다.',
     ],
     verification: [
-      'GitHub 소스, 예제, 문서와 pub.dev 0.18.6 릴리스를 공개 근거로 함께 확인할 수 있습니다.',
+      'GitHub 소스, 예제, 문서와 pub.dev 0.20.0 릴리스를 공개 근거로 함께 확인할 수 있습니다.',
     ],
     outcomes: [
-      'Flutter 공개 API, 예제, 문서, 릴리스 패키징을 포함한 0.18.6을 pub.dev에 배포했습니다.',
+      'Flutter 공개 API, 예제, 문서, 릴리스 패키징을 포함한 0.20.0을 pub.dev에 배포했습니다.',
       'Easy Contract Viewer 같은 Flutter 제품에서 로컬 색인과 원문 기반 context 생성에 재사용할 수 있는 기반을 만들었습니다.',
     ],
     tradeoffs: [
