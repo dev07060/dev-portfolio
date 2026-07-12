@@ -94,6 +94,7 @@ const getTypeLabel = (project: Project) => {
   if (project.type === 'package') return '오픈소스 패키지';
   if (project.type === 'mobile') return '모바일 애플리케이션';
   if (project.type === 'tablet') return '태블릿 애플리케이션';
+  if (project.type === 'api') return '백엔드 API';
   return '웹 플랫폼';
 };
 
@@ -123,7 +124,7 @@ const ProjectInfoHeader = ({
           </p>
           <h2
             id={titleId}
-            className="break-all pr-10 font-serif text-xl font-light leading-tight text-[#1f1b16] min-[360px]:text-3xl md:text-4xl"
+            className="break-words pr-10 font-serif text-xl font-light leading-tight text-[#1f1b16] min-[360px]:text-3xl md:text-4xl"
           >
             {project.title}
           </h2>

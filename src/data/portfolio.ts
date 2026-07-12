@@ -12,6 +12,7 @@ export const featuredProjectIds = [
 ] as const;
 
 export const additionalProjectIds = [
+  'easy-contract-viewer-server',
   'haru-check',
   'fiet-fitness-trainer',
   'weedool',
@@ -30,7 +31,7 @@ export const portfolioCopy: PortfolioCopy = {
   experienceDescription: '최신순으로 역할과 대표 성과를 요약했습니다.',
   additionalHeading: '추가 프로젝트',
   additionalDescription:
-    'AI 기능 제품화와 BLE·모바일 운영 경험을 보완하는 세 가지 사례입니다.',
+    'Python 검색·요약 백엔드와 AI·BLE 제품화 경험을 보완하는 네 가지 사례입니다.',
   contactHeading:
     '모바일 제품과 로컬 검색 기술을 함께 다룰 개발자를 찾고 계신가요?',
   contactDescription:

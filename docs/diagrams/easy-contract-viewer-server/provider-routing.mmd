@@ -1,0 +1,20 @@
+flowchart LR
+  subgraph Route["Route"]
+    direction TB
+    A["FastAPI route"] --> B{"API version"}
+  end
+  subgraph Providers["Providers"]
+    direction TB
+    C["Gemini API Key provider"]
+    D["Vertex AI IAM provider"]
+  end
+  subgraph Contract["Result contract"]
+    direction TB
+    E["Provider interface"] --> F["Structured summary result"]
+    E -. optional failure path .-> G["Ollama fallback"]
+    G --> F
+  end
+  B -->|v1| C
+  B -->|v2| D
+  C --> E
+  D --> E

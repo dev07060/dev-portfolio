@@ -15,6 +15,7 @@ const projectTypeLabel = (project: Project) => {
   if (project.type === 'mobile') return '모바일 앱';
   if (project.type === 'tablet') return '태블릿 앱';
   if (project.type === 'package') return '패키지';
+  if (project.type === 'api') return '백엔드 API';
   return '웹';
 };
 

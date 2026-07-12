@@ -1,6 +1,6 @@
 'use client';
 
-import { Smartphone, Monitor, Tablet, Maximize2, Mouse, Package as PackageIcon } from 'lucide-react';
+import { Smartphone, Monitor, Tablet, Maximize2, Mouse, Package as PackageIcon, Server } from 'lucide-react';
 import { useRef, useEffect } from 'react';
 import { Project } from '@/types/project';
 import ScreenImage from './ScreenImage';
@@ -21,7 +21,7 @@ const DeviceFrame = ({
   currentScreenIndex = 0,
 }: DeviceFrameProps) => {
   if (variant === 'presentation') {
-    if (project.type === 'package') {
+    if (project.type === 'package' || project.type === 'api') {
       return <PackagePresentationFrame project={project} currentScreenIndex={currentScreenIndex} />;
     } else if (project.type === 'mobile') {
       return <MobilePresentationFrame project={project} currentScreenIndex={currentScreenIndex} />;
@@ -45,7 +45,7 @@ const DeviceFrame = ({
         className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r ${project.color} rounded-full blur-[100px] opacity-30 pointer-events-none`}
       />
 
-      {project.type === 'package' ? (
+      {project.type === 'package' || project.type === 'api' ? (
         <PackageFrame
           project={project}
           currentScreenIndex={currentScreenIndex}
@@ -77,6 +77,7 @@ const PackageFrame = ({
   currentScreenIndex: number;
 }) => {
   const title = project.title;
+  const isApi = project.type === 'api';
   const featuredScreen = project.screens[currentScreenIndex] ?? project.screens[0];
   const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
     if (e.key !== 'Enter' && e.key !== ' ') return;
@@ -94,13 +95,17 @@ const PackageFrame = ({
     >
       <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between border-b border-[#d9e4e1] bg-white/95 px-4 py-2">
         <div className="flex items-center gap-2">
-          <PackageIcon size={14} className="text-[#0f766e]" />
+          {isApi ? (
+            <Server size={14} className="text-[#0f766e]" />
+          ) : (
+            <PackageIcon size={14} className="text-[#0f766e]" />
+          )}
           <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-[#0f766e]">
-            패키지 아키텍처
+            {isApi ? '백엔드 아키텍처' : '패키지 아키텍처'}
           </span>
         </div>
         <span className="rounded-full border border-[#d9e4e1] px-2 py-0.5 text-[10px] font-mono text-[#4a4339]">
-          pub.dev
+          {isApi ? 'FastAPI' : 'pub.dev'}
         </span>
       </div>
       <div className="absolute inset-0 pt-10">
@@ -117,7 +122,11 @@ const PackageFrame = ({
           <div
             className={`w-full h-full bg-gradient-to-br ${project.color} flex flex-col items-center justify-center text-white p-6 text-center`}
           >
-            <PackageIcon size={56} className="mb-4 opacity-85" />
+            {isApi ? (
+              <Server size={56} className="mb-4 opacity-85" />
+            ) : (
+              <PackageIcon size={56} className="mb-4 opacity-85" />
+            )}
             <h3 className="text-2xl font-bold">{title}</h3>
           </div>
         )}

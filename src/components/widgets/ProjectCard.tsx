@@ -4,6 +4,7 @@ import {
   ExternalLink,
   Monitor,
   Package as PackageIcon,
+  Server,
   Smartphone,
   Tablet,
 } from 'lucide-react';
@@ -45,6 +46,9 @@ const getProjectType = (project: Project) => {
   }
   if (project.type === 'tablet') {
     return { icon: <Tablet size={12} aria-hidden="true" />, label: '태블릿 앱' };
+  }
+  if (project.type === 'api') {
+    return { icon: <Server size={12} aria-hidden="true" />, label: '백엔드 API' };
   }
   return { icon: <Monitor size={12} aria-hidden="true" />, label: '웹' };
 };
@@ -214,12 +218,12 @@ const ProjectThumbnail = ({
     );
   }
 
-  if (project.type === 'package') {
+  if (project.type === 'package' || project.type === 'api') {
     return (
       <div className="relative z-[1] aspect-[16/10] w-[84%] max-w-[290px] overflow-hidden rounded-xl border border-white/80 bg-white/95 shadow-2xl transition-transform duration-500 group-hover:scale-105">
         <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between border-b border-[#d9e4e1] bg-white/90 px-3 py-1.5">
           <span className="font-mono text-[8px] uppercase tracking-[0.2em] text-[#0f766e]">
-            RAG 파이프라인
+            {project.type === 'api' ? '백엔드 아키텍처' : 'RAG 파이프라인'}
           </span>
           <span className="h-1.5 w-1.5 rounded-full bg-[#0f766e]" />
         </div>

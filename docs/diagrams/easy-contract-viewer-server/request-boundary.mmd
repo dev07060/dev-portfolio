@@ -1,0 +1,21 @@
+flowchart LR
+  subgraph Request["Request"]
+    direction TB
+    A["Flutter app / mobile_rag_engine"] --> B["POST /v1/mobile-rag/summarize"]
+    B --> C{"Request policy"}
+  end
+  subgraph Protection["Protection"]
+    direction TB
+    D["HMAC"]
+    E["Install / client session"] --> F["Redis quota / budget / concurrency"]
+  end
+  subgraph Summary["Summary"]
+    direction TB
+    G["Masking + token optimization"] --> H["Single-flight"]
+    H --> I["Summarizer"]
+    I --> J["Summary + citations + estimated cost"]
+  end
+  C -->|server request| D
+  C -->|anonymous mobile| E
+  D --> G
+  F --> G

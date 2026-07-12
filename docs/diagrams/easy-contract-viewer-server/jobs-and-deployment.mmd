@@ -1,0 +1,24 @@
+flowchart LR
+  subgraph API["API execution"]
+    direction TB
+    A["Client"] --> B{"Execution mode"}
+    B -->|sync| C["Summarize API"]
+    B -->|async| D["POST /summarize/jobs"]
+    D --> E["Job manager"]
+    E --> F["queued → running → succeeded / failed"]
+    F --> G["GET /summarize/jobs/{job_id}"]
+  end
+  subgraph Runtime["Deployment configuration"]
+    direction TB
+    I["Caddy"] --> H["FastAPI container"]
+    H --> J["Redis"]
+    H -. optional .-> K["Ollama"]
+  end
+  subgraph Verification["Verification"]
+    direction TB
+    L["5-case golden harness"]
+  end
+  C --> H
+  E --> H
+  G --> H
+  L --> C

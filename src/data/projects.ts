@@ -1,6 +1,83 @@
 import { Project } from "@/types/project";
 export const projects: Project[] = [
   {
+    id: "easy-contract-viewer-server",
+    type: "api",
+    title: "Easy Contract Viewer Server",
+    subtitle: "계약서·보험약관 RAG 요약을 위한 FastAPI 백엔드",
+    description:
+      "모바일 앱이 검색한 계약서·보험약관 chunk를 받아 근거 인용과 함께 요약하는 FastAPI 백엔드입니다. API 버전별 provider와 HMAC·익명 모바일 요청 경계를 분리했습니다.",
+    implementationPoints: [
+      "v1 Gemini API Key와 v2 Vertex AI IAM provider를 공통 인터페이스 뒤에 분리했습니다.",
+      "HMAC 보호 요청과 익명 모바일 요청을 구분하고 Redis quota·budget·concurrency·single-flight 경계를 구성했습니다.",
+      "동기 요약 API와 queued·running·succeeded·failed 상태를 제공하는 비동기 job API를 구현했습니다.",
+      "Docker Compose 로컬 구성, Caddy·OCI 배포 구성과 5개 골든 케이스 평가 스크립트를 마련했습니다.",
+    ],
+    cardPresentation: {
+      variant: "architecture",
+      thumbnailScreenIndex: 0,
+      description:
+        "FastAPI 요청 경계, Gemini·Vertex provider routing, Redis 보호선, 비동기 job과 배포 구성을 분리한 Python 백엔드입니다.",
+      evidenceBadges: [
+        "FastAPI",
+        "Redis",
+        "HMAC",
+        "Gemini / Vertex AI",
+        "Docker",
+      ],
+      highlight:
+        "FastAPI provider routing과 HMAC·quota·budget·single-flight 경계를 구현했습니다.",
+    },
+    techStack: [
+      "Python",
+      "FastAPI",
+      "Redis",
+      "Pydantic",
+      "asyncpg",
+      "Gemini API",
+      "Vertex AI",
+      "Docker",
+      "Caddy",
+    ],
+    evidenceBadges: [
+      "비공개 구현",
+      "FastAPI",
+      "Redis",
+      "HMAC",
+      "Docker",
+    ],
+    releaseLabel: "비공개 구현 · 로컬 검증",
+    color: "from-indigo-600 to-violet-600",
+    iconType: "layers",
+    screens: [
+      {
+        id: "request-boundary",
+        imageAlt: "Easy Contract Viewer Server 요청 보호 경계",
+        title: "요청 보호 경계",
+        desc: "HMAC 요청과 익명 모바일 요청을 분리하고 quota, budget, concurrency, single-flight를 거쳐 요약 결과를 반환하는 흐름입니다.",
+        imagePath:
+          "/images/easy-contract-viewer-server/request-boundary.svg",
+      },
+      {
+        id: "provider-routing",
+        imageAlt: "Easy Contract Viewer Server provider routing",
+        title: "Provider routing",
+        desc: "v1 Gemini API Key와 v2 Vertex AI IAM provider를 공통 결과 계약 뒤에 분리하고 Ollama fallback을 선택적으로 연결합니다.",
+        imagePath:
+          "/images/easy-contract-viewer-server/provider-routing.svg",
+      },
+      {
+        id: "jobs-and-deployment",
+        imageAlt: "Easy Contract Viewer Server 비동기 job과 배포 구성",
+        title: "비동기 job·배포 구성",
+        desc: "동기 요약과 비동기 job 상태 흐름, FastAPI·Redis·선택형 Ollama를 포함한 Docker/Caddy 배포 구성을 보여줍니다.",
+        imagePath:
+          "/images/easy-contract-viewer-server/jobs-and-deployment.svg",
+      },
+    ],
+    links: [],
+  },
+  {
     id: "law-info-engine",
     type: "web",
     title: "Swifty-law",

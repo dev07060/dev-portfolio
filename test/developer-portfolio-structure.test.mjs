@@ -98,7 +98,88 @@ test('featured cases tell engine product backend story', () => {
   }
 });
 
-test('additional projects expose three positioning-aligned cases and retain hidden data', () => {
+test('Easy Contract Viewer Server copy is bounded by a committed private-source snapshot', () => {
+  const evidence = read(
+    'docs/reports/2026-07-12-easy-contract-viewer-server-evidence.md'
+  );
+
+  assert.match(evidence, /Source HEAD: bfaee10/);
+  assert.match(evidence, /Source visibility: private/);
+  assert.match(evidence, /Deployment status: configuration only/);
+  assert.match(evidence, /Evaluation status: harness present, accepted score absent/);
+  assert.match(evidence, /Uncommitted server changes: excluded/);
+  const approvedClaims = evidence.split('## Excluded claims')[0];
+  assert.doesNotMatch(
+    approvedClaims,
+    /production traffic|active users|public GitHub/i
+  );
+  assert.match(
+    approvedClaims,
+    /Redis-backed quota, budget, and concurrency controls; single-flight runs as a separate in-process stage\./
+  );
+  assert.match(
+    approvedClaims,
+    /The committed baseline masks sensitive text with regex-based detectors before token optimization\./
+  );
+  assert.match(evidence, /Uncommitted masking hardening/);
+});
+
+test('API projects use a backend-specific type and label', () => {
+  const projectTypes = read('src/types/project.ts');
+  const archive = read('src/components/widgets/ProjectArchive.tsx');
+  const modal = read('src/components/widgets/ProjectModal.tsx');
+  const card = read('src/components/widgets/ProjectCard.tsx');
+  const deviceFrame = read('src/components/widgets/DeviceFrame.tsx');
+
+  assert.match(projectTypes, /type: 'mobile' \| 'web' \| 'tablet' \| 'package' \| 'api'/);
+  assert.match(archive, /project\.type === 'api'[\s\S]*?return '백엔드 API'/);
+  assert.match(modal, /project\.type === 'api'[\s\S]*?return '백엔드 API'/);
+  assert.match(card, /project\.type === 'api'[\s\S]*?label: '백엔드 API'/);
+  assert.match(
+    card,
+    /project\.type === 'package' \|\| project\.type === 'api'[\s\S]*?fit="contain"/
+  );
+  assert.match(
+    deviceFrame,
+    /project\.type === 'package' \|\| project\.type === 'api'[\s\S]*?백엔드 아키텍처/
+  );
+  const packageFrameFallback = deviceFrame.slice(
+    deviceFrame.indexOf('{featuredScreen?.imagePath ? ('),
+    deviceFrame.indexOf('// Mobile Frame Component')
+  );
+  assert.match(
+    packageFrameFallback,
+    /\{isApi \? \([\s\S]*?<Server size=\{56\}[\s\S]*?<PackageIcon size=\{56\}/
+  );
+});
+
+test('Easy Contract Viewer Server uses source-backed architecture assets', () => {
+  for (const path of [
+    'docs/diagrams/easy-contract-viewer-server/request-boundary.mmd',
+    'docs/diagrams/easy-contract-viewer-server/provider-routing.mmd',
+    'docs/diagrams/easy-contract-viewer-server/jobs-and-deployment.mmd',
+    'public/images/easy-contract-viewer-server/request-boundary.svg',
+    'public/images/easy-contract-viewer-server/provider-routing.svg',
+    'public/images/easy-contract-viewer-server/jobs-and-deployment.svg',
+  ]) {
+    assert.notEqual(read(path), '', path + ' must exist and be non-empty');
+  }
+
+  assert.match(
+    read('docs/diagrams/easy-contract-viewer-server/request-boundary.mmd'),
+    /HMAC[\s\S]*?Redis quota \/ budget \/ concurrency[\s\S]*?Summary \+ citations/
+  );
+  assert.match(
+    read('docs/diagrams/easy-contract-viewer-server/provider-routing.mmd'),
+    /Gemini API Key[\s\S]*?Vertex AI IAM[\s\S]*?Ollama fallback/
+  );
+  assert.match(
+    read('docs/diagrams/easy-contract-viewer-server/jobs-and-deployment.mmd'),
+    /G --> H/
+  );
+});
+
+test('additional projects expose the backend-first four-case selection and retain hidden data', () => {
   const portfolioData = read('src/data/portfolio.ts');
   const freelancerData = read('src/data/freelancer.ts');
   const projects = read('src/data/projects.ts');
@@ -110,7 +191,7 @@ test('additional projects expose three positioning-aligned cases and retain hidd
   assert.ok(selection, 'additionalProjectIds must exist');
   assert.match(
     selection[1],
-    /'haru-check'[\s\S]*?'fiet-fitness-trainer'[\s\S]*?'weedool'/
+    /'easy-contract-viewer-server'[\s\S]*?'haru-check'[\s\S]*?'fiet-fitness-trainer'[\s\S]*?'weedool'/
   );
   assert.doesNotMatch(selection[1], /motgo|fiet-fitness-user/);
   assert.match(projects, /id: ["']motgo["']/);
@@ -126,11 +207,41 @@ test('additional projects expose three positioning-aligned cases and retain hidd
   );
   assert.match(
     portfolioData,
-    /additionalDescription:[\s\S]*?'AI 기능 제품화와 BLE·모바일 운영 경험을 보완하는 세 가지 사례입니다\.'/
+    /additionalDescription:[\s\S]*?'Python 검색·요약 백엔드와 AI·BLE 제품화 경험을 보완하는 네 가지 사례입니다\.'/
   );
   assert.match(
     freelancerData,
-    /additionalDescription:[\s\S]*?'AI 기능 제품화와 BLE·모바일 운영 경험을 보여주는 세 가지 수행 사례입니다\.'/
+    /additionalDescription:[\s\S]*?'FastAPI 백엔드와 AI·BLE 모바일 제품화 경험을 보여주는 네 가지 수행 사례입니다\.'/
+  );
+});
+
+test('Easy Contract Viewer Server is a private backend case without inflated claims', () => {
+  const projects = read('src/data/projects.ts');
+  const start = projects.indexOf('id: "easy-contract-viewer-server"');
+  const end = projects.indexOf('\n  },', start);
+
+  assert.notEqual(start, -1, 'expected Easy Contract Viewer Server project entry');
+  assert.notEqual(end, -1, 'expected Easy Contract Viewer Server project boundary');
+
+  const project = projects.slice(start, end);
+  assert.match(project, /type: "api"/);
+  assert.match(project, /title: "Easy Contract Viewer Server"/);
+  assert.match(project, /releaseLabel: "비공개 구현 · 로컬 검증"/);
+  assert.match(project, /techStack: \[\s*"Python",\s*"FastAPI",\s*"Redis"/);
+  for (const asset of [
+    'request-boundary.svg',
+    'provider-routing.svg',
+    'jobs-and-deployment.svg',
+  ]) {
+    assert.ok(
+      project.includes(`/images/easy-contract-viewer-server/${asset}`),
+      `missing project asset path: ${asset}`
+    );
+  }
+  assert.match(project, /links: \[\]/);
+  assert.doesNotMatch(
+    project,
+    /Play Integrity|production traffic|active users|public GitHub|정확도|점수/i
   );
 });
 

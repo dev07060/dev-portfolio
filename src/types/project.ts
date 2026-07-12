@@ -28,7 +28,7 @@ export interface ProjectCardPresentation {
 
 export interface Project {
   id: string;
-  type: 'mobile' | 'web' | 'tablet' | 'package';
+  type: 'mobile' | 'web' | 'tablet' | 'package' | 'api';
   title: string;
   subtitle: string;
   description: string;
