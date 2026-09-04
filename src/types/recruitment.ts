@@ -20,6 +20,7 @@ export interface RecruitmentCase {
   team?: string;
   problem: string;
   contributions: string[];
+  verificationLabel?: string;
   verification: string[];
   outcomes: string[];
   tradeoffs: string[];

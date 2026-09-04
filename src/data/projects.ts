@@ -79,7 +79,7 @@ export const projects: Project[] = [
   },
   {
     id: "law-info-engine",
-    type: "web",
+    type: "api",
     title: "Swifty-law",
     subtitle: "인용 기반 한국 법령 검색 RAG 엔진",
     description:

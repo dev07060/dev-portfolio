@@ -20,8 +20,8 @@ export const recruitmentProfile: RecruitmentProfile = {
       evidence: 'https://pub.dev/packages/mobile_rag_engine',
     },
     {
-      label: '경력',
-      value: '총 5년 5개월',
+      label: '총 경력',
+      value: '5년 5개월',
     },
   ],
 };
@@ -99,6 +99,7 @@ export const recruitmentCases: RecruitmentCase[] = [
       'mobile_rag_engine을 연결해 SQLite, HNSW, BM25 기반의 온디바이스 약관 검색 흐름을 구성했습니다.',
       '동의 기반 AI 요약, 서버 readiness 확인, client session, 로컬 fallback 흐름을 구현했습니다.',
     ],
+    verificationLabel: '검증 기준·방법',
     verification: [
       '검색과 분석 결과가 ingest 단계에서 보존한 페이지 좌표를 통해 정확한 PDF 근거 영역으로 돌아가는지 확인합니다.',
       'AI 요약은 사용자 동의, 서버 readiness, client session, 로컬 fallback 경계를 각각 거칩니다.',

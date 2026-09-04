@@ -214,8 +214,8 @@ test('두 실제 라우트 설정의 모든 프로젝트 ID가 공유 프로젝�
 }) => {
   const additionalTitles = [
     'Easy Contract Viewer Server',
-    'HaruCheck',
     '피에트 피트니스 트레이너',
+    'HaruCheck',
     'Weedool (TuringBio)',
   ];
   const routes = [
@@ -478,8 +478,8 @@ test('320px 추가 프로젝트 archive가 네 행과 기존 상세를 제공한
 
   for (const title of [
     'Easy Contract Viewer Server',
-    'HaruCheck',
     '피에트 피트니스 트레이너',
+    'HaruCheck',
     'Weedool (TuringBio)',
   ]) {
     await expectHorizontallyReachable(

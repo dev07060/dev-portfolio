@@ -158,6 +158,10 @@ test('API projects use a backend-specific type and label', () => {
     deviceFrame,
     /project\.type === 'package' \|\| project\.type === 'api'[\s\S]*?백엔드 아키텍처/
   );
+  assert.match(
+    deviceFrame,
+    /project\.type === 'api' && currentScreen\?\.scrollable[\s\S]*?<WebPresentationFrame/
+  );
   const packageFrameFallback = deviceFrame.slice(
     deviceFrame.indexOf('{featuredScreen?.imagePath ? ('),
     deviceFrame.indexOf('// Mobile Frame Component')
@@ -206,7 +210,7 @@ test('additional projects expose the backend-first four-case selection and retai
   assert.ok(selection, 'additionalProjectIds must exist');
   assert.match(
     selection[1],
-    /'easy-contract-viewer-server'[\s\S]*?'haru-check'[\s\S]*?'fiet-fitness-trainer'[\s\S]*?'weedool'/
+    /'easy-contract-viewer-server'[\s\S]*?'fiet-fitness-trainer'[\s\S]*?'haru-check'[\s\S]*?'weedool'/
   );
   assert.doesNotMatch(selection[1], /motgo|fiet-fitness-user/);
   assert.match(projects, /id: ["']motgo["']/);
@@ -502,7 +506,7 @@ test('recruitment data separates project assets from hiring evidence', () => {
   assert.doesNotMatch(data, /MAU 1만|5년 4개월|10–100×/);
 });
 
-test('featured cases distinguish public evidence and integrate supporting packages', () => {
+test('featured cases keep cards concise and integrate supporting packages in detail', () => {
   const types = read('src/types/recruitment.ts');
   const data = read('src/data/recruitment.ts');
   const card = read('src/components/widgets/ProjectCard.tsx');
@@ -518,9 +522,10 @@ test('featured cases distinguish public evidence and integrate supporting packag
   );
   assert.match(card, /evidenceLinks\.length > 0/);
   assert.match(card, /공개 근거가 있는 결과/);
-  assert.match(card, /핵심 결과/);
+  assert.match(card, /직접 구현/);
   assert.doesNotMatch(card, /검증 가능한 결과/);
-  assert.match(card, /관련 공개 패키지/);
+  assert.doesNotMatch(card, /관련 공개 패키지/);
+  assert.doesNotMatch(card, /visibleTechStack/);
   assert.match(modal, /관련 공개 패키지/);
   assert.match(modal, /supportingPackages/);
   assert.doesNotMatch(portfolio, /<OpenSourceBanner/);
@@ -539,7 +544,7 @@ test('verified resume input populates six latest-first experience entries withou
     '한국와콤',
   ];
 
-  assert.match(data, /총 5년 5개월/);
+  assert.match(data, /label: '총 경력'[\s\S]*?value: '5년 5개월'/);
   assert.match(data, /resumeUrl: '\/oh-byeonghee-resume-ko\.pdf'/);
 
   let previous = -1;
@@ -662,7 +667,7 @@ test('case detail separates verification, outcomes, trade-offs, and non-goals', 
     '— 문제와 제약',
     '— 직접 설계·구현한 범위',
     '— 구조와 핵심 기술',
-    '— 테스트·평가·운영 검증',
+    '테스트·평가·운영 검증',
     '— 결과와 영향',
     '— 트레이드오프와 비목표',
   ];
@@ -718,12 +723,47 @@ test('hero owns compact project-backed capabilities without a standalone section
 
   for (const [title, evidence] of [
     ['Flutter 제품화·릴리스', 'Easy Contract Viewer'],
-    ['온디바이스 Retrieval/RAG', 'mobile_rag_engine'],
-    ['Rust FFI·네이티브 검색', 'mobile_rag_engine'],
+    ['온디바이스 검색·Rust FFI', 'mobile_rag_engine'],
     ['검색 백엔드·평가 운영', 'Swifty-law'],
   ]) {
     assert.match(portfolioData, new RegExp(`title: '${title}'[\\s\\S]*?evidence: '${evidence}'`));
   }
+  assert.doesNotMatch(portfolioData, /title: 'Rust FFI·네이티브 검색'/);
+});
+
+test('hero separates career context from linked public evidence', () => {
+  const recruitment = read('src/data/recruitment.ts');
+  const hero = read('src/components/widgets/DeveloperHero.tsx');
+
+  assert.match(recruitment, /label: '총 경력'[\s\S]*?value: '5년 5개월'/);
+  assert.match(hero, /aria-label="주요 이력과 공개 근거"/);
+  assert.match(hero, />\s*주요 이력과 공개 근거\s*</);
+});
+
+test('case verification labels distinguish methods from verified results', () => {
+  const types = read('src/types/recruitment.ts');
+  const data = read('src/data/recruitment.ts');
+  const modal = read('src/components/widgets/ProjectModal.tsx');
+
+  assert.match(types, /verificationLabel\?: string;/);
+  assert.match(
+    data,
+    /projectId: 'easy-contract-viewer'[\s\S]*?verificationLabel: '검증 기준·방법'/
+  );
+  assert.match(
+    modal,
+    /recruitmentCase\.verificationLabel \?\? '테스트·평가·운영 검증'/
+  );
+});
+
+test('Swifty-law is typed as an API while scrollable product screens stay scrollable', () => {
+  const projects = read('src/data/projects.ts');
+  const swiftyStart = projects.indexOf('id: "law-info-engine"');
+  const swiftyEnd = projects.indexOf('\n  },', swiftyStart);
+  const swifty = projects.slice(swiftyStart, swiftyEnd);
+
+  assert.match(swifty, /type: "api"/);
+  assert.match(swifty, /id: "search-ui-full"[\s\S]*?scrollable: true/);
 });
 
 test('additional projects use a compact archive without thumbnail cards', () => {

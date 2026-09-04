@@ -13,8 +13,8 @@ export const featuredProjectIds = [
 
 export const additionalProjectIds = [
   'easy-contract-viewer-server',
-  'haru-check',
   'fiet-fitness-trainer',
+  'haru-check',
   'weedool',
 ] as const;
 
@@ -44,11 +44,7 @@ export const capabilities: Capability[] = [
     evidence: 'Easy Contract Viewer',
   },
   {
-    title: '온디바이스 Retrieval/RAG',
-    evidence: 'mobile_rag_engine',
-  },
-  {
-    title: 'Rust FFI·네이티브 검색',
+    title: '온디바이스 검색·Rust FFI',
     evidence: 'mobile_rag_engine',
   },
   {

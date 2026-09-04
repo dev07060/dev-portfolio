@@ -21,7 +21,11 @@ const DeviceFrame = ({
   currentScreenIndex = 0,
 }: DeviceFrameProps) => {
   if (variant === 'presentation') {
-    if (project.type === 'package' || project.type === 'api') {
+    const currentScreen = project.screens[currentScreenIndex];
+
+    if (project.type === 'api' && currentScreen?.scrollable) {
+      return <WebPresentationFrame project={project} currentScreenIndex={currentScreenIndex} />;
+    } else if (project.type === 'package' || project.type === 'api') {
       return <PackagePresentationFrame project={project} currentScreenIndex={currentScreenIndex} />;
     } else if (project.type === 'mobile') {
       return <MobilePresentationFrame project={project} currentScreenIndex={currentScreenIndex} />;

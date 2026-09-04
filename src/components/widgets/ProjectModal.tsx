@@ -241,7 +241,7 @@ const ProjectInfoDetails = ({
                 id={`verification-${project.id}`}
                 className="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] text-[#756b60]"
               >
-                — 테스트·평가·운영 검증
+                — {recruitmentCase.verificationLabel ?? '테스트·평가·운영 검증'}
               </h3>
               <ul className="space-y-2">
                 {recruitmentCase.verification.map((item) => (

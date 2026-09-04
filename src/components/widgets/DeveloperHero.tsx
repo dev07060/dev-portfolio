@@ -84,9 +84,9 @@ const DeveloperHero = ({ profile, capabilities, copy }: DeveloperHeroProps) => {
         </div>
 
         {profile.proofItems.length > 0 && (
-          <aside aria-label="검증된 공개 근거" className="space-y-3">
+          <aside aria-label="주요 이력과 공개 근거" className="space-y-3">
             <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#0f766e]">
-              검증된 공개 근거
+              주요 이력과 공개 근거
             </p>
             {profile.proofItems.map((proof) => {
               const content = (
