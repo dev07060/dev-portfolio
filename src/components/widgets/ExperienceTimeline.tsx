@@ -37,7 +37,7 @@ const ExperienceTimeline = ({
                   <h3 className="text-lg font-semibold text-[#1f1b16]">{item.company}</h3>
                   <div className="mt-1 flex flex-wrap items-center gap-2">
                     <p className="text-sm font-medium text-[#0f766e]">{item.role}</p>
-                    <span className="rounded-full border border-[#d9e4e1] bg-[#eef7f5] px-2 py-0.5 text-[10px] font-medium text-[#164e4a]">
+                    <span className="rounded-full border border-[#d9e4e1] bg-[#eef7f5] px-2 py-0.5 text-[11px] font-medium text-[#164e4a]">
                       {item.employmentType}
                     </span>
                   </div>
@@ -46,7 +46,7 @@ const ExperienceTimeline = ({
               </div>
               {item.highlights[0] && (
                 <p className="mt-3 border-l-2 border-[#0f766e] pl-3 text-sm leading-relaxed text-[#4a4339] break-keep">
-                  <span className="mr-2 font-mono text-[10px] tracking-[0.12em] text-[#0f766e]">
+                  <span className="mr-2 font-mono text-[11px] tracking-[0.12em] text-[#0f766e]">
                     대표 성과
                   </span>
                   {item.highlights[0]}
@@ -89,7 +89,7 @@ const ExperienceTimeline = ({
                           <a
                             key={projectId}
                             href={relatedProjectHref}
-                            className="inline-flex min-h-11 items-center rounded-full border border-[#d9e4e1] bg-[#eef7f5] px-3 py-2 font-mono text-[10px] text-[#164e4a] transition-colors hover:border-[#0f766e] hover:bg-[#dff1ed] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f766e]"
+                            className="inline-flex min-h-11 items-center rounded-full border border-[#d9e4e1] bg-[#eef7f5] px-3 py-2 font-mono text-[11px] text-[#164e4a] transition-colors hover:border-[#0f766e] hover:bg-[#dff1ed] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f766e]"
                           >
                             {relatedProject.title.replace(/\s+/g, ' ')}
                           </a>

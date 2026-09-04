@@ -829,8 +829,13 @@ for (const viewport of [
     );
     await expectHorizontallyReachable(
       page,
-      page.getByRole('link', { name: '채용 관련 이메일' }).first()
+      page.getByRole('link', { name: '이메일 보내기' }).first()
     );
+
+    const contactActions = page.locator('#contact').getByRole('link');
+    for (let index = 0; index < (await contactActions.count()); index += 1) {
+      await expectHorizontallyReachable(page, contactActions.nth(index));
+    }
 
     const featuredGrid = page.locator('#featured-work .grid').first();
     expect(await gridColumnCount(featuredGrid)).toBe(viewport.columns);

@@ -39,7 +39,7 @@ const DeviceFrame = ({
   return (
     <div className="group relative flex min-h-[360px] w-full items-center justify-center overflow-hidden bg-gradient-to-b from-[#f2ede4] to-[#e8dfd0] p-4 sm:min-h-[460px] sm:p-6 lg:h-full lg:min-h-[500px] lg:p-8">
       {/* Always-visible affordance badge — also works on touch devices */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 bg-[#1f1b16]/75 backdrop-blur-sm px-3 py-1.5 rounded-full text-[10px] uppercase tracking-[0.2em] text-[#faf7f2] flex items-center gap-1.5 pointer-events-none font-mono shadow-sm group-hover:bg-[#1f1b16]/90 transition-colors">
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 bg-[#1f1b16]/75 backdrop-blur-sm px-3 py-1.5 rounded-full text-[11px] uppercase tracking-[0.2em] text-[#faf7f2] flex items-center gap-1.5 pointer-events-none font-mono shadow-sm group-hover:bg-[#1f1b16]/90 transition-colors">
         <Maximize2 size={10} />
         <span>눌러서 크게 보기</span>
       </div>
@@ -104,11 +104,11 @@ const PackageFrame = ({
           ) : (
             <PackageIcon size={14} className="text-[#0f766e]" />
           )}
-          <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-[#0f766e]">
+          <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-[#0f766e]">
             {isApi ? '백엔드 아키텍처' : '패키지 아키텍처'}
           </span>
         </div>
-        <span className="rounded-full border border-[#d9e4e1] px-2 py-0.5 text-[10px] font-mono text-[#4a4339]">
+        <span className="rounded-full border border-[#d9e4e1] px-2 py-0.5 text-[11px] font-mono text-[#4a4339]">
           {isApi ? 'FastAPI' : 'pub.dev'}
         </span>
       </div>
@@ -433,7 +433,7 @@ const PackagePresentationFrame = ({
           />
         ) : (
           <div className="flex h-full flex-col justify-center px-8 py-8 md:px-14">
-            <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.28em] text-[#0f766e]">
+            <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.28em] text-[#0f766e]">
               mobile_rag_engine 기술 사례
             </p>
             <h2 className="font-serif text-3xl md:text-5xl font-light text-[#1f1b16]">

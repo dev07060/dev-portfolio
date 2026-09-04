@@ -19,7 +19,7 @@ const DeveloperHero = ({ profile, capabilities, copy }: DeveloperHeroProps) => {
     <SectionContainer>
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.65fr)] lg:items-end lg:gap-14">
         <div className="animate-fade-in-up">
-          <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] text-[#756b60] sm:text-[11px]">
+          <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-[#756b60] sm:text-xs">
             — {copy.heroEyebrow}
           </p>
           <h1 className="font-serif text-5xl font-light leading-none tracking-tight text-[#1f1b16] sm:text-6xl md:text-7xl">
@@ -42,12 +42,12 @@ const DeveloperHero = ({ profile, capabilities, copy }: DeveloperHeroProps) => {
             {capabilities.map((capability) => (
               <div
                 key={capability.title}
-                className="flex min-w-0 items-baseline gap-2 border-l-2 border-[#d9e4e1] pl-3"
+                className="flex min-w-0 flex-col gap-0.5 border-l-2 border-[#d9e4e1] pl-3"
               >
                 <strong className="text-sm font-semibold text-[#1f1b16] break-keep">
                   {capability.title}
                 </strong>
-                <span className="truncate font-mono text-[10px] text-[#756b60]">
+                <span className="font-mono text-[11px] leading-relaxed text-[#756b60]">
                   {capability.evidence}
                 </span>
               </div>
@@ -85,7 +85,7 @@ const DeveloperHero = ({ profile, capabilities, copy }: DeveloperHeroProps) => {
 
         {profile.proofItems.length > 0 && (
           <aside aria-label="주요 이력과 공개 근거" className="space-y-3">
-            <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#0f766e]">
+            <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-[#0f766e]">
               주요 이력과 공개 근거
             </p>
             {profile.proofItems.map((proof) => {

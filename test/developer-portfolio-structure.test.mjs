@@ -718,6 +718,7 @@ test('hero owns compact project-backed capabilities without a standalone section
   assert.doesNotMatch(portfolio, /<CoreCapabilities/);
   assert.match(hero, /capabilities: Capability\[\]/);
   assert.match(hero, /capabilities\.map/);
+  assert.doesNotMatch(hero, /<span className="truncate font-mono/);
   assert.doesNotMatch(widgets, /CoreCapabilities/);
   assert.equal(standalone, '');
 
@@ -869,4 +870,60 @@ test('unverified profile facts stay hidden and resume actions remain data-driven
 
   assert.doesNotMatch(recruitment, /MAU 1만|5년 4개월|10–100×/);
   assert.match(hero, /profile\.resumeUrl/);
+});
+
+test('information labels remain readable without tiny active text', () => {
+  const readableLabelFiles = [
+    'src/components/widgets/DeveloperHero.tsx',
+    'src/components/widgets/DeviceFrame.tsx',
+    'src/components/widgets/ExperienceTimeline.tsx',
+    'src/components/widgets/ProjectArchive.tsx',
+    'src/components/widgets/ProjectModal.tsx',
+    'src/components/widgets/RecruitmentCTA.tsx',
+    'src/components/widgets/SectionHeader.tsx',
+  ];
+
+  for (const file of readableLabelFiles) {
+    assert.doesNotMatch(read(file), /text-\[(?:8|9|10)px\]/, file);
+  }
+
+  const card = read('src/components/widgets/ProjectCard.tsx');
+  assert.doesNotMatch(card, /text-\[(?:8|9)px\]/);
+  assert.equal(card.match(/text-\[10px\]/g)?.length, 1);
+});
+
+test('contact section leads with a clear email action and stable Korean copy', () => {
+  const cta = read('src/components/widgets/RecruitmentCTA.tsx');
+  const portfolioData = read('src/data/portfolio.ts');
+  const emailAction = cta.indexOf('href={contactHref}');
+  const resumeAction = cta.indexOf('href={profile.resumeUrl}');
+
+  assert.match(cta, /<h2 className="[^"]*break-keep[^"]*"/);
+  assert.ok(emailAction > -1 && emailAction < resumeAction);
+  assert.match(portfolioData, /contactCta: '이메일 보내기'/);
+  assert.match(
+    portfolioData,
+    /contactHeading:[\s\S]*?'모바일 제품과 로컬 검색을 함께 만들 개발자를 찾고 계신가요\?'/
+  );
+  assert.match(
+    portfolioData,
+    /contactDescription:[\s\S]*?'역할과 해결하려는 문제를 알려주세요\. 관련 경험과 구현 사례를 바탕으로 함께 이야기 나누겠습니다\.'/
+  );
+});
+
+test('project cards reserve hover feedback for real controls', () => {
+  const card = read('src/components/widgets/ProjectCard.tsx');
+
+  assert.doesNotMatch(card, /hover:-translate-y-1/);
+  assert.doesNotMatch(card, /group-hover:scale-105/);
+  assert.doesNotMatch(card, /group-hover:bg-/);
+});
+
+test('layout only loads fonts used by the active design', () => {
+  const layout = read('src/app/layout.tsx');
+
+  assert.doesNotMatch(layout, /Fraunces|font-fraunces/);
+  assert.match(layout, /Noto_Sans_KR/);
+  assert.match(layout, /Noto_Serif_KR/);
+  assert.match(layout, /Geist_Mono/);
 });

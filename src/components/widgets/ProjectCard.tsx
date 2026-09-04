@@ -74,12 +74,12 @@ const ProjectCard = ({
   return (
     <article
       id={`project-${project.id}`}
-      className="group flex h-full scroll-mt-6 flex-col overflow-hidden rounded-2xl border border-[#e8dfd0] bg-white transition-all duration-300 hover:-translate-y-1 hover:border-[#0f766e]/45 hover:shadow-[0_20px_50px_-20px_rgba(15,118,110,0.2)]"
+      className="flex h-full scroll-mt-6 flex-col overflow-hidden rounded-2xl border border-[#e8dfd0] bg-white"
     >
       <div
         className={`relative flex h-40 items-center justify-center overflow-hidden bg-gradient-to-br ${project.color} sm:h-44`}
       >
-        <div className="absolute inset-0 bg-[#1f1b16]/15 transition-colors duration-300 group-hover:bg-[#1f1b16]/5" />
+        <div className="absolute inset-0 bg-[#1f1b16]/15" />
         {typeof index === 'number' && (
           <span className="absolute left-4 top-3 font-mono text-[11px] uppercase tracking-[0.25em] text-white/80">
             {String(index + 1).padStart(2, '0')}
@@ -99,7 +99,7 @@ const ProjectCard = ({
 
       <div className="flex flex-1 flex-col p-5 sm:p-6">
         {recruitmentCase && (
-          <p className="mb-2 font-mono text-[10px] leading-relaxed tracking-[0.16em] text-[#0f766e]">
+          <p className="mb-2 font-mono text-[11px] leading-relaxed tracking-[0.16em] text-[#0f766e]">
             {recruitmentCase.statusLabel}
           </p>
         )}
@@ -130,7 +130,7 @@ const ProjectCard = ({
 
         {highlightedResult && (
           <div className="mt-4 border-l-2 border-[#0f766e] pl-3">
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#756b60]">
+            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#756b60]">
               {recruitmentCase?.evidenceLinks.length
                 ? '공개 근거가 있는 결과'
                 : '직접 구현'}
@@ -143,7 +143,7 @@ const ProjectCard = ({
 
         {!recruitmentCase && card.highlight && (
           <div className="mt-4 border-l-2 border-[#b8543a] pl-3">
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#756b60]">
+            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#756b60]">
               담당 범위
             </p>
             <p className="mt-1 line-clamp-3 text-xs leading-relaxed text-[#4a4339] break-keep">
@@ -193,7 +193,7 @@ const ProjectThumbnail = ({
 }) => {
   if (!screen?.imagePath) {
     return (
-      <div className="relative z-[1] transition-transform duration-500 group-hover:scale-105">
+      <div className="relative z-[1]">
         <ProjectIcon iconType={project.iconType} size={44} />
       </div>
     );
@@ -201,9 +201,9 @@ const ProjectThumbnail = ({
 
   if (project.type === 'package' || project.type === 'api') {
     return (
-      <div className="relative z-[1] aspect-[16/10] w-[84%] max-w-[290px] overflow-hidden rounded-xl border border-white/80 bg-white/95 shadow-2xl transition-transform duration-500 group-hover:scale-105">
+      <div className="relative z-[1] aspect-[16/10] w-[84%] max-w-[290px] overflow-hidden rounded-xl border border-white/80 bg-white/95 shadow-2xl">
         <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between border-b border-[#d9e4e1] bg-white/90 px-3 py-1.5">
-          <span className="font-mono text-[8px] uppercase tracking-[0.2em] text-[#0f766e]">
+          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#0f766e]">
             {project.type === 'api' ? '백엔드 아키텍처' : 'RAG 파이프라인'}
           </span>
           <span className="h-1.5 w-1.5 rounded-full bg-[#0f766e]" />
@@ -225,7 +225,7 @@ const ProjectThumbnail = ({
 
   if (project.type === 'web') {
     return (
-      <div className="relative z-[1] aspect-video w-[78%] max-w-[270px] overflow-hidden rounded-lg border-t-[14px] border-white/90 bg-[#faf7f2] shadow-2xl transition-transform duration-500 group-hover:scale-105">
+      <div className="relative z-[1] aspect-video w-[78%] max-w-[270px] overflow-hidden rounded-lg border-t-[14px] border-white/90 bg-[#faf7f2] shadow-2xl">
         <ScreenImage
           variant="fill"
           src={screen.imagePath}
@@ -244,7 +244,7 @@ const ProjectThumbnail = ({
       : 'h-[118px] w-[58px] sm:h-[148px] sm:w-[72px]';
 
   return (
-    <div className={`relative z-[1] overflow-hidden rounded-[1rem] border-[5px] border-white/85 bg-white/85 shadow-2xl transition-transform duration-500 group-hover:scale-105 ${sizeClass}`}>
+    <div className={`relative z-[1] overflow-hidden rounded-[1rem] border-[5px] border-white/85 bg-white/85 shadow-2xl ${sizeClass}`}>
       <div className="relative h-full w-full overflow-hidden rounded-[0.75rem] bg-slate-800">
         <ScreenImage
           variant="fill"

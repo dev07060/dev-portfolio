@@ -49,10 +49,10 @@ const ProjectArchive = ({
             >
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-mono text-[10px] tracking-[0.18em] text-[#0f766e]">
+                  <span className="font-mono text-[11px] tracking-[0.18em] text-[#0f766e]">
                     {String(index + 1).padStart(2, '0')}
                   </span>
-                  <span className="rounded-full border border-[#e8dfd0] bg-[#f2ede4] px-2 py-0.5 text-[10px] text-[#4a4339]">
+                  <span className="rounded-full border border-[#e8dfd0] bg-[#f2ede4] px-2 py-0.5 text-[11px] text-[#4a4339]">
                     {projectTypeLabel(project)}
                   </span>
                 </div>
@@ -60,7 +60,7 @@ const ProjectArchive = ({
                   {title}
                 </h3>
                 <p className="mt-2 text-sm leading-relaxed text-[#4a4339] break-keep">
-                  <span className="mr-2 font-mono text-[10px] tracking-[0.12em] text-[#756b60]">
+                  <span className="mr-2 font-mono text-[11px] tracking-[0.12em] text-[#756b60]">
                     담당 범위
                   </span>
                   {responsibility}

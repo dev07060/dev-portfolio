@@ -23,7 +23,7 @@ export const portfolioCopy: PortfolioCopy = {
   heroEyebrow: '개발자 포트폴리오',
   capabilityAriaLabel: '핵심 개발 역량 요약',
   primaryCta: '대표 기술 사례',
-  contactCta: '채용 관련 이메일',
+  contactCta: '이메일 보내기',
   featuredEyebrow: '대표 흐름',
   featuredHeading: '대표 기술 사례',
   featuredDescription:
@@ -33,9 +33,9 @@ export const portfolioCopy: PortfolioCopy = {
   additionalDescription:
     'Python 검색·요약 백엔드와 AI·BLE 제품화 경험을 보완하는 네 가지 사례입니다.',
   contactHeading:
-    '모바일 제품과 로컬 검색 기술을 함께 다룰 개발자를 찾고 계신가요?',
+    '모바일 제품과 로컬 검색을 함께 만들 개발자를 찾고 계신가요?',
   contactDescription:
-    '역할과 해결하려는 문제를 이메일로 알려주시면 포트폴리오의 관련 구현 근거를 기준으로 답변드리겠습니다.',
+    '역할과 해결하려는 문제를 알려주세요. 관련 경험과 구현 사례를 바탕으로 함께 이야기 나누겠습니다.',
 };
 
 export const capabilities: Capability[] = [

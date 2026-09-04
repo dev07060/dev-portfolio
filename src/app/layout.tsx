@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import {
-  Fraunces,
   Geist_Mono,
   Noto_Sans_KR,
   Noto_Serif_KR,
@@ -18,13 +17,6 @@ const notoSerifKr = Noto_Serif_KR({
   variable: '--font-noto-serif-kr',
   weight: 'variable',
   subsets: ['latin'],
-  display: 'swap',
-});
-
-const fraunces = Fraunces({
-  variable: '--font-fraunces',
-  subsets: ['latin'],
-  axes: ['opsz', 'SOFT'],
   display: 'swap',
 });
 
@@ -48,7 +40,7 @@ export default function RootLayout({
   return (
     <html
       lang="ko"
-      className={`${notoSansKr.variable} ${notoSerifKr.variable} ${fraunces.variable} ${geistMono.variable}`}
+      className={`${notoSansKr.variable} ${notoSerifKr.variable} ${geistMono.variable}`}
     >
       <body className="antialiased">
         <a
