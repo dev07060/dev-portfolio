@@ -917,6 +917,8 @@ test('project cards reserve hover feedback for real controls', () => {
   assert.doesNotMatch(card, /hover:-translate-y-1/);
   assert.doesNotMatch(card, /group-hover:scale-105/);
   assert.doesNotMatch(card, /group-hover:bg-/);
+  assert.match(card, /left-2 top-3 z-\[2\]/);
+  assert.match(card, /bottom-3 right-3 z-\[2\]/);
 });
 
 test('layout only loads fonts used by the active design', () => {

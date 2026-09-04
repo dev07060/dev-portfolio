@@ -81,7 +81,7 @@ const ProjectCard = ({
       >
         <div className="absolute inset-0 bg-[#1f1b16]/15" />
         {typeof index === 'number' && (
-          <span className="absolute left-4 top-3 font-mono text-[11px] uppercase tracking-[0.25em] text-white/80">
+          <span className="absolute left-2 top-3 z-[2] font-mono text-[11px] uppercase tracking-[0.25em] text-white/80">
             {String(index + 1).padStart(2, '0')}
           </span>
         )}
@@ -91,7 +91,7 @@ const ProjectCard = ({
           priority={Boolean(recruitmentCase) && index === 0}
           loading={Boolean(recruitmentCase) && index !== 0 ? 'eager' : undefined}
         />
-        <span className="absolute bottom-3 right-3 flex items-center gap-1 rounded-full bg-white/90 px-2 py-1 font-mono text-[11px] text-[#4a4339] backdrop-blur-md">
+        <span className="absolute bottom-3 right-3 z-[2] flex items-center gap-1 rounded-full bg-white/90 px-2 py-1 font-mono text-[11px] text-[#4a4339] backdrop-blur-md">
           {type.icon}
           {type.label}
         </span>
