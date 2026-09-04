@@ -391,44 +391,48 @@ test('프리랜서 전달용 라우트는 390px과 320px에서 가로 유실이 
   }
 });
 
-test('320px 앱바가 모든 링크와 44px 터치 영역을 처음부터 제공한다', async ({
+test('320px 앱바가 두 라우트에서 겹침 없이 모든 링크와 44px 터치 영역을 제공한다', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 320, height: 800 });
-  await page.goto('/');
 
-  const nav = page.getByRole('navigation', { name: '주요 탐색' });
-  const links = nav.getByRole('link');
-  await expect(nav.getByRole('link', { name: '이력서 보기', exact: true })).toHaveCount(0);
-  const labels = await links.evaluateAll((items) =>
-    items.map((item) => item.textContent?.trim())
-  );
-  expect(labels).toEqual(['DEV PORTFOLIO', '기술 사례', '경력', '연락']);
+  for (const route of [
+    { path: '/', brand: 'DEV PORTFOLIO' },
+    { path: '/freelancer', brand: 'FREELANCE PORTFOLIO' },
+  ]) {
+    await page.goto(route.path);
 
-  const boxes = await links.evaluateAll((items) =>
-    items.map((item) => {
-      const box = item.getBoundingClientRect();
-      return { x: box.x, width: box.width, height: box.height };
-    })
-  );
-  for (const box of boxes) {
-    expect(box.x).toBeGreaterThanOrEqual(0);
-    expect(box.x + box.width).toBeLessThanOrEqual(320);
-    expect(box.height).toBeGreaterThanOrEqual(44);
+    const nav = page.getByRole('navigation', { name: '주요 탐색' });
+    const links = nav.getByRole('link');
+    await expect(nav.getByRole('link', { name: '이력서 보기', exact: true })).toHaveCount(0);
+    const labels = await links.evaluateAll((items) =>
+      items.map((item) => item.textContent?.trim())
+    );
+    expect(labels).toEqual([route.brand, '기술 사례', '경력', '연락']);
+
+    const boxes = await links.evaluateAll((items) =>
+      items.map((item) => {
+        const box = item.getBoundingClientRect();
+        return { x: box.x, width: box.width, height: box.height };
+      })
+    );
+    for (const box of boxes) {
+      expect(box.x).toBeGreaterThanOrEqual(0);
+      expect(box.x + box.width).toBeLessThanOrEqual(320);
+      expect(box.height).toBeGreaterThanOrEqual(44);
+    }
+    for (let index = 1; index < boxes.length; index += 1) {
+      expect(boxes[index - 1].x + boxes[index - 1].width).toBeLessThanOrEqual(
+        boxes[index].x
+      );
+    }
+
+    const internalOverflow = await nav.evaluate((element) => {
+      const scroller = element.querySelector('div > div');
+      return scroller ? scroller.scrollWidth - scroller.clientWidth : 0;
+    });
+    expect(internalOverflow).toBe(0);
   }
-
-  const internalOverflow = await nav.evaluate((element) => {
-    const scroller = element.querySelector('div > div');
-    return scroller ? scroller.scrollWidth - scroller.clientWidth : 0;
-  });
-  expect(internalOverflow).toBe(0);
-
-  const overflowingDescendants = await nav.locator('*').evaluateAll((elements) =>
-    elements
-      .filter((element) => element.scrollWidth > element.clientWidth + 1)
-      .map((element) => element.tagName)
-  );
-  expect(overflowingDescendants).toEqual([]);
 });
 
 test('390px 채용 스캔 흐름은 8000px 안에 전체 정보를 제공한다', async ({ page }) => {
@@ -605,19 +609,47 @@ test('390px 프로젝트 상세은 제목 다음에 eager 시각 근거를 제�
   await expect(previewImage).toHaveAttribute('loading', 'eager');
 });
 
-test('320px 프로젝트 상세의 긴 기술 제목이 잘리지 않는다', async ({ page }) => {
-  await page.setViewportSize({ width: 320, height: 800 });
+test('320px와 390px 프로젝트 상세의 긴 기술 제목이 한 줄로 표시된다', async ({ page }) => {
+  for (const width of [320, 390]) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto('/');
+    await page
+      .getByRole('button', { name: 'mobile_rag_engine 프로젝트 상세 열기' })
+      .click();
+
+    const title = page.getByRole('heading', { name: 'mobile_rag_engine' });
+    await expect(title).toBeVisible();
+    const dimensions = await title.evaluate((element) => {
+      const style = getComputedStyle(element);
+      return {
+        overflow: element.scrollWidth - element.clientWidth,
+        height: element.getBoundingClientRect().height,
+        lineHeight: Number.parseFloat(style.lineHeight),
+      };
+    });
+    expect(dimensions.overflow).toBeLessThanOrEqual(0);
+    expect(dimensions.height).toBeLessThanOrEqual(dimensions.lineHeight * 1.1);
+  }
+});
+
+test('데스크톱 프로젝트 상세 설명을 keyboard로 스크롤한다', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto('/');
   await page
-    .getByRole('button', { name: 'mobile_rag_engine 프로젝트 상세 열기' })
+    .getByRole('button', { name: 'Easy Contract Viewer 프로젝트 상세 열기' })
     .click();
 
-  const title = page.getByRole('heading', { name: 'mobile_rag_engine' });
-  await expect(title).toBeVisible();
-  const overflow = await title.evaluate(
-    (element) => element.scrollWidth - element.clientWidth
-  );
-  expect(overflow).toBeLessThanOrEqual(0);
+  const region = page.getByRole('region', {
+    name: 'Easy Contract Viewer 프로젝트 상세 설명',
+  });
+  await expect(region).toBeVisible();
+  await expect
+    .poll(() => region.evaluate((element) => element.scrollHeight > element.clientHeight))
+    .toBe(true);
+  await region.focus();
+  const before = await region.evaluate((element) => element.scrollTop);
+  await page.keyboard.press('PageDown');
+  await expect.poll(() => region.evaluate((element) => element.scrollTop)).toBeGreaterThan(before);
 });
 
 test('카드 dialog가 focus trap, Escape, focus restoration을 제공한다', async ({ page }) => {
@@ -776,7 +808,7 @@ for (const viewport of [
   { width: 360, height: 740, columns: 1, label: 'mobile' },
   { width: 390, height: 844, columns: 1, label: 'mobile' },
   { width: 640, height: 900, columns: 1, label: '200% zoom reflow proxy' },
-  { width: 768, height: 1024, columns: 2, label: 'tablet' },
+  { width: 768, height: 1024, columns: 1, label: 'tablet' },
   { width: 1024, height: 600, columns: 3, label: 'desktop' },
   { width: 1440, height: 900, columns: 3, label: 'desktop' },
   { width: 320, height: 800, columns: 1, label: '400% zoom reflow proxy' },

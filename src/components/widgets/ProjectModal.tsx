@@ -124,7 +124,7 @@ const ProjectInfoHeader = ({
           </p>
           <h2
             id={titleId}
-            className="break-words pr-10 font-serif text-xl font-light leading-tight text-[#1f1b16] min-[360px]:text-3xl md:text-4xl"
+            className="break-words pr-10 font-serif text-xl font-light leading-tight text-[#1f1b16] min-[360px]:text-2xl sm:text-3xl md:text-4xl"
           >
             {project.title}
           </h2>
@@ -170,7 +170,12 @@ const ProjectInfoDetails = ({
   recruitmentCase?: RecruitmentCase;
   descriptionId: string;
 }) => (
-  <div className="accessible-scrollbar bg-white p-6 sm:p-8 lg:col-start-1 lg:row-start-2 lg:min-h-0 lg:overflow-y-auto lg:border-r lg:border-[#e8dfd0]">
+  <div
+    role="region"
+    aria-label={`${project.title} 프로젝트 상세 설명`}
+    tabIndex={0}
+    className="accessible-scrollbar bg-white p-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#0f766e] sm:p-8 lg:col-start-1 lg:row-start-2 lg:min-h-0 lg:overflow-y-auto lg:border-r lg:border-[#e8dfd0]"
+  >
     <div className="space-y-7">
           <section aria-labelledby={`problem-${project.id}`}>
             <h3

@@ -1,6 +1,6 @@
 'use client';
 
-import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ExternalLink, X } from 'lucide-react';
 import { useRef } from 'react';
 import { Project } from '@/types/project';
 import DeviceFrame from './DeviceFrame';
@@ -167,6 +167,11 @@ const CaptionArea = ({
   titleId: string;
   descriptionId: string;
 }) => {
+  const currentScreen = project.screens[currentScreenIndex];
+  const canOpenOriginal =
+    (project.type === 'package' || project.type === 'api') &&
+    Boolean(currentScreen.imagePath);
+
   return (
     <div className="w-full shrink-0 bg-[#1f1b16]/90 backdrop-blur-md p-3 md:p-8 border-t border-white/10 text-center">
       <div className="max-w-4xl mx-auto">
@@ -174,14 +179,26 @@ const CaptionArea = ({
           id={titleId}
           className="font-serif text-lg md:text-3xl font-light text-[#faf7f2] mb-1 md:mb-2"
         >
-          {project.screens[currentScreenIndex].title}
+          {currentScreen.title}
         </h2>
         <p
           id={descriptionId}
           className="text-[#cfc4b2] text-xs md:text-base leading-relaxed"
         >
-          {project.screens[currentScreenIndex].desc}
+          {currentScreen.desc}
         </p>
+        {canOpenOriginal && (
+          <a
+            href={currentScreen.imagePath}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${currentScreen.title} 원본 이미지 새 창에서 열기`}
+            className="mt-3 inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full border border-white/25 px-4 py-2 text-xs font-semibold text-[#faf7f2] transition-colors hover:border-white/50 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#faf7f2]"
+          >
+            원본 이미지 열기
+            <ExternalLink size={13} aria-hidden="true" />
+          </a>
+        )}
       </div>
     </div>
   );

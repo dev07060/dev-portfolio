@@ -29,3 +29,20 @@ test('icon-only dialog controls meet the minimum target token', () => {
   assert.match(modal, /min-h-11 min-w-11/);
   assert.match(presentation, /min-h-11 min-w-11/);
 });
+
+test('project detail exposes a named keyboard-scroll region', () => {
+  const modal = read('src/components/widgets/ProjectModal.tsx');
+
+  assert.match(modal, /role="region"/);
+  assert.match(modal, /aria-label=\{`\$\{project\.title\} 프로젝트 상세 설명`\}/);
+  assert.match(modal, /tabIndex=\{0\}/);
+  assert.match(modal, /focus-visible:ring-inset/);
+});
+
+test('architecture presentations expose the original image with a full-size target', () => {
+  const presentation = read('src/components/widgets/PresentationOverlay.tsx');
+
+  assert.match(presentation, /project\.type === 'package' \|\| project\.type === 'api'/);
+  assert.match(presentation, /aria-label=\{`\$\{currentScreen\.title\} 원본 이미지 새 창에서 열기`\}/);
+  assert.match(presentation, /min-h-11/);
+});

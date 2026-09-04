@@ -20,11 +20,11 @@ const RecruitmentNav = ({
     <SectionContainer className="flex min-h-16 items-center justify-between gap-3 py-2">
       <a
         href="#about"
-        className="inline-flex min-h-11 items-center shrink-0 text-xs font-semibold tracking-[0.18em] text-[#1f1b16] focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f766e] sm:text-sm"
+        className="inline-flex min-h-11 shrink-0 items-center text-xs font-semibold tracking-[0.18em] text-[#1f1b16] focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f766e] max-[359px]:w-[6.25rem] max-[359px]:whitespace-normal max-[359px]:leading-tight max-[359px]:tracking-[0.12em] sm:text-sm"
       >
         {brandLabel}
       </a>
-      <div className="flex min-w-0 items-center justify-end gap-3 sm:gap-5">
+      <div className="flex min-w-0 items-center justify-end gap-2 sm:gap-5">
         {navigation.map((item) => (
           <a
             key={item.href}

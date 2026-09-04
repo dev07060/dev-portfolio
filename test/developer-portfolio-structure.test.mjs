@@ -98,6 +98,21 @@ test('featured cases tell engine product backend story', () => {
   }
 });
 
+test('featured cases avoid an orphaned tablet card before the desktop breakpoint', () => {
+  const featured = read('src/components/widgets/FeaturedWork.tsx');
+
+  assert.match(featured, /grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-7/);
+  assert.doesNotMatch(featured, /md:grid-cols-2/);
+});
+
+test('narrow navigation preserves the complete brand without overlapping links', () => {
+  const navigation = read('src/components/widgets/RecruitmentNav.tsx');
+
+  assert.match(navigation, /max-\[359px\]:w-\[6\.25rem\]/);
+  assert.match(navigation, /max-\[359px\]:whitespace-normal/);
+  assert.match(navigation, /gap-2 sm:gap-5/);
+});
+
 test('Easy Contract Viewer Server copy is bounded by a committed private-source snapshot', () => {
   const evidence = read(
     'docs/reports/2026-07-12-easy-contract-viewer-server-evidence.md'

@@ -23,7 +23,7 @@ const FeaturedWork = ({ projects, cases, copy, onProjectClick }: FeaturedWorkPro
         description={copy.featuredDescription}
         count={projects.length}
       />
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-7 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-7">
         {projects.map((project, index) => (
           <ProjectCard
             key={project.id}
