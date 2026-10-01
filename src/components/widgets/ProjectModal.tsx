@@ -55,7 +55,7 @@ const ProjectModal = ({
         onClick={onClose}
       />
 
-      <div className="accessible-scrollbar relative grid max-h-[calc(100dvh-1rem)] w-full max-w-6xl grid-cols-1 overflow-y-auto rounded-2xl border border-line bg-ground shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)] md:rounded-3xl lg:h-[720px] lg:max-h-[calc(100vh-2rem)] lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:grid-rows-[auto_minmax(0,1fr)] lg:overflow-hidden">
+      <div className="accessible-scrollbar relative grid max-h-[calc(100dvh-1rem)] w-full max-w-6xl grid-cols-1 overflow-y-auto rounded-2xl border border-line bg-ground shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)] md:rounded-3xl lg:h-[720px] lg:max-h-[calc(100vh-2rem)] lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:grid-rows-[minmax(0,1fr)] lg:overflow-hidden">
         <button
           ref={closeButtonRef}
           type="button"
@@ -66,25 +66,36 @@ const ProjectModal = ({
           <X size={20} aria-hidden="true" />
         </button>
 
-        <ProjectInfoHeader
-          project={project}
-          recruitmentCase={recruitmentCase}
-          titleId={titleId}
-        />
+        {/* lg: header + details scroll together as one column, so a tall header never clips.
+            Below lg the wrapper dissolves (display: contents) and the card itself scrolls,
+            keeping the header → screens → details order. */}
+        <div
+          role="region"
+          aria-label={`${project.title} 프로젝트 상세 설명`}
+          tabIndex={0}
+          data-project-info-scroll
+          className="accessible-scrollbar focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-marker max-lg:contents lg:col-start-1 lg:row-start-1 lg:min-h-0 lg:overflow-y-auto lg:border-r lg:border-line lg:bg-surface"
+        >
+          <ProjectInfoHeader
+            project={project}
+            recruitmentCase={recruitmentCase}
+            titleId={titleId}
+          />
 
-        <div className="lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:min-h-0">
+          <ProjectInfoDetails
+            project={project}
+            recruitmentCase={recruitmentCase}
+            descriptionId={descriptionId}
+          />
+        </div>
+
+        <div className="max-lg:order-2 lg:col-start-2 lg:row-start-1 lg:min-h-0">
           <DeviceFrame
             project={project}
             currentScreenIndex={currentScreenIndex}
             onEnterPresentation={onEnterPresentation}
           />
         </div>
-
-        <ProjectInfoDetails
-          project={project}
-          recruitmentCase={recruitmentCase}
-          descriptionId={descriptionId}
-        />
       </div>
     </div>
   );
@@ -118,7 +129,7 @@ const ProjectInfoHeader = ({
     : [];
 
   return (
-    <header className="border-b border-line bg-surface p-6 sm:p-8 lg:col-start-1 lg:row-start-1 lg:border-r">
+    <header className="border-b border-line bg-surface p-6 max-lg:order-1 sm:p-8">
           <p className="mb-3 text-[13px] font-semibold text-marker">
             — {recruitmentCase?.statusLabel ?? getTypeLabel(project)}
           </p>
@@ -171,12 +182,7 @@ const ProjectInfoDetails = ({
   recruitmentCase?: RecruitmentCase;
   descriptionId: string;
 }) => (
-  <div
-    role="region"
-    aria-label={`${project.title} 프로젝트 상세 설명`}
-    tabIndex={0}
-    className="accessible-scrollbar bg-surface p-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-marker sm:p-8 lg:col-start-1 lg:row-start-2 lg:min-h-0 lg:overflow-y-auto lg:border-r lg:border-line"
-  >
+  <div data-project-info-details className="bg-surface p-6 max-lg:order-3 sm:p-8">
     <div className="space-y-7">
           <section aria-labelledby={`problem-${project.id}`}>
             <h3

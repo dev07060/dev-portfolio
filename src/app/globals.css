@@ -115,7 +115,7 @@ body[data-portfolio-overlay="true"] .skip-link {
   .search-result { animation: result-in 300ms ease both; }
   .search-result-link {
     display: flex;
-    width: 100%;
+    width: calc(100% + 24px);
     gap: 16px;
     margin-inline: -12px;
     padding: 14px 12px;
@@ -162,6 +162,16 @@ body[data-portfolio-overlay="true"] .skip-link {
     transition: width 260ms cubic-bezier(0.2, 0.7, 0.2, 1);
   }
   .engine-tab.is-selected .engine-tab-bar { width: 28px; }
+  @media (width < 48rem) {
+    .engine-tab { min-height: 44px; font-size: 15px; }
+    .engine-tab-bar { display: none; }
+    .engine-tab.is-selected .engine-tab-label {
+      text-decoration: underline;
+      text-decoration-color: var(--color-marker);
+      text-decoration-thickness: 2px;
+      text-underline-offset: 8px;
+    }
+  }
   .engine-panel {
     transition: opacity 320ms ease, transform 320ms cubic-bezier(0.2, 0.7, 0.2, 1);
   }
@@ -186,35 +196,29 @@ body[data-portfolio-overlay="true"] .skip-link {
   100% { background-size: 100% 100%; color: var(--color-ground); }
 }
 
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
-.animate-fade-in-up { animation: fadeInUp 0.8s ease-out forwards; }
 .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
 
 .accessible-scrollbar {
   scrollbar-gutter: stable;
   scrollbar-width: thin;
-  scrollbar-color: #9d9d96 #34353a;
+  scrollbar-color: var(--color-faint) var(--color-surface);
 }
 .accessible-scrollbar::-webkit-scrollbar { width: 10px; height: 10px; }
-.accessible-scrollbar::-webkit-scrollbar-track { background: #34353a; }
+.accessible-scrollbar::-webkit-scrollbar-track { background: var(--color-surface); }
 .accessible-scrollbar::-webkit-scrollbar-thumb {
-  border: 2px solid #34353a;
+  border: 2px solid var(--color-surface);
   border-radius: 999px;
-  background: #9d9d96;
+  background: var(--color-faint);
 }
 
 ::selection {
-  background-color: #f3e04a;
-  color: #2a2b2f;
+  background-color: var(--color-marker);
+  color: var(--color-ground);
 }
 
 @media (prefers-reduced-motion: reduce) {

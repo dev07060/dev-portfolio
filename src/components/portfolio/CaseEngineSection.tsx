@@ -80,8 +80,8 @@ export default function CaseEngineSection({
 
   return (
     <section id={anchorId} aria-labelledby={`${anchorId}-title`} className="screen bg-slate">
-      <div className="screen-inner flex flex-wrap items-center gap-16">
-        <div className="flex min-w-0 flex-[1_1_440px] flex-col">
+      <div className="screen-inner flex flex-wrap items-center gap-16 max-md:flex-col max-md:flex-nowrap max-md:items-stretch max-md:gap-0">
+        <div className="flex min-w-0 flex-[1_1_440px] flex-col max-md:contents">
           <CaseLabel n={caseNumber} />
           <h2 id={`${anchorId}-title`} className="t-h2 m-0 max-w-[14ch]">
             {recruitmentCase.sectionTitle ?? project.title}
@@ -90,7 +90,7 @@ export default function CaseEngineSection({
             <p className="t-lead mb-0 mt-6 max-w-[560px]">{recruitmentCase.sectionLead}</p>
           )}
           {metrics.length > 0 && (
-            <dl className="m-0 mt-12 flex flex-wrap gap-x-12 gap-y-7">
+            <dl className="m-0 mt-12 flex flex-wrap gap-x-12 gap-y-7 max-md:mt-8 max-md:grid max-md:grid-cols-2 max-md:gap-x-4 max-md:gap-y-6">
               {metrics.map((metric) => (
                 <div key={metric.label} className="flex flex-col-reverse gap-1.5">
                   <dt className="text-[13px] text-sub">{metric.label}</dt>
@@ -104,7 +104,7 @@ export default function CaseEngineSection({
               role="tablist"
               aria-label={`${project.title} 소개`}
               onKeyDown={onTabKeyDown}
-              className="mt-10 flex flex-col gap-0.5 max-md:flex-row max-md:flex-wrap max-md:gap-x-5"
+              className="mt-10 flex flex-col gap-0.5 max-md:mt-9 max-md:flex-row max-md:flex-wrap max-md:gap-x-5 max-md:gap-y-0"
             >
               {topics.map((item, index) => {
                 const isSelected = index === selected;
@@ -124,13 +124,13 @@ export default function CaseEngineSection({
                     className={`engine-tab${isSelected ? ' is-selected' : ''}`}
                   >
                     <span aria-hidden="true" className="engine-tab-bar" />
-                    <span>{item.label}</span>
+                    <span className="engine-tab-label">{item.label}</span>
                   </button>
                 );
               })}
             </div>
           )}
-          <div className="mt-7 flex flex-wrap gap-x-7 gap-y-1 text-[15px] font-medium">
+          <div className="mt-7 flex flex-wrap gap-x-7 gap-y-1 text-[15px] font-medium max-md:order-2">
             {links.map((link) => (
               <a key={`${link.label}-${link.url}`} href={link.url} target="_blank" rel="noopener noreferrer" className="link-marker inline-flex min-h-11 items-center">
                 {link.label} ↗
@@ -140,7 +140,7 @@ export default function CaseEngineSection({
           </div>
         </div>
 
-        <div className="flex min-h-[420px] min-w-0 flex-[1_1_480px] items-center">
+        <div className="flex min-h-[420px] min-w-0 flex-[1_1_480px] items-center max-md:order-1 max-md:mt-6 max-md:min-h-0 max-md:flex-none">
           {topic && (
             <div
               id={`${anchorId}-panel`}

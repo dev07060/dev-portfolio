@@ -39,7 +39,7 @@ const DeviceFrame = ({
   return (
     <div className="group relative flex min-h-[360px] w-full items-center justify-center overflow-hidden bg-gradient-to-b from-surface to-surface-2 p-4 sm:min-h-[460px] sm:p-6 lg:h-full lg:min-h-[500px] lg:p-8">
       {/* Always-visible affordance badge — also works on touch devices */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 bg-black/65 backdrop-blur-sm px-3 py-1.5 rounded-full text-[11px] uppercase tracking-[0.2em] text-ink flex items-center gap-1.5 pointer-events-none font-mono shadow-sm group-hover:bg-black/80 transition-colors">
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 bg-black/65 backdrop-blur-sm px-3 py-1.5 rounded-full text-[13px] font-semibold text-ink flex items-center gap-1.5 pointer-events-none shadow-sm group-hover:bg-black/80 transition-colors">
         <Maximize2 size={10} />
         <span>눌러서 크게 보기</span>
       </div>
@@ -104,7 +104,7 @@ const PackageFrame = ({
           ) : (
             <PackageIcon size={14} className="text-marker" />
           )}
-          <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-marker">
+          <span className="text-[13px] font-semibold text-marker">
             {isApi ? '백엔드 아키텍처' : '패키지 아키텍처'}
           </span>
         </div>
@@ -433,7 +433,7 @@ const PackagePresentationFrame = ({
           />
         ) : (
           <div className="flex h-full flex-col justify-center px-8 py-8 md:px-14">
-            <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.28em] text-marker">
+            <p className="mb-4 text-[13px] font-semibold text-marker">
               mobile_rag_engine 기술 사례
             </p>
             <h2 className="text-3xl md:text-5xl font-bold text-ink">
