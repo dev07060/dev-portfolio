@@ -544,9 +544,10 @@ test('public resume PDF is extractable and contains only approved public profile
   }
 
   assert.doesNotMatch(text, /\b01[016789][-.\s]?\d{3,4}[-.\s]?\d{4}\b/);
+  assert.doesNotMatch(text, /\+82[-.\s]?1[016789]/);
   assert.doesNotMatch(
     text,
-    /(?:휴대폰|주소|거주지|생년월일|학력|희망\s*(?:연봉|급여|근무지)|병역|보훈|장애)\s*[:：]?/
+    /(?:휴대폰|핸드폰|전화\s*번호|연락처\s*[:：]|주소|거주지|생년월일|학력|희망\s*(?:연봉|급여|근무지)|병역|보훈|장애)\s*[:：]?/
   );
   assert.doesNotMatch(text, /(?:연봉|급여)\s*[:：]?\s*[\d,]+\s*만?원/);
   assert.doesNotMatch(text, /Motgo|맛집 투표/);
@@ -813,6 +814,10 @@ test('modal order and screenshot regions follow reading and keyboard order', () 
   const details = modal.indexOf('<ProjectInfoDetails');
   assert.ok(header > -1 && header < visual, 'modal header must precede visual evidence');
   assert.ok(visual < details, 'visual evidence must precede detailed copy on mobile');
+  const headerSource = modal.slice(modal.indexOf('const ProjectInfoHeader'), modal.indexOf('const ProjectInfoDetails'));
+  const detailsSource = modal.slice(modal.indexOf('const ProjectInfoDetails'), modal.indexOf('const ProjectCardSummary'));
+  assert.match(headerSource, /<ProjectCardSummary project=\{project\} \/>/, 'card summary must sit in the header, before the visual on mobile');
+  assert.doesNotMatch(detailsSource, /<ProjectCardSummary/);
   assert.match(device, /tabIndex=\{isScrollable \? 0 : undefined\}/);
   assert.match(device, /role=\{isScrollable \? 'region' : undefined\}/);
   assert.match(device, /스크린샷 스크롤 영역/);

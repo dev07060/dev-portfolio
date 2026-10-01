@@ -163,6 +163,32 @@ test('사례 자세히 모달 상단에 카드 요약(설명·담당 범위·근
   await expect(summary).toContainText('Flutter · pdfrx · mobile_rag_engine · PDF highlights · QA');
 });
 
+test('프로젝트 사례 #5로 연 모달도 카드 요약(담당 범위·근거)을 보여 준다', async ({ page }) => {
+  await page.goto('/');
+  const button = page
+    .getByRole('button', { name: /^프로젝트 사례 #5, 피에트 피트니스 트레이너.* 화면 보기$/ })
+    .first();
+  await button.scrollIntoViewIfNeeded();
+  await button.click();
+  const dialog = page.getByRole('dialog', { name: /피에트 피트니스 트레이너/ });
+  const summary = dialog.locator('[data-project-card-summary]');
+  await expect(summary).toBeVisible();
+  await expect(summary.getByText('담당 범위.', { exact: true })).toBeVisible();
+  await expect(summary).toContainText('BLE 실시간 센서 연동, 트레이너용 분석 리포트');
+  await expect(summary.getByText('근거.', { exact: true })).toBeVisible();
+  await expect(summary).toContainText('BLE · 분석 리포트 · CI/CD');
+});
+
+test('외부 링크(이력서·GitHub·근거)는 새 탭으로 열린다', async ({ page }) => {
+  await page.goto('/');
+  const external = page.locator('main a[href^="http"], main a[href$=".pdf"]');
+  expect(await external.count()).toBeGreaterThan(0);
+  for (const link of await external.all()) {
+    await expect(link).toHaveAttribute('target', '_blank');
+    await expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+  }
+});
+
 test('홈과 열린 모달에 critical/serious axe 위반이 없다', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');

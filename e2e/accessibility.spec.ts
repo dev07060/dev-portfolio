@@ -75,6 +75,8 @@ test('한국어 단일 홈과 skip link, 대표 사례 순서를 제공한다', 
   await expect(resumeLink).toHaveCount(3);
   for (const link of await resumeLink.all()) {
     await expect(link).toHaveAttribute('href', '/oh-byeonghee-resume-ko.pdf');
+    await expect(link).toHaveAttribute('target', '_blank');
+    await expect(link).toHaveAttribute('rel', /noopener/);
   }
 
   await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
@@ -503,12 +505,8 @@ test('피에트 사용자 앱은 데이터에 남고 공개 프로젝트 링크�
   const results = page.getByRole('list', { name: '검색 결과' });
   await expect(results.getByRole('listitem')).not.toHaveCount(0);
   await expect(results).toContainText('피에트 피트니스 트레이너');
-  const resultTitles = await results
-    .getByRole('listitem')
-    .evaluateAll((items) =>
-      items.map((item) => item.querySelector('.search-result-link > span:nth-child(2) > span')?.textContent?.trim())
-    );
-  expect(resultTitles).not.toContain('피에트 피트니스');
+  // Any '피에트 피트니스' not followed by ' 트레이너' would be the hidden user app.
+  await expect(results).not.toContainText(userAppName);
 });
 
 test('390px 프로젝트 상세은 제목 다음에 eager 시각 근거를 제공한다', async ({
@@ -689,7 +687,14 @@ test('home, modal, presentation에 critical/serious axe 위반이 없다', async
   await page.goto('/');
   // The hero search autoplay re-renders results with a 300ms fade-in; stop it so
   // axe measures settled colors instead of a mid-animation frame.
-  await page.getByRole('button', { name: '자동 입력 멈추기' }).click();
+  // Autoplay frames are intentionally not scanned; only the settled state is.
+  const stopDemo = page.getByRole('button', { name: '자동 입력 멈추기' });
+  await expect(stopDemo).toBeVisible();
+  await stopDemo.click();
+  await expect(stopDemo).toHaveCount(0);
+  const results = page.getByRole('list', { name: '검색 결과' }).getByRole('listitem');
+  await expect(results.first()).toHaveCSS('opacity', '1');
+  await expect(results.last()).toHaveCSS('opacity', '1');
   expect(await seriousViolations(page)).toEqual([]);
 
   await caseDetailButton(page, 'mobile_rag_engine').click();
