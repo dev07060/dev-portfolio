@@ -92,7 +92,7 @@ export default function CaseEngineSection({
           {metrics.length > 0 && (
             <dl className="m-0 mt-12 flex flex-wrap gap-x-12 gap-y-7 max-md:mt-8 max-md:grid max-md:grid-cols-2 max-md:gap-x-4 max-md:gap-y-6">
               {metrics.map((metric) => (
-                <div key={metric.label} className="flex flex-col-reverse gap-1.5">
+                <div key={metric.label} className="flex flex-col-reverse justify-end gap-1.5">
                   <dt className="text-[13px] text-sub">{metric.label}</dt>
                   <dd className="t-number m-0 text-marker">{metric.value}</dd>
                 </div>
