@@ -252,6 +252,9 @@ for (const [anchor, title] of [
 
     await scroller.evaluate((node) => node.scrollTo({ top: node.scrollHeight }));
     await expect(lastDetail).toBeInViewport();
+    // The screens column and the close button stay in place while the info column scrolls.
+    await expect(dialog.getByRole('button', { name: `${title} 프로젝트 상세 닫기` })).toBeInViewport();
+    expect(await header.evaluate((node) => node.getBoundingClientRect().bottom)).toBeLessThan(geometry.boxTop);
     const lastBottom = await lastDetail.evaluate((node) => node.getBoundingClientRect().bottom);
     expect(lastBottom).toBeLessThanOrEqual(geometry.boxBottom + 1);
   });
