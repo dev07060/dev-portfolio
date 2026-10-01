@@ -9,9 +9,10 @@ import {
   type TextSegment,
 } from '@/lib/portfolioSearch';
 import { usePrefersReducedMotion } from '@/lib/usePrefersReducedMotion';
+import { heroSearchDemoWords, heroSearchSuggestions } from '@/data/searchDocuments';
 
-const DEMO_WORDS = ['Flutter', 'RAG', '모바일 개발', '온디바이스'] as const;
-const SUGGESTIONS = ['Flutter', 'RAG', '모바일 개발', '온디바이스', 'BLE'] as const;
+const DEMO_WORDS = heroSearchDemoWords;
+const SUGGESTIONS = heroSearchSuggestions;
 const TIMING = { start: 700, type: 130, hold: 2400, erase: 45, gap: 380 } as const;
 const REDUCED_MOTION_QUERY = DEMO_WORDS[0];
 

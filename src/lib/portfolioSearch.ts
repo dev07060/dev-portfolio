@@ -7,7 +7,10 @@ export interface SearchDocument {
   title: string;
   monoTitle?: boolean;
   snippet: string;
+  /** Shown as "관련 키워드" hints when they match the query. */
   keywords: string[];
+  /** Scored like keywords but never displayed (e.g. ranking-algorithm names). */
+  hiddenKeywords?: string[];
   meta: string;
   target: SearchTarget;
 }
@@ -25,8 +28,19 @@ export interface SearchResult {
   keywordMatches: string[];
 }
 
-export const RESULT_LIMIT = 3;
+const RESULT_LIMIT = 3;
 const KEYWORD_MATCH_LIMIT = 3;
+const MIN_HINT_TOKEN_LENGTH = 2;
+
+function keywordWords(keyword: string): string[] {
+  return keyword.toLowerCase().split(/[\s·/_-]+/).filter(Boolean);
+}
+
+/** A keyword is hinted only when one of its words starts with a query token of 2+ characters. */
+function matchesKeywordHint(keyword: string, hintTokens: string[]): boolean {
+  const words = keywordWords(keyword);
+  return hintTokens.some((token) => words.some((word) => word.startsWith(token)));
+}
 
 export function tokenize(query: string): string[] {
   return query
@@ -65,13 +79,14 @@ export function segmentText(text: string, tokens: string[]): TextSegment[] {
 
 function toResult(document: SearchDocument, score: number, tokens: string[]): SearchResult {
   const visible = `${document.title} ${document.snippet}`.toLowerCase();
+  const hintTokens = tokens
+    .map((token) => token.toLowerCase())
+    .filter((token) => token.length >= MIN_HINT_TOKEN_LENGTH);
   const keywordMatches =
-    tokens.length === 0
+    hintTokens.length === 0
       ? []
       : document.keywords
-          .filter((keyword) =>
-            tokens.some((token) => keyword.toLowerCase().includes(token.toLowerCase()))
-          )
+          .filter((keyword) => matchesKeywordHint(keyword, hintTokens))
           .filter((keyword) => !visible.includes(keyword.toLowerCase()))
           .slice(0, KEYWORD_MATCH_LIMIT);
 
@@ -101,7 +116,7 @@ export function searchDocuments(
       score:
         countMatches(document.title, tokens) * 3 +
         countMatches(document.snippet, tokens) * 2 +
-        countMatches(document.keywords.join(' '), tokens),
+        countMatches([...document.keywords, ...(document.hiddenKeywords ?? [])].join(' '), tokens),
     }))
     .filter((entry) => entry.score > 0)
     .sort((a, b) => b.score - a.score || a.index - b.index)

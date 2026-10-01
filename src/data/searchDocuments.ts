@@ -1,6 +1,16 @@
 import type { SearchDocument } from '@/lib/portfolioSearch';
 
-export const searchDocuments: readonly SearchDocument[] = [
+/** Words the hero search types by itself (autoplay demo). */
+export const heroSearchDemoWords = ['Flutter', 'RAG', '모바일 개발', '온디바이스'] as const;
+
+/** Suggestion buttons under the hero search field. */
+export const heroSearchSuggestions = ['Flutter', 'RAG', '모바일 개발', '온디바이스', 'BLE'] as const;
+
+/**
+ * `keywords` may be shown as hints ("관련 키워드"). Ranking-algorithm names live in
+ * `hiddenKeywords`: they still count for scoring but are never displayed.
+ */
+export const heroSearchDocuments: readonly SearchDocument[] = [
   {
     id: 'easy-contract-viewer',
     title: 'Easy Contract Viewer',
@@ -38,7 +48,8 @@ export const searchDocuments: readonly SearchDocument[] = [
     title: 'mobile_rag_engine',
     monoTitle: true,
     snippet: '문서를 서버에 올리지 않고 온디바이스에서 검색과 RAG context 생성까지 처리하는 Flutter 패키지.',
-    keywords: ['모바일', 'Dart', 'Rust FFI', 'HNSW', 'BM25', 'ONNX', 'SQLite', 'RRF', '하이브리드'],
+    keywords: ['모바일', 'Dart', 'Rust FFI', 'ONNX', 'SQLite', '하이브리드'],
+    hiddenKeywords: ['HNSW', 'BM25', 'RRF'],
     meta: 'pub.dev · 0.20.0',
     target: { kind: 'project', projectId: 'local-mobile-rag-gemma' },
   },
@@ -46,7 +57,8 @@ export const searchDocuments: readonly SearchDocument[] = [
     id: 'law-info-engine',
     title: 'Swifty-law',
     snippet: '같은 하이브리드 검색을 서버에서 운영하는, 공식 근거 안에서만 답하는 법령 API.',
-    keywords: ['RAG', 'Python', 'FastAPI', 'PostgreSQL', 'Milvus', 'SBERT', 'BM25', 'RRF', 'LLM'],
+    keywords: ['RAG', 'Python', 'FastAPI', 'PostgreSQL', 'Milvus', 'SBERT', 'LLM'],
+    hiddenKeywords: ['BM25', 'RRF'],
     meta: 'law-api.swifty.kr',
     target: { kind: 'project', projectId: 'law-info-engine' },
   },

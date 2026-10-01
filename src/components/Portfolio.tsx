@@ -5,7 +5,7 @@ import type { Project } from '@/types/project';
 import type { PortfolioConfig } from '@/types/portfolio';
 import { projects } from '@/data/projects';
 import { resolveProjectIds } from '@/data/resolveProjectIds';
-import { searchDocuments } from '@/data/searchDocuments';
+import { heroSearchDocuments } from '@/data/searchDocuments';
 import {
   buildCaseOrder,
   caseAnchorId,
@@ -177,7 +177,7 @@ const Portfolio = ({ config }: PortfolioProps) => {
     ...experienceItems.flatMap((item) => item.relatedProjectIds),
     ...cases.flatMap((item) => item.relatedProjectIds ?? []),
   ]);
-  const heroDocuments = resolveSearchDocuments(searchDocuments, featuredProjectIds);
+  const heroDocuments = resolveSearchDocuments(heroSearchDocuments, featuredProjectIds);
 
   return (
     <>
@@ -202,7 +202,7 @@ const Portfolio = ({ config }: PortfolioProps) => {
             copy={copy}
             resumeUrl={profile.resumeUrl}
             caseOrder={caseOrder}
-            featuredCount={featuredProjectIds.length}
+            featuredCount={featuredProjects.length}
             projects={projects}
             otherProjectIds={otherProjectIds}
             onOpenProject={openProjectById}
@@ -222,7 +222,7 @@ const Portfolio = ({ config }: PortfolioProps) => {
                 project={project}
                 recruitmentCase={recruitmentCase}
                 caseOrder={caseOrder}
-                featuredCount={featuredProjectIds.length}
+                featuredCount={featuredProjects.length}
                 projects={projects}
                 onOpenProject={openProjectById}
               />
