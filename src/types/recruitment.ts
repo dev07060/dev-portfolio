@@ -12,6 +12,33 @@ export interface SupportingPackage {
   links: EvidenceLink[];
 }
 
+export interface IntroTopic {
+  label: string;
+  title: string;
+  body: string;
+  flow?: string;
+}
+
+export interface CaseMetric {
+  value: string;
+  label: string;
+}
+
+export interface CaseFeature {
+  title: string;
+  description: string;
+}
+
+export interface CaseStepScreen {
+  screenId: string;
+  label: string;
+}
+
+export interface CaseFigure {
+  screenId: string;
+  caption: string;
+}
+
 export interface RecruitmentCase {
   projectId: string;
   statusLabel: string;
@@ -27,6 +54,15 @@ export interface RecruitmentCase {
   nonGoals: string[];
   evidenceLinks: EvidenceLink[];
   supportingPackages?: SupportingPackage[];
+  sectionTitle?: string;
+  sectionLead?: string;
+  sectionSummary?: string;
+  metrics?: CaseMetric[];
+  introTopics?: IntroTopic[];
+  features?: CaseFeature[];
+  stepScreens?: CaseStepScreen[];
+  figure?: CaseFigure;
+  relatedProjectIds?: string[];
 }
 
 export interface ExperienceItem {
@@ -37,6 +73,7 @@ export interface ExperienceItem {
   summary: string;
   highlights: string[];
   relatedProjectIds: string[];
+  cardHighlight?: string;
 }
 
 export interface RecruitmentProfile {
@@ -44,6 +81,8 @@ export interface RecruitmentProfile {
   role: string;
   position: string;
   positioning: string;
+  headline?: string;
+  intro?: string;
   email: string;
   githubUrl: string;
   resumeUrl?: string;

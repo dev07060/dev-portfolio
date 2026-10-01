@@ -19,7 +19,7 @@ export const additionalProjectIds = [
 ] as const;
 
 export const portfolioCopy: PortfolioCopy = {
-  navBrandLabel: 'DEV PORTFOLIO',
+  navBrandLabel: '포트폴리오',
   heroEyebrow: '개발자 포트폴리오',
   capabilityAriaLabel: '핵심 개발 역량 요약',
   primaryCta: '대표 기술 사례',
@@ -33,7 +33,10 @@ export const portfolioCopy: PortfolioCopy = {
   additionalDescription:
     'Python 검색·요약 백엔드와 AI·BLE 제품화 경험을 보완하는 네 가지 사례입니다.',
   contactHeading:
-    '모바일 제품과 로컬 검색을 함께 만들 개발자를 찾고 계신가요?',
+    '모바일 제품과 로컬 검색 기술을 함께 다룰 개발자를 찾고 계신가요?',
+  careerHeading: '5년 5개월, 여섯 팀',
+  otherProjectsLabel: '그 밖의 프로젝트',
+  contactHeadingHighlight: '모바일 제품과 로컬 검색 기술',
   contactDescription:
     '역할과 해결하려는 문제를 알려주세요. 관련 경험과 구현 사례를 바탕으로 함께 이야기 나누겠습니다.',
 };

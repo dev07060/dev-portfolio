@@ -125,3 +125,66 @@ test('mail href adds an encoded subject only when given', async () => {
   assert.equal(buildMailHref('a@b.c'), 'mailto:a@b.c');
   assert.equal(buildMailHref('a@b.c', '[문의] 앱'), 'mailto:a@b.c?subject=%5B%EB%AC%B8%EC%9D%98%5D%20%EC%95%B1');
 });
+
+test('search documents produce the approved results for the demo keywords', async () => {
+  const { searchDocuments: documents } = await importTypeScriptModule('src/data/searchDocuments.ts');
+  const { searchDocuments } = await importTypeScriptModule('src/lib/portfolioSearch.ts');
+  const ids = (query) => searchDocuments(documents, query).map((r) => r.document.id);
+
+  assert.equal(documents.length, 8);
+  assert.deepEqual(ids('Flutter'), ['easy-contract-viewer', 'fiet-fitness-trainer', 'weedool']);
+  assert.deepEqual(ids('RAG'), ['local-mobile-rag-gemma', 'easy-contract-viewer', 'law-info-engine']);
+  assert.deepEqual(ids('모바일 개발'), ['crypto-exchange-app', 'easy-contract-viewer', 'fiet-fitness-trainer']);
+  assert.deepEqual(ids('온디바이스'), ['easy-contract-viewer', 'local-mobile-rag-gemma']);
+  assert.deepEqual(ids('BLE'), ['fiet-fitness-trainer']);
+});
+
+test('search documents only target public projects that exist', async () => {
+  const { searchDocuments: documents } = await importTypeScriptModule('src/data/searchDocuments.ts');
+  const { projects } = await importTypeScriptModule('src/data/projects.ts');
+  const projectIds = new Set(projects.map((p) => p.id));
+  for (const document of documents) {
+    if (document.target.kind === 'project') {
+      assert.ok(projectIds.has(document.target.projectId), document.id);
+      assert.notEqual(document.target.projectId, 'fiet-fitness-user');
+      assert.notEqual(document.target.projectId, 'motgo');
+    }
+    assert.doesNotMatch(document.meta, /BM25|HNSW|RRF/);
+  }
+});
+
+test('no user-visible search document field names the ranking algorithms', async () => {
+  const { searchDocuments: documents } = await importTypeScriptModule('src/data/searchDocuments.ts');
+  for (const document of documents) {
+    for (const field of [document.title, document.snippet, document.meta]) {
+      assert.doesNotMatch(field, /BM25|HNSW|RRF/, document.id);
+    }
+  }
+});
+
+test('recruitment cases carry the v1 section content and reference real screens', async () => {
+  const { recruitmentCases, experienceItems, recruitmentProfile } =
+    await importTypeScriptModule('src/data/recruitment.ts');
+  const { projects } = await importTypeScriptModule('src/data/projects.ts');
+  const byId = Object.fromEntries(recruitmentCases.map((c) => [c.projectId, c]));
+  const screenIds = (projectId) => projects.find((p) => p.id === projectId).screens.map((s) => s.id);
+
+  assert.equal(recruitmentProfile.headline, 'Flutter · 온디바이스 RAG 개발자');
+  assert.equal(byId['local-mobile-rag-gemma'].sectionTitle, 'Flutter 공개 패키지');
+  assert.equal(byId['local-mobile-rag-gemma'].introTopics.length, 4);
+  assert.deepEqual(byId['local-mobile-rag-gemma'].metrics.map((m) => m.value), ['0.20.0', '25.9ms']);
+  assert.equal(byId['easy-contract-viewer'].features.length, 4);
+  assert.deepEqual(byId['easy-contract-viewer'].relatedProjectIds, ['easy-contract-viewer-server']);
+  for (const step of byId['easy-contract-viewer'].stepScreens) {
+    assert.ok(screenIds('easy-contract-viewer').includes(step.screenId), step.screenId);
+  }
+  assert.ok(screenIds('law-info-engine').includes(byId['law-info-engine'].figure.screenId));
+  assert.doesNotMatch(byId['law-info-engine'].sectionSummary, /Bronze|Silver|Gold|nDCG|MRR|Recall|RRFRanker/);
+  assert.equal(experienceItems.filter((item) => item.cardHighlight).length, 4);
+});
+
+test('freelancer profile opts out of the recruitment headline and intro', () => {
+  const source = read('src/data/freelancer.ts');
+  assert.match(source, /headline:\s*undefined/);
+  assert.match(source, /intro:\s*undefined/);
+});

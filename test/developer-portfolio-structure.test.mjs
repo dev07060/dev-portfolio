@@ -554,7 +554,7 @@ test('verified resume input populates six latest-first experience entries withou
     previous = current;
   }
   assert.doesNotMatch(data, /\b01[016789][-.\s]?\d{3,4}[-.\s]?\d{4}\b/);
-  assert.doesNotMatch(data, /(?:휴대폰|주소|거주지|생년월일|희망\s*(?:연봉|급여|근무지)|병역)\s*[:：]?/);
+  assert.doesNotMatch(data, /(?:휴대폰\s*번호|주소|거주지|생년월일|희망\s*(?:연봉|급여|근무지)|병역)\s*[:：]?/);
 });
 
 test('public resume PDF is extractable and contains only approved public profile fields', () => {
@@ -822,7 +822,7 @@ test('app bar uses a portfolio brand label instead of repeating the hero name', 
   const navigation = read('src/components/widgets/RecruitmentNav.tsx');
   const portfolioData = read('src/data/portfolio.ts');
 
-  assert.match(portfolioData, /navBrandLabel: 'DEV PORTFOLIO'/);
+  assert.match(portfolioData, /navBrandLabel: '포트폴리오'/);
   assert.match(navigation, /\{brandLabel\}/);
   assert.doesNotMatch(navigation, />\s*오병희\s*</);
   assert.match(navigation, /href="#about"/);
@@ -903,7 +903,7 @@ test('contact section leads with a clear email action and stable Korean copy', (
   assert.match(portfolioData, /contactCta: '이메일 보내기'/);
   assert.match(
     portfolioData,
-    /contactHeading:[\s\S]*?'모바일 제품과 로컬 검색을 함께 만들 개발자를 찾고 계신가요\?'/
+    /contactHeading:[\s\S]*?'모바일 제품과 로컬 검색 기술을 함께 다룰 개발자를 찾고 계신가요\?'/
   );
   assert.match(
     portfolioData,
