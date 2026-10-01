@@ -27,3 +27,54 @@ test('globals define the v1 color tokens and dark color scheme', () => {
   assert.match(css, /color-scheme:\s*dark/);
   assert.match(css, /min-height:\s*100svh/);
 });
+
+const sampleDocuments = [
+  { id: 'a', title: 'Alpha App', snippet: 'Flutter 앱입니다.', keywords: ['모바일'], meta: '', target: { kind: 'anchor', href: '#a' } },
+  { id: 'b', title: 'mobile_rag_engine', snippet: 'RAG context 생성', keywords: ['Rust FFI'], meta: '', target: { kind: 'anchor', href: '#b' } },
+  { id: 'c', title: 'Gamma', snippet: '서버를 개발했습니다.', keywords: ['모바일', 'RAG'], meta: '', target: { kind: 'anchor', href: '#c' } },
+];
+
+test('tokenize splits on whitespace and sorts longer tokens first', async () => {
+  const { tokenize } = await importTypeScriptModule('src/lib/portfolioSearch.ts');
+  assert.deepEqual(tokenize('  모바일   개발 '), ['모바일', '개발']);
+  assert.deepEqual(tokenize('a abc ab'), ['abc', 'ab', 'a']);
+  assert.deepEqual(tokenize('   '), []);
+});
+
+test('search scores title x3, snippet x2, keywords x1 and keeps data order on ties', async () => {
+  const { searchDocuments } = await importTypeScriptModule('src/lib/portfolioSearch.ts');
+  const rag = searchDocuments(sampleDocuments, 'rag');
+  assert.deepEqual(rag.map((r) => [r.document.id, r.score]), [['b', 5], ['c', 1]]);
+  const mobileDev = searchDocuments(sampleDocuments, '모바일 개발');
+  assert.deepEqual(mobileDev.map((r) => r.document.id), ['c', 'a']);
+});
+
+test('empty query returns the first documents as recommendations', async () => {
+  const { searchDocuments } = await importTypeScriptModule('src/lib/portfolioSearch.ts');
+  assert.deepEqual(searchDocuments(sampleDocuments, '').map((r) => r.document.id), ['a', 'b', 'c']);
+  assert.deepEqual(searchDocuments(sampleDocuments, '', 2).map((r) => r.document.id), ['a', 'b']);
+});
+
+test('segmentText marks case-insensitive hits and keeps original text', async () => {
+  const { segmentText } = await importTypeScriptModule('src/lib/portfolioSearch.ts');
+  assert.deepEqual(segmentText('Flutter로 만든 flutter 앱', ['flutter']), [
+    { text: 'Flutter', hit: true },
+    { text: '로 만든 ', hit: false },
+    { text: 'flutter', hit: true },
+    { text: ' 앱', hit: false },
+  ]);
+  assert.deepEqual(segmentText('a.b', ['.']), [
+    { text: 'a', hit: false },
+    { text: '.', hit: true },
+    { text: 'b', hit: false },
+  ]);
+});
+
+test('keyword-only matches are reported without repeating visible text', async () => {
+  const { searchDocuments } = await importTypeScriptModule('src/lib/portfolioSearch.ts');
+  const [first] = searchDocuments(sampleDocuments, '모바일');
+  assert.equal(first.document.id, 'a');
+  assert.deepEqual(first.keywordMatches, ['모바일']);
+  const [engine] = searchDocuments(sampleDocuments, 'rag');
+  assert.deepEqual(engine.keywordMatches, []);
+});
