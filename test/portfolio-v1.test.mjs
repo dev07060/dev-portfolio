@@ -188,3 +188,71 @@ test('freelancer profile opts out of the recruitment headline and intro', () => 
   assert.match(source, /headline:\s*undefined/);
   assert.match(source, /intro:\s*undefined/);
 });
+
+test('v1 section order: hero, career, featured cases, contact', () => {
+  const portfolio = read('src/components/Portfolio.tsx');
+  const order = [
+    '<HeroSection',
+    '<CareerSection',
+    '{featuredProjects.map((project, index)',
+    '<ContactSection',
+  ].map((token) => portfolio.indexOf(token));
+  assert.ok(order.every((index) => index > -1), JSON.stringify(order));
+  assert.deepEqual([...order].sort((a, b) => a - b), order);
+  assert.match(portfolio, /<ProjectModal/);
+  assert.match(portfolio, /<PresentationOverlay/);
+
+  const portfolioData = read('src/data/portfolio.ts');
+  const featured = portfolioData.match(/export const featuredProjectIds = \[([\s\S]*?)\]/);
+  assert.ok(featured, 'featuredProjectIds must exist');
+  assert.match(featured[1], /'local-mobile-rag-gemma'[\s\S]*?'easy-contract-viewer'[\s\S]*?'law-info-engine'/);
+});
+
+test('v1 component boundaries replace the legacy widgets', () => {
+  for (const removed of [
+    'RecruitmentNav',
+    'DeveloperHero',
+    'FeaturedWork',
+    'ProjectCard',
+    'ProjectArchive',
+    'ExperienceTimeline',
+    'RecruitmentCTA',
+    'Footer',
+    'SectionContainer',
+    'SectionHeader',
+  ]) {
+    assert.equal(read(`src/components/widgets/${removed}.tsx`), '', `${removed} should be removed`);
+  }
+  for (const added of [
+    'HeroSection',
+    'PortfolioSearch',
+    'CareerSection',
+    'CaseLink',
+    'CaseLabel',
+    'CaseEngineSection',
+    'CaseContractViewerSection',
+    'CaseLawSection',
+    'ContactSection',
+  ]) {
+    assert.notEqual(read(`src/components/portfolio/${added}.tsx`), '', `${added} should exist`);
+  }
+});
+
+test('v1 UI has no section progress indices or tiny label text', () => {
+  // Algorithm names (BM25/HNSW/RRF) are data-driven; see the searchDocuments field test above.
+  const sources = [
+    'PortfolioSearch',
+    'HeroSection',
+    'CareerSection',
+    'CaseLabel',
+    'CaseEngineSection',
+    'CaseContractViewerSection',
+    'CaseLawSection',
+    'ContactSection',
+  ]
+    .map((name) => read(`src/components/portfolio/${name}.tsx`))
+    .join('\n');
+  assert.notEqual(sources.trim(), '');
+  assert.doesNotMatch(sources, /\d{2} \/ \d{2}/);
+  assert.doesNotMatch(sources, /text-\[1[01]px\]/);
+});
