@@ -7,7 +7,9 @@ const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf
 test('global styles expose accessible contrast, scrollbars, and reduced motion', () => {
   const css = read('src/app/globals.css');
 
-  assert.match(css, /--accent-text:\s*#9d4530/);
+  assert.match(css, /--color-marker:\s*#f3e04a/);
+  assert.match(css, /--color-ground:\s*#2a2b2f/);
+  assert.match(css, /--color-ink:\s*#ecece7/);
   assert.match(css, /scrollbar-gutter:\s*stable/);
   assert.match(css, /@media \(prefers-reduced-motion: reduce\)/);
   assert.match(css, /animation-duration:\s*0\.01ms/);

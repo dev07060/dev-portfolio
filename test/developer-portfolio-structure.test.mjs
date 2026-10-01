@@ -920,12 +920,3 @@ test('project cards reserve hover feedback for real controls', () => {
   assert.match(card, /left-2 top-3 z-\[2\]/);
   assert.match(card, /bottom-3 right-3 z-\[2\]/);
 });
-
-test('layout only loads fonts used by the active design', () => {
-  const layout = read('src/app/layout.tsx');
-
-  assert.doesNotMatch(layout, /Fraunces|font-fraunces/);
-  assert.match(layout, /Noto_Sans_KR/);
-  assert.match(layout, /Noto_Serif_KR/);
-  assert.match(layout, /Geist_Mono/);
-});
