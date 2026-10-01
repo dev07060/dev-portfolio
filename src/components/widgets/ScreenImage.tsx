@@ -19,7 +19,7 @@ type Props =
   | (BaseProps & { variant: 'fill' })
   | (BaseProps & { variant: 'scroll' });
 
-const DEFAULT_GRADIENT = 'from-slate-700 to-slate-900';
+const DEFAULT_GRADIENT = 'from-surface-2 to-career';
 const DEFAULT_FILL_SIZES = '(max-width: 640px) 90vw, (max-width: 1024px) 50vw, 33vw';
 
 const ScreenImage = (props: Props) => {

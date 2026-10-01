@@ -51,17 +51,17 @@ const ProjectModal = ({
     >
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-[#1f1b16]/40 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
       />
 
-      <div className="accessible-scrollbar relative grid max-h-[calc(100dvh-1rem)] w-full max-w-6xl grid-cols-1 overflow-y-auto rounded-2xl border border-[#e8dfd0] bg-[#faf7f2] shadow-[0_30px_80px_-20px_rgba(31,27,22,0.25)] md:rounded-3xl lg:h-[720px] lg:max-h-[calc(100vh-2rem)] lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:grid-rows-[auto_minmax(0,1fr)] lg:overflow-hidden">
+      <div className="accessible-scrollbar relative grid max-h-[calc(100dvh-1rem)] w-full max-w-6xl grid-cols-1 overflow-y-auto rounded-2xl border border-line bg-ground shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)] md:rounded-3xl lg:h-[720px] lg:max-h-[calc(100vh-2rem)] lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:grid-rows-[auto_minmax(0,1fr)] lg:overflow-hidden">
         <button
           ref={closeButtonRef}
           type="button"
           onClick={onClose}
           aria-label={`${project.title} 프로젝트 상세 닫기`}
-          className="fixed right-5 top-5 z-[70] inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-[#d9e4e1] bg-white text-[#4a4339] shadow-sm transition-colors hover:bg-[#f2ede4] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f766e] lg:absolute lg:right-4 lg:top-4"
+          className="fixed right-5 top-5 z-[70] inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-line bg-surface text-sub shadow-sm transition-colors hover:bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marker lg:absolute lg:right-4 lg:top-4"
         >
           <X size={20} aria-hidden="true" />
         </button>
@@ -118,26 +118,26 @@ const ProjectInfoHeader = ({
     : [];
 
   return (
-    <header className="border-b border-[#e8dfd0] bg-white p-6 sm:p-8 lg:col-start-1 lg:row-start-1 lg:border-r">
-          <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-[#9d4530]">
+    <header className="border-b border-line bg-surface p-6 sm:p-8 lg:col-start-1 lg:row-start-1 lg:border-r">
+          <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-marker">
             — {recruitmentCase?.statusLabel ?? getTypeLabel(project)}
           </p>
           <h2
             id={titleId}
-            className="break-words pr-10 font-serif text-xl font-light leading-tight text-[#1f1b16] min-[360px]:text-2xl sm:text-3xl md:text-4xl"
+            className="break-words pr-10 text-xl font-bold leading-tight text-ink min-[360px]:text-2xl sm:text-3xl md:text-4xl"
           >
             {project.title}
           </h2>
-          <p className="mt-2 font-serif text-base italic text-[#756b60]">
+          <p className="mt-2 text-base text-sub">
             {project.subtitle}
           </p>
           {metadata.length > 0 && (
-            <p className="mt-3 text-xs leading-relaxed text-[#4a4339]">
+            <p className="mt-3 text-xs leading-relaxed text-sub">
               {metadata.join(' · ')}
             </p>
           )}
           {project.releaseLabel && (
-            <span className="mt-4 inline-flex rounded-full border border-[#0f766e]/30 bg-[#eef7f5] px-2.5 py-1 font-mono text-[11px] uppercase tracking-wider text-[#0f766e]">
+            <span className="mt-4 inline-flex rounded-full border border-marker/40 bg-surface-2 px-2.5 py-1 font-mono text-[11px] uppercase tracking-wider text-marker">
               {project.releaseLabel}
             </span>
           )}
@@ -149,7 +149,7 @@ const ProjectInfoHeader = ({
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-[#d9e4e1] bg-[#faf7f2] px-3 py-2.5 text-xs font-semibold text-[#0f766e] hover:border-[#0f766e]/50 hover:bg-[#eef7f5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f766e]"
+                  className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-line bg-ground px-3 py-2.5 text-xs font-semibold text-marker hover:border-marker/60 hover:bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marker"
                 >
                   {link.label}
                   <ExternalLink size={13} aria-hidden="true" />
@@ -174,17 +174,19 @@ const ProjectInfoDetails = ({
     role="region"
     aria-label={`${project.title} 프로젝트 상세 설명`}
     tabIndex={0}
-    className="accessible-scrollbar bg-white p-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#0f766e] sm:p-8 lg:col-start-1 lg:row-start-2 lg:min-h-0 lg:overflow-y-auto lg:border-r lg:border-[#e8dfd0]"
+    className="accessible-scrollbar bg-surface p-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-marker sm:p-8 lg:col-start-1 lg:row-start-2 lg:min-h-0 lg:overflow-y-auto lg:border-r lg:border-line"
   >
     <div className="space-y-7">
+          <ProjectCardSummary project={project} />
+
           <section aria-labelledby={`problem-${project.id}`}>
             <h3
               id={`problem-${project.id}`}
-              className="mb-2 font-mono text-[11px] uppercase tracking-[0.25em] text-[#756b60]"
+              className="mb-2 font-mono text-[11px] uppercase tracking-[0.25em] text-sub"
             >
               — 문제와 제약
             </h3>
-            <p id={descriptionId} className="text-sm leading-relaxed text-[#4a4339] break-keep">
+            <p id={descriptionId} className="text-sm leading-relaxed text-sub break-keep">
               {recruitmentCase?.problem ?? project.description}
             </p>
           </section>
@@ -193,15 +195,15 @@ const ProjectInfoDetails = ({
             <section aria-labelledby={`contribution-${project.id}`}>
               <h3
                 id={`contribution-${project.id}`}
-                className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-[#756b60]"
+                className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-sub"
               >
                 — 직접 설계·구현한 범위
               </h3>
               <ul className="space-y-2">
                 {(recruitmentCase?.contributions ?? project.implementationPoints ?? []).map(
                   (point) => (
-                    <li key={point} className="flex gap-2 text-sm leading-relaxed text-[#4a4339]">
-                      <span aria-hidden="true" className="mt-[2px] text-[#9d4530]">·</span>
+                    <li key={point} className="flex gap-2 text-sm leading-relaxed text-sub">
+                      <span aria-hidden="true" className="mt-[2px] text-marker">·</span>
                       <span>{point}</span>
                     </li>
                   )
@@ -219,7 +221,7 @@ const ProjectInfoDetails = ({
           <section aria-labelledby={`technology-${project.id}`}>
             <h3
               id={`technology-${project.id}`}
-              className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-[#756b60]"
+              className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-sub"
             >
               — 구조와 핵심 기술
             </h3>
@@ -227,7 +229,7 @@ const ProjectInfoDetails = ({
               {project.techStack.map((tech) => (
                 <span
                   key={tech}
-                  className="rounded-full border border-[#e8dfd0] bg-[#f2ede4] px-2.5 py-1 text-xs font-medium text-[#4a4339]"
+                  className="rounded-full border border-line bg-surface-2 px-2.5 py-1 text-xs font-medium text-sub"
                 >
                   {tech}
                 </span>
@@ -239,14 +241,14 @@ const ProjectInfoDetails = ({
             <section aria-labelledby={`verification-${project.id}`}>
               <h3
                 id={`verification-${project.id}`}
-                className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-[#756b60]"
+                className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-sub"
               >
                 — {recruitmentCase.verificationLabel ?? '테스트·평가·운영 검증'}
               </h3>
               <ul className="space-y-2">
                 {recruitmentCase.verification.map((item) => (
-                  <li key={item} className="flex gap-2 text-sm leading-relaxed text-[#4a4339]">
-                    <span aria-hidden="true" className="mt-[2px] text-[#0f766e]">·</span>
+                  <li key={item} className="flex gap-2 text-sm leading-relaxed text-sub">
+                    <span aria-hidden="true" className="mt-[2px] text-marker">·</span>
                     <span>{item}</span>
                   </li>
                 ))}
@@ -258,14 +260,14 @@ const ProjectInfoDetails = ({
             <section aria-labelledby={`outcomes-${project.id}`}>
               <h3
                 id={`outcomes-${project.id}`}
-                className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-[#756b60]"
+                className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-sub"
               >
                 — 결과와 영향
               </h3>
               <ul className="space-y-2">
                 {recruitmentCase.outcomes.map((outcome) => (
-                  <li key={outcome} className="flex gap-2 text-sm leading-relaxed text-[#4a4339]">
-                    <span aria-hidden="true" className="mt-[2px] text-[#0f766e]">·</span>
+                  <li key={outcome} className="flex gap-2 text-sm leading-relaxed text-sub">
+                    <span aria-hidden="true" className="mt-[2px] text-marker">·</span>
                     <span>{outcome}</span>
                   </li>
                 ))}
@@ -278,20 +280,20 @@ const ProjectInfoDetails = ({
             <section aria-labelledby={`boundaries-${project.id}`}>
               <h3
                 id={`boundaries-${project.id}`}
-                className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-[#756b60]"
+                className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-sub"
               >
                 — 트레이드오프와 비목표
               </h3>
-              <div className="space-y-3 text-sm leading-relaxed text-[#4a4339]">
+              <div className="space-y-3 text-sm leading-relaxed text-sub">
                 {recruitmentCase.tradeoffs.map((item) => (
                   <p key={item}>
-                    <strong className="font-semibold text-[#1f1b16]">트레이드오프.</strong>{' '}
+                    <strong className="font-semibold text-ink">트레이드오프.</strong>{' '}
                     {item}
                   </p>
                 ))}
                 {recruitmentCase.nonGoals.map((item) => (
                   <p key={item}>
-                    <strong className="font-semibold text-[#1f1b16]">비목표.</strong>{' '}
+                    <strong className="font-semibold text-ink">비목표.</strong>{' '}
                     {item}
                   </p>
                 ))}
@@ -302,11 +304,45 @@ const ProjectInfoDetails = ({
   </div>
 );
 
+const ProjectCardSummary = ({ project }: { project: Project }) => {
+  const description = project.cardPresentation?.description;
+  const highlight = project.cardPresentation?.highlight;
+  const evidenceBadges =
+    project.cardPresentation?.evidenceBadges ?? project.evidenceBadges ?? [];
+
+  if (!description && !highlight && evidenceBadges.length === 0) return null;
+
+  return (
+    <section aria-labelledby={`summary-${project.id}`} data-project-card-summary>
+      <h3
+        id={`summary-${project.id}`}
+        className="mb-2 font-mono text-[11px] uppercase tracking-[0.25em] text-sub"
+      >
+        — 사례 요약
+      </h3>
+      {description && (
+        <p className="text-sm leading-relaxed text-ink break-keep">{description}</p>
+      )}
+      {highlight && (
+        <p className="mt-3 text-sm leading-relaxed text-sub break-keep">
+          <strong className="font-semibold text-ink">담당 범위.</strong> {highlight}
+        </p>
+      )}
+      {evidenceBadges.length > 0 && (
+        <p className="mt-3 text-sm leading-relaxed text-sub break-keep">
+          <strong className="font-semibold text-ink">근거.</strong>{' '}
+          {evidenceBadges.join(' · ')}
+        </p>
+      )}
+    </section>
+  );
+};
+
 const SupportingPackages = ({ items }: { items: SupportingPackage[] }) => (
   <section aria-labelledby="supporting-packages-heading">
     <h3
       id="supporting-packages-heading"
-      className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-[#756b60]"
+      className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-sub"
     >
       — 관련 공개 패키지
     </h3>
@@ -314,17 +350,17 @@ const SupportingPackages = ({ items }: { items: SupportingPackage[] }) => (
       {items.map((item) => (
         <article
           key={item.name}
-          className="rounded-lg border border-[#0f766e]/25 bg-[#eef7f5] p-3"
+          className="rounded-lg border border-marker/30 bg-surface-2 p-3"
         >
           <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <strong className="text-sm font-semibold text-[#1f1b16]">
+            <strong className="text-sm font-semibold text-ink">
               {item.name}
             </strong>
-            <span className="font-mono text-[11px] text-[#0f766e]">
+            <span className="font-mono text-[11px] text-marker">
               v{item.version}
             </span>
           </div>
-          <p className="mt-2 text-xs leading-relaxed text-[#4a4339]">
+          <p className="mt-2 text-xs leading-relaxed text-sub">
             {item.relationship}
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
@@ -334,7 +370,7 @@ const SupportingPackages = ({ items }: { items: SupportingPackage[] }) => (
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-[#d9e4e1] bg-white px-3 py-2 text-xs font-semibold text-[#0f766e] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f766e]"
+                className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-line bg-surface px-3 py-2 text-xs font-semibold text-marker focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marker"
               >
                 {link.label}
                 <ExternalLink size={13} aria-hidden="true" />
@@ -345,7 +381,7 @@ const SupportingPackages = ({ items }: { items: SupportingPackage[] }) => (
             {item.techStack.map((tech) => (
               <span
                 key={tech}
-                className="rounded-full border border-[#d9e4e1] bg-white px-2.5 py-1 text-[11px] text-[#4a4339]"
+                className="rounded-full border border-line bg-surface px-2.5 py-1 text-[11px] text-sub"
               >
                 {tech}
               </span>
@@ -365,16 +401,16 @@ const PackageCaseStudyFlow = ({ project }: { project: Project }) => {
     <section aria-labelledby={`case-flow-${project.id}`} data-package-detail="architecture-first">
       <h3
         id={`case-flow-${project.id}`}
-        className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-[#756b60]"
+        className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-sub"
       >
         — 아키텍처와 데이터 흐름
       </h3>
       {architectureScreen && (
-        <div className="rounded-lg border border-[#0f766e]/25 bg-[#eef7f5] px-3 py-2.5">
-          <strong className="block text-sm font-semibold text-[#1f1b16]">
+        <div className="rounded-lg border border-marker/30 bg-surface-2 px-3 py-2.5">
+          <strong className="block text-sm font-semibold text-ink">
             {architectureScreen.title}
           </strong>
-          <p className="mt-1 text-xs leading-relaxed text-[#4a4339]">
+          <p className="mt-1 text-xs leading-relaxed text-sub">
             {architectureScreen.desc}
           </p>
         </div>
