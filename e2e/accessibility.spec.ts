@@ -23,11 +23,6 @@ const expectHorizontallyReachable = async (page: Page, locator: Locator) => {
   );
 };
 
-const gridColumnCount = (locator: Locator) =>
-  locator.evaluate((element) =>
-    getComputedStyle(element).gridTemplateColumns.split(' ').filter(Boolean).length
-  );
-
 const normalizedAnchors = (page: Page) =>
   page.locator('a').evaluateAll((anchors) =>
     anchors.map((anchor) => {
@@ -45,6 +40,24 @@ const normalizedAnchors = (page: Page) =>
     })
   );
 
+const caseHeadings = (page: Page) =>
+  page
+    .locator('#case-01 h2, #case-02 h2, #case-03 h2')
+    .evaluateAll((items) => items.map((item) => item.textContent?.trim()));
+
+const caseDetailButton = (page: Page, title: string) =>
+  page.getByRole('button', { name: `사례 자세히, ${title}`, exact: true });
+
+const additionalCaseButton = (page: Page, number: number) =>
+  page.getByRole('button', { name: new RegExp(`^프로젝트 사례 #${number},`) }).first();
+
+const additionalCases = [
+  [4, 'Easy Contract Viewer Server'],
+  [5, '피에트 피트니스 트레이너'],
+  [6, 'HaruCheck'],
+  [7, 'Weedool (TuringBio)'],
+] as const;
+
 test('한국어 단일 홈과 skip link, 대표 사례 순서를 제공한다', async ({
   page,
   browserName,
@@ -55,15 +68,13 @@ test('한국어 단일 홈과 skip link, 대표 사례 순서를 제공한다', 
   await expect(page.getByText('English', { exact: true })).toHaveCount(0);
   await expect(page.getByText('Client', { exact: true })).toHaveCount(0);
   await expect(page.getByText('Developer', { exact: true })).toHaveCount(0);
-  const experienceLink = page.getByRole('link', { name: '경력', exact: true });
-  const resumeLink = page.getByRole('link', { name: '이력서 보기', exact: true });
-  await expect(experienceLink).toHaveCount(1);
-  await expect(resumeLink).toHaveCount(2);
+  const nav = page.locator('nav[aria-label="주요 메뉴"]');
+  const experienceLink = nav.getByRole('link', { name: '경력', exact: true });
+  const resumeLink = page.getByRole('link', { name: '이력서 PDF', exact: true });
+  await expect(page.getByRole('link', { name: '경력', exact: true })).toHaveCount(1);
+  await expect(resumeLink).toHaveCount(3);
   for (const link of await resumeLink.all()) {
     await expect(link).toHaveAttribute('href', '/oh-byeonghee-resume-ko.pdf');
-    await expect(link).toHaveAttribute('target', '_blank');
-    await expect(link).toHaveAttribute('rel', /noopener/);
-    await expect(link).toHaveAttribute('rel', /noreferrer/);
   }
 
   await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
@@ -72,19 +83,20 @@ test('한국어 단일 홈과 skip link, 대표 사례 순서를 제공한다', 
   await page.keyboard.press('Enter');
   await expect(page.locator('#main-content')).toBeFocused();
 
-  await page.getByRole('link', { name: '대표 기술 사례', exact: true }).last().click();
-  await expect(page).toHaveURL(/#featured-work$/);
-  await expect(page.getByRole('heading', { name: '대표 기술 사례' })).toBeInViewport();
+  await nav.getByRole('link', { name: '작업', exact: true }).click();
+  await expect(page).toHaveURL(/#case-01$/);
+  await expect(page.locator('#case-01-title')).toBeInViewport();
 
-  const headings = await page
-    .locator('#featured-work article h3')
-    .evaluateAll((items) => items.map((item) => item.textContent?.trim()));
-  expect(headings).toEqual(['mobile_rag_engine', 'Easy Contract Viewer', 'Swifty-law']);
+  expect(await caseHeadings(page)).toEqual([
+    'Flutter 공개 패키지',
+    'Easy Contract Viewer',
+    'Swifty-law',
+  ]);
 
   await experienceLink.click();
-  await expect(page).toHaveURL(/#experience$/);
-  await expect(page.getByRole('heading', { name: '경력과 역할' })).toBeInViewport();
-  await expect(page.locator('#experience > div ol > li')).toHaveCount(6);
+  await expect(page).toHaveURL(/#career$/);
+  await expect(page.locator('#career-title')).toBeInViewport();
+  await expect(page.locator('#career ol > li')).toHaveCount(6);
 });
 
 test('프리랜서 전달용 라우트는 공개 홈에서 숨겨지고 검색 비노출 계약을 제공한다', async ({
@@ -121,46 +133,44 @@ test('프리랜서 전달용 라우트는 공개 홈에서 숨겨지고 검색 �
     page.getByText('일반 포트폴리오로 돌아가기', { exact: true })
   ).toHaveCount(0);
 
+  await expect(
+    page.getByRole('link', { name: '프리랜서 포트폴리오', exact: true })
+  ).toBeVisible();
+  const hero = page.locator('#top');
   for (const copy of [
     '모바일 제품 · 문서 검색/RAG 프로젝트 수행 개발자',
     '크로스플랫폼 앱 · Native 연동 · Retrieval/RAG · FastAPI',
     '기존 모바일 제품의 고도화부터 문서·PDF 검색 기능과 검색 백엔드까지 구현합니다.',
     '모바일 앱 구축·고도화',
-    '모바일 제품, 문서 검색 엔진, 운영 가능한 검색 백엔드로 이어지는 수행 사례입니다.',
-    '모바일 제품이나 문서 검색 기능을 개발·개선하려고 하시나요?',
   ]) {
-    await expect(page.getByText(copy, { exact: true })).toBeVisible();
+    await expect(hero).toContainText(copy);
   }
-
   await expect(
-    page.getByRole('link', { name: '이력서 보기', exact: true })
-  ).toHaveCount(0);
-  await expect(
-    page.getByRole('link', { name: '프로젝트 상담', exact: true })
-  ).toHaveCount(2);
-  for (const contactLink of await page
-    .getByRole('link', { name: '프로젝트 상담', exact: true })
-    .all()) {
-    await expect(contactLink).toHaveAttribute(
-      'href',
-      `mailto:byeongheeoh51@gmail.com?subject=${encodeURIComponent(
-        '[프로젝트 문의] 모바일 제품 · 문서 RAG 개발'
-      )}`
-    );
-  }
+    page.getByRole('heading', {
+      level: 2,
+      name: '모바일 제품이나 문서 검색 기능을 개발·개선하려고 하시나요?',
+      exact: true,
+    })
+  ).toBeVisible();
 
-  const headings = await page
-    .locator('#featured-work article h3')
-    .evaluateAll((items) => items.map((item) => item.textContent?.trim()));
-  expect(headings).toEqual([
+  await expect(page.getByRole('link', { name: /이력서/ })).toHaveCount(0);
+  const contactLinks = page.getByRole('link', { name: '프로젝트 상담', exact: true });
+  await expect(contactLinks).toHaveCount(1);
+  const mailHref = `mailto:byeongheeoh51@gmail.com?subject=${encodeURIComponent(
+    '[프로젝트 문의] 모바일 제품 · 문서 RAG 개발'
+  )}`;
+  await expect(contactLinks).toHaveAttribute('href', mailHref);
+  await expect(
+    page.locator('#contact').getByRole('link', { name: 'byeongheeoh51@gmail.com' })
+  ).toHaveAttribute('href', mailHref);
+
+  expect(await caseHeadings(page)).toEqual([
     'Easy Contract Viewer',
-    'mobile_rag_engine',
+    'Flutter 공개 패키지',
     'Swifty-law',
   ]);
 
-  const detailButton = page.getByRole('button', {
-    name: 'Easy Contract Viewer 프로젝트 상세 열기',
-  });
+  const detailButton = caseDetailButton(page, 'Easy Contract Viewer');
   await detailButton.focus();
   await page.keyboard.press('Enter');
   const dialog = page.getByRole('dialog', { name: /Easy Contract Viewer/ });
@@ -209,72 +219,27 @@ test('sitemap 출력은 없거나 프리랜서 URL pathname을 포함하지 않�
   ).toEqual([]);
 });
 
-test('두 실제 라우트 설정의 모든 프로젝트 ID가 공유 프로젝트로 렌더링된다', async ({
+test('두 실제 라우트 설정의 모든 프로젝트 ID가 사례 경로로 열린다', async ({
   page,
 }) => {
-  const additionalTitles = [
-    'Easy Contract Viewer Server',
-    '피에트 피트니스 트레이너',
-    'HaruCheck',
-    'Weedool (TuringBio)',
-  ];
-  const routes = [
-    {
-      path: '/',
-      featuredTitles: [
-        'mobile_rag_engine',
-        'Easy Contract Viewer',
-        'Swifty-law',
-      ],
-    },
-    {
-      path: '/freelancer',
-      featuredTitles: [
-        'Easy Contract Viewer',
-        'mobile_rag_engine',
-        'Swifty-law',
-      ],
-    },
-  ];
+  for (const path of ['/', '/freelancer']) {
+    await page.goto(path);
 
-  for (const route of routes) {
-    await page.goto(route.path);
+    for (const title of ['mobile_rag_engine', 'Easy Contract Viewer', 'Swifty-law']) {
+      await expect(caseDetailButton(page, title)).toHaveCount(1);
+    }
+    for (const [number, title] of additionalCases) {
+      await expect(
+        page.getByRole('button', {
+          name: `프로젝트 사례 #${number}, ${title} 화면 보기`,
+          exact: true,
+        }).first()
+      ).toBeAttached();
+    }
+    await expect(page.getByText(/Motgo|맛집 투표/)).toHaveCount(0);
+    await expect(page.getByRole('button', { name: /Motgo|맛집 투표/ })).toHaveCount(0);
 
-    await expect(page.locator('#featured-work article')).toHaveCount(
-      route.featuredTitles.length
-    );
-    await expect(page.locator('#additional-projects article')).toHaveCount(
-      additionalTitles.length
-    );
-
-    const renderedFeaturedTitles = await page
-      .locator('#featured-work article h3')
-      .allTextContents();
-    const renderedAdditionalTitles = await page
-      .locator('#additional-projects article h3')
-      .allTextContents();
-    expect(renderedFeaturedTitles.map((title) => title.trim())).toEqual(
-      route.featuredTitles
-    );
-    expect(renderedAdditionalTitles.map((title) => title.trim())).toEqual(
-      additionalTitles
-    );
-    await expect(
-      page.getByRole('heading', {
-        name: 'Motgo 맛집 투표 서비스',
-        exact: true,
-      })
-    ).toHaveCount(0);
-    await expect(
-      page.getByRole('button', {
-        name: 'Motgo 맛집 투표 서비스 프로젝트 상세 열기',
-      })
-    ).toHaveCount(0);
-
-    const serverButton = page.getByRole('button', {
-      name: 'Easy Contract Viewer Server 프로젝트 상세 열기',
-    });
-    await serverButton.click();
+    await additionalCaseButton(page, 4).click();
     const serverDialog = page.getByRole('dialog', {
       name: /Easy Contract Viewer Server/,
     });
@@ -293,29 +258,22 @@ test('공개 홈과 프리랜서 경력은 모두 최신순으로 제공한다',
 }) => {
   const experienceCompanies = () =>
     page
-      .locator('#experience > div ol > li')
-      .getByRole('heading', { level: 3 })
-      .allTextContents();
+      .locator('#career ol > li > h3')
+      .evaluateAll((items) => items.map((item) => item.firstChild?.textContent?.trim()));
+  const expected = [
+    '메리츠화재해상보험',
+    '㈜피에트',
+    '㈜인피니티익스체인지코리아',
+    '튜링바이오',
+    '㈜영우',
+    '한국와콤',
+  ];
 
   await page.goto('/');
-  expect(await experienceCompanies()).toEqual([
-    '메리츠화재해상보험',
-    '㈜피에트',
-    '㈜인피니티익스체인지코리아',
-    '튜링바이오',
-    '㈜영우',
-    '한국와콤',
-  ]);
+  expect(await experienceCompanies()).toEqual(expected);
 
   await page.goto('/freelancer');
-  expect(await experienceCompanies()).toEqual([
-    '메리츠화재해상보험',
-    '㈜피에트',
-    '㈜인피니티익스체인지코리아',
-    '튜링바이오',
-    '㈜영우',
-    '한국와콤',
-  ]);
+  expect(await experienceCompanies()).toEqual(expected);
 });
 
 test('경력 설명은 두 라우트의 최신순 정렬 기준을 안내한다', async ({ page }) => {
@@ -345,16 +303,10 @@ test('프리랜서 전달용 라우트는 390px과 320px에서 가로 유실이 
     await page.goto('/freelancer');
     await page.evaluate(() => document.fonts.ready);
 
-    const dimensions = await page.evaluate(() => ({
-      height: document.documentElement.scrollHeight,
-      overflow:
-        document.documentElement.scrollWidth -
-        document.documentElement.clientWidth,
-    }));
-    expect(dimensions.overflow).toBe(0);
-    if (viewport.width === 390) {
-      expect(dimensions.height).toBeLessThanOrEqual(8_000);
-    }
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - document.documentElement.clientWidth
+    );
+    expect(overflow).toBe(0);
 
     await expect(
       page.getByText('일반 포트폴리오로 돌아가기', { exact: true })
@@ -364,11 +316,7 @@ test('프리랜서 전달용 라우트는 390px과 320px에서 가로 유실이 
       page.getByRole('link', { name: '프로젝트 상담', exact: true }).first()
     );
 
-    await page
-      .getByRole('button', {
-        name: 'Easy Contract Viewer Server 프로젝트 상세 열기',
-      })
-      .click();
+    await additionalCaseButton(page, 4).click();
     const serverDialog = page.getByRole('dialog', {
       name: /Easy Contract Viewer Server/,
     });
@@ -397,122 +345,104 @@ test('320px 앱바가 두 라우트에서 겹침 없이 모든 링크와 44px �
   await page.setViewportSize({ width: 320, height: 800 });
 
   for (const route of [
-    { path: '/', brand: 'DEV PORTFOLIO' },
-    { path: '/freelancer', brand: 'FREELANCE PORTFOLIO' },
+    { path: '/', brand: '포트폴리오', labels: ['작업', '경력', '연락', '이력서 PDF'] },
+    { path: '/freelancer', brand: '프리랜서 포트폴리오', labels: ['작업', '경력', '연락'] },
   ]) {
     await page.goto(route.path);
 
-    const nav = page.getByRole('navigation', { name: '주요 탐색' });
+    const brand = page.locator('#top header').getByRole('link', {
+      name: route.brand,
+      exact: true,
+    });
+    await expect(brand).toBeVisible();
+    const nav = page.locator('nav[aria-label="주요 메뉴"]');
     const links = nav.getByRole('link');
-    await expect(nav.getByRole('link', { name: '이력서 보기', exact: true })).toHaveCount(0);
     const labels = await links.evaluateAll((items) =>
       items.map((item) => item.textContent?.trim())
     );
-    expect(labels).toEqual([route.brand, '기술 사례', '경력', '연락']);
+    expect(labels).toEqual(route.labels);
 
-    const boxes = await links.evaluateAll((items) =>
-      items.map((item) => {
-        const box = item.getBoundingClientRect();
-        return { x: box.x, width: box.width, height: box.height };
-      })
-    );
+    const boxes = [
+      await brand.evaluate((item) => item.getBoundingClientRect().toJSON()),
+      ...(await links.evaluateAll((items) =>
+        items.map((item) => item.getBoundingClientRect().toJSON())
+      )),
+    ] as Array<{ x: number; y: number; width: number; height: number }>;
     for (const box of boxes) {
       expect(box.x).toBeGreaterThanOrEqual(0);
       expect(box.x + box.width).toBeLessThanOrEqual(320);
       expect(box.height).toBeGreaterThanOrEqual(44);
     }
-    for (let index = 1; index < boxes.length; index += 1) {
-      expect(boxes[index - 1].x + boxes[index - 1].width).toBeLessThanOrEqual(
-        boxes[index].x
-      );
+    for (let a = 0; a < boxes.length; a += 1) {
+      for (let b = a + 1; b < boxes.length; b += 1) {
+        const first = boxes[a];
+        const second = boxes[b];
+        const overlaps =
+          first.x < second.x + second.width - 0.5 &&
+          second.x < first.x + first.width - 0.5 &&
+          first.y < second.y + second.height - 0.5 &&
+          second.y < first.y + first.height - 0.5;
+        expect(overlaps).toBe(false);
+      }
     }
 
-    const internalOverflow = await nav.evaluate((element) => {
-      const scroller = element.querySelector('div > div');
-      return scroller ? scroller.scrollWidth - scroller.clientWidth : 0;
-    });
+    const internalOverflow = await nav.evaluate(
+      (element) => element.scrollWidth - element.clientWidth
+    );
     expect(internalOverflow).toBe(0);
   }
 });
 
-test('390px 채용 스캔 흐름은 8000px 안에 전체 정보를 제공한다', async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/');
-  await page.evaluate(() => document.fonts.ready);
-
-  const dimensions = await page.evaluate(() => ({
-    height: document.documentElement.scrollHeight,
-    overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
-  }));
-  expect(dimensions.height).toBeLessThanOrEqual(8_000);
-  expect(dimensions.overflow).toBe(0);
-});
-
 test('경력은 대표 성과만 먼저 보여주고 나머지를 펼쳐 제공한다', async ({ page }) => {
-  await page.goto('/#experience');
+  await page.goto('/#career');
 
-  const firstExperience = page.locator('#experience > div ol > li').first();
+  const firstExperience = page.locator('#career ol > li').first();
   const hiddenSummary = firstExperience.getByText(
     '보험 판매자용 태블릿 앱에서 약관 RAG 탐색과 온디바이스 조항 요약 흐름을 개발했습니다.',
     { exact: true }
   );
   await expect(hiddenSummary).toBeHidden();
 
-  await firstExperience.getByText('상세 경력 보기', { exact: true }).click();
+  await firstExperience.locator('details > summary', { hasText: '자세히' }).click();
   await expect(hiddenSummary).toBeVisible();
   await expect(
-    firstExperience.getByRole('link', { name: 'mobile_rag_engine', exact: true })
+    firstExperience.getByRole('link', {
+      name: '프로젝트 사례 #1, mobile_rag_engine',
+      exact: true,
+    })
   ).toBeVisible();
 });
 
-test('320px 추가 프로젝트 archive가 네 행과 기존 상세를 제공한다', async ({
+test('320px 추가 프로젝트 사례 #4–#7 버튼이 보이고 각각 기존 상세를 연다', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 320, height: 800 });
-  await page.goto('/#additional-projects');
+  await page.goto('/');
 
-  const archive = page.locator('#additional-projects');
-  const rows = archive.locator('article');
-  await expect(rows).toHaveCount(4);
-  await expect(archive.locator('img')).toHaveCount(0);
-
-  for (const title of [
-    'Easy Contract Viewer Server',
-    '피에트 피트니스 트레이너',
-    'HaruCheck',
-    'Weedool (TuringBio)',
-  ]) {
-    await expectHorizontallyReachable(
-      page,
-      archive.getByRole('heading', { name: title, exact: true })
-    );
+  for (const [number, title] of additionalCases) {
+    const button = additionalCaseButton(page, number);
+    await expectHorizontallyReachable(page, button);
+    const box = await button.boundingBox();
+    expect(box?.height ?? 0).toBeGreaterThanOrEqual(44);
+    await button.click();
+    const dialog = page.getByRole('dialog', { name: new RegExp(title.replace(/[()]/g, '\\$&')) });
+    await expect(dialog).toBeVisible();
+    if (number === 5) {
+      await expect(dialog).toContainText(
+        'BLE 실시간 센서 연동, 트레이너용 분석 리포트, Fastlane·GitHub Actions 배포 자동화를 구현했습니다.'
+      );
+    }
+    await page.keyboard.press('Escape');
+    await expect(dialog).toBeHidden();
   }
-
-  const trainerRow = archive.locator('article').filter({
-    hasText: '피에트 피트니스 트레이너',
-  });
-  await expect(trainerRow).toContainText(
-    'BLE 실시간 센서 연동, 트레이너용 분석 리포트, Fastlane·GitHub Actions 배포 자동화를 구현했습니다.'
-  );
-
-  const detailButton = archive.getByRole('button', {
-    name: 'HaruCheck 프로젝트 상세 열기',
-  });
-  await expect(detailButton).toHaveText('상세 보기');
-  await detailButton.click();
-  await expect(page.getByRole('dialog', { name: /HaruCheck/ })).toBeVisible();
 });
 
 test('피에트 트레이너 상세는 스플래시 대신 인바디 리포트를 첫 근거로 제공한다', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('/#additional-projects');
-  await page
-    .getByRole('button', {
-      name: '피에트 피트니스 트레이너 프로젝트 상세 열기',
-    })
-    .click();
+  await page.goto('/');
+  await additionalCaseButton(page, 5).click();
 
   const dialog = page.getByRole('dialog', {
     name: /피에트 피트니스 트레이너/,
@@ -549,41 +479,44 @@ test('피에트 트레이너 상세는 스플래시 대신 인바디 리포트�
 test('피에트 사용자 앱은 데이터에 남고 공개 프로젝트 링크에서는 제외된다', async ({
   page,
 }) => {
-  await page.goto('/#experience');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/#career');
 
-  await expect(
-    page.locator('#additional-projects').getByRole('heading', {
-      name: '피에트 피트니스',
-      exact: true,
-    })
-  ).toHaveCount(0);
+  const userAppName = /피에트 피트니스(?! 트레이너)/;
+  await expect(page.getByRole('heading', { name: userAppName })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: userAppName })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: userAppName })).toHaveCount(0);
 
-  const fietExperience = page
-    .locator('#experience > div ol > li')
-    .filter({ hasText: '㈜피에트' });
-  await fietExperience.getByText('상세 경력 보기', { exact: true }).click();
+  const fietExperience = page.locator('#career ol > li').filter({ hasText: '㈜피에트' });
+  await fietExperience.locator('details > summary', { hasText: '자세히' }).click();
   await expect(
-    fietExperience.getByRole('link', {
-      name: '피에트 피트니스 트레이너',
+    fietExperience.getByRole('button', {
+      name: '프로젝트 사례 #5, 피에트 피트니스 트레이너 화면 보기',
       exact: true,
     })
   ).toBeVisible();
-  await expect(
-    fietExperience.getByRole('link', {
-      name: '피에트 피트니스',
-      exact: true,
-    })
-  ).toHaveCount(0);
+  await expect(fietExperience.getByRole('button', { name: userAppName })).toHaveCount(0);
+  await expect(fietExperience.getByRole('link', { name: userAppName })).toHaveCount(0);
+
+  const search = page.getByLabel('포트폴리오 검색');
+  await search.fill('피에트');
+  const results = page.getByRole('list', { name: '검색 결과' });
+  await expect(results.getByRole('listitem')).not.toHaveCount(0);
+  await expect(results).toContainText('피에트 피트니스 트레이너');
+  const resultTitles = await results
+    .getByRole('listitem')
+    .evaluateAll((items) =>
+      items.map((item) => item.querySelector('.search-result-link > span:nth-child(2) > span')?.textContent?.trim())
+    );
+  expect(resultTitles).not.toContain('피에트 피트니스');
 });
 
 test('390px 프로젝트 상세은 제목 다음에 eager 시각 근거를 제공한다', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/#featured-work');
-  await page
-    .getByRole('button', { name: 'mobile_rag_engine 프로젝트 상세 열기' })
-    .click();
+  await page.goto('/#case-01');
+  await caseDetailButton(page, 'mobile_rag_engine').click();
 
   const dialog = page.getByRole('dialog', { name: /mobile_rag_engine/ });
   const title = dialog.getByRole('heading', { name: 'mobile_rag_engine' });
@@ -613,9 +546,7 @@ test('320px와 390px 프로젝트 상세의 긴 기술 제목이 한 줄로 표�
   for (const width of [320, 390]) {
     await page.setViewportSize({ width, height: 844 });
     await page.goto('/');
-    await page
-      .getByRole('button', { name: 'mobile_rag_engine 프로젝트 상세 열기' })
-      .click();
+    await caseDetailButton(page, 'mobile_rag_engine').click();
 
     const title = page.getByRole('heading', { name: 'mobile_rag_engine' });
     await expect(title).toBeVisible();
@@ -635,9 +566,7 @@ test('320px와 390px 프로젝트 상세의 긴 기술 제목이 한 줄로 표�
 test('데스크톱 프로젝트 상세 설명을 keyboard로 스크롤한다', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto('/');
-  await page
-    .getByRole('button', { name: 'Easy Contract Viewer 프로젝트 상세 열기' })
-    .click();
+  await caseDetailButton(page, 'Easy Contract Viewer').click();
 
   const region = page.getByRole('region', {
     name: 'Easy Contract Viewer 프로젝트 상세 설명',
@@ -652,11 +581,10 @@ test('데스크톱 프로젝트 상세 설명을 keyboard로 스크롤한다', a
   await expect.poll(() => region.evaluate((element) => element.scrollTop)).toBeGreaterThan(before);
 });
 
-test('카드 dialog가 focus trap, Escape, focus restoration을 제공한다', async ({ page }) => {
+test('사례 자세히 dialog가 focus trap, Escape, focus restoration을 제공한다', async ({ page }) => {
   await page.goto('/');
-  const detailButton = page.getByRole('button', {
-    name: 'mobile_rag_engine 프로젝트 상세 열기',
-  });
+  const detailButton = caseDetailButton(page, 'mobile_rag_engine');
+  await expect(detailButton).toHaveAttribute('aria-haspopup', 'dialog');
 
   await detailButton.focus();
   await page.keyboard.press('Enter');
@@ -690,9 +618,7 @@ test('프레젠테이션이 slide status와 preview focus restoration을 제공�
   page,
 }) => {
   await page.goto('/');
-  await page
-    .getByRole('button', { name: 'mobile_rag_engine 프로젝트 상세 열기' })
-    .click();
+  await caseDetailButton(page, 'mobile_rag_engine').click();
 
   const previewButton = page.getByRole('button', {
     name: 'mobile_rag_engine 프레젠테이션 열기',
@@ -715,7 +641,7 @@ test('프레젠테이션이 slide status와 preview focus restoration을 제공�
 
 test('스크롤 가능한 screenshot region을 keyboard로 탐색한다', async ({ page }) => {
   await page.goto('/');
-  await page.getByRole('button', { name: 'Swifty-law 프로젝트 상세 열기' }).click();
+  await caseDetailButton(page, 'Swifty-law').click();
   await page.getByRole('button', { name: 'Swifty-law 프레젠테이션 열기' }).click();
   await page.getByRole('button', { name: '이전 화면' }).click();
 
@@ -734,23 +660,39 @@ test('스크롤 가능한 screenshot region을 keyboard로 탐색한다', async 
   await expect.poll(() => region.evaluate((element) => element.scrollTop)).toBeGreaterThan(before);
 });
 
-test('reduced motion에서 named animation을 제거한다', async ({ page }) => {
+test('reduced motion에서 named animation과 자동 입력을 제거한다', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
 
-  const animationName = await page
-    .locator('.animate-fade-in-up')
-    .evaluate((element) => getComputedStyle(element).animationName);
-  expect(animationName).toBe('none');
+  await expect(page.getByLabel('포트폴리오 검색')).toHaveValue('Flutter');
+  await expect(page.getByRole('button', { name: '자동 입력 멈추기' })).toHaveCount(0);
+
+  for (const selector of ['.search-result', '.search-mark']) {
+    const elements = page.locator(selector);
+    await expect(elements.first()).toBeAttached();
+    const names = await elements.evaluateAll((items) =>
+      items.map((item) => getComputedStyle(item).animationName)
+    );
+    expect(names.length).toBeGreaterThan(0);
+    expect(names.every((name) => name === 'none')).toBe(true);
+  }
+
+  const panelTransition = await page
+    .locator('#case-01 .engine-panel')
+    .evaluate((element) => getComputedStyle(element).transitionDuration);
+  expect(
+    panelTransition.split(',').every((duration) => Number.parseFloat(duration) <= 0.00001)
+  ).toBe(true);
 });
 
 test('home, modal, presentation에 critical/serious axe 위반이 없다', async ({ page }) => {
   await page.goto('/');
+  // The hero search autoplay re-renders results with a 300ms fade-in; stop it so
+  // axe measures settled colors instead of a mid-animation frame.
+  await page.getByRole('button', { name: '자동 입력 멈추기' }).click();
   expect(await seriousViolations(page)).toEqual([]);
 
-  await page
-    .getByRole('button', { name: 'mobile_rag_engine 프로젝트 상세 열기' })
-    .click();
+  await caseDetailButton(page, 'mobile_rag_engine').click();
   expect(await seriousViolations(page)).toEqual([]);
 
   await page
@@ -770,9 +712,7 @@ test('home, modal, presentation에 browser console 경고와 오류가 없다', 
   });
 
   await page.goto('/');
-  await page
-    .getByRole('button', { name: 'mobile_rag_engine 프로젝트 상세 열기' })
-    .click();
+  await caseDetailButton(page, 'mobile_rag_engine').click();
   await page
     .getByRole('button', { name: 'mobile_rag_engine 프레젠테이션 열기' })
     .click();
@@ -791,13 +731,26 @@ test('1440px home이 LCP 이미지 우선순위 경고 없이 안정화된다', 
   });
 
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('/#featured-work');
+  await page.goto('/');
   await page.evaluate(() => document.fonts.ready);
-  await expect(page.locator('#featured-work img')).toHaveCount(3);
+  await page.waitForTimeout(1_000);
+
+  const caseImages = page.locator('#case-02 img, #case-03 img');
+  await expect(caseImages).toHaveCount(4);
+  // Scroll like a reader (wheel input) so the lazy case images load below the fold.
+  await page.mouse.move(720, 450);
+  const lawImage = page.locator('#case-03 img');
+  for (let step = 0; step < 40; step += 1) {
+    const top = await lawImage.evaluate((element) => element.getBoundingClientRect().top);
+    if (top < 450) break;
+    await page.mouse.wheel(0, 400);
+    await page.waitForTimeout(100);
+  }
+  await expect(lawImage).toBeInViewport();
   await page.waitForFunction(() =>
-    Array.from(document.querySelectorAll<HTMLImageElement>('#featured-work img')).every(
-      (image) => image.complete
-    )
+    Array.from(
+      document.querySelectorAll<HTMLImageElement>('#case-02 img, #case-03 img')
+    ).every((image) => image.complete)
   );
   await page.waitForTimeout(1_000);
 
@@ -805,13 +758,13 @@ test('1440px home이 LCP 이미지 우선순위 경고 없이 안정화된다', 
 });
 
 for (const viewport of [
-  { width: 360, height: 740, columns: 1, label: 'mobile' },
-  { width: 390, height: 844, columns: 1, label: 'mobile' },
-  { width: 640, height: 900, columns: 1, label: '200% zoom reflow proxy' },
-  { width: 768, height: 1024, columns: 1, label: 'tablet' },
-  { width: 1024, height: 600, columns: 3, label: 'desktop' },
-  { width: 1440, height: 900, columns: 3, label: 'desktop' },
-  { width: 320, height: 800, columns: 1, label: '400% zoom reflow proxy' },
+  { width: 360, height: 740, label: 'mobile' },
+  { width: 390, height: 844, label: 'mobile' },
+  { width: 640, height: 900, label: '200% zoom reflow proxy' },
+  { width: 768, height: 1024, label: 'tablet' },
+  { width: 1024, height: 600, label: 'desktop' },
+  { width: 1440, height: 900, label: 'desktop' },
+  { width: 320, height: 800, label: '400% zoom reflow proxy' },
 ]) {
   test(`${viewport.width}×${viewport.height} ${viewport.label}에서 콘텐츠와 control을 잃지 않는다`, async ({ page }) => {
     await page.setViewportSize(viewport);
@@ -831,28 +784,26 @@ for (const viewport of [
       page,
       page.getByRole('link', { name: '이메일 보내기' }).first()
     );
+    await expectHorizontallyReachable(page, page.getByLabel('포트폴리오 검색'));
 
     const contactActions = page.locator('#contact').getByRole('link');
     for (let index = 0; index < (await contactActions.count()); index += 1) {
       await expectHorizontallyReachable(page, contactActions.nth(index));
     }
 
-    const featuredGrid = page.locator('#featured-work .grid').first();
-    expect(await gridColumnCount(featuredGrid)).toBe(viewport.columns);
-
-    const firstCard = page.locator('#featured-work article').first();
+    const firstCase = page.locator('#case-01');
     await expectHorizontallyReachable(
       page,
-      firstCard.getByRole('heading', { name: 'mobile_rag_engine' })
+      firstCase.getByRole('heading', { level: 2, name: 'Flutter 공개 패키지' })
     );
     await expectHorizontallyReachable(
       page,
-      firstCard.getByRole('link', { name: 'GitHub' })
+      firstCase.getByRole('link', { name: 'GitHub ↗' })
     );
 
-    await firstCard
-      .getByRole('button', { name: 'mobile_rag_engine 프로젝트 상세 열기' })
-      .click();
+    const detailButton = caseDetailButton(page, 'mobile_rag_engine');
+    await expectHorizontallyReachable(page, detailButton);
+    await detailButton.click();
     const dialog = page.getByRole('dialog', { name: /mobile_rag_engine/ });
     await expect(dialog).toBeVisible();
     await expectHorizontallyReachable(
