@@ -78,3 +78,50 @@ test('keyword-only matches are reported without repeating visible text', async (
   const [engine] = searchDocuments(sampleDocuments, 'rag');
   assert.deepEqual(engine.keywordMatches, []);
 });
+
+const FEATURED = ['local-mobile-rag-gemma', 'easy-contract-viewer', 'law-info-engine'];
+const ADDITIONAL = ['easy-contract-viewer-server', 'fiet-fitness-trainer', 'haru-check', 'weedool'];
+
+test('case order follows featured then additional ids without duplicates', async () => {
+  const { buildCaseOrder, caseNumber, caseAnchorId } = await importTypeScriptModule('src/lib/caseOrder.ts');
+  const order = buildCaseOrder(FEATURED, [...ADDITIONAL, 'law-info-engine']);
+  assert.deepEqual(order, [...FEATURED, ...ADDITIONAL]);
+  assert.equal(caseNumber(order, 'easy-contract-viewer-server'), 4);
+  assert.equal(caseNumber(order, 'fiet-fitness-trainer'), 5);
+  assert.equal(caseNumber(order, 'haru-check'), 6);
+  assert.equal(caseNumber(order, 'weedool'), 7);
+  assert.equal(caseNumber(order, 'fiet-fitness-user'), null);
+  assert.equal(caseAnchorId(1), 'case-01');
+  assert.equal(caseAnchorId(12), 'case-12');
+});
+
+test('featured search targets become section anchors and others stay modal targets', async () => {
+  const { resolveSearchDocuments } = await importTypeScriptModule('src/lib/caseOrder.ts');
+  const documents = [
+    { id: 'x', title: '', snippet: '', keywords: [], meta: '', target: { kind: 'project', projectId: 'easy-contract-viewer' } },
+    { id: 'y', title: '', snippet: '', keywords: [], meta: '', target: { kind: 'project', projectId: 'haru-check' } },
+    { id: 'z', title: '', snippet: '', keywords: [], meta: '', target: { kind: 'anchor', href: '#career' } },
+  ];
+  assert.deepEqual(resolveSearchDocuments(documents, FEATURED).map((d) => d.target), [
+    { kind: 'anchor', href: '#case-02' },
+    { kind: 'project', projectId: 'haru-check' },
+    { kind: 'anchor', href: '#career' },
+  ]);
+  assert.deepEqual(
+    resolveSearchDocuments(documents, ['easy-contract-viewer', 'local-mobile-rag-gemma']).map((d) => d.target)[0],
+    { kind: 'anchor', href: '#case-01' }
+  );
+});
+
+test('other projects are numbered cases that no section or career entry links to', async () => {
+  const { buildCaseOrder, findOtherProjectIds } = await importTypeScriptModule('src/lib/caseOrder.ts');
+  const order = buildCaseOrder(FEATURED, ADDITIONAL);
+  const linked = ['local-mobile-rag-gemma', 'fiet-fitness-trainer', 'weedool', 'easy-contract-viewer-server'];
+  assert.deepEqual(findOtherProjectIds(order, FEATURED.length, linked), ['haru-check']);
+});
+
+test('mail href adds an encoded subject only when given', async () => {
+  const { buildMailHref } = await importTypeScriptModule('src/lib/mailHref.ts');
+  assert.equal(buildMailHref('a@b.c'), 'mailto:a@b.c');
+  assert.equal(buildMailHref('a@b.c', '[문의] 앱'), 'mailto:a@b.c?subject=%5B%EB%AC%B8%EC%9D%98%5D%20%EC%95%B1');
+});
