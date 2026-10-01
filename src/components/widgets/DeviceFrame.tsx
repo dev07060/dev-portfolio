@@ -212,8 +212,8 @@ const WebFrame = ({
     >
       <div className="absolute -top-[14px] left-3 flex gap-1.5 z-10">
         <div className="w-2.5 h-2.5 rounded-full bg-line-soft" />
-        <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
-        <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
+        <div className="w-2.5 h-2.5 rounded-full bg-line-soft" />
+        <div className="w-2.5 h-2.5 rounded-full bg-line-soft" />
       </div>
       {project.screens[0]?.imagePath ? (
         <div className="w-full h-full relative">
@@ -351,8 +351,8 @@ const WebPresentationFrame = ({
     >
       <div className="absolute -top-[16px] left-4 flex gap-2 z-10">
         <div className="w-3 h-3 rounded-full bg-line-soft" />
-        <div className="w-3 h-3 rounded-full bg-yellow-400" />
-        <div className="w-3 h-3 rounded-full bg-green-400" />
+        <div className="w-3 h-3 rounded-full bg-line-soft" />
+        <div className="w-3 h-3 rounded-full bg-line-soft" />
       </div>
       <div
         ref={scrollRef}

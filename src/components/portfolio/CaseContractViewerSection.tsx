@@ -66,6 +66,7 @@ export default function CaseContractViewerSection({
 
         {steps.length > 0 && (
           <ol
+            role="list"
             tabIndex={0}
             aria-label={`${project.title} 사용 흐름 화면`}
             className="m-0 flex min-w-0 flex-[1.35_1_560px] list-none items-start justify-center gap-7 p-0 max-md:snap-x max-md:snap-mandatory max-md:justify-start max-md:overflow-x-auto max-md:pb-2"

@@ -40,7 +40,7 @@ export default function CareerSection({
             <p className="t-lead mb-0 mt-6 max-w-[520px]">{copy.experienceDescription}</p>
           </div>
           {resumeUrl && (
-            <a href={resumeUrl} className="link-marker inline-flex min-h-11 items-center text-[15px] font-semibold">
+            <a href={resumeUrl} target="_blank" rel="noopener noreferrer" className="link-marker inline-flex min-h-11 items-center text-[15px] font-semibold">
               전체 경력은 이력서 PDF에서 ↗
             </a>
           )}
@@ -75,7 +75,7 @@ export default function CareerSection({
                   <p className="t-body-sm m-0 mt-1">{item.summary}</p>
                   {detailHighlights.length > 0 && (
                     <ul className="t-body-sm m-0 mt-2 list-disc space-y-1 pl-5">
-                      {detailHighlights.map((highlight) => <li key={highlight}>{highlight}</li>)}
+                      {detailHighlights.map((highlight, index) => <li key={`${index}-${highlight}`}>{highlight}</li>)}
                     </ul>
                   )}
                 </details>

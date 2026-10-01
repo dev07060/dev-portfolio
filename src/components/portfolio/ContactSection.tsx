@@ -35,8 +35,8 @@ export default function ContactSection({ profile, copy }: ContactSectionProps) {
           {profile.email}
         </a>
         <div className="mt-11 flex flex-wrap gap-3">
-          {profile.resumeUrl && <a href={profile.resumeUrl} className="btn-primary">이력서 PDF</a>}
-          <a href={profile.githubUrl} className="btn-outline">GitHub ↗</a>
+          {profile.resumeUrl && <a href={profile.resumeUrl} target="_blank" rel="noopener noreferrer" className="btn-primary">이력서 PDF</a>}
+          <a href={profile.githubUrl} target="_blank" rel="noopener noreferrer" className="btn-outline">GitHub ↗</a>
         </div>
       </div>
       <footer className="absolute inset-x-0 bottom-8">

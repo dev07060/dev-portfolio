@@ -92,7 +92,7 @@ export default function CaseEngineSection({
           {metrics.length > 0 && (
             <dl className="m-0 mt-12 flex flex-wrap gap-x-12 gap-y-7">
               {metrics.map((metric) => (
-                <div key={metric.value} className="flex flex-col-reverse gap-1.5">
+                <div key={metric.label} className="flex flex-col-reverse gap-1.5">
                   <dt className="text-[13px] text-sub">{metric.label}</dt>
                   <dd className="t-number m-0 text-marker">{metric.value}</dd>
                 </div>
@@ -103,7 +103,6 @@ export default function CaseEngineSection({
             <div
               role="tablist"
               aria-label={`${project.title} 소개`}
-              aria-orientation="vertical"
               onKeyDown={onTabKeyDown}
               className="mt-10 flex flex-col gap-0.5 max-md:flex-row max-md:flex-wrap max-md:gap-x-5"
             >
@@ -133,7 +132,7 @@ export default function CaseEngineSection({
           )}
           <div className="mt-7 flex flex-wrap gap-x-7 gap-y-1 text-[15px] font-medium">
             {links.map((link) => (
-              <a key={`${link.label}-${link.url}`} href={link.url} className="link-marker inline-flex min-h-11 items-center">
+              <a key={`${link.label}-${link.url}`} href={link.url} target="_blank" rel="noopener noreferrer" className="link-marker inline-flex min-h-11 items-center">
                 {link.label} ↗
               </a>
             ))}

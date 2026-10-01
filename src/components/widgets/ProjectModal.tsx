@@ -119,7 +119,7 @@ const ProjectInfoHeader = ({
 
   return (
     <header className="border-b border-line bg-surface p-6 sm:p-8 lg:col-start-1 lg:row-start-1 lg:border-r">
-          <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-marker">
+          <p className="mb-3 text-[13px] font-semibold text-marker">
             — {recruitmentCase?.statusLabel ?? getTypeLabel(project)}
           </p>
           <h2
@@ -157,6 +157,7 @@ const ProjectInfoHeader = ({
               ))}
             </div>
           )}
+          <ProjectCardSummary project={project} />
     </header>
   );
 };
@@ -177,12 +178,10 @@ const ProjectInfoDetails = ({
     className="accessible-scrollbar bg-surface p-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-marker sm:p-8 lg:col-start-1 lg:row-start-2 lg:min-h-0 lg:overflow-y-auto lg:border-r lg:border-line"
   >
     <div className="space-y-7">
-          <ProjectCardSummary project={project} />
-
           <section aria-labelledby={`problem-${project.id}`}>
             <h3
               id={`problem-${project.id}`}
-              className="mb-2 font-mono text-[11px] uppercase tracking-[0.25em] text-sub"
+              className="mb-2 text-[13px] font-semibold text-sub"
             >
               — 문제와 제약
             </h3>
@@ -195,7 +194,7 @@ const ProjectInfoDetails = ({
             <section aria-labelledby={`contribution-${project.id}`}>
               <h3
                 id={`contribution-${project.id}`}
-                className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-sub"
+                className="mb-3 text-[13px] font-semibold text-sub"
               >
                 — 직접 설계·구현한 범위
               </h3>
@@ -221,7 +220,7 @@ const ProjectInfoDetails = ({
           <section aria-labelledby={`technology-${project.id}`}>
             <h3
               id={`technology-${project.id}`}
-              className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-sub"
+              className="mb-3 text-[13px] font-semibold text-sub"
             >
               — 구조와 핵심 기술
             </h3>
@@ -241,7 +240,7 @@ const ProjectInfoDetails = ({
             <section aria-labelledby={`verification-${project.id}`}>
               <h3
                 id={`verification-${project.id}`}
-                className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-sub"
+                className="mb-3 text-[13px] font-semibold text-sub"
               >
                 — {recruitmentCase.verificationLabel ?? '테스트·평가·운영 검증'}
               </h3>
@@ -260,7 +259,7 @@ const ProjectInfoDetails = ({
             <section aria-labelledby={`outcomes-${project.id}`}>
               <h3
                 id={`outcomes-${project.id}`}
-                className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-sub"
+                className="mb-3 text-[13px] font-semibold text-sub"
               >
                 — 결과와 영향
               </h3>
@@ -280,7 +279,7 @@ const ProjectInfoDetails = ({
             <section aria-labelledby={`boundaries-${project.id}`}>
               <h3
                 id={`boundaries-${project.id}`}
-                className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-sub"
+                className="mb-3 text-[13px] font-semibold text-sub"
               >
                 — 트레이드오프와 비목표
               </h3>
@@ -313,10 +312,10 @@ const ProjectCardSummary = ({ project }: { project: Project }) => {
   if (!description && !highlight && evidenceBadges.length === 0) return null;
 
   return (
-    <section aria-labelledby={`summary-${project.id}`} data-project-card-summary>
+    <section aria-labelledby={`summary-${project.id}`} data-project-card-summary className="mt-6">
       <h3
         id={`summary-${project.id}`}
-        className="mb-2 font-mono text-[11px] uppercase tracking-[0.25em] text-sub"
+        className="mb-2 text-[13px] font-semibold text-sub"
       >
         — 사례 요약
       </h3>
@@ -342,7 +341,7 @@ const SupportingPackages = ({ items }: { items: SupportingPackage[] }) => (
   <section aria-labelledby="supporting-packages-heading">
     <h3
       id="supporting-packages-heading"
-      className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-sub"
+      className="mb-3 text-[13px] font-semibold text-sub"
     >
       — 관련 공개 패키지
     </h3>
@@ -401,7 +400,7 @@ const PackageCaseStudyFlow = ({ project }: { project: Project }) => {
     <section aria-labelledby={`case-flow-${project.id}`} data-package-detail="architecture-first">
       <h3
         id={`case-flow-${project.id}`}
-        className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-sub"
+        className="mb-3 text-[13px] font-semibold text-sub"
       >
         — 아키텍처와 데이터 흐름
       </h3>

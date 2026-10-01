@@ -145,7 +145,7 @@ export default function PortfolioSearch({ documents, onOpenProject }: PortfolioS
 
   return (
     <div ref={rootRef} className="search-panel">
-      <div className="flex items-center justify-between gap-3 font-mono text-xs text-sub">
+      <div className="flex items-center justify-between gap-3 text-xs text-sub">
         <label htmlFor="portfolio-search-input">포트폴리오 검색</label>
         {demoActive ? (
           <button
@@ -156,7 +156,7 @@ export default function PortfolioSearch({ documents, onOpenProject }: PortfolioS
             자동 입력 멈추기
           </button>
         ) : (
-          <span>프로젝트 {documents.length}개에서 찾기</span>
+          <span>프로젝트 <span className="font-mono">{documents.length}</span>개에서 찾기</span>
         )}
       </div>
 
@@ -178,13 +178,13 @@ export default function PortfolioSearch({ documents, onOpenProject }: PortfolioS
       </div>
 
       <div className="flex flex-wrap items-center gap-x-4">
-        <span className="font-mono text-xs text-sub">추천 검색어</span>
+        <span className="text-xs text-sub">추천 검색어</span>
         {SUGGESTIONS.map((label) => (
           <button
             key={label}
             type="button"
             onClick={() => runQuery(label)}
-            className="min-h-11 text-sm text-sub underline decoration-line-soft underline-offset-4 hover:text-marker"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center text-sm text-sub underline decoration-line-soft underline-offset-4 hover:text-marker"
           >
             {label}
           </button>

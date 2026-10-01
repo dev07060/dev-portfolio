@@ -19,7 +19,7 @@ const navLinkClass = 'inline-flex min-h-11 items-center text-ink hover:text-mark
 
 // Mono only for numbers/dates/code; Korean prose stays sans.
 function monoTokens(text: string): ReactNode[] {
-  return text.split(/([A-Za-z0-9_.]+)/).map((part, index) =>
+  return text.split(/(\d[\d.]*|[A-Za-z]+[_.][A-Za-z0-9_.]+)/).map((part, index) =>
     index % 2 === 1 ? (
       <span key={index} className="font-mono">
         {part}
@@ -54,6 +54,8 @@ export default function HeroSection({
             {profile.resumeUrl && (
               <a
                 href={profile.resumeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex min-h-11 items-center rounded-[10px] border-[1.5px] border-ink px-[18px] text-sm font-semibold text-ink hover:border-marker hover:text-marker"
               >
                 이력서 PDF
@@ -82,7 +84,7 @@ export default function HeroSection({
                 {index > 0 && ' · '}
                 {item.label}{' '}
                 {item.evidence ? (
-                  <a href={item.evidence} className="text-sub underline decoration-line-soft underline-offset-4 hover:text-marker">
+                  <a href={item.evidence} target="_blank" rel="noopener noreferrer" className="text-sub underline decoration-line-soft underline-offset-4 hover:text-marker">
                     {monoTokens(item.value)} ↗
                   </a>
                 ) : (
@@ -101,9 +103,9 @@ export default function HeroSection({
             ))}
           </ul>
           <div className="mt-10 flex flex-wrap items-center gap-x-5 gap-y-3">
-            {profile.resumeUrl && <a href={profile.resumeUrl} className="btn-primary">이력서 PDF</a>}
+            {profile.resumeUrl && <a href={profile.resumeUrl} target="_blank" rel="noopener noreferrer" className="btn-primary">이력서 PDF</a>}
             <a href={buildMailHref(profile.email, copy.contactMailSubject)} className="btn-outline">{copy.contactCta}</a>
-            <a href={profile.githubUrl} className="inline-flex min-h-11 items-center text-[15px] font-medium text-ink hover:text-marker">
+            <a href={profile.githubUrl} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center text-[15px] font-medium text-ink hover:text-marker">
               GitHub ↗
             </a>
           </div>

@@ -32,7 +32,7 @@ export default function CaseLawSection({
           </div>
           <div className="mt-7 flex flex-wrap gap-x-7 gap-y-1 text-[15px] font-medium">
             {recruitmentCase.evidenceLinks.map((link) => (
-              <a key={link.url} href={link.url} className="link-marker inline-flex min-h-11 items-center">
+              <a key={link.url} href={link.url} target="_blank" rel="noopener noreferrer" className="link-marker inline-flex min-h-11 items-center">
                 {link.label} ↗
               </a>
             ))}
