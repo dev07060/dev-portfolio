@@ -561,13 +561,14 @@ test('320px와 390px 프로젝트 상세의 긴 기술 제목이 한 줄로 표�
   }
 });
 
-test('데스크톱 프로젝트 상세 설명을 keyboard로 스크롤한다', async ({ page }) => {
+test('데스크톱 프로젝트 상세를 keyboard로 스크롤한다', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
   await page.goto('/');
   await caseDetailButton(page, 'Easy Contract Viewer').click();
 
   const region = page.getByRole('region', {
-    name: 'Easy Contract Viewer 프로젝트 상세 설명',
+    name: 'Easy Contract Viewer 프로젝트 상세',
+    exact: true,
   });
   await expect(region).toBeVisible();
   await expect

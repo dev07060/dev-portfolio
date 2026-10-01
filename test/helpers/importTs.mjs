@@ -62,5 +62,6 @@ const transpileToDataUrl = (path, cache) => {
 };
 
 /** Like importTypeScriptModule, but also resolves relative ('./x') imports to sibling .ts files. */
+// Limits: only relative './x' or '../x' specifiers mapped to 'x.ts'; no '@/' aliases, .tsx, or index.ts resolution.
 export const importTypeScriptModuleWithDependencies = async (path) =>
   import(transpileToDataUrl(path, new Map()));

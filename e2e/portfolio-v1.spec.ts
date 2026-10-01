@@ -227,7 +227,7 @@ for (const [anchor, title] of [
     const dialog = page.getByRole('dialog', { name: new RegExp(title) });
     await expect(dialog).toBeVisible();
 
-    const scroller = dialog.getByRole('region', { name: `${title} 프로젝트 상세 설명` });
+    const scroller = dialog.getByRole('region', { name: `${title} 프로젝트 상세`, exact: true });
     const header = scroller.locator('header');
     const lastDetail = scroller.locator('[data-project-info-details] section').last();
 
@@ -284,6 +284,7 @@ test('390px 사례 #1은 지표 2열 → 탭(밑줄) → 패널 → 링크 순�
   expect(decoration.line).toContain('underline');
   expect(decoration.color).toBe('rgb(243, 224, 74)');
   await expect(selected.locator('.engine-tab-bar')).toBeHidden();
+  expect(await section.locator('.engine-panel').evaluate((node) => getComputedStyle(node).rowGap)).toBe('14px');
 
   const metricsTop = await top(section.locator('dl'));
   const tabsTop = await top(section.getByRole('tablist'));
@@ -292,6 +293,38 @@ test('390px 사례 #1은 지표 2열 → 탭(밑줄) → 패널 → 링크 순�
   expect(metricsTop).toBeLessThan(tabsTop);
   expect(tabsTop).toBeLessThan(panelTop);
   expect(panelTop).toBeLessThan(linksTop);
+});
+
+test('390px 사례 #1에서 선택된 탭 다음 Tab은 링크보다 먼저 탭 패널로 간다', async ({ page, browserName }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  const section = page.locator('#case-01');
+  const selected = section.getByRole('tab', { selected: true });
+  await selected.focus();
+  await expect(selected).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(section.getByRole('tabpanel')).toBeFocused();
+  // WebKit skips links on Tab by default (Safari "Press Tab to highlight each item" is off).
+  await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
+  await expect(section.getByRole('link').first()).toBeFocused();
+});
+
+test('사례 #1은 DOM 순서도 탭 → 패널 → 링크이고 CSS order에 기대지 않는다', async ({ page }) => {
+  await page.goto('/');
+  const section = page.locator('#case-01');
+  const order = await section.evaluate((root) => {
+    const tablist = root.querySelector('[role="tablist"]')!;
+    const panel = root.querySelector('[role="tabpanel"]')!;
+    const link = root.querySelector('a[href^="http"]')!;
+    const follows = (a: Element, b: Element) =>
+      Boolean(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
+    const usesOrder = [...root.querySelectorAll('*')].some(
+      (node) => getComputedStyle(node).order !== '0' || getComputedStyle(node).display === 'contents'
+    );
+    return { tabsBeforePanel: follows(tablist, panel), panelBeforeLink: follows(panel, link), usesOrder };
+  });
+  expect(order).toEqual({ tabsBeforePanel: true, panelBeforeLink: true, usesOrder: false });
 });
 
 test('데스크톱 사례 #1 탭은 왼쪽 막대 표시를 유지한다', async ({ page }) => {
@@ -304,4 +337,14 @@ test('데스크톱 사례 #1 탭은 왼쪽 막대 표시를 유지한다', async
     .locator('.engine-tab-label')
     .evaluate((node) => getComputedStyle(node).textDecorationLine);
   expect(line).toBe('none');
+  const section = page.locator('#case-01');
+  const rect = (locator: ReturnType<typeof section.locator>) =>
+    locator.evaluate((node) => node.getBoundingClientRect().toJSON());
+  const tabs = await rect(section.getByRole('tablist'));
+  const panel = await rect(section.getByRole('tabpanel'));
+  const link = await rect(section.getByRole('button', { name: /^사례 자세히/ }));
+  expect(link.top).toBeGreaterThan(tabs.bottom);
+  expect(link.left).toBeLessThan(panel.left);
+  expect(panel.left).toBeGreaterThan(tabs.right);
+  expect(await section.locator('.engine-panel').evaluate((node) => getComputedStyle(node).rowGap)).toBe('24px');
 });

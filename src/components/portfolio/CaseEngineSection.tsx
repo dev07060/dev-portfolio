@@ -80,57 +80,82 @@ export default function CaseEngineSection({
 
   return (
     <section id={anchorId} aria-labelledby={`${anchorId}-title`} className="screen bg-slate">
-      <div className="screen-inner flex flex-wrap items-center gap-16 max-md:flex-col max-md:flex-nowrap max-md:items-stretch max-md:gap-0">
-        <div className="flex min-w-0 flex-[1_1_440px] flex-col max-md:contents">
-          <CaseLabel n={caseNumber} />
-          <h2 id={`${anchorId}-title`} className="t-h2 m-0 max-w-[14ch]">
-            {recruitmentCase.sectionTitle ?? project.title}
-          </h2>
-          {recruitmentCase.sectionLead && (
-            <p className="t-lead mb-0 mt-6 max-w-[560px]">{recruitmentCase.sectionLead}</p>
-          )}
-          {metrics.length > 0 && (
-            <dl className="m-0 mt-12 flex flex-wrap gap-x-12 gap-y-7 max-md:mt-8 max-md:grid max-md:grid-cols-2 max-md:gap-x-4 max-md:gap-y-6">
-              {metrics.map((metric) => (
-                <div key={metric.label} className="flex flex-col-reverse justify-end gap-1.5">
-                  <dt className="text-[13px] text-sub">{metric.label}</dt>
-                  <dd className="t-number m-0 text-marker">{metric.value}</dd>
-                </div>
-              ))}
-            </dl>
-          )}
-          {topics.length > 0 && (
-            <div
-              role="tablist"
-              aria-label={`${project.title} 소개`}
-              onKeyDown={onTabKeyDown}
-              className="mt-10 flex flex-col gap-0.5 max-md:mt-9 max-md:flex-row max-md:flex-wrap max-md:gap-x-5 max-md:gap-y-0"
-            >
-              {topics.map((item, index) => {
-                const isSelected = index === selected;
-                return (
-                  <button
-                    key={item.label}
-                    ref={(node) => {
-                      tabRefs.current[index] = node;
-                    }}
-                    type="button"
-                    role="tab"
-                    id={`${anchorId}-tab-${index}`}
-                    aria-selected={isSelected}
-                    aria-controls={`${anchorId}-panel`}
-                    tabIndex={isSelected ? 0 : -1}
-                    onClick={() => select(index)}
-                    className={`engine-tab${isSelected ? ' is-selected' : ''}`}
-                  >
-                    <span aria-hidden="true" className="engine-tab-bar" />
-                    <span className="engine-tab-label">{item.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          )}
-          <div className="mt-7 flex flex-wrap gap-x-7 gap-y-1 text-[15px] font-medium max-md:order-2">
+      {/* DOM order = reading/focus order: intro → tabs → panel → links.
+          From a 984px content width (where the old flex row stopped wrapping) a grid puts
+          the links back under the tabs in the left column and the panel on the right. */}
+      <div className="screen-inner @container">
+        <div className="flex flex-col @min-[984px]:grid @min-[984px]:grid-cols-[calc(50%-52px)_calc(50%-12px)] @min-[984px]:grid-rows-[1fr_auto_auto_1fr] @min-[984px]:gap-x-16">
+          <div className="flex min-w-0 flex-col @min-[984px]:col-start-1 @min-[984px]:row-start-2">
+            <CaseLabel n={caseNumber} />
+            <h2 id={`${anchorId}-title`} className="t-h2 m-0 max-w-[14ch]">
+              {recruitmentCase.sectionTitle ?? project.title}
+            </h2>
+            {recruitmentCase.sectionLead && (
+              <p className="t-lead mb-0 mt-6 max-w-[560px]">{recruitmentCase.sectionLead}</p>
+            )}
+            {metrics.length > 0 && (
+              <dl className="m-0 mt-12 flex flex-wrap gap-x-12 gap-y-7 max-md:mt-8 max-md:grid max-md:grid-cols-2 max-md:gap-x-4 max-md:gap-y-6">
+                {metrics.map((metric) => (
+                  <div key={metric.label} className="flex flex-col-reverse justify-end gap-1.5">
+                    <dt className="text-[13px] text-sub">{metric.label}</dt>
+                    <dd className="t-number m-0 text-marker">{metric.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            )}
+            {topics.length > 0 && (
+              <div
+                role="tablist"
+                aria-label={`${project.title} 소개`}
+                onKeyDown={onTabKeyDown}
+                className="mt-10 flex flex-col gap-0.5 max-md:mt-9 max-md:flex-row max-md:flex-wrap max-md:gap-x-5 max-md:gap-y-0"
+              >
+                {topics.map((item, index) => {
+                  const isSelected = index === selected;
+                  return (
+                    <button
+                      key={item.label}
+                      ref={(node) => {
+                        tabRefs.current[index] = node;
+                      }}
+                      type="button"
+                      role="tab"
+                      id={`${anchorId}-tab-${index}`}
+                      aria-selected={isSelected}
+                      aria-controls={`${anchorId}-panel`}
+                      tabIndex={isSelected ? 0 : -1}
+                      onClick={() => select(index)}
+                      className={`engine-tab${isSelected ? ' is-selected' : ''}`}
+                    >
+                      <span aria-hidden="true" className="engine-tab-bar" />
+                      <span className="engine-tab-label">{item.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          <div className="mt-6 flex min-w-0 items-center md:mt-16 @min-[984px]:col-start-2 @min-[984px]:row-span-full @min-[984px]:mt-0 @min-[984px]:min-h-[420px]">
+            {topic && (
+              <div
+                id={`${anchorId}-panel`}
+                role="tabpanel"
+                aria-labelledby={`${anchorId}-tab-${shown}`}
+                tabIndex={0}
+                data-phase={phase}
+                className="engine-panel flex flex-col gap-3.5 md:gap-6"
+              >
+                <h3 className="t-h3 m-0 max-w-[560px]">{topic.title}</h3>
+                <p className="m-0 max-w-[560px] text-[17px] leading-[1.85] text-sub">{topic.body}</p>
+                {topic.flow && (
+                  <p className="m-0 mt-2 max-w-[560px] font-mono text-[15px] leading-[1.7] text-marker">{topic.flow}</p>
+                )}
+              </div>
+            )}
+          </div>
+
+          <div className="mt-7 flex flex-wrap gap-x-7 gap-y-1 text-[15px] font-medium md:mt-10 @min-[984px]:col-start-1 @min-[984px]:row-start-3 @min-[984px]:mt-7">
             {links.map((link) => (
               <a key={`${link.label}-${link.url}`} href={link.url} target="_blank" rel="noopener noreferrer" className="link-marker inline-flex min-h-11 items-center">
                 {link.label} ↗
@@ -138,25 +163,6 @@ export default function CaseEngineSection({
             ))}
             <CaseDetailButton project={project} onOpenProject={onOpenProject} />
           </div>
-        </div>
-
-        <div className="flex min-h-[420px] min-w-0 flex-[1_1_480px] items-center max-md:order-1 max-md:mt-6 max-md:min-h-0 max-md:flex-none">
-          {topic && (
-            <div
-              id={`${anchorId}-panel`}
-              role="tabpanel"
-              aria-labelledby={`${anchorId}-tab-${shown}`}
-              tabIndex={0}
-              data-phase={phase}
-              className="engine-panel flex flex-col gap-6"
-            >
-              <h3 className="t-h3 m-0 max-w-[560px]">{topic.title}</h3>
-              <p className="m-0 max-w-[560px] text-[17px] leading-[1.85] text-sub">{topic.body}</p>
-              {topic.flow && (
-                <p className="m-0 mt-2 max-w-[560px] font-mono text-[15px] leading-[1.7] text-marker">{topic.flow}</p>
-              )}
-            </div>
-          )}
         </div>
       </div>
     </section>

@@ -36,7 +36,7 @@ test('project detail exposes a named keyboard-scroll region', () => {
   const modal = read('src/components/widgets/ProjectModal.tsx');
 
   assert.match(modal, /role="region"/);
-  assert.match(modal, /aria-label=\{`\$\{project\.title\} 프로젝트 상세 설명`\}/);
+  assert.match(modal, /aria-label=\{`\$\{project\.title\} 프로젝트 상세`\}/);
   assert.match(modal, /tabIndex=\{0\}/);
   assert.match(modal, /focus-visible:ring-inset/);
 });

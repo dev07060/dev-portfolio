@@ -59,7 +59,7 @@ const ProjectModal = ({
           (sticky) while header and details scroll together, so a tall header never clips. */}
       <div
         role="region"
-        aria-label={`${project.title} 프로젝트 상세 설명`}
+        aria-label={`${project.title} 프로젝트 상세`}
         tabIndex={0}
         data-project-info-scroll
         className="accessible-scrollbar relative grid max-h-[calc(100dvh-1rem)] w-full max-w-6xl grid-cols-1 overflow-y-auto overscroll-contain rounded-2xl border border-line bg-ground shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-marker md:rounded-3xl lg:h-[720px] lg:max-h-[calc(100vh-2rem)] lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:grid-rows-[auto_1fr]"
