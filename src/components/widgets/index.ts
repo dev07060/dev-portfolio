@@ -2,5 +2,4 @@
 export { default as ProjectModal } from './ProjectModal';
 export { default as PresentationOverlay } from './PresentationOverlay';
 export { default as DeviceFrame } from './DeviceFrame';
-export { default as ProjectIcon } from './ProjectIcon';
 export { default as ScreenImage } from './ScreenImage';

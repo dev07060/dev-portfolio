@@ -1,4 +1,5 @@
 // src/components/portfolio/CaseDetailButton.tsx
+import { displayTitle } from '@/lib/projectTitle';
 import type { Project } from '@/types/project';
 
 interface CaseDetailButtonProps {
@@ -7,7 +8,7 @@ interface CaseDetailButtonProps {
 }
 
 export default function CaseDetailButton({ project, onOpenProject }: CaseDetailButtonProps) {
-  const title = project.title.replace(/\s*\n\s*/g, ' ');
+  const title = displayTitle(project);
 
   return (
     <button

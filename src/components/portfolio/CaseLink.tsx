@@ -1,5 +1,6 @@
 // src/components/portfolio/CaseLink.tsx
 import { caseAnchorId, caseNumber } from '@/lib/caseOrder';
+import { displayTitle } from '@/lib/projectTitle';
 import type { Project } from '@/types/project';
 
 interface CaseLinkProps {
@@ -18,7 +19,7 @@ export default function CaseLink({ projectId, caseOrder, featuredCount, projects
   if (number === null || !project) return null;
 
   const label = `프로젝트 사례 #${number}`;
-  const title = project.title.replace(/\s*\n\s*/g, ' ');
+  const title = displayTitle(project);
 
   if (number <= featuredCount) {
     return (
