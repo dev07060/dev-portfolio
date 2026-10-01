@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { usePrefersReducedMotion } from '@/lib/usePrefersReducedMotion';
+import CaseDetailButton from './CaseDetailButton';
 import CaseLabel from './CaseLabel';
 import type { CaseSectionProps } from './caseSectionTypes';
 
@@ -136,9 +137,7 @@ export default function CaseEngineSection({
                 {link.label} ↗
               </a>
             ))}
-            <button type="button" onClick={() => onOpenProject(project.id)} className="link-marker inline-flex min-h-11 items-center">
-              사례 자세히
-            </button>
+            <CaseDetailButton project={project} onOpenProject={onOpenProject} />
           </div>
         </div>
 

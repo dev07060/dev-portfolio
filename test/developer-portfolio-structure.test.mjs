@@ -785,13 +785,13 @@ test('project detail and presentation actions use Korean accessible names', () =
   const device = readExisting('src/components/widgets/DeviceFrame.tsx');
   const presentation = readExisting('src/components/widgets/PresentationOverlay.tsx');
 
+  const detailButton = readExisting('src/components/portfolio/CaseDetailButton.tsx');
+  assert.match(detailButton, /aria-haspopup="dialog"/);
+  assert.match(detailButton, /aria-label=\{`사례 자세히, \$\{title\}`\}/);
+  assert.match(detailButton, />\s*사례 자세히\s*<\/button>/);
   for (const name of v1CaseSections) {
     const section = readExisting(`src/components/portfolio/${name}.tsx`);
-    assert.match(
-      section,
-      /<button type="button" onClick=\{\(\) => onOpenProject\(project\.id\)\}[^>]*>\s*사례 자세히\s*<\/button>/,
-      name
-    );
+    assert.match(section, /<CaseDetailButton project=\{project\} onOpenProject=\{onOpenProject\} \/>/, name);
   }
   assert.match(caseLink, /`\$\{label\}, \$\{title\} 화면 보기`/);
   assert.match(modal, /\$\{project\.title\} 프로젝트 상세 닫기/);

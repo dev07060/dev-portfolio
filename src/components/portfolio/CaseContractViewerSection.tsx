@@ -1,5 +1,6 @@
 // src/components/portfolio/CaseContractViewerSection.tsx
 import Image from 'next/image';
+import CaseDetailButton from './CaseDetailButton';
 import CaseLabel from './CaseLabel';
 import CaseLink from './CaseLink';
 import type { CaseSectionProps } from './caseSectionTypes';
@@ -49,9 +50,7 @@ export default function CaseContractViewerSection({
             <p className="m-0 text-base leading-[1.8]">{project.techStack.join(' · ')}</p>
           </div>
           <div className="mt-7 flex flex-wrap gap-x-7 gap-y-1 text-[15px] font-medium">
-            <button type="button" onClick={() => onOpenProject(project.id)} className="link-marker inline-flex min-h-11 items-center">
-              사례 자세히
-            </button>
+            <CaseDetailButton project={project} onOpenProject={onOpenProject} />
             {(recruitmentCase.relatedProjectIds ?? []).map((projectId) => (
               <CaseLink
                 key={projectId}
