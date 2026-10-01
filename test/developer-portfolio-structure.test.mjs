@@ -560,7 +560,7 @@ test('career case links resolve project ids to readable project names', () => {
 
   assert.match(caseLink, /projects: Project\[\]/);
   assert.match(caseLink, /projects\.find/);
-  assert.match(caseLink, /const title = project\.title/);
+  assert.match(caseLink, /const title = displayTitle\(project\)/);
   assert.match(caseLink, /aria-label=\{`\$\{label\}, \$\{title\}`\}/);
   assert.match(caseLink, /aria-label=\{`\$\{label\}, \$\{title\} 화면 보기`\}/);
   assert.match(career, /<CaseLink[\s\S]*?projectId=\{projectId\}/);

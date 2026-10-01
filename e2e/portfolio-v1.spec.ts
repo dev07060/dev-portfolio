@@ -79,6 +79,21 @@ for (const [route, role, positioning] of [
   });
 }
 
+test('히어로 검색 키워드 힌트는 한 글자 입력에 반응하지 않고 알고리즘 이름을 보이지 않는다', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  const panel = page.locator('.search-panel');
+  const input = page.getByLabel('포트폴리오 검색');
+  await expect(input).toHaveValue('Flutter');
+  for (const query of ['F', 'B', 'R', 'H', 'BM', 'RR', 'HN']) {
+    await input.fill(query);
+    await expect(input).toHaveValue(query);
+    await expect(panel).not.toContainText(/BM25|HNSW|RRF/);
+  }
+  await input.fill('F');
+  await expect(panel).not.toContainText('관련 키워드');
+});
+
 test('사례 #1 탭은 화살표 키로 이동하고 패널을 바꾼다', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/');
@@ -198,4 +213,92 @@ test('홈과 열린 모달에 critical/serious axe 위반이 없다', async ({ p
   await expect(page.getByRole('dialog')).toBeVisible();
   const modal = await new AxeBuilder({ page }).analyze();
   expect(modal.violations.filter((v) => v.impact === 'critical' || v.impact === 'serious')).toEqual([]);
+});
+
+for (const [anchor, title] of [
+  ['#case-01', 'mobile_rag_engine'],
+  ['#case-03', 'Swifty-law'],
+] as const) {
+  test(`1024×768 ${title} 모달은 헤더가 잘리지 않고 상세 끝까지 스크롤된다`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.setViewportSize({ width: 1024, height: 768 });
+    await page.goto('/');
+    await page.locator(anchor).getByRole('button', { name: /^사례 자세히/ }).click();
+    const dialog = page.getByRole('dialog', { name: new RegExp(title) });
+    await expect(dialog).toBeVisible();
+
+    const scroller = dialog.getByRole('region', { name: `${title} 프로젝트 상세 설명` });
+    const header = scroller.locator('header');
+    const lastDetail = scroller.locator('[data-project-info-details] section').last();
+
+    // The header lives inside the scroll container, so it can never be clipped by a fixed row.
+    expect(await header.evaluate((node) => node.closest('[data-project-info-scroll]') !== null)).toBe(true);
+    const geometry = await scroller.evaluate((node) => {
+      const box = node.getBoundingClientRect();
+      const head = node.querySelector('header')!.getBoundingClientRect();
+      return {
+        overflowY: getComputedStyle(node).overflowY,
+        scrollable: node.scrollHeight > node.clientHeight,
+        headerTop: head.top,
+        boxTop: box.top,
+        boxBottom: box.bottom,
+        viewport: window.innerHeight,
+      };
+    });
+    expect(geometry.overflowY).toBe('auto');
+    expect(geometry.scrollable).toBe(true);
+    expect(geometry.headerTop).toBeGreaterThanOrEqual(geometry.boxTop - 1);
+    expect(geometry.boxBottom).toBeLessThanOrEqual(geometry.viewport);
+
+    await scroller.evaluate((node) => node.scrollTo({ top: node.scrollHeight }));
+    await expect(lastDetail).toBeInViewport();
+    const lastBottom = await lastDetail.evaluate((node) => node.getBoundingClientRect().bottom);
+    expect(lastBottom).toBeLessThanOrEqual(geometry.boxBottom + 1);
+  });
+}
+
+test('390px 사례 #1은 지표 2열 → 탭(밑줄) → 패널 → 링크 순서다', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  const section = page.locator('#case-01');
+  const top = (locator: ReturnType<typeof section.locator>) =>
+    locator.evaluate((node) => node.getBoundingClientRect().top);
+
+  const metrics = section.locator('dl > div');
+  await expect(metrics).toHaveCount(2);
+  const [first, second] = await metrics.evaluateAll((nodes) =>
+    nodes.map((node) => node.getBoundingClientRect())
+  );
+  expect(Math.abs(first.top - second.top)).toBeLessThan(2);
+  expect(second.left).toBeGreaterThan(first.right);
+
+  const selected = section.getByRole('tab', { selected: true });
+  const decoration = await selected.locator('.engine-tab-label').evaluate((node) => {
+    const style = getComputedStyle(node);
+    return { line: style.textDecorationLine, color: style.textDecorationColor };
+  });
+  expect(decoration.line).toContain('underline');
+  expect(decoration.color).toBe('rgb(243, 224, 74)');
+  await expect(selected.locator('.engine-tab-bar')).toBeHidden();
+
+  const metricsTop = await top(section.locator('dl'));
+  const tabsTop = await top(section.getByRole('tablist'));
+  const panelTop = await top(section.getByRole('tabpanel'));
+  const linksTop = await top(section.getByRole('button', { name: /^사례 자세히/ }));
+  expect(metricsTop).toBeLessThan(tabsTop);
+  expect(tabsTop).toBeLessThan(panelTop);
+  expect(panelTop).toBeLessThan(linksTop);
+});
+
+test('데스크톱 사례 #1 탭은 왼쪽 막대 표시를 유지한다', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/');
+  const selected = page.locator('#case-01').getByRole('tab', { selected: true });
+  await expect(selected.locator('.engine-tab-bar')).toBeVisible();
+  const line = await selected
+    .locator('.engine-tab-label')
+    .evaluate((node) => getComputedStyle(node).textDecorationLine);
+  expect(line).toBe('none');
 });

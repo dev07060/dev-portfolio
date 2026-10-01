@@ -1,6 +1,10 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { importTypeScriptModule, read } from './helpers/importTs.mjs';
+import {
+  importTypeScriptModule,
+  importTypeScriptModuleWithDependencies,
+  read,
+} from './helpers/importTs.mjs';
 
 test('layout loads only IBM Plex Sans KR and IBM Plex Mono', () => {
   const layout = read('src/app/layout.tsx');
@@ -120,6 +124,17 @@ test('other projects are numbered cases that no section or career entry links to
   assert.deepEqual(findOtherProjectIds(order, FEATURED.length, linked), ['haru-check']);
 });
 
+test('displayTitle joins manual line breaks into one line', async () => {
+  const { displayTitle } = await importTypeScriptModule('src/lib/projectTitle.ts');
+  assert.equal(displayTitle({ title: 'Easy Contract\n  Viewer' }), 'Easy Contract Viewer');
+  assert.equal(displayTitle({ title: 'Weedool' }), 'Weedool');
+  for (const component of ['CaseLink', 'CaseDetailButton']) {
+    const source = read(`src/components/portfolio/${component}.tsx`);
+    assert.match(source, /displayTitle\(project\)/, component);
+    assert.doesNotMatch(source, /project\.title\.replace/, component);
+  }
+});
+
 test('mail href adds an encoded subject only when given', async () => {
   const { buildMailHref } = await importTypeScriptModule('src/lib/mailHref.ts');
   assert.equal(buildMailHref('a@b.c'), 'mailto:a@b.c');
@@ -127,7 +142,7 @@ test('mail href adds an encoded subject only when given', async () => {
 });
 
 test('search documents produce the approved results for the demo keywords', async () => {
-  const { searchDocuments: documents } = await importTypeScriptModule('src/data/searchDocuments.ts');
+  const { heroSearchDocuments: documents } = await importTypeScriptModule('src/data/searchDocuments.ts');
   const { searchDocuments } = await importTypeScriptModule('src/lib/portfolioSearch.ts');
   const ids = (query) => searchDocuments(documents, query).map((r) => r.document.id);
 
@@ -140,7 +155,7 @@ test('search documents produce the approved results for the demo keywords', asyn
 });
 
 test('search documents only target public projects that exist', async () => {
-  const { searchDocuments: documents } = await importTypeScriptModule('src/data/searchDocuments.ts');
+  const { heroSearchDocuments: documents } = await importTypeScriptModule('src/data/searchDocuments.ts');
   const { projects } = await importTypeScriptModule('src/data/projects.ts');
   const projectIds = new Set(projects.map((p) => p.id));
   for (const document of documents) {
@@ -153,10 +168,65 @@ test('search documents only target public projects that exist', async () => {
   }
 });
 
+test('keyword hints match word prefixes of 2+ characters only', async () => {
+  const { searchDocuments } = await importTypeScriptModule('src/lib/portfolioSearch.ts');
+  const documents = [
+    { id: 'x', title: 'X', snippet: '앱', keywords: ['pdfrx', 'Rust FFI', 'Firebase'], meta: '', target: { kind: 'anchor', href: '#x' } },
+  ];
+  const hints = (query) => searchDocuments(documents, query).flatMap((r) => r.keywordMatches);
+  assert.deepEqual(hints('F'), []);
+  assert.deepEqual(hints('df'), []);
+  assert.deepEqual(hints('ff'), ['Rust FFI']);
+  assert.deepEqual(hints('fi'), ['Firebase']);
+  assert.deepEqual(hints('pdf'), ['pdfrx']);
+});
+
+test('hidden keywords score but are never shown as hints', async () => {
+  const { searchDocuments } = await importTypeScriptModule('src/lib/portfolioSearch.ts');
+  const documents = [
+    { id: 'x', title: 'X', snippet: '앱', keywords: ['Dart'], hiddenKeywords: ['BM25'], meta: '', target: { kind: 'anchor', href: '#x' } },
+  ];
+  const [result] = searchDocuments(documents, 'BM25');
+  assert.equal(result.document.id, 'x');
+  assert.equal(result.score, 1);
+  assert.deepEqual(result.keywordMatches, []);
+});
+
+test('hero search never displays ranking-algorithm names for any demo or suggestion prefix', async () => {
+  const { heroSearchDocuments, heroSearchDemoWords, heroSearchSuggestions } =
+    await importTypeScriptModule('src/data/searchDocuments.ts');
+  const { searchDocuments } = await importTypeScriptModule('src/lib/portfolioSearch.ts');
+  const algorithmNames = /BM25|HNSW|RRF/i;
+  const words = new Set([...heroSearchDemoWords, ...heroSearchSuggestions]);
+  assert.ok(words.size >= 5);
+  let checked = 0;
+  for (const word of words) {
+    const characters = [...word];
+    for (let length = 1; length <= characters.length; length += 1) {
+      const query = characters.slice(0, length).join('');
+      for (const result of searchDocuments(heroSearchDocuments, query)) {
+        const displayed = [
+          result.document.title,
+          result.document.snippet,
+          result.document.meta,
+          ...result.titleSegments.map((segment) => segment.text),
+          ...result.snippetSegments.map((segment) => segment.text),
+          ...result.keywordMatches,
+        ];
+        for (const text of displayed) {
+          assert.doesNotMatch(text, algorithmNames, `query "${query}" → ${result.document.id}: ${text}`);
+        }
+        checked += 1;
+      }
+    }
+  }
+  assert.ok(checked > 0);
+});
+
 test('no user-visible search document field names the ranking algorithms', async () => {
-  const { searchDocuments: documents } = await importTypeScriptModule('src/data/searchDocuments.ts');
+  const { heroSearchDocuments: documents } = await importTypeScriptModule('src/data/searchDocuments.ts');
   for (const document of documents) {
-    for (const field of [document.title, document.snippet, document.meta]) {
+    for (const field of [document.title, document.snippet, document.meta, ...document.keywords]) {
       assert.doesNotMatch(field, /BM25|HNSW|RRF/, document.id);
     }
   }
@@ -183,10 +253,14 @@ test('recruitment cases carry the v1 section content and reference real screens'
   assert.equal(experienceItems.filter((item) => item.cardHighlight).length, 4);
 });
 
-test('freelancer profile opts out of the recruitment headline and intro', () => {
-  const source = read('src/data/freelancer.ts');
-  assert.match(source, /headline:\s*undefined/);
-  assert.match(source, /intro:\s*undefined/);
+test('freelancer profile opts out of the recruitment headline and intro', async () => {
+  const { freelancerPortfolioConfig } = await importTypeScriptModuleWithDependencies('src/data/freelancer.ts');
+  const { recruitmentProfile } = await importTypeScriptModule('src/data/recruitment.ts');
+  assert.ok(recruitmentProfile.headline, 'recruitment profile keeps its headline');
+  assert.ok(recruitmentProfile.intro, 'recruitment profile keeps its intro');
+  assert.equal(freelancerPortfolioConfig.profile.headline, undefined);
+  assert.equal(freelancerPortfolioConfig.profile.intro, undefined);
+  assert.notEqual(freelancerPortfolioConfig.profile.role, recruitmentProfile.role);
 });
 
 test('v1 section order: hero, career, featured cases, contact', () => {
