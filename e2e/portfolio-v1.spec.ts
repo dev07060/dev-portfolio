@@ -503,48 +503,61 @@ test('플로팅 헤더의 경력 링크는 #career 제목을 헤더에 가리지
   expect(headingTop).toBeGreaterThan(headerBottom);
 });
 
-test('1440px 사례 #2는 고정된 채 세로 스크롤로 화면 3개를 가로로 넘기고 다음 섹션으로 이어진다', async ({ page }) => {
+test('1440px 사례 #2는 고정된 채 스크롤 단계마다 큰 화면을 하나씩 보여주고 다음 섹션으로 이어진다', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
   await expect(page.locator('html')).toHaveClass(/\blenis\b/);
   const section = page.locator('#case-02');
   await expect(section).toHaveAttribute('data-pin', 'on');
+  await expect(section).toHaveAttribute('data-snap-steps', '3');
   // Pinned, the steps list does not scroll, so it is not a Tab stop.
   await expect(section.locator('ol')).not.toHaveAttribute('tabindex', /.*/);
 
   const trackTop = await section.evaluate((node) => node.getBoundingClientRect().top + window.scrollY);
   const scrollable = await section.evaluate((node) => node.getBoundingClientRect().height - window.innerHeight);
-  expect(scrollable).toBeGreaterThan(200);
+  // Exactly one viewport per step: start, +1 step, +2 steps.
+  expect(Math.abs(scrollable - 2 * 900)).toBeLessThanOrEqual(1);
+  const shots = section.locator('.pin-row > li');
+  const indicator = section.locator('.pin-progress p');
 
-  const seen = new Set<number>();
-  const offsets: number[] = [];
-  for (let step = 0; step <= 10; step += 1) {
-    await page.evaluate((y) => window.scrollTo(0, y), trackTop + (scrollable * step) / 10);
-    await expect
-      .poll(async () => Number(await section.getAttribute('data-pin-progress')))
-      .toBeCloseTo(step / 10, 1);
+  for (const [offset, expected] of [
+    [0, 0], [300, 0], [500, 1], [900, 1], [1300, 1], [1400, 2], [1800, 2], [1000, 1], [100, 0],
+  ] as const) {
+    await page.evaluate((y) => window.scrollTo(0, y), trackTop + offset);
+    await expect(indicator).toContainText(`${expected + 1} / 3`);
+    for (let index = 0; index < 3; index += 1) {
+      await expect(shots.nth(index)).toHaveAttribute(
+        'data-step-state',
+        index < expected ? 'before' : index > expected ? 'after' : 'current'
+      );
+    }
+    await expect(shots.nth(expected)).toBeVisible();
+    await expect(shots.nth(expected).locator('img')).toBeInViewport({ ratio: 1 });
+    // Only one screen is shown at a time.
+    for (let index = 0; index < 3; index += 1) {
+      if (index !== expected) await expect(shots.nth(index)).toBeHidden();
+    }
     const state = await section.evaluate((node) => {
       const stage = node.querySelector('.pin-stage')!.getBoundingClientRect();
-      const view = node.querySelector('.pin-window')!.getBoundingClientRect();
-      const row = node.querySelector('.pin-row')!.getBoundingClientRect();
-      const shots = [...node.querySelectorAll('.pin-row img')].map((img) => img.getBoundingClientRect());
-      return {
-        stageTop: stage.top,
-        rowLeft: row.left,
-        visible: shots.map((shot) => shot.left >= view.left - 1 && shot.right <= view.right + 1),
-      };
+      const tops = [...node.querySelectorAll('.pin-row > li')].map((li) => li.getBoundingClientRect().top);
+      return { stageTop: stage.top, tops };
     });
     expect(Math.abs(state.stageTop)).toBeLessThan(1);
-    offsets.push(state.rowLeft);
-    state.visible.forEach((isVisible, index) => isVisible && seen.add(index));
+    // Not staggered: every screen sits on the same line.
+    expect(Math.max(...state.tops) - Math.min(...state.tops)).toBeLessThan(1);
     // The text column (with its links) stays in the stage the whole time.
     await expect(section.getByRole('button', { name: /^사례 자세히/ })).toBeInViewport();
   }
-  expect(offsets[10]).toBeLessThan(offsets[0] - 100);
-  for (let index = 1; index < offsets.length; index += 1) {
-    expect(offsets[index]).toBeLessThanOrEqual(offsets[index - 1] + 0.5);
-  }
-  expect([...seen].sort()).toEqual([0, 1, 2]);
+
+  // Large, fully visible phone screen with the 1344×2992 ratio.
+  const size = await shots.nth(0).locator('img').evaluate((img) => {
+    const rect = img.getBoundingClientRect();
+    return { width: rect.width, height: rect.height, top: rect.top, bottom: rect.bottom };
+  });
+  expect(size.height).toBeGreaterThan(600);
+  expect(Math.abs(size.width / size.height - 1344 / 2992)).toBeLessThan(0.01);
+  expect(size.top).toBeGreaterThanOrEqual(70);
+  expect(size.bottom).toBeLessThanOrEqual(900);
 
   await page.evaluate((y) => window.scrollTo(0, y), trackTop + scrollable + 300);
   await expect(page.locator('#case-03')).toBeInViewport();
@@ -570,29 +583,47 @@ test('#case-02 앵커는 트랙의 시작에 도착한다', async ({ page }) => 
   await expect
     .poll(async () => Number(await page.locator('#case-02').getAttribute('data-pin-progress')))
     .toBeLessThan(0.01);
+  await expect(page.locator('#case-02 .pin-row > li').first()).toHaveAttribute('data-step-state', 'current');
+  await expect(page.locator('#case-02 .pin-progress p')).toContainText('1 / 3');
 });
 
-test('390px 사례 #2는 고정하지 않고 가로 스냅 목록을 유지한다', async ({ page }) => {
+test('390px 사례 #2는 고정하지 않고 한 화면씩(약 78vw) 넘기는 가로 스냅 캐러셀이다', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
   const section = page.locator('#case-02');
   await section.scrollIntoViewIfNeeded();
   await expect(section).not.toHaveAttribute('data-pin', /.+/);
-  // The mobile snap list scrolls horizontally, so it stays keyboard-focusable.
+  await expect(section).not.toHaveAttribute('data-snap-steps', /.+/);
+  // The mobile carousel scrolls horizontally, so it stays keyboard-focusable.
   await expect(section.locator('ol')).toHaveAttribute('tabindex', '0');
+  await expect(section.locator('.pin-progress')).toBeHidden();
   const state = await section.evaluate((node) => {
     const list = node.querySelector('ol')!;
+    const items = [...list.querySelectorAll('li')].map((li) => li.getBoundingClientRect());
+    const listRect = list.getBoundingClientRect();
     return {
       stage: getComputedStyle(node.querySelector('.pin-stage')!).position,
       overflowX: getComputedStyle(list).overflowX,
       snap: getComputedStyle(list).scrollSnapType,
       transform: list.style.transform,
+      widths: items.map((rect) => rect.width),
+      tops: items.map((rect) => rect.top),
+      firstRight: items[0].right,
+      secondLeft: items[1].left,
+      listRight: listRect.right,
     };
   });
   expect(state.stage).not.toBe('sticky');
   expect(state.overflowX).toBe('auto');
   expect(state.snap).toContain('x');
+  expect(state.snap).toContain('mandatory');
   expect(state.transform).toBe('');
+  for (const width of state.widths) expect(Math.abs(width - 390 * 0.78)).toBeLessThanOrEqual(2);
+  // Aligned (no offsets); the first screen fills the view and the next one peeks in.
+  expect(Math.max(...state.tops) - Math.min(...state.tops)).toBeLessThan(1);
+  expect(state.firstRight).toBeLessThanOrEqual(state.listRight);
+  expect(state.secondLeft).toBeLessThan(state.listRight);
+  expect(state.listRight - state.secondLeft).toBeGreaterThan(8);
 });
 
 test('움직임 줄이기에서는 Lenis와 사례 #2 고정이 꺼진다', async ({ page }) => {
@@ -613,6 +644,13 @@ test('움직임 줄이기에서는 Lenis와 사례 #2 고정이 꺼진다', asyn
   expect(await section.evaluate((node) => getComputedStyle(node.querySelector('.pin-stage')!).position)).not.toBe('sticky');
   expect(await section.evaluate((node) => (node.querySelector('.pin-row') as HTMLElement).style.transform)).toBe('');
   await expect(section).not.toHaveAttribute('data-pin-progress', /.+/);
+  await expect(section).not.toHaveAttribute('data-snap-steps', /.+/);
+  // All three screens show in one aligned row.
+  for (let index = 0; index < 3; index += 1) await expect(section.locator('.pin-row > li').nth(index)).toBeVisible();
+  const tops = await section.evaluate((node) =>
+    [...node.querySelectorAll('.pin-row > li')].map((li) => li.getBoundingClientRect().top)
+  );
+  expect(Math.max(...tops) - Math.min(...tops)).toBeLessThan(1);
 
   // Native anchors still work without Lenis.
   await page.evaluate(() => window.scrollTo(0, document.getElementById('contact')!.offsetTop));
@@ -780,38 +818,63 @@ test.describe('1440px 섹션 스냅', () => {
     await settledScrollY(page);
     await page.mouse.wheel(0, 40);
     expect(await settledScrollY(page)).toBeGreaterThanOrEqual(careerTop + 38);
+  });
 
-    // Case #2 pinned track: mid-track stays where the wheel left it, the screens follow.
+  test('사례 #2는 휠 한 칸마다 화면 하나씩 넘기고, 세 번째 다음은 #case-03, 위로 한 칸이면 세 번째 화면이다', async ({ page }) => {
     const track = page.locator('#case-02');
+    const shots = track.locator('.pin-row > li');
+    const indicator = track.locator('.pin-progress p');
     const trackTop = await sectionTop(page, 'case-02');
     await page.evaluate((y) => window.scrollTo(0, y), trackTop);
     await settledScrollY(page);
-    for (let step = 1; step <= 3; step += 1) {
-      await page.mouse.wheel(0, 40);
-      expect(Math.abs((await settledScrollY(page)) - (trackTop + 40 * step))).toBeLessThanOrEqual(2);
-    }
-    const progress = Number(await track.getAttribute('data-pin-progress'));
-    expect(progress).toBeGreaterThan(0.05);
-    expect(progress).toBeLessThan(0.95);
-  });
+    await expect(indicator).toContainText('1 / 3');
+    await expect(shots.nth(0)).toBeVisible();
 
-  test('사례 #2 트랙 끝 근처에서는 끝(화면 3개 다 넘김)에, 다음 휠은 #case-03에 멈춘다', async ({ page }) => {
-    const track = page.locator('#case-02');
-    const trackTop = await sectionTop(page, 'case-02');
-    const trackEnd = await track.evaluate(
-      (node) => Math.round(node.getBoundingClientRect().top + window.scrollY + node.getBoundingClientRect().height - window.innerHeight)
-    );
-    await page.evaluate((y) => window.scrollTo(0, y), trackEnd - 200);
-    await settledScrollY(page);
-    await page.mouse.wheel(0, 80);
-    expect(Math.abs((await settledScrollY(page)) - trackEnd)).toBeLessThanOrEqual(2);
-    await expect.poll(async () => Number(await track.getAttribute('data-pin-progress'))).toBeGreaterThan(0.99);
-    expect(trackEnd).toBeGreaterThan(trackTop);
+    await page.mouse.wheel(0, 120);
+    expect(Math.abs((await settledScrollY(page)) - (trackTop + 900))).toBeLessThanOrEqual(2);
+    await expect(indicator).toContainText('2 / 3');
+    await expect(shots.nth(1)).toBeVisible();
+    await expect(shots.nth(1).locator('img')).toBeInViewport({ ratio: 1 });
+    await expect(shots.nth(0)).toBeHidden();
+    await expect(shots.nth(0).locator('img')).not.toBeInViewport();
+
+    await page.mouse.wheel(0, 120);
+    expect(Math.abs((await settledScrollY(page)) - (trackTop + 1800))).toBeLessThanOrEqual(2);
+    await expect(indicator).toContainText('3 / 3');
+    await expect(shots.nth(2)).toBeVisible();
+    await expect(shots.nth(1)).toBeHidden();
 
     await page.mouse.wheel(0, 120);
     await expect.poll(() => viewportTopOf(page, 'case-03')).toBeLessThanOrEqual(2);
     await settledScrollY(page);
     expect(await viewportTopOf(page, 'case-03')).toBeLessThanOrEqual(2);
+
+    await page.mouse.wheel(0, -120);
+    expect(Math.abs((await settledScrollY(page)) - (trackTop + 1800))).toBeLessThanOrEqual(2);
+    await expect(indicator).toContainText('3 / 3');
+    await expect(shots.nth(2)).toBeVisible();
+
+    await page.mouse.wheel(0, -120);
+    expect(Math.abs((await settledScrollY(page)) - (trackTop + 900))).toBeLessThanOrEqual(2);
+    await expect(indicator).toContainText('2 / 3');
+  });
+
+  test('사례 #2에서 PageDown은 화면 하나씩, 세 번째 다음은 #case-03으로 간다', async ({ page }) => {
+    const indicator = page.locator('#case-02 .pin-progress p');
+    const trackTop = await sectionTop(page, 'case-02');
+    await page.evaluate((y) => window.scrollTo(0, y), trackTop);
+    await settledScrollY(page);
+    await page.locator('body').focus();
+    await page.keyboard.press('PageDown');
+    expect(Math.abs((await settledScrollY(page)) - (trackTop + 900))).toBeLessThanOrEqual(2);
+    await expect(indicator).toContainText('2 / 3');
+    await page.keyboard.press('PageDown');
+    expect(Math.abs((await settledScrollY(page)) - (trackTop + 1800))).toBeLessThanOrEqual(2);
+    await expect(indicator).toContainText('3 / 3');
+    await page.keyboard.press('PageDown');
+    await expect.poll(() => viewportTopOf(page, 'case-03')).toBeLessThanOrEqual(2);
+    await page.keyboard.press('PageUp');
+    expect(Math.abs((await settledScrollY(page)) - (trackTop + 1800))).toBeLessThanOrEqual(2);
   });
 
   test('PageDown은 다음 섹션 경계로 간다', async ({ page }) => {

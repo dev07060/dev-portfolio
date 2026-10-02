@@ -15,7 +15,8 @@ const NOISE_DELTA = 2;
 const TAIL_DELTA = 4;
 const easeOutQuart = (t: number) => 1 - (1 - t) ** 4;
 
-export type SnapPoint = { y: number; kind: 'start' | 'end'; section: number };
+/** `step`: an intermediate stop inside a pinned step track (case #2), `step` = its index (1..count-2). */
+export type SnapPoint = { y: number; kind: 'start' | 'step' | 'end'; section: number; step?: number };
 
 /** Keys whose Space/PageDown meaning belongs to the focused control, not the page. */
 const KEY_OWNERS =
@@ -24,6 +25,8 @@ const KEY_OWNERS =
 /**
  * Snap points: the start of every `main > section`, plus an end-aligned point (bottom edge at the
  * viewport bottom) for sections taller than the viewport, e.g. career or case #2's pinned track.
+ * A pinned step track (`data-snap-steps="N"`, set by useStepPin) also gets its N-2 intermediate
+ * steps, evenly spaced between its start and end, so every step is a stop and it has no free zone.
  * Read fresh from layout on every use, so resizes, pin re-measures and font swaps never leave stale points.
  */
 function snapPoints(lenis: Lenis): SnapPoint[] {
@@ -35,7 +38,12 @@ function snapPoints(lenis: Lenis): SnapPoint[] {
     const top = Math.round(rect.top + window.scrollY);
     points.push({ y: Math.min(top, limit), kind: 'start', section: index });
     if (rect.height > vh + 2) {
-      points.push({ y: Math.min(Math.round(top + rect.height - vh), limit), kind: 'end', section: index });
+      const span = rect.height - vh;
+      const steps = Number(section.dataset.snapSteps) || 0;
+      for (let step = 1; step < steps - 1; step += 1) {
+        points.push({ y: Math.min(Math.round(top + (span * step) / (steps - 1)), limit), kind: 'step', section: index, step });
+      }
+      points.push({ y: Math.min(Math.round(top + span), limit), kind: 'end', section: index });
     }
   });
   points.sort((a, b) => a.y - b.y);
@@ -47,7 +55,8 @@ function snapPoints(lenis: Lenis): SnapPoint[] {
  * - Between two sections (the viewport straddles a boundary): settle on the next point in the
  *   direction of travel, so one wheel notch moves one section. Going up, the end point of a section
  *   that overflows by no more than the threshold is skipped in favour of that section's start.
- * - Inside a tall section (between its start and end points): free scrolling; settle only when
+ * - Inside a pinned step track every step is a point, so it behaves like a row of boundaries.
+ * - Inside a tall section (between its start and end points, no steps): free scrolling; settle only when
  *   moving toward a boundary that is within the threshold. Never pulled back against the wheel.
  * Returns null when no snap should happen.
  */
@@ -119,7 +128,7 @@ export function attachSectionSnap(lenis: Lenis): () => void {
       onComplete: () => {
         if (!correct || !active()) return;
         // Layout may have shifted during the animation (lazy images, fonts): land on where the point is now.
-        const now = snapPoints(lenis).find((p) => p.section === point.section && p.kind === point.kind);
+        const now = snapPoints(lenis).find((p) => p.section === point.section && p.kind === point.kind && p.step === point.step);
         if (now && Math.abs(now.y - point.y) > 2) settleTo(now, false);
       },
     });

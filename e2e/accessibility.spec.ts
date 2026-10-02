@@ -632,7 +632,8 @@ test('프레젠테이션이 slide status와 preview focus restoration을 제공�
   await previewButton.click();
 
   const presentation = page.getByRole('dialog');
-  const liveStatus = page.locator('[aria-live="polite"]');
+  // Scoped to the overlay: case #2's step indicator is another polite live region on the page.
+  const liveStatus = presentation.locator('[aria-live="polite"]');
   const presentationClose = page.getByRole('button', { name: '프레젠테이션 닫기' });
   await expect(presentation).toBeVisible();
   await expect(presentationClose).toBeFocused();

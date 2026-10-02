@@ -3,13 +3,11 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { useHorizontalPin } from '@/lib/useHorizontalPin';
+import { useStepPin } from '@/lib/useStepPin';
 import CaseDetailButton from './CaseDetailButton';
 import CaseLabel from './CaseLabel';
 import CaseLink from './CaseLink';
 import type { CaseSectionProps } from './caseSectionTypes';
-
-const STEP_OFFSETS = ['', 'md:mt-10', 'md:mt-20'];
 
 export default function CaseContractViewerSection({
   anchorId,
@@ -27,9 +25,13 @@ export default function CaseContractViewerSection({
     return screen?.imagePath ? [{ ...step, imagePath: screen.imagePath, imageAlt: screen.imageAlt }] : [];
   });
   const trackRef = useRef<HTMLElement>(null);
-  // >=768px with motion allowed: the section is a tall track with a sticky 100svh stage and the
-  // step screens move on X with vertical scroll (A14). Otherwise: today's static layout.
-  useHorizontalPin(trackRef);
+  // >=768px with motion allowed: the section is a tall track with a sticky 100svh stage that shows
+  // one enlarged screen per scroll step (A17). Otherwise: an aligned row (desktop, reduced motion or
+  // pin off) or a native horizontal snap carousel (mobile).
+  const activeStep = useStepPin(trackRef, steps.length);
+  // Pinned, the off-stage screens sit outside the clipped window, so native lazy loading would only
+  // fetch them as they slide in. Once the first screen has loaded, fetch the rest right away.
+  const [preloadSteps, setPreloadSteps] = useState(false);
   // The steps list is a tab stop only while it is an actual horizontal scroller (mobile snap list).
   // Pinned or static at >=768px it does not scroll, so it should not take a Tab stop.
   const rowRef = useRef<HTMLOListElement>(null);
@@ -105,10 +107,14 @@ export default function CaseContractViewerSection({
                 role="list"
                 tabIndex={rowScrolls ? 0 : undefined}
                 aria-label={`${project.title} 사용 흐름 화면`}
-                className="pin-row m-0 flex min-w-0 list-none items-start justify-center gap-7 p-0 max-md:snap-x max-md:snap-mandatory max-md:justify-start max-md:overflow-x-auto max-md:pb-2"
+                className="pin-row m-0 flex min-w-0 list-none items-start justify-center gap-7 p-0 max-md:snap-x max-md:snap-mandatory max-md:justify-start max-md:gap-4 max-md:overflow-x-auto max-md:pb-2"
               >
                 {steps.map((step, index) => (
-                  <li key={step.screenId} className={`flex w-[190px] shrink-0 snap-start flex-col gap-3.5 ${STEP_OFFSETS[index] ?? ''}`}>
+                  <li
+                    key={step.screenId}
+                    data-step-state={index < activeStep ? 'before' : index > activeStep ? 'after' : 'current'}
+                    className="flex w-[190px] shrink-0 snap-start flex-col gap-3.5 max-md:w-[78vw]"
+                  >
                     <div className="flex items-baseline gap-2.5">
                       <span className="font-mono text-[30px] font-medium leading-none text-marker">{index + 1}</span>
                       <span className="text-base font-semibold">{step.label}</span>
@@ -116,14 +122,32 @@ export default function CaseContractViewerSection({
                     <Image
                       src={step.imagePath}
                       alt={step.imageAlt}
-                      width={190}
-                      height={423}
-                      sizes="(min-width: 768px) 260px, 190px"
-                      className="h-auto w-[190px] rounded-3xl"
+                      width={1344}
+                      height={2992}
+                      sizes="(min-width: 768px) 380px, 78vw"
+                      loading={index > 0 && preloadSteps ? 'eager' : 'lazy'}
+                      onLoad={index === 0 ? () => setPreloadSteps(true) : undefined}
+                      className="h-auto w-full rounded-3xl"
                     />
                   </li>
                 ))}
               </ol>
+              {/* Pinned only (hidden by CSS otherwise): which screen of how many, announced politely. */}
+              <div className="pin-progress hidden items-center gap-3">
+                <p aria-live="polite" aria-atomic="true" className="m-0 font-mono text-sm text-sub">
+                  <span className="sr-only">{`${project.title} 사용 흐름 화면 `}</span>
+                  {`${activeStep + 1} / ${steps.length}`}
+                  <span className="sr-only">{`, ${steps[activeStep]?.label ?? ''}`}</span>
+                </p>
+                <span aria-hidden="true" className="flex gap-1.5">
+                  {steps.map((step, index) => (
+                    <span
+                      key={step.screenId}
+                      className={`size-1.5 rounded-full ${index === activeStep ? 'bg-marker' : 'bg-faint'}`}
+                    />
+                  ))}
+                </span>
+              </div>
             </div>
           )}
         </div>

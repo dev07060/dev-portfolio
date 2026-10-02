@@ -378,17 +378,26 @@ test('A14 floating header is inert and aria-hidden while hidden and is a distinc
   assert.match(header, /rel="noopener noreferrer"/);
 });
 
-test('A14 case #2 pins only at >=768px with motion allowed', () => {
+test('A14/A17 case #2 pins only at >=768px with motion allowed and shows one screen per step', () => {
   const section = read('src/components/portfolio/CaseContractViewerSection.tsx');
-  const hook = read('src/lib/useHorizontalPin.ts');
+  const hook = read('src/lib/useStepPin.ts');
   const css = read('src/app/globals.css');
 
   assert.match(section, /className="screen pin-track bg-stone"/);
-  assert.match(section, /useHorizontalPin\(trackRef\)/);
+  assert.match(section, /useStepPin\(trackRef, steps\.length\)/);
   assert.match(section, /<ol[\s\S]*?role="list"[\s\S]*?max-md:snap-x max-md:snap-mandatory/);
+  // Mobile carousel: one screen ~78vw at a time.
+  assert.match(section, /max-md:w-\[78vw\]/);
+  // No staggered offsets any more (A17).
+  assert.doesNotMatch(section, /STEP_OFFSETS|md:mt-10|md:mt-20/);
+  assert.match(section, /data-step-state=/);
+  assert.match(section, /aria-live="polite"/);
+  assert.match(hook, /dataset\.snapSteps = String\(count\)/);
+  assert.match(css, /--shot-h: min\(78svh,/);
+  assert.match(css, /li\[data-step-state="after"\] \{\s*transform: translate3d\(calc\(50cqw/);
   assert.match(css, /@media \(min-width: 48rem\) and \(prefers-reduced-motion: no-preference\) \{\s*\.pin-track/);
   assert.match(css, /position: sticky;\s*top: 0;\s*height: 100svh;/);
-  assert.match(hook, /if \(reducedMotion\) return;/);
+  assert.match(hook, /if \(reducedMotion \|\| count < 2\) return;/);
 });
 
 test('A15 section snap is attached to Lenis after the reduced-motion guard and detached before destroy', () => {
@@ -406,16 +415,18 @@ test('A15 resolveSnapTarget: boundary zones follow the direction, tall sections 
   assert.equal(SNAP_MEDIA, '(min-width: 48rem) and (pointer: fine)');
   const vh = 900;
   const threshold = vh * SNAP_FREE_THRESHOLD; // 225
-  // Geometry measured at 1440×900: hero 900, career 1143 (tall), case-01 900, case-02 track 1478 (tall), case-03, contact.
+  // Geometry at 1440×900: hero 900, career 1143 (tall), case-01 900, case-02 step track 2700 (3 steps, one
+  // viewport apart: start, step, end), case-03, contact.
   const points = [
     { y: 0, kind: 'start', section: 0 },
     { y: 900, kind: 'start', section: 1 },
     { y: 1143, kind: 'end', section: 1 },
     { y: 2043, kind: 'start', section: 2 },
     { y: 2943, kind: 'start', section: 3 },
-    { y: 3521, kind: 'end', section: 3 },
-    { y: 4421, kind: 'start', section: 4 },
-    { y: 5321, kind: 'start', section: 5 },
+    { y: 3843, kind: 'step', section: 3, step: 1 },
+    { y: 4743, kind: 'end', section: 3 },
+    { y: 5643, kind: 'start', section: 4 },
+    { y: 6543, kind: 'start', section: 5 },
   ];
   const at = (position, direction) => resolveSnapTarget(points, position, direction, threshold)?.y ?? null;
   const rows = [
@@ -424,18 +435,19 @@ test('A15 resolveSnapTarget: boundary zones follow the direction, tall sections 
     [100, -1, 0, 'boundary zone, up: previous boundary even when moved down overall'],
     [1500, 1, 2043, 'past the career end, down: case-01 start'],
     [1500, -1, 1143, 'past the career end, up: career end-aligned point'],
-    [3700, -1, 3521, 'below the case-02 track end, up: track end'],
+    [5643 - 120, -1, 4743, 'one notch up from case-03: case-02 track end (screen 3)'],
     [960, 1, 1143, 'career free zone, within threshold of its end: settle on the end'],
     [960, -1, 900, 'career free zone, within threshold of its start going up'],
-    [2943 + 120, 1, null, 'case-02 track, mid: free'],
-    [2943 + 300, -1, null, 'case-02 track, 300px in going up: free (beyond threshold)'],
-    [2943 + 200, -1, 2943, 'case-02 track, within threshold of its start going up'],
-    [3521 - 200, 1, 3521, 'case-02 track, within threshold of its end going down'],
-    [3521 - 300, 1, null, 'case-02 track, 300px before its end: free'],
+    [2943 + 120, 1, 3843, 'case-02 step track, one notch from screen 1: screen 2 (no free zone)'],
+    [2943 + 600, -1, 2943, 'case-02 step track, going up before screen 2: screen 1'],
+    [3843 + 120, 1, 4743, 'case-02 step track, one notch from screen 2: screen 3'],
+    [3843 - 120, -1, 2943, 'case-02 step track, one notch up from screen 2: screen 1'],
+    [4743 + 120, 1, 5643, 'one notch past screen 3: case-03 start'],
+    [4743 - 120, -1, 3843, 'one notch up from screen 3: screen 2'],
     [900, 1, null, 'already on a point'],
     [901, -1, null, 'within 1px of a point'],
     [1500, 0, null, 'no direction'],
-    [6000, 1, null, 'past the last point'],
+    [7000, 1, null, 'past the last point'],
   ];
   for (const [position, direction, expected, why] of rows) {
     assert.equal(at(position, direction), expected, `${position} ${direction}: ${why}`);

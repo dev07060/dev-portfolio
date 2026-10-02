@@ -297,16 +297,21 @@ body[data-portfolio-overlay="true"] .skip-link {
   .career-detail > summary::-webkit-details-marker { display: none; }
 }
 
-/* Case #2 pinned horizontal track (>=768px, motion allowed). Below 768px and under
-   reduced motion the static layout (native horizontal snap list on mobile) is untouched.
+/* Case #2 pinned step track (A17, >=768px, motion allowed): the stage stays pinned and shows ONE
+   enlarged screen per scroll step; the step change slides the next screen in from the right (the
+   previous one from the left when scrolling back). Below 768px (native snap carousel) and under
+   reduced motion (aligned row) the static layout is untouched.
    Unlayered on purpose so it overrides the static Tailwind utilities. */
 @media (min-width: 48rem) and (prefers-reduced-motion: no-preference) {
   .pin-track:not([data-pin="off"]) {
-    --pin-shot: clamp(180px, calc((100svh - 300px) * 0.45), 260px);
+    /* As tall as the stage allows: 100svh minus stage padding (96), label + gap (44),
+       progress row + gap (38) and window padding (16). Phone ratio 1344 x 2992. */
+    --shot-h: min(78svh, calc(100svh - 194px));
+    --shot-w: calc(var(--shot-h) * 1344 / 2992);
     display: block;
     min-height: 0;
     padding-block: 0;
-    height: calc(100svh + var(--pin-scroll, 60svh));
+    height: calc(100svh + var(--pin-scroll, 200svh));
   }
   .pin-track:not([data-pin="off"]) .pin-stage {
     position: sticky;
@@ -334,24 +339,54 @@ body[data-portfolio-overlay="true"] .skip-link {
   }
   .pin-track:not([data-pin="off"]) .pin-window {
     min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
     overflow: clip;
     overflow-clip-margin: 8px;
     padding-block: 8px;
-    /* Soft edges where the moving screens enter and leave the window. */
+    /* Soft edges where the screens slide in and out. */
     -webkit-mask-image: linear-gradient(to right, transparent, #000 20px, #000 calc(100% - 20px), transparent);
     mask-image: linear-gradient(to right, transparent, #000 20px, #000 calc(100% - 20px), transparent);
   }
+  /* All screens share one grid cell, centred and aligned (no staggered offsets). */
   .pin-track:not([data-pin="off"]) .pin-row {
-    justify-content: flex-start;
-    padding-inline: 20px;
-    gap: clamp(32px, 4vw, 56px);
-    will-change: transform;
+    display: grid;
+    width: 100%;
+    justify-items: center;
+    container-type: inline-size;
   }
   .pin-track:not([data-pin="off"]) .pin-row > li {
-    width: var(--pin-shot, 240px);
+    grid-area: 1 / 1;
+    width: var(--shot-w);
+    max-width: 100%;
+    transition:
+      transform 560ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 420ms ease-out,
+      visibility 0s linear 0s;
+  }
+  /* Off-stage screens sit fully outside the window: half the window plus half the screen. */
+  .pin-track:not([data-pin="off"]) .pin-row > li[data-step-state="before"],
+  .pin-track:not([data-pin="off"]) .pin-row > li[data-step-state="after"] {
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      transform 560ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 420ms ease-out,
+      visibility 0s linear 560ms;
+  }
+  .pin-track:not([data-pin="off"]) .pin-row > li[data-step-state="before"] {
+    transform: translate3d(calc(-50cqw - 50% - 24px), 0, 0);
+  }
+  .pin-track:not([data-pin="off"]) .pin-row > li[data-step-state="after"] {
+    transform: translate3d(calc(50cqw + 50% + 24px), 0, 0);
   }
   .pin-track:not([data-pin="off"]) .pin-row img {
-    width: var(--pin-shot, 240px);
+    width: 100%;
+  }
+  .pin-track:not([data-pin="off"]) .pin-progress {
+    display: flex;
   }
 }
 
