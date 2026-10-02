@@ -1,7 +1,7 @@
 // src/components/portfolio/CaseContractViewerSection.tsx
 'use client';
 
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { useHorizontalPin } from '@/lib/useHorizontalPin';
 import CaseDetailButton from './CaseDetailButton';
@@ -30,6 +30,31 @@ export default function CaseContractViewerSection({
   // >=768px with motion allowed: the section is a tall track with a sticky 100svh stage and the
   // step screens move on X with vertical scroll (A14). Otherwise: today's static layout.
   useHorizontalPin(trackRef);
+  // The steps list is a tab stop only while it is an actual horizontal scroller (mobile snap list).
+  // Pinned or static at >=768px it does not scroll, so it should not take a Tab stop.
+  const rowRef = useRef<HTMLOListElement>(null);
+  const [rowScrolls, setRowScrolls] = useState(true);
+  useEffect(() => {
+    const row = rowRef.current;
+    if (!row) return;
+    let frame = 0;
+    const check = () => {
+      frame = 0;
+      setRowScrolls(getComputedStyle(row).overflowX !== 'visible' && row.scrollWidth > row.clientWidth + 1);
+    };
+    const schedule = () => {
+      if (!frame) frame = window.requestAnimationFrame(check);
+    };
+    check();
+    const observer = new ResizeObserver(schedule);
+    observer.observe(row);
+    window.addEventListener('resize', schedule);
+    return () => {
+      if (frame) window.cancelAnimationFrame(frame);
+      observer.disconnect();
+      window.removeEventListener('resize', schedule);
+    };
+  }, []);
 
   return (
     <section ref={trackRef} id={anchorId} aria-labelledby={`${anchorId}-title`} className="screen pin-track bg-stone">
@@ -76,8 +101,9 @@ export default function CaseContractViewerSection({
           {steps.length > 0 && (
             <div className="pin-window min-w-0 flex-[1.35_1_560px]">
               <ol
+                ref={rowRef}
                 role="list"
-                tabIndex={0}
+                tabIndex={rowScrolls ? 0 : undefined}
                 aria-label={`${project.title} 사용 흐름 화면`}
                 className="pin-row m-0 flex min-w-0 list-none items-start justify-center gap-7 p-0 max-md:snap-x max-md:snap-mandatory max-md:justify-start max-md:overflow-x-auto max-md:pb-2"
               >

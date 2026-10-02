@@ -443,6 +443,8 @@ test('1440px 사례 #2는 고정된 채 세로 스크롤로 화면 3개를 가�
   await expect(page.locator('html')).toHaveClass(/\blenis\b/);
   const section = page.locator('#case-02');
   await expect(section).toHaveAttribute('data-pin', 'on');
+  // Pinned, the steps list does not scroll, so it is not a Tab stop.
+  await expect(section.locator('ol')).not.toHaveAttribute('tabindex', /.*/);
 
   const trackTop = await section.evaluate((node) => node.getBoundingClientRect().top + window.scrollY);
   const scrollable = await section.evaluate((node) => node.getBoundingClientRect().height - window.innerHeight);
@@ -510,6 +512,8 @@ test('390px 사례 #2는 고정하지 않고 가로 스냅 목록을 유지한�
   const section = page.locator('#case-02');
   await section.scrollIntoViewIfNeeded();
   await expect(section).not.toHaveAttribute('data-pin', /.+/);
+  // The mobile snap list scrolls horizontally, so it stays keyboard-focusable.
+  await expect(section.locator('ol')).toHaveAttribute('tabindex', '0');
   const state = await section.evaluate((node) => {
     const list = node.querySelector('ol')!;
     return {
@@ -528,9 +532,16 @@ test('390px 사례 #2는 고정하지 않고 가로 스냅 목록을 유지한�
 test('움직임 줄이기에서는 Lenis와 사례 #2 고정이 꺼진다', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.setViewportSize({ width: 1440, height: 900 });
+  // Record whether <html> ever receives the 'lenis' class, from the first paint on.
+  await page.addInitScript(() => {
+    const flags = window as unknown as { __lenisSeen?: boolean };
+    flags.__lenisSeen = false;
+    const record = () => {
+      if (document.documentElement?.classList.contains('lenis')) flags.__lenisSeen = true;
+    };
+    new MutationObserver(record).observe(document, { attributes: true, attributeFilter: ['class'], subtree: true });
+  });
   await page.goto('/');
-  await page.waitForTimeout(500);
-  await expect(page.locator('html')).not.toHaveClass(/\blenis\b/);
   const section = page.locator('#case-02');
   await section.scrollIntoViewIfNeeded();
   expect(await section.evaluate((node) => getComputedStyle(node.querySelector('.pin-stage')!).position)).not.toBe('sticky');
@@ -542,6 +553,8 @@ test('움직임 줄이기에서는 Lenis와 사례 #2 고정이 꺼진다', asyn
   await page.getByRole('navigation', { name: '빠른 메뉴' }).getByRole('link', { name: '경력', exact: true }).click();
   await expect(page).toHaveURL(/#career$/);
   await expect(page.locator('#career-title')).toBeInViewport();
+  expect(await page.evaluate(() => (window as unknown as { __lenisSeen?: boolean }).__lenisSeen)).toBe(false);
+  await expect(page.locator('html')).not.toHaveClass(/\blenis\b/);
 });
 
 test('모달이 열리면 Lenis가 멈추고 모달 안 스크롤은 그대로 동작한다', async ({ page }) => {
@@ -563,3 +576,28 @@ test('모달이 열리면 Lenis가 멈추고 모달 안 스크롤은 그대로 �
   await expect(dialog).toHaveCount(0);
   await expect(page.locator('html')).not.toHaveClass(/\blenis-stopped\b/);
 });
+
+for (const [label, hrefPattern] of [
+  ['경력', '#career'],
+  ['맨 위로', '#top'],
+] as const) {
+  test(`플로팅 헤더가 숨을 때 '${label}' 포커스는 히어로 내비게이션의 같은 링크로 넘어간다`, async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/');
+    await page.evaluate(() => window.scrollTo(0, document.getElementById('career')!.offsetTop));
+    const header = floatingHeader(page);
+    await expect(header).toHaveAttribute('data-visible', 'true');
+    const floatingLink =
+      label === '맨 위로'
+        ? header.getByRole('link', { name: /맨 위로$/ })
+        : page.getByRole('navigation', { name: '빠른 메뉴' }).getByRole('link', { name: label, exact: true });
+    await floatingLink.focus();
+    await expect(floatingLink).toBeFocused();
+
+    await page.keyboard.press('Home');
+    await expect(header).toHaveAttribute('data-visible', 'false');
+    const heroLink = page.locator('#hero-header').locator(`a[href="${hrefPattern}"]`).first();
+    await expect(heroLink).toBeFocused();
+    expect(await page.evaluate(() => document.activeElement?.tagName)).not.toBe('BODY');
+  });
+}

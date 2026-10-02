@@ -236,6 +236,9 @@ body[data-portfolio-overlay="true"] .skip-link {
   .pin-track:not([data-pin="off"]) [data-pin-text] > :not(:first-child, :nth-child(2)) {
     margin-top: 24px;
   }
+  .pin-track:not([data-pin="off"]) [data-pin-text] ul {
+    gap: 14px;
+  }
   .pin-track:not([data-pin="off"]) .pin-window {
     min-width: 0;
     overflow: clip;

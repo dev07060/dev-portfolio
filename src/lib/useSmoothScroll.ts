@@ -14,7 +14,13 @@ function inPageTarget(event: MouseEvent): { link: HTMLAnchorElement; target: HTM
   if (!(link instanceof HTMLAnchorElement) || link.target) return null;
   const hash = link.getAttribute('href') ?? '';
   if (hash.length < 2) return null;
-  const target = document.getElementById(decodeURIComponent(hash.slice(1)));
+  let id: string;
+  try {
+    id = decodeURIComponent(hash.slice(1));
+  } catch {
+    return null;
+  }
+  const target = document.getElementById(id);
   return target ? { link, target } : null;
 }
 

@@ -1,7 +1,7 @@
 // src/components/portfolio/FloatingHeader.tsx
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ArrowUp } from 'lucide-react';
 
 interface FloatingHeaderProps {
@@ -24,12 +24,25 @@ export default function FloatingHeader({
   heroHeaderId,
 }: FloatingHeaderProps) {
   const [visible, setVisible] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const heroHeader = document.getElementById(heroHeaderId);
     if (!heroHeader) return;
     const observer = new IntersectionObserver(([entry]) => {
-      setVisible(!entry.isIntersecting && entry.boundingClientRect.top < 0);
+      const nextVisible = !entry.isIntersecting && entry.boundingClientRect.top < 0;
+      const active = document.activeElement;
+      if (!nextVisible && active instanceof HTMLElement && headerRef.current?.contains(active)) {
+        // Hiding makes the bar inert, which would drop focus to <body>. Hand focus to the
+        // matching hero-nav link (same href), or the hero brand link, first.
+        const href = active.getAttribute('href');
+        const heroLinks = Array.from(heroHeader.querySelectorAll<HTMLAnchorElement>('a[href]'));
+        const match =
+          heroLinks.find((link) => link.getAttribute('href') === href) ??
+          heroLinks.find((link) => link.getAttribute('href') === '#top');
+        match?.focus({ preventScroll: true });
+      }
+      setVisible(nextVisible);
     });
     observer.observe(heroHeader);
     return () => observer.disconnect();
@@ -39,6 +52,7 @@ export default function FloatingHeader({
 
   return (
     <header
+      ref={headerRef}
       data-floating-header
       data-visible={visible ? 'true' : 'false'}
       inert={hidden ? true : undefined}

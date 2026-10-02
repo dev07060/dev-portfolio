@@ -46,19 +46,26 @@ export function useHorizontalPin(trackRef: RefObject<HTMLElement | null>): void 
     };
 
     const measure = () => {
-      track.removeAttribute('data-pin');
+      // Measure with the pinned layout applied ("on"); fall back to "off" when it does not fit.
+      track.dataset.pin = 'on';
       row.style.transform = '';
       const pinned = getComputedStyle(stage).position === 'sticky';
-      const contentHeight = Math.max(text.getBoundingClientRect().height, row.getBoundingClientRect().height);
-      const fits = contentHeight <= window.innerHeight - STAGE_VERTICAL_ROOM;
-      active = pinned && fits;
-      if (!active) {
-        if (pinned) track.dataset.pin = 'off';
+      if (!pinned) {
+        // Below 768px or no motion preference match: CSS keeps the static layout.
+        track.removeAttribute('data-pin');
+        active = false;
         track.style.removeProperty('--pin-scroll');
         delete track.dataset.pinProgress;
         return;
       }
-      track.dataset.pin = 'on';
+      const contentHeight = Math.max(text.getBoundingClientRect().height, view.getBoundingClientRect().height);
+      active = contentHeight <= window.innerHeight - STAGE_VERTICAL_ROOM;
+      if (!active) {
+        track.dataset.pin = 'off';
+        track.style.removeProperty('--pin-scroll');
+        delete track.dataset.pinProgress;
+        return;
+      }
       distance = Math.max(0, row.scrollWidth - view.clientWidth);
       // Scroll length: a little longer than the horizontal distance so the motion reads calmly.
       const scrollLength = Math.max(distance * 1.4, window.innerHeight * 0.5);
@@ -66,19 +73,27 @@ export function useHorizontalPin(trackRef: RefObject<HTMLElement | null>): void 
       apply();
     };
 
+    let resizeFrame = 0;
+    const scheduleMeasure = () => {
+      if (!resizeFrame) {
+        resizeFrame = window.requestAnimationFrame(() => {
+          resizeFrame = 0;
+          measure();
+        });
+      }
+    };
+
     measure();
-    const resizeObserver = new ResizeObserver(() => {
-      measure();
-    });
+    const resizeObserver = new ResizeObserver(scheduleMeasure);
     resizeObserver.observe(text);
-    const onResize = () => measure();
-    window.addEventListener('resize', onResize);
+    window.addEventListener('resize', scheduleMeasure);
     window.addEventListener('scroll', schedule, { passive: true });
 
     return () => {
       if (frame) window.cancelAnimationFrame(frame);
+      if (resizeFrame) window.cancelAnimationFrame(resizeFrame);
       resizeObserver.disconnect();
-      window.removeEventListener('resize', onResize);
+      window.removeEventListener('resize', scheduleMeasure);
       window.removeEventListener('scroll', schedule);
       row.style.transform = '';
       track.removeAttribute('data-pin');
