@@ -132,12 +132,10 @@ export default function CaseContractViewerSection({
                   </li>
                 ))}
               </ol>
-              {/* Pinned only (hidden by CSS otherwise): which screen of how many, announced politely. */}
+              {/* Pinned only (hidden by CSS otherwise): dots show progress; the step count is for screen readers only (no visible progress numbers). */}
               <div className="pin-progress hidden items-center gap-3">
-                <p aria-live="polite" aria-atomic="true" className="m-0 font-mono text-sm text-sub">
-                  <span className="sr-only">{`${project.title} 사용 흐름 화면 `}</span>
-                  {`${activeStep + 1} / ${steps.length}`}
-                  <span className="sr-only">{`, ${steps[activeStep]?.label ?? ''}`}</span>
+                <p aria-live="polite" aria-atomic="true" className="sr-only">
+                  {`${project.title} 사용 흐름 화면 ${activeStep + 1} / ${steps.length}, ${steps[activeStep]?.label ?? ''}`}
                 </p>
                 <span aria-hidden="true" className="flex gap-1.5">
                   {steps.map((step, index) => (

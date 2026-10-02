@@ -585,6 +585,8 @@ test('#case-02 앵커는 트랙의 시작에 도착한다', async ({ page }) => 
     .toBeLessThan(0.01);
   await expect(page.locator('#case-02 .pin-row > li').first()).toHaveAttribute('data-step-state', 'current');
   await expect(page.locator('#case-02 .pin-progress p')).toContainText('1 / 3');
+  // Progress numbers are screen-reader only (no visible progress numbering per the design rules).
+  await expect(page.locator('#case-02 .pin-progress p')).toHaveClass(/\bsr-only\b/);
 });
 
 test('390px 사례 #2는 고정하지 않고 한 화면씩(약 78vw) 넘기는 가로 스냅 캐러셀이다', async ({ page }) => {
