@@ -353,24 +353,19 @@ const SupportingPackages = ({ items }: { items: SupportingPackage[] }) => (
     >
       — 관련 공개 패키지
     </h3>
-    <div className="space-y-3">
+    <ul className="space-y-6">
       {items.map((item) => (
-        <article
-          key={item.name}
-          className="rounded-lg border border-marker/30 bg-surface-2 p-3"
-        >
-          <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <strong className="text-sm font-semibold text-ink">
-              {item.name}
-            </strong>
-            <span className="font-mono text-[11px] text-marker">
+        <li key={item.name} data-supporting-package>
+          <p className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm">
+            <strong className="font-semibold text-ink">{item.name}</strong>
+            <span className="font-mono text-[13px] font-normal text-sub">
               v{item.version}
             </span>
-          </div>
-          <p className="mt-2 text-xs leading-relaxed text-sub">
+          </p>
+          <p className="mt-1.5 text-sm leading-relaxed text-sub break-keep">
             {item.relationship}
           </p>
-          <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1">
+          <p className="mt-1 flex flex-wrap gap-x-5">
             {item.links.map((link) => (
               <a
                 key={link.url}
@@ -383,13 +378,13 @@ const SupportingPackages = ({ items }: { items: SupportingPackage[] }) => (
                 <ExternalLink size={13} aria-hidden="true" />
               </a>
             ))}
-          </div>
-          <p className="mt-3 text-xs leading-relaxed text-sub">
+          </p>
+          <p className="text-[13px] leading-relaxed text-sub">
             {item.techStack.join(' · ')}
           </p>
-        </article>
+        </li>
       ))}
-    </div>
+    </ul>
   </section>
 );
 
@@ -406,11 +401,11 @@ const PackageCaseStudyFlow = ({ project }: { project: Project }) => {
         — 아키텍처와 데이터 흐름
       </h3>
       {architectureScreen && (
-        <div className="rounded-lg border border-marker/30 bg-surface-2 px-3 py-2.5">
+        <div data-architecture-caption>
           <strong className="block text-sm font-semibold text-ink">
             {architectureScreen.title}
           </strong>
-          <p className="mt-1 text-xs leading-relaxed text-sub">
+          <p className="mt-1 text-sm leading-relaxed text-sub break-keep">
             {architectureScreen.desc}
           </p>
         </div>

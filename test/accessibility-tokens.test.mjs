@@ -60,6 +60,12 @@ test('project detail content uses plain text links and stacks instead of chips',
   assert.doesNotMatch(modal, /rounded-full border border-line bg-(ground|surface|surface-2) px-/);
   assert.doesNotMatch(modal, /rounded-full border border-marker\/40/);
   assert.doesNotMatch(device, /rounded-full border border-line px-2 py-0\.5/);
+  // supporting packages and the architecture caption are plain text, not card boxes
+  assert.match(modal, /data-supporting-package/);
+  assert.match(modal, /data-architecture-caption/);
+  assert.doesNotMatch(modal, /rounded-lg border border-marker\/30/);
+  assert.doesNotMatch(modal, /className="[^"]*\bbg-surface-2\b(?! )[^"]*(p-3|px-3)/);
+  assert.doesNotMatch(modal, /<article[^>]*rounded/);
 });
 
 test('long identifier titles break only after separators', () => {
