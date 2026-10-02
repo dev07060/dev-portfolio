@@ -401,6 +401,9 @@ export const projects: Project[] = [
     techStack: ["Flutter", "Dart", "Firebase"],
     color: "from-violet-500 to-fuchsia-500",
     iconType: "dumbbell",
+    cardPresentation: {
+      thumbnailScreenIndex: 1,
+    },
     screens: [
       {
         id: "splash",

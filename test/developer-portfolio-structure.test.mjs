@@ -183,11 +183,11 @@ test('additional projects expose the backend-first four-case selection and retai
   );
   assert.match(
     portfolioData,
-    /additionalDescription:[\s\S]*?'Python 검색·요약 백엔드와 AI·BLE 제품화 경험을 보완하는 네 가지 사례입니다\.'/
+    /additionalDescription:[\s\S]*?'Python 검색·요약 백엔드와 AI·BLE 제품화 경험을 보완하는 다섯 가지 사례입니다\.'/
   );
   assert.match(
     freelancerData,
-    /additionalDescription:[\s\S]*?'FastAPI 백엔드와 AI·BLE 모바일 제품화 경험을 보여주는 네 가지 수행 사례입니다\.'/
+    /additionalDescription:[\s\S]*?'FastAPI 백엔드와 AI·BLE 모바일 제품화 경험을 보여주는 다섯 가지 수행 사례입니다\.'/
   );
 });
 

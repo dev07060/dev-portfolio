@@ -30,7 +30,7 @@ const freelancerCopy: PortfolioCopy = {
   experienceDescription: '최신순으로 역할과 대표 성과를 요약했습니다.',
   additionalHeading: '추가 프로젝트',
   additionalDescription:
-    'FastAPI 백엔드와 AI·BLE 모바일 제품화 경험을 보여주는 네 가지 수행 사례입니다.',
+    'FastAPI 백엔드와 AI·BLE 모바일 제품화 경험을 보여주는 다섯 가지 수행 사례입니다.',
   contactHeading: '모바일 제품이나 문서 검색 기능을 개발·개선하려고 하시나요?',
   careerHeading: '5년 5개월, 여섯 팀',
   otherProjectsLabel: '그 밖의 프로젝트',
