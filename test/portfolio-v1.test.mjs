@@ -330,3 +330,58 @@ test('v1 UI has no section progress indices or tiny label text', () => {
   assert.doesNotMatch(sources, /\d{2} \/ \d{2}/);
   assert.doesNotMatch(sources, /text-\[1[01]px\]/);
 });
+
+test('A14 Lenis smooth scroll is mounted once and never created under reduced motion', () => {
+  const hook = read('src/lib/useSmoothScroll.ts');
+  const portfolio = read('src/components/Portfolio.tsx');
+  const css = read('src/app/globals.css');
+  const pkg = JSON.parse(read('package.json'));
+
+  assert.ok(pkg.dependencies.lenis, 'lenis is a runtime dependency');
+  assert.match(css, /@import "lenis\/dist\/lenis\.css";/);
+  assert.match(hook, /usePrefersReducedMotion\(\)/);
+  const guard = hook.indexOf('if (reducedMotion) return;');
+  const create = hook.indexOf('new Lenis(');
+  assert.ok(guard > -1 && create > guard, 'reduced-motion guard must run before Lenis is created');
+  assert.match(hook, /lenis\.destroy\(\)/);
+  assert.match(hook, /lenis\.stop\(\)/);
+  assert.match(hook, /lenis\.start\(\)/);
+  assert.match(hook, /lenis\.scrollTo\(target\)/);
+  assert.equal(portfolio.match(/useSmoothScroll\(/g)?.length, 1);
+  assert.match(portfolio, /useSmoothScroll\(selectedProject !== null\)/);
+});
+
+test('A14 modal and presentation overlay opt out of Lenis wheel handling', () => {
+  for (const file of ['src/components/widgets/ProjectModal.tsx', 'src/components/widgets/PresentationOverlay.tsx']) {
+    assert.match(read(file), /ref=\{dialogRef\}\s+data-lenis-prevent/, file);
+  }
+});
+
+test('A14 floating header is inert and aria-hidden while hidden and is a distinct landmark', () => {
+  const header = read('src/components/portfolio/FloatingHeader.tsx');
+  const hero = read('src/components/portfolio/HeroSection.tsx');
+  const portfolio = read('src/components/Portfolio.tsx');
+
+  assert.match(header, /new IntersectionObserver/);
+  assert.match(header, /useState\(false\)/, 'starts hidden for SSR and the top of the page');
+  assert.match(header, /inert=\{hidden \? true : undefined\}/);
+  assert.match(header, /aria-hidden=\{hidden \? true : undefined\}/);
+  assert.match(header, /<nav aria-label="빠른 메뉴"/);
+  assert.match(hero, /<header id="hero-header"/);
+  assert.match(hero, /<nav aria-label="주요 메뉴"/);
+  assert.match(portfolio, /<FloatingHeader[\s\S]*?heroHeaderId="hero-header"/);
+  assert.match(header, /rel="noopener noreferrer"/);
+});
+
+test('A14 case #2 pins only at >=768px with motion allowed', () => {
+  const section = read('src/components/portfolio/CaseContractViewerSection.tsx');
+  const hook = read('src/lib/useHorizontalPin.ts');
+  const css = read('src/app/globals.css');
+
+  assert.match(section, /className="screen pin-track bg-stone"/);
+  assert.match(section, /useHorizontalPin\(trackRef\)/);
+  assert.match(section, /<ol[\s\S]*?role="list"[\s\S]*?max-md:snap-x max-md:snap-mandatory/);
+  assert.match(css, /@media \(min-width: 48rem\) and \(prefers-reduced-motion: no-preference\) \{\s*\.pin-track/);
+  assert.match(css, /position: sticky;\s*top: 0;\s*height: 100svh;/);
+  assert.match(hook, /if \(reducedMotion\) return;/);
+});

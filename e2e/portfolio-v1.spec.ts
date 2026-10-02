@@ -348,3 +348,218 @@ test('데스크톱 사례 #1 탭은 왼쪽 막대 표시를 유지한다', async
   expect(panel.left).toBeGreaterThan(tabs.right);
   expect(await section.locator('.engine-panel').evaluate((node) => getComputedStyle(node).rowGap)).toBe('24px');
 });
+
+// A14 scroll format: Lenis smooth scroll, floating header, case #2 horizontal pin.
+const floatingHeader = (page: import('@playwright/test').Page) => page.locator('[data-floating-header]');
+
+for (const viewport of [
+  { width: 1440, height: 900 },
+  { width: 390, height: 844 },
+]) {
+  test(`${viewport.width}px 플로팅 헤더는 히어로를 지나면 나타나고 맨 위에서 숨는다`, async ({ page }) => {
+    await page.setViewportSize(viewport);
+    await page.goto('/');
+    const header = floatingHeader(page);
+    await expect(header).toHaveAttribute('aria-hidden', 'true');
+    await expect(header).toHaveAttribute('inert', '');
+    await expect(page.getByRole('navigation', { name: '빠른 메뉴' })).toHaveCount(0);
+
+    await page.evaluate(() => window.scrollTo(0, document.getElementById('career')!.offsetTop));
+    await expect(header).toHaveAttribute('data-visible', 'true');
+    await expect(header).not.toHaveAttribute('aria-hidden', 'true');
+    await expect(header).not.toHaveAttribute('inert', '');
+    const nav = page.getByRole('navigation', { name: '빠른 메뉴' });
+    await expect(nav).toBeVisible();
+    await expect(header).toHaveCSS('transform', 'none');
+    const labels = ['작업', '경력', '연락', '이력서 PDF'];
+    const targets = [header.getByRole('link', { name: /맨 위로$/ }), ...labels.map((name) => nav.getByRole('link', { name, exact: true }))];
+    const boxes = [];
+    for (const target of targets) {
+      await expect(target).toBeVisible();
+      const box = (await target.boundingBox())!;
+      expect(box.height).toBeGreaterThanOrEqual(43.9);
+      expect(box.width).toBeGreaterThanOrEqual(43.9);
+      expect(box.x).toBeGreaterThanOrEqual(0);
+      expect(box.x + box.width).toBeLessThanOrEqual(viewport.width);
+      boxes.push(box);
+    }
+    for (let index = 1; index < boxes.length; index += 1) {
+      expect(boxes[index].x).toBeGreaterThanOrEqual(boxes[index - 1].x + boxes[index - 1].width - 0.5);
+    }
+
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await expect(header).toHaveAttribute('data-visible', 'false');
+    await expect(header).toHaveAttribute('aria-hidden', 'true');
+    await expect(header).toBeHidden();
+  });
+}
+
+test('320px 플로팅 헤더도 네 링크와 맨 위로를 겹침 없이 44px로 제공한다', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 800 });
+  for (const route of [
+    { path: '/', labels: ['작업', '경력', '연락', '이력서 PDF'] },
+    { path: '/freelancer', labels: ['작업', '경력', '연락'] },
+  ]) {
+    await page.goto(route.path);
+    await page.evaluate(() => window.scrollTo(0, document.getElementById('career')!.offsetTop));
+    const nav = page.getByRole('navigation', { name: '빠른 메뉴' });
+    await expect(nav).toBeVisible();
+    await expect(floatingHeader(page)).toHaveCSS('transform', 'none');
+    expect(await nav.getByRole('link').allTextContents()).toEqual(route.labels);
+    const boxes = [
+      (await floatingHeader(page).getByRole('link', { name: /맨 위로$/ }).boundingBox())!,
+      ...(await Promise.all((await nav.getByRole('link').all()).map(async (link) => (await link.boundingBox())!))),
+    ];
+    for (const [index, box] of boxes.entries()) {
+      expect(box.height).toBeGreaterThanOrEqual(43.9);
+      expect(box.x).toBeGreaterThanOrEqual(0);
+      expect(box.x + box.width).toBeLessThanOrEqual(320);
+      if (index > 0) expect(box.x).toBeGreaterThanOrEqual(boxes[index - 1].x + boxes[index - 1].width - 0.5);
+    }
+  }
+});
+
+test('플로팅 헤더의 경력 링크는 #career 제목을 헤더에 가리지 않게 보여 준다', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/');
+  await page.evaluate(() => window.scrollTo(0, document.getElementById('contact')!.offsetTop));
+  const nav = page.getByRole('navigation', { name: '빠른 메뉴' });
+  await expect(nav).toBeVisible();
+  await nav.getByRole('link', { name: '경력', exact: true }).click();
+  await expect(page).toHaveURL(/#career$/);
+  const heading = page.locator('#career-title');
+  await expect(heading).toBeInViewport();
+  await expect
+    .poll(() => page.locator('#career').evaluate((node) => Math.abs(node.getBoundingClientRect().top)))
+    .toBeLessThanOrEqual(1);
+  const headerBottom = await floatingHeader(page).locator('> div').evaluate((node) => node.getBoundingClientRect().bottom);
+  const headingTop = await heading.evaluate((node) => node.getBoundingClientRect().top);
+  expect(headingTop).toBeGreaterThan(headerBottom);
+});
+
+test('1440px 사례 #2는 고정된 채 세로 스크롤로 화면 3개를 가로로 넘기고 다음 섹션으로 이어진다', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/');
+  await expect(page.locator('html')).toHaveClass(/\blenis\b/);
+  const section = page.locator('#case-02');
+  await expect(section).toHaveAttribute('data-pin', 'on');
+
+  const trackTop = await section.evaluate((node) => node.getBoundingClientRect().top + window.scrollY);
+  const scrollable = await section.evaluate((node) => node.getBoundingClientRect().height - window.innerHeight);
+  expect(scrollable).toBeGreaterThan(200);
+
+  const seen = new Set<number>();
+  const offsets: number[] = [];
+  for (let step = 0; step <= 10; step += 1) {
+    await page.evaluate((y) => window.scrollTo(0, y), trackTop + (scrollable * step) / 10);
+    await expect
+      .poll(async () => Number(await section.getAttribute('data-pin-progress')))
+      .toBeCloseTo(step / 10, 1);
+    const state = await section.evaluate((node) => {
+      const stage = node.querySelector('.pin-stage')!.getBoundingClientRect();
+      const view = node.querySelector('.pin-window')!.getBoundingClientRect();
+      const row = node.querySelector('.pin-row')!.getBoundingClientRect();
+      const shots = [...node.querySelectorAll('.pin-row img')].map((img) => img.getBoundingClientRect());
+      return {
+        stageTop: stage.top,
+        rowLeft: row.left,
+        visible: shots.map((shot) => shot.left >= view.left - 1 && shot.right <= view.right + 1),
+      };
+    });
+    expect(Math.abs(state.stageTop)).toBeLessThan(1);
+    offsets.push(state.rowLeft);
+    state.visible.forEach((isVisible, index) => isVisible && seen.add(index));
+    // The text column (with its links) stays in the stage the whole time.
+    await expect(section.getByRole('button', { name: /^사례 자세히/ })).toBeInViewport();
+  }
+  expect(offsets[10]).toBeLessThan(offsets[0] - 100);
+  for (let index = 1; index < offsets.length; index += 1) {
+    expect(offsets[index]).toBeLessThanOrEqual(offsets[index - 1] + 0.5);
+  }
+  expect([...seen].sort()).toEqual([0, 1, 2]);
+
+  await page.evaluate((y) => window.scrollTo(0, y), trackTop + scrollable + 300);
+  await expect(page.locator('#case-03')).toBeInViewport();
+  expect(await page.locator('#case-03').evaluate((node) => node.getBoundingClientRect().top)).toBeLessThan(900);
+});
+
+test('#case-02 앵커는 트랙의 시작에 도착한다', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/');
+  await page.locator('#case-01').scrollIntoViewIfNeeded();
+  await page.evaluate(() => {
+    const link = document.createElement('a');
+    link.href = '#case-02';
+    link.textContent = 'test link';
+    link.id = 'case-02-test-link';
+    document.querySelector('#case-01')!.append(link);
+  });
+  await page.locator('#case-02-test-link').click();
+  await expect(page).toHaveURL(/#case-02$/);
+  await expect
+    .poll(() => page.locator('#case-02').evaluate((node) => Math.abs(node.getBoundingClientRect().top)))
+    .toBeLessThanOrEqual(1);
+  await expect
+    .poll(async () => Number(await page.locator('#case-02').getAttribute('data-pin-progress')))
+    .toBeLessThan(0.01);
+});
+
+test('390px 사례 #2는 고정하지 않고 가로 스냅 목록을 유지한다', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  const section = page.locator('#case-02');
+  await section.scrollIntoViewIfNeeded();
+  await expect(section).not.toHaveAttribute('data-pin', /.+/);
+  const state = await section.evaluate((node) => {
+    const list = node.querySelector('ol')!;
+    return {
+      stage: getComputedStyle(node.querySelector('.pin-stage')!).position,
+      overflowX: getComputedStyle(list).overflowX,
+      snap: getComputedStyle(list).scrollSnapType,
+      transform: list.style.transform,
+    };
+  });
+  expect(state.stage).not.toBe('sticky');
+  expect(state.overflowX).toBe('auto');
+  expect(state.snap).toContain('x');
+  expect(state.transform).toBe('');
+});
+
+test('움직임 줄이기에서는 Lenis와 사례 #2 고정이 꺼진다', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/');
+  await page.waitForTimeout(500);
+  await expect(page.locator('html')).not.toHaveClass(/\blenis\b/);
+  const section = page.locator('#case-02');
+  await section.scrollIntoViewIfNeeded();
+  expect(await section.evaluate((node) => getComputedStyle(node.querySelector('.pin-stage')!).position)).not.toBe('sticky');
+  expect(await section.evaluate((node) => (node.querySelector('.pin-row') as HTMLElement).style.transform)).toBe('');
+  await expect(section).not.toHaveAttribute('data-pin-progress', /.+/);
+
+  // Native anchors still work without Lenis.
+  await page.evaluate(() => window.scrollTo(0, document.getElementById('contact')!.offsetTop));
+  await page.getByRole('navigation', { name: '빠른 메뉴' }).getByRole('link', { name: '경력', exact: true }).click();
+  await expect(page).toHaveURL(/#career$/);
+  await expect(page.locator('#career-title')).toBeInViewport();
+});
+
+test('모달이 열리면 Lenis가 멈추고 모달 안 스크롤은 그대로 동작한다', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.goto('/');
+  await expect(page.locator('html')).toHaveClass(/\blenis\b/);
+  await page.getByRole('button', { name: '사례 자세히, Easy Contract Viewer', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: /Easy Contract Viewer/ });
+  await expect(dialog).toBeVisible();
+  await expect(page.locator('html')).toHaveClass(/\blenis-stopped\b/);
+  const scrollYBefore = await page.evaluate(() => window.scrollY);
+  const region = dialog.getByRole('region', { name: 'Easy Contract Viewer 프로젝트 상세', exact: true });
+  const box = (await region.boundingBox())!;
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.wheel(0, 600);
+  await expect.poll(() => region.evaluate((node) => node.scrollTop)).toBeGreaterThan(0);
+  expect(await page.evaluate(() => window.scrollY)).toBe(scrollYBefore);
+  await page.keyboard.press('Escape');
+  await expect(dialog).toHaveCount(0);
+  await expect(page.locator('html')).not.toHaveClass(/\blenis-stopped\b/);
+});
