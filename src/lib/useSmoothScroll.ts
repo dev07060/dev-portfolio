@@ -4,6 +4,7 @@
 import { useEffect, useRef } from 'react';
 import Lenis from 'lenis';
 import { usePrefersReducedMotion } from './usePrefersReducedMotion';
+import { attachSectionSnap } from './sectionSnap';
 
 const FOCUSABLE = 'a[href], button, input, select, textarea, summary, [tabindex]';
 
@@ -30,6 +31,7 @@ function inPageTarget(event: MouseEvent): { link: HTMLAnchorElement; target: HTM
  * In-page `#anchor` clicks go through `lenis.scrollTo` (which honours scroll-margin /
  * scroll-padding), update the URL hash, and move focus to the target like a native jump.
  * `stopped` pauses Lenis while a modal or the presentation overlay is open.
+ * Section snapping (A15, desktop wheel only) rides on the same instance and goes away with it.
  */
 export function useSmoothScroll(stopped: boolean): void {
   const reducedMotion = usePrefersReducedMotion();
@@ -39,6 +41,7 @@ export function useSmoothScroll(stopped: boolean): void {
     if (reducedMotion) return;
     const lenis = new Lenis({ autoRaf: true });
     lenisRef.current = lenis;
+    const detachSnap = attachSectionSnap(lenis);
 
     const onClick = (event: MouseEvent) => {
       const match = inPageTarget(event);
@@ -61,6 +64,7 @@ export function useSmoothScroll(stopped: boolean): void {
 
     return () => {
       document.removeEventListener('click', onClick);
+      detachSnap();
       lenis.destroy();
       lenisRef.current = null;
     };

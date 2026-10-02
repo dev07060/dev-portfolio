@@ -385,3 +385,30 @@ test('A14 case #2 pins only at >=768px with motion allowed', () => {
   assert.match(css, /position: sticky;\s*top: 0;\s*height: 100svh;/);
   assert.match(hook, /if \(reducedMotion\) return;/);
 });
+
+test('A15 section snap rides on Lenis: desktop pointer only, never under reduced motion, cleaned up', () => {
+  const hook = read('src/lib/useSmoothScroll.ts');
+  const snap = read('src/lib/sectionSnap.ts');
+
+  // Only attached to the Lenis instance, which is never created under reduced motion.
+  const guard = hook.indexOf('if (reducedMotion) return;');
+  const create = hook.indexOf('new Lenis(');
+  const attach = hook.indexOf('attachSectionSnap(lenis)');
+  assert.ok(guard > -1 && create > guard && attach > create, 'snap is attached after the reduced-motion guard and Lenis');
+  assert.equal(hook.match(/attachSectionSnap\(/g)?.length, 1);
+  const cleanup = hook.slice(hook.indexOf('return () => {'));
+  assert.ok(cleanup.indexOf('detachSnap()') > -1 && cleanup.indexOf('detachSnap()') < cleanup.indexOf('lenis.destroy()'));
+
+  // Off below 768px and on touch-only (coarse) pointers; inactive while Lenis is stopped (modal).
+  assert.match(snap, /SNAP_MEDIA = '\(min-width: 48rem\) and \(pointer: fine\)'/);
+  assert.match(snap, /media\.matches && !lenis\.isStopped/);
+  // Wheel only (touch keeps native scroll), snap points are every top-level section.
+  assert.match(snap, /event\.type\.includes\('wheel'\)/);
+  assert.match(snap, /querySelectorAll<HTMLElement>\('main > section'\)/);
+  // Everything it registers is removed again.
+  for (const name of ['keydown', 'pointerdown', 'pointerup', 'pointercancel']) {
+    assert.match(snap, new RegExp(`removeEventListener\\('${name}'`), name);
+  }
+  assert.match(snap, /offVirtualScroll\(\)/);
+  assert.match(snap, /clearTimeout\(timer\)/);
+});

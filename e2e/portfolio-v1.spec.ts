@@ -601,3 +601,154 @@ for (const [label, hrefPattern] of [
     expect(await page.evaluate(() => document.activeElement?.tagName)).not.toBe('BODY');
   });
 }
+
+// A15 section snapping (desktop wheel, on top of Lenis).
+type Page = import('@playwright/test').Page;
+
+/** Resolves once window.scrollY has not changed for 600ms (longer than the snap debounce). */
+const settledScrollY = (page: Page) =>
+  page.evaluate(
+    () =>
+      new Promise<number>((resolve) => {
+        let last = window.scrollY;
+        let since = performance.now();
+        const tick = (now: number) => {
+          if (Math.abs(window.scrollY - last) > 0.5) {
+            last = window.scrollY;
+            since = now;
+          }
+          if (now - since >= 600) resolve(window.scrollY);
+          else requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      })
+  );
+
+const sectionTop = (page: Page, id: string) =>
+  page.locator(`#${id}`).evaluate((node) => Math.round(node.getBoundingClientRect().top + window.scrollY));
+
+/** Distance (px) of a section's top from the viewport top. */
+const viewportTopOf = (page: Page, id: string) =>
+  page.locator(`#${id}`).evaluate((node) => Math.abs(node.getBoundingClientRect().top));
+
+async function openAt(page: Page, viewport: { width: number; height: number }) {
+  await page.setViewportSize(viewport);
+  await page.goto('/');
+  await page.evaluate(() => document.fonts.ready);
+  await page.mouse.move(viewport.width / 2, viewport.height / 2);
+}
+
+test.describe('1440px 섹션 스냅', () => {
+  test.beforeEach(async ({ page }) => {
+    await openAt(page, { width: 1440, height: 900 });
+    await expect(page.locator('html')).toHaveClass(/\blenis\b/);
+    await expect(page.locator('#case-02')).toHaveAttribute('data-pin', 'on');
+  });
+
+  test('맨 위에서 휠 한 칸이면 #career 시작에 멈춘다', async ({ page }) => {
+    await page.mouse.wheel(0, 120);
+    await expect.poll(() => viewportTopOf(page, 'career')).toBeLessThanOrEqual(2);
+    const careerTop = await sectionTop(page, 'career');
+    expect(Math.abs((await settledScrollY(page)) - careerTop)).toBeLessThanOrEqual(2);
+  });
+
+  test('트랙패드처럼 작은 휠 30번(40px)도 다음 섹션 시작에 멈춘다', async ({ page }) => {
+    for (let step = 0; step < 30; step += 1) await page.mouse.wheel(0, 40);
+    const position = await settledScrollY(page);
+    const starts = await page.locator('main > section').evaluateAll((nodes) =>
+      nodes.map((node) => Math.round(node.getBoundingClientRect().top + window.scrollY))
+    );
+    expect(starts.some((start) => Math.abs(start - position) <= 2)).toBe(true);
+    expect(position).toBeGreaterThan(0);
+  });
+
+  test('#career 중간에서 아래로 끝을 넘기면 #case-01 시작에 멈춘다', async ({ page }) => {
+    const careerTop = await sectionTop(page, 'career');
+    await page.evaluate((y) => window.scrollTo(0, y), careerTop + 100);
+    await settledScrollY(page);
+    const careerHeight = await page.locator('#career').evaluate((node) => node.getBoundingClientRect().height);
+    await page.mouse.wheel(0, Math.max(240, careerHeight - 900 + 60));
+    await expect.poll(() => viewportTopOf(page, 'case-01')).toBeLessThanOrEqual(2);
+    await settledScrollY(page);
+    expect(await viewportTopOf(page, 'case-01')).toBeLessThanOrEqual(2);
+  });
+
+  test('긴 섹션 안의 작은 휠은 섹션 시작으로 되돌아가지 않는다', async ({ page }) => {
+    // Career: a small step forward never settles back on its start.
+    const careerTop = await sectionTop(page, 'career');
+    await page.evaluate((y) => window.scrollTo(0, y), careerTop);
+    await settledScrollY(page);
+    await page.mouse.wheel(0, 40);
+    expect(await settledScrollY(page)).toBeGreaterThanOrEqual(careerTop + 38);
+
+    // Case #2 pinned track: mid-track stays where the wheel left it, the screens follow.
+    const track = page.locator('#case-02');
+    const trackTop = await sectionTop(page, 'case-02');
+    await page.evaluate((y) => window.scrollTo(0, y), trackTop);
+    await settledScrollY(page);
+    for (let step = 1; step <= 3; step += 1) {
+      await page.mouse.wheel(0, 40);
+      expect(Math.abs((await settledScrollY(page)) - (trackTop + 40 * step))).toBeLessThanOrEqual(2);
+    }
+    const progress = Number(await track.getAttribute('data-pin-progress'));
+    expect(progress).toBeGreaterThan(0.05);
+    expect(progress).toBeLessThan(0.95);
+  });
+
+  test('사례 #2 트랙 끝 근처에서는 끝(화면 3개 다 넘김)에, 다음 휠은 #case-03에 멈춘다', async ({ page }) => {
+    const track = page.locator('#case-02');
+    const trackTop = await sectionTop(page, 'case-02');
+    const trackEnd = await track.evaluate(
+      (node) => Math.round(node.getBoundingClientRect().top + window.scrollY + node.getBoundingClientRect().height - window.innerHeight)
+    );
+    await page.evaluate((y) => window.scrollTo(0, y), trackEnd - 200);
+    await settledScrollY(page);
+    await page.mouse.wheel(0, 80);
+    expect(Math.abs((await settledScrollY(page)) - trackEnd)).toBeLessThanOrEqual(2);
+    await expect.poll(async () => Number(await track.getAttribute('data-pin-progress'))).toBeGreaterThan(0.99);
+    expect(trackEnd).toBeGreaterThan(trackTop);
+
+    await page.mouse.wheel(0, 120);
+    await expect.poll(() => viewportTopOf(page, 'case-03')).toBeLessThanOrEqual(2);
+    await settledScrollY(page);
+    expect(await viewportTopOf(page, 'case-03')).toBeLessThanOrEqual(2);
+  });
+
+  test('PageDown은 다음 섹션 경계로 간다', async ({ page }) => {
+    await page.locator('body').focus();
+    await page.keyboard.press('PageDown');
+    await expect.poll(() => viewportTopOf(page, 'career')).toBeLessThanOrEqual(2);
+    // Career is taller than the viewport: its end, then case #1.
+    await page.keyboard.press('PageDown');
+    await expect.poll(() => page.locator('#career').evaluate((node) => Math.abs(node.getBoundingClientRect().bottom - 900))).toBeLessThanOrEqual(2);
+    await page.keyboard.press('PageDown');
+    await expect.poll(() => viewportTopOf(page, 'case-01')).toBeLessThanOrEqual(2);
+  });
+
+  test("플로팅 헤더 '연락' 앵커는 스냅과 상관없이 #contact에 도착한다", async ({ page }) => {
+    await page.mouse.wheel(0, 120);
+    await expect.poll(() => viewportTopOf(page, 'career')).toBeLessThanOrEqual(2);
+    await page.getByRole('navigation', { name: '빠른 메뉴' }).getByRole('link', { name: '연락', exact: true }).click();
+    await expect(page).toHaveURL(/#contact$/);
+    await expect.poll(() => viewportTopOf(page, 'contact')).toBeLessThanOrEqual(2);
+    await settledScrollY(page);
+    expect(await viewportTopOf(page, 'contact')).toBeLessThanOrEqual(2);
+  });
+});
+
+test('390px에서는 스냅하지 않고 휠이 남긴 위치에 머문다', async ({ page }) => {
+  await openAt(page, { width: 390, height: 844 });
+  await expect(page.locator('html')).toHaveClass(/\blenis\b/);
+  await page.mouse.wheel(0, 120);
+  expect(Math.abs((await settledScrollY(page)) - 120)).toBeLessThanOrEqual(2);
+});
+
+test('움직임 줄이기에서는 스냅하지 않는다', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await openAt(page, { width: 1440, height: 900 });
+  await page.mouse.wheel(0, 120);
+  const position = await settledScrollY(page);
+  expect(position).toBeGreaterThan(60);
+  expect(position).toBeLessThan(300);
+  await expect(page.locator('html')).not.toHaveClass(/\blenis\b/);
+});
