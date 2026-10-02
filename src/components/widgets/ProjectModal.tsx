@@ -1,7 +1,7 @@
 'use client';
 
 import { ExternalLink, X } from 'lucide-react';
-import { useRef } from 'react';
+import { Fragment, useRef } from 'react';
 import type { Project } from '@/types/project';
 import type { RecruitmentCase, SupportingPackage } from '@/types/recruitment';
 import DeviceFrame from './DeviceFrame';
@@ -38,6 +38,7 @@ const ProjectModal = ({
   return (
     <div
       ref={dialogRef}
+      data-lenis-prevent
       role={isPresentationMode ? undefined : 'dialog'}
       aria-hidden={isPresentationMode ? true : undefined}
       aria-modal={isPresentationMode ? undefined : 'true'}
@@ -51,17 +52,25 @@ const ProjectModal = ({
     >
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-[#1f1b16]/40 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
       />
 
-      <div className="accessible-scrollbar relative grid max-h-[calc(100dvh-1rem)] w-full max-w-6xl grid-cols-1 overflow-y-auto rounded-2xl border border-[#e8dfd0] bg-[#faf7f2] shadow-[0_30px_80px_-20px_rgba(31,27,22,0.25)] md:rounded-3xl lg:h-[720px] lg:max-h-[calc(100vh-2rem)] lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:grid-rows-[auto_minmax(0,1fr)] lg:overflow-hidden">
+      {/* The card is the single scroll container. On lg the screens column stays put
+          (sticky) while header and details scroll together, so a tall header never clips. */}
+      <div
+        role="region"
+        aria-label={`${project.title} 프로젝트 상세`}
+        tabIndex={0}
+        data-project-info-scroll
+        className="accessible-scrollbar relative grid max-h-[calc(100dvh-1rem)] w-full max-w-6xl grid-cols-1 overflow-y-auto overscroll-contain rounded-2xl border border-line bg-ground shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-marker md:rounded-3xl lg:h-[720px] lg:max-h-[calc(100vh-2rem)] lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:grid-rows-[auto_1fr]"
+      >
         <button
           ref={closeButtonRef}
           type="button"
           onClick={onClose}
           aria-label={`${project.title} 프로젝트 상세 닫기`}
-          className="fixed right-5 top-5 z-[70] inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-[#d9e4e1] bg-white text-[#4a4339] shadow-sm transition-colors hover:bg-[#f2ede4] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f766e] lg:absolute lg:right-4 lg:top-4"
+          className="fixed right-5 top-5 z-[70] inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-line bg-surface text-sub shadow-sm transition-colors hover:bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marker lg:sticky lg:top-4 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:mr-4 lg:mt-4 lg:self-start lg:justify-self-end"
         >
           <X size={20} aria-hidden="true" />
         </button>
@@ -72,7 +81,7 @@ const ProjectModal = ({
           titleId={titleId}
         />
 
-        <div className="lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:min-h-0">
+        <div className="lg:sticky lg:top-0 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:h-[calc(min(720px,100vh-2rem)-2px)] lg:self-start">
           <DeviceFrame
             project={project}
             currentScreenIndex={currentScreenIndex}
@@ -89,6 +98,15 @@ const ProjectModal = ({
     </div>
   );
 };
+
+// 긴 식별자 제목(mobile_rag_engine 등)이 단어 중간이 아니라 구분자 뒤에서만 줄바꿈되도록 합니다.
+const withSeparatorBreaks = (text: string) =>
+  text.split(/(?<=[_\-/])/).map((part, index, parts) => (
+    <Fragment key={`${part}-${index}`}>
+      {part}
+      {index < parts.length - 1 && <wbr />}
+    </Fragment>
+  ));
 
 const getTypeLabel = (project: Project) => {
   if (project.type === 'package') return '오픈소스 패키지';
@@ -118,38 +136,38 @@ const ProjectInfoHeader = ({
     : [];
 
   return (
-    <header className="border-b border-[#e8dfd0] bg-white p-6 sm:p-8 lg:col-start-1 lg:row-start-1 lg:border-r">
-          <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] text-[#9d4530]">
+    <header className="border-b border-line bg-surface p-6 sm:p-8 lg:col-start-1 lg:row-start-1 lg:border-r">
+          <p className="mb-3 text-[13px] font-semibold text-marker">
             — {recruitmentCase?.statusLabel ?? getTypeLabel(project)}
           </p>
           <h2
             id={titleId}
-            className="break-words pr-10 font-serif text-xl font-light leading-tight text-[#1f1b16] min-[360px]:text-3xl md:text-4xl"
+            className="break-words pr-10 text-xl [word-break:keep-all] font-bold leading-tight text-ink min-[360px]:text-2xl sm:text-3xl md:text-4xl"
           >
-            {project.title}
+            {withSeparatorBreaks(project.title)}
           </h2>
-          <p className="mt-2 font-serif text-base italic text-[#756b60]">
+          <p className="mt-2 text-base text-sub">
             {project.subtitle}
           </p>
           {metadata.length > 0 && (
-            <p className="mt-3 text-xs leading-relaxed text-[#4a4339]">
+            <p className="mt-3 text-xs leading-relaxed text-sub">
               {metadata.join(' · ')}
             </p>
           )}
           {project.releaseLabel && (
-            <span className="mt-4 inline-flex rounded-full border border-[#0f766e]/30 bg-[#eef7f5] px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-[#0f766e]">
+            <p className="mt-4 font-mono text-xs uppercase tracking-wider text-marker">
               {project.releaseLabel}
-            </span>
+            </p>
           )}
           {allLinks.length > 0 && (
-            <div className="mt-5 flex flex-wrap gap-2" aria-label="프로젝트 공개 근거">
+            <div className="mt-5 flex flex-wrap gap-x-5 gap-y-1" aria-label="프로젝트 공개 근거">
               {allLinks.map((link) => (
                 <a
                   key={link.url}
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-[#d9e4e1] bg-[#faf7f2] px-3 py-2.5 text-xs font-semibold text-[#0f766e] hover:border-[#0f766e]/50 hover:bg-[#eef7f5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f766e]"
+                  className="link-marker inline-flex min-h-11 items-center gap-1.5 text-sm"
                 >
                   {link.label}
                   <ExternalLink size={13} aria-hidden="true" />
@@ -157,6 +175,7 @@ const ProjectInfoHeader = ({
               ))}
             </div>
           )}
+          <ProjectCardSummary project={project} />
     </header>
   );
 };
@@ -170,16 +189,19 @@ const ProjectInfoDetails = ({
   recruitmentCase?: RecruitmentCase;
   descriptionId: string;
 }) => (
-  <div className="accessible-scrollbar bg-white p-6 sm:p-8 lg:col-start-1 lg:row-start-2 lg:min-h-0 lg:overflow-y-auto lg:border-r lg:border-[#e8dfd0]">
+  <div
+    data-project-info-details
+    className="bg-surface p-6 sm:p-8 lg:col-start-1 lg:row-start-2 lg:border-r lg:border-line"
+  >
     <div className="space-y-7">
           <section aria-labelledby={`problem-${project.id}`}>
             <h3
               id={`problem-${project.id}`}
-              className="mb-2 font-mono text-[10px] uppercase tracking-[0.25em] text-[#756b60]"
+              className="mb-2 text-[13px] font-semibold text-sub"
             >
               — 문제와 제약
             </h3>
-            <p id={descriptionId} className="text-sm leading-relaxed text-[#4a4339] break-keep">
+            <p id={descriptionId} className="text-sm leading-relaxed text-sub break-keep">
               {recruitmentCase?.problem ?? project.description}
             </p>
           </section>
@@ -188,15 +210,15 @@ const ProjectInfoDetails = ({
             <section aria-labelledby={`contribution-${project.id}`}>
               <h3
                 id={`contribution-${project.id}`}
-                className="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] text-[#756b60]"
+                className="mb-3 text-[13px] font-semibold text-sub"
               >
                 — 직접 설계·구현한 범위
               </h3>
               <ul className="space-y-2">
                 {(recruitmentCase?.contributions ?? project.implementationPoints ?? []).map(
                   (point) => (
-                    <li key={point} className="flex gap-2 text-sm leading-relaxed text-[#4a4339]">
-                      <span aria-hidden="true" className="mt-[2px] text-[#9d4530]">·</span>
+                    <li key={point} className="flex gap-2 text-sm leading-relaxed text-sub">
+                      <span aria-hidden="true" className="mt-[2px] text-marker">·</span>
                       <span>{point}</span>
                     </li>
                   )
@@ -214,34 +236,27 @@ const ProjectInfoDetails = ({
           <section aria-labelledby={`technology-${project.id}`}>
             <h3
               id={`technology-${project.id}`}
-              className="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] text-[#756b60]"
+              className="mb-3 text-[13px] font-semibold text-sub"
             >
               — 구조와 핵심 기술
             </h3>
-            <div className="flex flex-wrap gap-2">
-              {project.techStack.map((tech) => (
-                <span
-                  key={tech}
-                  className="rounded-full border border-[#e8dfd0] bg-[#f2ede4] px-2.5 py-1 text-xs font-medium text-[#4a4339]"
-                >
-                  {tech}
-                </span>
-              ))}
-            </div>
+            <p className="text-sm leading-relaxed text-sub">
+              {project.techStack.join(' · ')}
+            </p>
           </section>
 
           {recruitmentCase?.verification.length ? (
             <section aria-labelledby={`verification-${project.id}`}>
               <h3
                 id={`verification-${project.id}`}
-                className="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] text-[#756b60]"
+                className="mb-3 text-[13px] font-semibold text-sub"
               >
-                — 테스트·평가·운영 검증
+                — {recruitmentCase.verificationLabel ?? '테스트·평가·운영 검증'}
               </h3>
               <ul className="space-y-2">
                 {recruitmentCase.verification.map((item) => (
-                  <li key={item} className="flex gap-2 text-sm leading-relaxed text-[#4a4339]">
-                    <span aria-hidden="true" className="mt-[2px] text-[#0f766e]">·</span>
+                  <li key={item} className="flex gap-2 text-sm leading-relaxed text-sub">
+                    <span aria-hidden="true" className="mt-[2px] text-marker">·</span>
                     <span>{item}</span>
                   </li>
                 ))}
@@ -253,14 +268,14 @@ const ProjectInfoDetails = ({
             <section aria-labelledby={`outcomes-${project.id}`}>
               <h3
                 id={`outcomes-${project.id}`}
-                className="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] text-[#756b60]"
+                className="mb-3 text-[13px] font-semibold text-sub"
               >
                 — 결과와 영향
               </h3>
               <ul className="space-y-2">
                 {recruitmentCase.outcomes.map((outcome) => (
-                  <li key={outcome} className="flex gap-2 text-sm leading-relaxed text-[#4a4339]">
-                    <span aria-hidden="true" className="mt-[2px] text-[#0f766e]">·</span>
+                  <li key={outcome} className="flex gap-2 text-sm leading-relaxed text-sub">
+                    <span aria-hidden="true" className="mt-[2px] text-marker">·</span>
                     <span>{outcome}</span>
                   </li>
                 ))}
@@ -273,20 +288,20 @@ const ProjectInfoDetails = ({
             <section aria-labelledby={`boundaries-${project.id}`}>
               <h3
                 id={`boundaries-${project.id}`}
-                className="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] text-[#756b60]"
+                className="mb-3 text-[13px] font-semibold text-sub"
               >
                 — 트레이드오프와 비목표
               </h3>
-              <div className="space-y-3 text-sm leading-relaxed text-[#4a4339]">
+              <div className="space-y-3 text-sm leading-relaxed text-sub">
                 {recruitmentCase.tradeoffs.map((item) => (
                   <p key={item}>
-                    <strong className="font-semibold text-[#1f1b16]">트레이드오프.</strong>{' '}
+                    <strong className="font-semibold text-ink">트레이드오프.</strong>{' '}
                     {item}
                   </p>
                 ))}
                 {recruitmentCase.nonGoals.map((item) => (
                   <p key={item}>
-                    <strong className="font-semibold text-[#1f1b16]">비목표.</strong>{' '}
+                    <strong className="font-semibold text-ink">비목표.</strong>{' '}
                     {item}
                   </p>
                 ))}
@@ -297,58 +312,80 @@ const ProjectInfoDetails = ({
   </div>
 );
 
+const ProjectCardSummary = ({ project }: { project: Project }) => {
+  const description = project.cardPresentation?.description;
+  const highlight = project.cardPresentation?.highlight;
+  const evidenceBadges =
+    project.cardPresentation?.evidenceBadges ?? project.evidenceBadges ?? [];
+
+  if (!description && !highlight && evidenceBadges.length === 0) return null;
+
+  return (
+    <section aria-labelledby={`summary-${project.id}`} data-project-card-summary className="mt-6">
+      <h3
+        id={`summary-${project.id}`}
+        className="mb-2 text-[13px] font-semibold text-sub"
+      >
+        — 사례 요약
+      </h3>
+      {description && (
+        <p className="text-sm leading-relaxed text-ink break-keep">{description}</p>
+      )}
+      {highlight && (
+        <p className="mt-3 text-sm leading-relaxed text-sub break-keep">
+          <strong className="font-semibold text-ink">담당 범위.</strong> {highlight}
+        </p>
+      )}
+      {evidenceBadges.length > 0 && (
+        <p className="mt-3 text-sm leading-relaxed text-sub break-keep">
+          <strong className="font-semibold text-ink">근거.</strong>{' '}
+          {evidenceBadges.join(' · ')}
+        </p>
+      )}
+    </section>
+  );
+};
+
 const SupportingPackages = ({ items }: { items: SupportingPackage[] }) => (
   <section aria-labelledby="supporting-packages-heading">
     <h3
       id="supporting-packages-heading"
-      className="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] text-[#756b60]"
+      className="mb-3 text-[13px] font-semibold text-sub"
     >
       — 관련 공개 패키지
     </h3>
-    <div className="space-y-3">
+    <ul className="space-y-6">
       {items.map((item) => (
-        <article
-          key={item.name}
-          className="rounded-lg border border-[#0f766e]/25 bg-[#eef7f5] p-3"
-        >
-          <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <strong className="text-sm font-semibold text-[#1f1b16]">
-              {item.name}
-            </strong>
-            <span className="font-mono text-[10px] text-[#0f766e]">
+        <li key={item.name} data-supporting-package>
+          <p className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm">
+            <strong className="font-semibold text-ink">{item.name}</strong>
+            <span className="font-mono text-[13px] font-normal text-sub">
               v{item.version}
             </span>
-          </div>
-          <p className="mt-2 text-xs leading-relaxed text-[#4a4339]">
+          </p>
+          <p className="mt-1.5 text-sm leading-relaxed text-sub break-keep">
             {item.relationship}
           </p>
-          <div className="mt-3 flex flex-wrap gap-2">
+          <p className="mt-1 flex flex-wrap gap-x-5">
             {item.links.map((link) => (
               <a
                 key={link.url}
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-[#d9e4e1] bg-white px-3 py-2 text-xs font-semibold text-[#0f766e] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f766e]"
+                className="link-marker inline-flex min-h-11 items-center gap-1.5 text-sm"
               >
                 {link.label}
                 <ExternalLink size={13} aria-hidden="true" />
               </a>
             ))}
-          </div>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {item.techStack.map((tech) => (
-              <span
-                key={tech}
-                className="rounded-full border border-[#d9e4e1] bg-white px-2.5 py-1 text-[10px] text-[#4a4339]"
-              >
-                {tech}
-              </span>
-            ))}
-          </div>
-        </article>
+          </p>
+          <p className="text-[13px] leading-relaxed text-sub">
+            {item.techStack.join(' · ')}
+          </p>
+        </li>
       ))}
-    </div>
+    </ul>
   </section>
 );
 
@@ -360,16 +397,16 @@ const PackageCaseStudyFlow = ({ project }: { project: Project }) => {
     <section aria-labelledby={`case-flow-${project.id}`} data-package-detail="architecture-first">
       <h3
         id={`case-flow-${project.id}`}
-        className="mb-3 font-mono text-[10px] uppercase tracking-[0.25em] text-[#756b60]"
+        className="mb-3 text-[13px] font-semibold text-sub"
       >
         — 아키텍처와 데이터 흐름
       </h3>
       {architectureScreen && (
-        <div className="rounded-lg border border-[#0f766e]/25 bg-[#eef7f5] px-3 py-2.5">
-          <strong className="block text-sm font-semibold text-[#1f1b16]">
+        <div data-architecture-caption>
+          <strong className="block text-sm font-semibold text-ink">
             {architectureScreen.title}
           </strong>
-          <p className="mt-1 text-xs leading-relaxed text-[#4a4339]">
+          <p className="mt-1 text-sm leading-relaxed text-sub break-keep">
             {architectureScreen.desc}
           </p>
         </div>

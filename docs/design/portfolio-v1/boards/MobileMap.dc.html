@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>모바일 사례 01</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans+KR:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;background:#292d34}
+a{color:#ecece7}a:hover{color:#f3e04a}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; overflow: hidden; background: #292d34; color: #ecece7; font-family: 'IBM Plex Sans KR', system-ui, sans-serif; line-height: 1.6; word-break: keep-all">
+
+<header style="height: 64px; box-sizing: border-box; padding: 0 20px; display: flex; align-items: center; justify-content: space-between">
+<a href="MobileHero.dc.html" style="font-size: 16px; font-weight: 700; color: #ecece7; text-decoration: none">포트폴리오</a>
+<button type="button" style="min-height: 44px; padding: 0; border: 0; background: none; font-family: inherit; font-size: 15px; font-weight: 600; color: #ecece7">메뉴</button>
+</header>
+
+<div style="padding: 28px 20px 0">
+<div style="font-size: 13px; font-weight: 600; color: #9d9d96">프로젝트 사례 #1</div>
+<h2 style="margin: 12px 0 0; font-weight: 700; font-size: 34px; line-height: 1.15; letter-spacing: -0.04em">Flutter 공개 패키지</h2>
+<p style="margin: 18px 0 0; font-size: 19px; font-weight: 500; line-height: 1.55"><strong style="font-weight: 700">mobile_rag_engine</strong>은 문서를 서버에 올리지 않고, 휴대폰 안에서 검색과 RAG context 생성까지 끝내는 패키지입니다.</p>
+
+<div style="margin-top: 32px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 16px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 36px; line-height: 1; color: #f3e04a">0.20.0</span>
+<span style="font-size: 13px; line-height: 1.55; color: #ababa5">pub.dev 배포 버전</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-size: 36px; line-height: 1; color: #f3e04a">25.9ms</span>
+<span style="font-size: 13px; line-height: 1.55; color: #ababa5">234자 임베딩 평균, 기기 내</span>
+</div>
+</div>
+</div>
+
+<div style="padding: 0 20px">
+<div role="tablist" aria-label="mobile_rag_engine 소개" style="margin-top: 36px; display: flex; flex-wrap: wrap; gap: 0 20px">
+<button type="button" role="tab" aria-selected="true" aria-controls="m-engine-panel" style="min-height: 44px; padding: 0; border: 0; background: none; font-family: inherit; font-size: 15px; font-weight: 600; color: #ecece7; text-decoration: underline; text-decoration-color: #f3e04a; text-decoration-thickness: 2px; text-underline-offset: 8px">완전 로컬 RAG</button>
+<button type="button" role="tab" aria-selected="false" aria-controls="m-engine-panel" style="min-height: 44px; padding: 0; border: 0; background: none; font-family: inherit; font-size: 15px; font-weight: 500; color: #9d9d96">색인 파이프라인</button>
+<button type="button" role="tab" aria-selected="false" aria-controls="m-engine-panel" style="min-height: 44px; padding: 0; border: 0; background: none; font-family: inherit; font-size: 15px; font-weight: 500; color: #9d9d96">하이브리드 검색</button>
+<button type="button" role="tab" aria-selected="false" aria-controls="m-engine-panel" style="min-height: 44px; padding: 0; border: 0; background: none; font-family: inherit; font-size: 15px; font-weight: 500; color: #9d9d96">3계층 구조</button>
+</div>
+<div id="m-engine-panel" role="tabpanel" style="margin-top: 24px; display: flex; flex-direction: column; gap: 14px">
+<h3 style="margin: 0; font-weight: 700; font-size: 24px; line-height: 1.35; letter-spacing: -0.03em">문서가 기기 밖으로 나가지 않습니다</h3>
+<p style="margin: 0; font-size: 16px; line-height: 1.8; color: #ababa5">Flutter 앱에서 문서를 서버에 업로드하지 않고 검색과 RAG context 생성을 처리합니다. 패키지는 LLM에 넘길 context까지만 책임지고, LLM provider와 채팅 UX는 앱에 맡깁니다.</p>
+</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

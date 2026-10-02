@@ -21,7 +21,11 @@ const DeviceFrame = ({
   currentScreenIndex = 0,
 }: DeviceFrameProps) => {
   if (variant === 'presentation') {
-    if (project.type === 'package' || project.type === 'api') {
+    const currentScreen = project.screens[currentScreenIndex];
+
+    if (project.type === 'api' && currentScreen?.scrollable) {
+      return <WebPresentationFrame project={project} currentScreenIndex={currentScreenIndex} />;
+    } else if (project.type === 'package' || project.type === 'api') {
       return <PackagePresentationFrame project={project} currentScreenIndex={currentScreenIndex} />;
     } else if (project.type === 'mobile') {
       return <MobilePresentationFrame project={project} currentScreenIndex={currentScreenIndex} />;
@@ -33,9 +37,9 @@ const DeviceFrame = ({
   }
 
   return (
-    <div className="group relative flex min-h-[360px] w-full items-center justify-center overflow-hidden bg-gradient-to-b from-[#f2ede4] to-[#e8dfd0] p-4 sm:min-h-[460px] sm:p-6 lg:h-full lg:min-h-[500px] lg:p-8">
+    <div className="group relative flex min-h-[360px] w-full items-center justify-center overflow-hidden bg-gradient-to-b from-surface to-surface-2 p-4 sm:min-h-[460px] sm:p-6 lg:h-full lg:min-h-[500px] lg:p-8">
       {/* Always-visible affordance badge — also works on touch devices */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 bg-[#1f1b16]/75 backdrop-blur-sm px-3 py-1.5 rounded-full text-[10px] uppercase tracking-[0.2em] text-[#faf7f2] flex items-center gap-1.5 pointer-events-none font-mono shadow-sm group-hover:bg-[#1f1b16]/90 transition-colors">
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 bg-black/65 backdrop-blur-sm px-3 py-1.5 rounded-full text-[13px] font-semibold text-ink flex items-center gap-1.5 pointer-events-none shadow-sm group-hover:bg-black/80 transition-colors">
         <Maximize2 size={10} />
         <span>눌러서 크게 보기</span>
       </div>
@@ -91,20 +95,20 @@ const PackageFrame = ({
       onClick={onClick}
       onKeyDown={handleKeyDown}
       aria-label={`${title} 프레젠테이션 열기`}
-      className="relative aspect-[16/10] w-full max-w-md cursor-pointer appearance-none overflow-hidden rounded-xl border border-white/90 bg-white p-0 text-left shadow-2xl transition-transform duration-500 hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f766e] focus-visible:ring-offset-4 focus-visible:ring-offset-[#f2ede4] lg:max-w-xl"
+      className="relative aspect-[16/10] w-full max-w-md cursor-pointer appearance-none overflow-hidden rounded-xl border border-surface-2 bg-surface p-0 text-left shadow-2xl transition-transform duration-500 hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marker focus-visible:ring-offset-4 focus-visible:ring-offset-surface lg:max-w-xl"
     >
-      <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between border-b border-[#d9e4e1] bg-white/95 px-4 py-2">
+      <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between border-b border-line bg-surface/95 px-4 py-2">
         <div className="flex items-center gap-2">
           {isApi ? (
-            <Server size={14} className="text-[#0f766e]" />
+            <Server size={14} className="text-marker" />
           ) : (
-            <PackageIcon size={14} className="text-[#0f766e]" />
+            <PackageIcon size={14} className="text-marker" />
           )}
-          <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-[#0f766e]">
+          <span className="text-[13px] font-semibold text-marker">
             {isApi ? '백엔드 아키텍처' : '패키지 아키텍처'}
           </span>
         </div>
-        <span className="rounded-full border border-[#d9e4e1] px-2 py-0.5 text-[10px] font-mono text-[#4a4339]">
+        <span className="font-mono text-xs text-sub">
           {isApi ? 'FastAPI' : 'pub.dev'}
         </span>
       </div>
@@ -156,12 +160,12 @@ const MobileFrame = ({
       onClick={onClick}
       onKeyDown={handleKeyDown}
       aria-label={`${title} 프레젠테이션 열기`}
-      className="relative mx-auto flex h-[340px] w-[188px] cursor-pointer flex-col appearance-none rounded-[2.5rem] border-[8px] border-gray-100 bg-gray-100 p-0 text-left shadow-xl transition-transform duration-500 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f766e] focus-visible:ring-offset-4 focus-visible:ring-offset-[#f2ede4] sm:h-[400px] sm:w-[220px] md:h-[500px] md:w-[280px] lg:h-[560px] lg:w-[310px]"
+      className="relative mx-auto flex h-[340px] w-[188px] cursor-pointer flex-col appearance-none rounded-[2.5rem] border-[8px] border-surface-2 bg-surface-2 p-0 text-left shadow-xl transition-transform duration-500 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marker focus-visible:ring-offset-4 focus-visible:ring-offset-surface sm:h-[400px] sm:w-[220px] md:h-[500px] md:w-[280px] lg:h-[560px] lg:w-[310px]"
     >
-      <div className="h-[32px] w-[3px] bg-gray-100 absolute -left-[10px] top-[72px] rounded-l-lg" />
-      <div className="h-[46px] w-[3px] bg-gray-100 absolute -left-[10px] top-[124px] rounded-l-lg" />
-      <div className="h-[64px] w-[3px] bg-gray-100 absolute -right-[10px] top-[142px] rounded-r-lg" />
-      <div className="rounded-[2rem] overflow-hidden w-full h-full bg-slate-800 relative">
+      <div className="h-[32px] w-[3px] bg-surface-2 absolute -left-[10px] top-[72px] rounded-l-lg" />
+      <div className="h-[46px] w-[3px] bg-surface-2 absolute -left-[10px] top-[124px] rounded-l-lg" />
+      <div className="h-[64px] w-[3px] bg-surface-2 absolute -right-[10px] top-[142px] rounded-r-lg" />
+      <div className="rounded-[2rem] overflow-hidden w-full h-full bg-career relative">
         {project.screens[0]?.imagePath ? (
           <ScreenImage
             variant="fill"
@@ -204,12 +208,12 @@ const WebFrame = ({
       onClick={onClick}
       onKeyDown={handleKeyDown}
       aria-label={`${title} 프레젠테이션 열기`}
-      className="relative aspect-video w-full max-w-md cursor-pointer appearance-none overflow-hidden rounded-lg border-t-[20px] border-white/90 bg-[#faf7f2] p-0 text-left shadow-2xl transition-transform duration-500 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f766e] focus-visible:ring-offset-4 focus-visible:ring-offset-[#f2ede4] lg:max-w-xl"
+      className="relative aspect-video w-full max-w-md cursor-pointer appearance-none overflow-hidden rounded-lg border-t-[20px] border-surface-2 bg-ground p-0 text-left shadow-2xl transition-transform duration-500 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marker focus-visible:ring-offset-4 focus-visible:ring-offset-surface lg:max-w-xl"
     >
       <div className="absolute -top-[14px] left-3 flex gap-1.5 z-10">
-        <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
-        <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
-        <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
+        <div className="w-2.5 h-2.5 rounded-full bg-line-soft" />
+        <div className="w-2.5 h-2.5 rounded-full bg-line-soft" />
+        <div className="w-2.5 h-2.5 rounded-full bg-line-soft" />
       </div>
       {project.screens[0]?.imagePath ? (
         <div className="w-full h-full relative">
@@ -256,15 +260,15 @@ const MobilePresentationFrame = ({
 
   return (
     <div className="relative">
-      <div className="relative border-gray-100 bg-gray-100 border-[8px] rounded-[2.5rem] h-[min(58dvh,540px)] md:h-[70vh] aspect-[9/19] shadow-2xl flex flex-col">
+      <div className="relative border-surface-2 bg-surface-2 border-[8px] rounded-[2.5rem] h-[min(58dvh,540px)] md:h-[70vh] aspect-[9/19] shadow-2xl flex flex-col">
         <div
           ref={scrollRef}
           tabIndex={isScrollable ? 0 : undefined}
           role={isScrollable ? 'region' : undefined}
           aria-label={isScrollable ? `${currentScreen.title} 스크린샷 스크롤 영역` : undefined}
-          className={`relative h-full w-full rounded-[2rem] bg-slate-800 ${
+          className={`relative h-full w-full rounded-[2rem] bg-career ${
             isScrollable
-              ? 'accessible-scrollbar overflow-x-hidden overflow-y-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#faf7f2]'
+              ? 'accessible-scrollbar overflow-x-hidden overflow-y-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marker'
               : 'overflow-hidden'
           }`}
         >
@@ -306,7 +310,7 @@ const MobilePresentationFrame = ({
 
       {/* Scroll Indicator - Right side (absolute positioned) */}
       {isScrollable && (
-        <div className="absolute -right-16 top-1/2 -translate-y-1/2 hidden sm:flex flex-col items-center gap-2 text-white/60 animate-bounce">
+        <div className="absolute -right-16 top-1/2 -translate-y-1/2 hidden sm:flex flex-col items-center gap-2 text-sub animate-bounce">
           <Mouse size={20} />
           <span className="text-xs whitespace-nowrap">스크롤</span>
         </div>
@@ -336,7 +340,7 @@ const WebPresentationFrame = ({
 
   return (
     <div
-      className="relative bg-[#faf7f2] rounded-lg shadow-2xl border-t-[20px] md:border-t-[24px] border-white/90 flex flex-col overflow-hidden"
+      className="relative bg-ground rounded-lg shadow-2xl border-t-[20px] md:border-t-[24px] border-surface-2 flex flex-col overflow-hidden"
       style={{
         aspectRatio: isScrollable ? undefined : '16 / 10',
         height: isScrollable ? 'min(68dvh, 760px)' : undefined,
@@ -346,9 +350,9 @@ const WebPresentationFrame = ({
       }}
     >
       <div className="absolute -top-[16px] left-4 flex gap-2 z-10">
-        <div className="w-3 h-3 rounded-full bg-red-400" />
-        <div className="w-3 h-3 rounded-full bg-yellow-400" />
-        <div className="w-3 h-3 rounded-full bg-green-400" />
+        <div className="w-3 h-3 rounded-full bg-line-soft" />
+        <div className="w-3 h-3 rounded-full bg-line-soft" />
+        <div className="w-3 h-3 rounded-full bg-line-soft" />
       </div>
       <div
         ref={scrollRef}
@@ -357,7 +361,7 @@ const WebPresentationFrame = ({
         aria-label={isScrollable ? `${currentScreen.title} 스크린샷 스크롤 영역` : undefined}
         className={`relative h-full w-full ${
           isScrollable
-            ? 'accessible-scrollbar overflow-x-hidden overflow-y-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#faf7f2]'
+            ? 'accessible-scrollbar overflow-x-hidden overflow-y-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marker'
             : ''
         }`}
       >
@@ -406,18 +410,18 @@ const PackagePresentationFrame = ({
 
   return (
     <div
-      className="relative bg-white rounded-xl shadow-2xl border-t-[20px] md:border-t-[24px] border-white/90 flex flex-col overflow-hidden"
+      className="relative bg-surface rounded-xl shadow-2xl border-t-[20px] md:border-t-[24px] border-surface-2 flex flex-col overflow-hidden"
       style={{
         aspectRatio: '16 / 10',
         width: 'min(92vw, 1280px, calc(68dvh * 1.6))',
       }}
     >
       <div className="absolute -top-[16px] left-4 flex gap-2 z-10">
-        <div className="w-3 h-3 rounded-full bg-[#0f766e]" />
-        <div className="w-3 h-3 rounded-full bg-[#38bdf8]" />
-        <div className="w-3 h-3 rounded-full bg-[#b8543a]" />
+        <div className="w-3 h-3 rounded-full bg-marker" />
+        <div className="w-3 h-3 rounded-full bg-marker" />
+        <div className="w-3 h-3 rounded-full bg-marker" />
       </div>
-      <div className="relative h-full w-full bg-[#f8faf9]">
+      <div className="relative h-full w-full bg-surface">
         {currentScreen?.imagePath ? (
           <ScreenImage
             variant="fill"
@@ -429,13 +433,13 @@ const PackagePresentationFrame = ({
           />
         ) : (
           <div className="flex h-full flex-col justify-center px-8 py-8 md:px-14">
-            <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.28em] text-[#0f766e]">
+            <p className="mb-4 text-[13px] font-semibold text-marker">
               mobile_rag_engine 기술 사례
             </p>
-            <h2 className="font-serif text-3xl md:text-5xl font-light text-[#1f1b16]">
+            <h2 className="text-3xl md:text-5xl font-bold text-ink">
               {currentScreen.title}
             </h2>
-            <p className="mt-5 max-w-3xl text-base md:text-xl leading-relaxed text-[#4a4339]">
+            <p className="mt-5 max-w-3xl text-base md:text-xl leading-relaxed text-sub">
               {currentScreen.desc}
             </p>
           </div>
@@ -473,10 +477,10 @@ const TabletFrame = ({
         /\s+/g,
         ' '
       )}
-      className="relative mx-auto flex h-[336px] w-[236px] cursor-pointer flex-col appearance-none rounded-[2rem] border-[10px] border-gray-100 bg-gray-100 p-0 text-left shadow-xl transition-transform duration-500 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f766e] focus-visible:ring-offset-4 focus-visible:ring-offset-[#f2ede4] sm:h-[400px] sm:w-[280px] lg:h-[510px] lg:w-[360px]"
+      className="relative mx-auto flex h-[336px] w-[236px] cursor-pointer flex-col appearance-none rounded-[2rem] border-[10px] border-surface-2 bg-surface-2 p-0 text-left shadow-xl transition-transform duration-500 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marker focus-visible:ring-offset-4 focus-visible:ring-offset-surface sm:h-[400px] sm:w-[280px] lg:h-[510px] lg:w-[360px]"
     >
-      <div className="absolute left-1/2 top-3 h-2 w-2 -translate-x-1/2 rounded-full bg-gray-300" />
-      <div className="relative mt-2 h-full w-full overflow-hidden rounded-[1.5rem] bg-slate-800">
+      <div className="absolute left-1/2 top-3 h-2 w-2 -translate-x-1/2 rounded-full bg-line-soft" />
+      <div className="relative mt-2 h-full w-full overflow-hidden rounded-[1.5rem] bg-career">
         {featuredScreen?.imagePath ? (
           <ScreenImage
             variant="fill"
@@ -522,20 +526,20 @@ const TabletPresentationFrame = ({
   return (
     <div className="relative">
         <div 
-        className="relative border-gray-100 bg-gray-100 border-[12px] rounded-[2.5rem] shadow-2xl flex flex-col"
+        className="relative border-surface-2 bg-surface-2 border-[12px] rounded-[2.5rem] shadow-2xl flex flex-col"
         style={{ height: 'min(58dvh, 640px)', aspectRatio: '834/1194' }}
       >
         {/* 태블릿 상단 카메라 */}
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 w-3 h-3 bg-gray-300 rounded-full z-10" />
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 w-3 h-3 bg-line-soft rounded-full z-10" />
         
         <div
           ref={scrollRef}
           tabIndex={isScrollable ? 0 : undefined}
           role={isScrollable ? 'region' : undefined}
           aria-label={isScrollable ? `${currentScreen.title} 스크린샷 스크롤 영역` : undefined}
-          className={`relative mt-2 h-full w-full rounded-[2rem] bg-slate-800 ${
+          className={`relative mt-2 h-full w-full rounded-[2rem] bg-career ${
             isScrollable
-              ? 'accessible-scrollbar overflow-x-hidden overflow-y-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#faf7f2]'
+              ? 'accessible-scrollbar overflow-x-hidden overflow-y-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marker'
               : 'overflow-hidden'
           }`}
         >
@@ -577,7 +581,7 @@ const TabletPresentationFrame = ({
 
       {/* Scroll Indicator - Right side (absolute positioned) */}
       {isScrollable && (
-        <div className="absolute -right-16 top-1/2 -translate-y-1/2 hidden sm:flex flex-col items-center gap-2 text-white/60 animate-bounce">
+        <div className="absolute -right-16 top-1/2 -translate-y-1/2 hidden sm:flex flex-col items-center gap-2 text-sub animate-bounce">
           <Mouse size={20} />
           <span className="text-xs whitespace-nowrap">스크롤</span>
         </div>

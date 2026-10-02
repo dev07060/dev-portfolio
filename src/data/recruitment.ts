@@ -12,6 +12,9 @@ export const recruitmentProfile: RecruitmentProfile = {
     '모바일 제품과 로컬 검색 엔진을 설계·구현하고 평가와 운영까지 연결합니다.',
   email: 'byeongheeoh51@gmail.com',
   githubUrl: 'https://github.com/dev07060',
+  headline: 'Flutter · 온디바이스 RAG 개발자',
+  intro:
+    'Flutter로 iOS·Android 제품을 만들고 운영해 왔습니다. 최근에는 앱 안에서 동작하는 로컬 검색 엔진까지 직접 만들어 제품에 붙였습니다.',
   resumeUrl: '/oh-byeonghee-resume-ko.pdf',
   proofItems: [
     {
@@ -20,8 +23,8 @@ export const recruitmentProfile: RecruitmentProfile = {
       evidence: 'https://pub.dev/packages/mobile_rag_engine',
     },
     {
-      label: '경력',
-      value: '총 5년 5개월',
+      label: '총 경력',
+      value: '5년 5개월',
     },
   ],
 };
@@ -29,6 +32,38 @@ export const recruitmentProfile: RecruitmentProfile = {
 export const recruitmentCases: RecruitmentCase[] = [
   {
     projectId: 'local-mobile-rag-gemma',
+    sectionTitle: 'Flutter 공개 패키지',
+    sectionLead:
+      'mobile_rag_engine은 문서를 서버에 올리지 않고, 휴대폰 안에서 검색과 RAG context 생성까지 끝내는 패키지입니다.',
+    metrics: [
+      { value: '0.20.0', label: 'pub.dev 배포 버전' },
+      { value: '25.9ms', label: '234자 임베딩 평균, 기기 내 · 디버그 빌드' },
+    ],
+    introTopics: [
+      {
+        label: '완전 로컬 RAG',
+        title: '문서가 기기 밖으로 나가지 않습니다',
+        body: 'Flutter 앱에서 문서를 서버에 업로드하지 않고 검색과 RAG context 생성을 처리합니다. 패키지는 LLM에 넘길 context까지만 책임지고, LLM provider와 채팅 UX는 앱에 맡깁니다.',
+      },
+      {
+        label: '색인 파이프라인',
+        title: '파싱부터 색인까지 기기 안에서',
+        body: '문서 파싱, chunk metadata, ONNX embedding, SQLite 저장, index write로 이어지는 ingest 경로를 직접 구현했습니다. 234자 텍스트 임베딩은 기기에서 평균 25.9ms가 걸렸습니다.',
+        flow: '파싱 → chunk metadata → ONNX embedding → SQLite → index',
+      },
+      {
+        label: '하이브리드 검색',
+        title: '의미 검색과 키워드 검색을 함께',
+        body: 'HNSW vector 검색과 BM25 sparse 검색의 후보를 결합해 context로 조립합니다. 메리츠화재 태블릿 앱에서는 여기에 RRF 융합 랭킹과 질의 유형별 가중치를 더했습니다.',
+        flow: 'HNSW + BM25 → 후보 결합 → LLM-ready context',
+      },
+      {
+        label: '3계층 구조',
+        title: '제품 API와 네이티브 hot path를 분리',
+        body: '앱이 쓰는 Flutter facade, 흐름을 제어하는 Dart orchestration, 네이티브 hot path를 맡는 Rust FFI 코어로 나눴습니다. Flutter 쪽 사용 면은 단순해지고, 대신 네이티브 빌드와 릴리스 경계를 함께 관리합니다.',
+        flow: 'Flutter facade → Dart orchestration → Rust FFI core',
+      },
+    ],
     statusLabel: 'pub.dev 공개 패키지 · 0.20.0',
     problem:
       'Flutter 앱에서 문서를 서버에 업로드하지 않고 로컬 문서 검색과 RAG context 생성을 처리해야 했습니다.',
@@ -91,6 +126,19 @@ export const recruitmentCases: RecruitmentCase[] = [
   },
   {
     projectId: 'easy-contract-viewer',
+    sectionLead: '검색과 AI 요약의 결과를 언제나 PDF 원문의 정확한 근거 위치로 되돌립니다.',
+    features: [
+      { title: '온디바이스 약관 검색', description: '약관 PDF를 서버로 보내지 않고 기기 안에서 조항 단위로 찾습니다.' },
+      { title: '원문 근거 하이라이트', description: '검색·요약 결과에서 PDF의 정확한 근거 영역으로 바로 이동합니다.' },
+      { title: '동의 기반 AI 요약', description: '사용자가 동의할 때만 요약하고, 서버를 못 쓰면 로컬로 대체합니다.' },
+      { title: '비용이 통제되는 요약 서버', description: '요청 서명, 사용 한도, 예산 상한, 중복 요청 병합으로 남용을 막습니다.' },
+    ],
+    stepScreens: [
+      { screenId: '11-smart-guide-search-results', label: '약관 검색' },
+      { screenId: '04-review-detail-highlight-summary', label: '조항 요약' },
+      { screenId: '07-pdf-source-highlight', label: '원문 근거로' },
+    ],
+    relatedProjectIds: ['easy-contract-viewer-server'],
     statusLabel: 'Flutter 제품 적용 사례',
     problem:
       '보험 약관 PDF를 로컬에서 검색하고, 검토 결과를 정확한 원문 근거 위치로 다시 연결해야 했습니다.',
@@ -99,6 +147,7 @@ export const recruitmentCases: RecruitmentCase[] = [
       'mobile_rag_engine을 연결해 SQLite, HNSW, BM25 기반의 온디바이스 약관 검색 흐름을 구성했습니다.',
       '동의 기반 AI 요약, 서버 readiness 확인, client session, 로컬 fallback 흐름을 구현했습니다.',
     ],
+    verificationLabel: '검증 기준·방법',
     verification: [
       '검색과 분석 결과가 ingest 단계에서 보존한 페이지 좌표를 통해 정확한 PDF 근거 영역으로 돌아가는지 확인합니다.',
       'AI 요약은 사용자 동의, 서버 readiness, client session, 로컬 fallback 경계를 각각 거칩니다.',
@@ -117,6 +166,13 @@ export const recruitmentCases: RecruitmentCase[] = [
   },
   {
     projectId: 'law-info-engine',
+    sectionLead: 'LLM이 검색된 공식 법령 근거 안에서만 답하도록 만든 인용 기반 검색 엔진.',
+    sectionSummary:
+      '국가법령 데이터를 조문 단위로 정리해 두고, 질문이 들어오면 의미가 비슷한 조문과 같은 법령 용어를 쓰는 조문을 함께 찾아 출처와 함께 돌려줍니다. 검색 품질이 떨어지는 변경은 배포되지 않도록 막아 두었습니다.',
+    figure: {
+      screenId: 'search-ui',
+      caption: '공개 검색 화면. 결과마다 법령명, 조문 경로, 시행일, 출처 URL이 붙습니다.',
+    },
     statusLabel: '운영 중인 검색·API',
     problem:
       '공식 법령 데이터를 인용 가능한 단위로 정규화하고, LLM이 검색된 공식 근거 안에서만 답하도록 해야 했습니다.',
@@ -157,6 +213,8 @@ export const recruitmentCases: RecruitmentCase[] = [
 export const experienceItems: ExperienceItem[] = [
   {
     company: '메리츠화재해상보험',
+    cardHighlight:
+      'mobile_rag_engine 기반 BM25+HNSW Hybrid Search에 RRF 융합 랭킹과 Source Filter를 적용했습니다.',
     role: '보험 판매자용 태블릿 RAG 개발',
     employmentType: '외주·프리랜서',
     period: '2025.12 - 2026.02',
@@ -170,6 +228,8 @@ export const experienceItems: ExperienceItem[] = [
   },
   {
     company: '㈜피에트',
+    cardHighlight:
+      'BLE sample interval·timestamp 기반 ROM 계산으로 장시간 누적 drift를 70% 이상 줄였습니다.',
     role: 'App Frontend 파트장',
     employmentType: '회사 근무',
     period: '2024.06 - 2025.05',
@@ -179,10 +239,12 @@ export const experienceItems: ExperienceItem[] = [
       'BLE Notify jitter와 packet drop을 반영한 sample interval·timestamp 기반 ROM 계산으로 장시간 누적 drift를 70% 이상 줄였습니다.',
       '펌웨어별 characteristic 누락을 실패 가능한 파서로 개선하고 Sentry 분석과 Fastlane·GitHub Actions 배포 자동화를 운영했습니다.',
     ],
-    relatedProjectIds: ['fiet-fitness-trainer'],
+    relatedProjectIds: ['fiet-fitness-trainer', 'fiet-fitness-user'],
   },
   {
     company: '㈜인피니티익스체인지코리아',
+    cardHighlight:
+      '가상자산 거래소 앱의 실시간 시세 WebSocket 연결 생명주기와 화면 반영 흐름을 최적화했습니다.',
     role: '가상자산 거래소 모바일 개발',
     employmentType: '외주·상주',
     period: '2024.03 - 2024.06',
@@ -196,6 +258,8 @@ export const experienceItems: ExperienceItem[] = [
   },
   {
     company: '튜링바이오',
+    cardHighlight:
+      'VitalTracker의 센서 수집과 MethodChannel 네이티브 처리, 백그라운드 lifecycle을 안정화했습니다.',
     role: '앱개발·연구개발 주임연구원',
     employmentType: '회사 근무',
     period: '2021.09 - 2024.03',
