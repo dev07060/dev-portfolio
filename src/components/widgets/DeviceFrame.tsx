@@ -108,7 +108,7 @@ const PackageFrame = ({
             {isApi ? '백엔드 아키텍처' : '패키지 아키텍처'}
           </span>
         </div>
-        <span className="rounded-full border border-line px-2 py-0.5 text-[11px] font-mono text-sub">
+        <span className="font-mono text-xs text-sub">
           {isApi ? 'FastAPI' : 'pub.dev'}
         </span>
       </div>

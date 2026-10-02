@@ -1,7 +1,7 @@
 'use client';
 
 import { ExternalLink, X } from 'lucide-react';
-import { useRef } from 'react';
+import { Fragment, useRef } from 'react';
 import type { Project } from '@/types/project';
 import type { RecruitmentCase, SupportingPackage } from '@/types/recruitment';
 import DeviceFrame from './DeviceFrame';
@@ -98,6 +98,15 @@ const ProjectModal = ({
   );
 };
 
+// 긴 식별자 제목(mobile_rag_engine 등)이 단어 중간이 아니라 구분자 뒤에서만 줄바꿈되도록 합니다.
+const withSeparatorBreaks = (text: string) =>
+  text.split(/(?<=[_\-/])/).map((part, index, parts) => (
+    <Fragment key={`${part}-${index}`}>
+      {part}
+      {index < parts.length - 1 && <wbr />}
+    </Fragment>
+  ));
+
 const getTypeLabel = (project: Project) => {
   if (project.type === 'package') return '오픈소스 패키지';
   if (project.type === 'mobile') return '모바일 애플리케이션';
@@ -132,9 +141,9 @@ const ProjectInfoHeader = ({
           </p>
           <h2
             id={titleId}
-            className="break-words pr-10 text-xl font-bold leading-tight text-ink min-[360px]:text-2xl sm:text-3xl md:text-4xl"
+            className="break-words pr-10 text-xl [word-break:keep-all] font-bold leading-tight text-ink min-[360px]:text-2xl sm:text-3xl md:text-4xl"
           >
-            {project.title}
+            {withSeparatorBreaks(project.title)}
           </h2>
           <p className="mt-2 text-base text-sub">
             {project.subtitle}
@@ -145,19 +154,19 @@ const ProjectInfoHeader = ({
             </p>
           )}
           {project.releaseLabel && (
-            <span className="mt-4 inline-flex rounded-full border border-marker/40 bg-surface-2 px-2.5 py-1 font-mono text-[11px] uppercase tracking-wider text-marker">
+            <p className="mt-4 font-mono text-xs uppercase tracking-wider text-marker">
               {project.releaseLabel}
-            </span>
+            </p>
           )}
           {allLinks.length > 0 && (
-            <div className="mt-5 flex flex-wrap gap-2" aria-label="프로젝트 공개 근거">
+            <div className="mt-5 flex flex-wrap gap-x-5 gap-y-1" aria-label="프로젝트 공개 근거">
               {allLinks.map((link) => (
                 <a
                   key={link.url}
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-line bg-ground px-3 py-2.5 text-xs font-semibold text-marker hover:border-marker/60 hover:bg-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marker"
+                  className="link-marker inline-flex min-h-11 items-center gap-1.5 text-sm"
                 >
                   {link.label}
                   <ExternalLink size={13} aria-hidden="true" />
@@ -230,16 +239,9 @@ const ProjectInfoDetails = ({
             >
               — 구조와 핵심 기술
             </h3>
-            <div className="flex flex-wrap gap-2">
-              {project.techStack.map((tech) => (
-                <span
-                  key={tech}
-                  className="rounded-full border border-line bg-surface-2 px-2.5 py-1 text-xs font-medium text-sub"
-                >
-                  {tech}
-                </span>
-              ))}
-            </div>
+            <p className="text-sm leading-relaxed text-sub">
+              {project.techStack.join(' · ')}
+            </p>
           </section>
 
           {recruitmentCase?.verification.length ? (
@@ -368,30 +370,23 @@ const SupportingPackages = ({ items }: { items: SupportingPackage[] }) => (
           <p className="mt-2 text-xs leading-relaxed text-sub">
             {item.relationship}
           </p>
-          <div className="mt-3 flex flex-wrap gap-2">
+          <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1">
             {item.links.map((link) => (
               <a
                 key={link.url}
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-line bg-surface px-3 py-2 text-xs font-semibold text-marker focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marker"
+                className="link-marker inline-flex min-h-11 items-center gap-1.5 text-sm"
               >
                 {link.label}
                 <ExternalLink size={13} aria-hidden="true" />
               </a>
             ))}
           </div>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {item.techStack.map((tech) => (
-              <span
-                key={tech}
-                className="rounded-full border border-line bg-surface px-2.5 py-1 text-[11px] text-sub"
-              >
-                {tech}
-              </span>
-            ))}
-          </div>
+          <p className="mt-3 text-xs leading-relaxed text-sub">
+            {item.techStack.join(' · ')}
+          </p>
         </article>
       ))}
     </div>

@@ -48,3 +48,24 @@ test('architecture presentations expose the original image with a full-size targ
   assert.match(presentation, /aria-label=\{`\$\{currentScreen\.title\} 원본 이미지 새 창에서 열기`\}/);
   assert.match(presentation, /min-h-11/);
 });
+
+test('project detail content uses plain text links and stacks instead of chips', () => {
+  const modal = read('src/components/widgets/ProjectModal.tsx');
+  const device = read('src/components/widgets/DeviceFrame.tsx');
+
+  assert.match(modal, /project\.techStack\.join\(' · '\)/);
+  assert.match(modal, /item\.techStack\.join\(' · '\)/);
+  assert.match(modal, /className="link-marker inline-flex min-h-11 items-center/);
+  assert.match(modal, /target="_blank"\s+rel="noopener noreferrer"/);
+  assert.doesNotMatch(modal, /rounded-full border border-line bg-(ground|surface|surface-2) px-/);
+  assert.doesNotMatch(modal, /rounded-full border border-marker\/40/);
+  assert.doesNotMatch(device, /rounded-full border border-line px-2 py-0\.5/);
+});
+
+test('long identifier titles break only after separators', () => {
+  const modal = read('src/components/widgets/ProjectModal.tsx');
+
+  assert.match(modal, /<wbr \/>/);
+  assert.match(modal, /\{withSeparatorBreaks\(project\.title\)\}/);
+  assert.doesNotMatch(modal, /break-all|\[overflow-wrap:anywhere\]/);
+});
