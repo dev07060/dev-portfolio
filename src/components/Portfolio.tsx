@@ -12,7 +12,9 @@ import {
   findOtherProjectIds,
   resolveSearchDocuments,
 } from '@/lib/caseOrder';
+import { useSmoothScroll } from '@/lib/useSmoothScroll';
 import { ProjectModal, PresentationOverlay } from './widgets';
+import FloatingHeader from './portfolio/FloatingHeader';
 import HeroSection from './portfolio/HeroSection';
 import CareerSection from './portfolio/CareerSection';
 import CaseEngineSection from './portfolio/CaseEngineSection';
@@ -164,6 +166,9 @@ const Portfolio = ({ config }: PortfolioProps) => {
     };
   }, [selectedProject]);
 
+  // Lenis smooth scroll (off under reduced motion); paused while the modal/overlay is open.
+  useSmoothScroll(selectedProject !== null);
+
   const openProjectById = (projectId: string) => {
     const project = projects.find((candidate) => candidate.id === projectId);
     if (project) handleProjectClick(project);
@@ -178,6 +183,7 @@ const Portfolio = ({ config }: PortfolioProps) => {
     ...cases.flatMap((item) => item.relatedProjectIds ?? []),
   ]);
   const heroDocuments = resolveSearchDocuments(heroSearchDocuments, featuredProjectIds);
+  const firstCaseHref = `#${caseAnchorId(1)}`;
 
   return (
     <>
@@ -186,13 +192,20 @@ const Portfolio = ({ config }: PortfolioProps) => {
         aria-hidden={selectedProject ? true : undefined}
         className="min-h-screen bg-ground font-sans text-ink outline-none"
       >
+        <FloatingHeader
+          brandLabel={copy.navBrandLabel}
+          firstCaseHref={firstCaseHref}
+          hasExperience={experienceItems.length > 0}
+          resumeUrl={profile.resumeUrl}
+          heroHeaderId="hero-header"
+        />
         <main id="main-content" tabIndex={-1} className="outline-none">
           <HeroSection
             profile={profile}
             copy={copy}
             capabilities={capabilities}
             searchDocuments={heroDocuments}
-            firstCaseHref={`#${caseAnchorId(1)}`}
+            firstCaseHref={firstCaseHref}
             hasExperience={experienceItems.length > 0}
             onOpenProject={openProjectById}
           />

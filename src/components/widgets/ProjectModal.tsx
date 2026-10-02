@@ -38,6 +38,7 @@ const ProjectModal = ({
   return (
     <div
       ref={dialogRef}
+      data-lenis-prevent
       role={isPresentationMode ? undefined : 'dialog'}
       aria-hidden={isPresentationMode ? true : undefined}
       aria-modal={isPresentationMode ? undefined : 'true'}

@@ -57,6 +57,7 @@ const PresentationOverlay = ({
   return (
     <div
       ref={dialogRef}
+      data-lenis-prevent
       role="dialog"
       aria-modal="true"
       aria-labelledby={titleId}

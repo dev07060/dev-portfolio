@@ -1,7 +1,10 @@
 @import "tailwindcss";
+@import "lenis/dist/lenis.css";
 
 :root {
   color-scheme: dark;
+  /* Floating header (fixed, ~72px) must never cover a focused control or an anchor target. */
+  scroll-padding-top: 88px;
 }
 
 @theme {
@@ -36,6 +39,12 @@ body {
   outline: 2px solid var(--color-marker);
   outline-offset: 3px;
 }
+
+/* Anchor targets that only receive focus to move the sequential focus start point. */
+[data-anchor-target]:focus { outline: none; }
+
+/* Full-screen sections start exactly at the viewport top (cancels scroll-padding-top). */
+main > section { scroll-margin-top: -88px; }
 
 body[data-portfolio-overlay="true"] .skip-link {
   display: none;
@@ -181,8 +190,73 @@ body[data-portfolio-overlay="true"] .skip-link {
     transition-duration: 180ms;
   }
 
+  .floating-header {
+    transition: opacity 220ms ease, transform 260ms cubic-bezier(0.2, 0.7, 0.2, 1), visibility 0s linear 0s;
+  }
+  .floating-header[data-visible="false"] {
+    opacity: 0;
+    transform: translateY(-12px);
+    visibility: hidden;
+    transition: opacity 180ms ease, transform 180ms ease, visibility 0s linear 180ms;
+  }
+
   .career-detail > summary { list-style: none; }
   .career-detail > summary::-webkit-details-marker { display: none; }
+}
+
+/* Case #2 pinned horizontal track (>=768px, motion allowed). Below 768px and under
+   reduced motion the static layout (native horizontal snap list on mobile) is untouched.
+   Unlayered on purpose so it overrides the static Tailwind utilities. */
+@media (min-width: 48rem) and (prefers-reduced-motion: no-preference) {
+  .pin-track:not([data-pin="off"]) {
+    --pin-shot: clamp(180px, calc((100svh - 300px) * 0.45), 260px);
+    display: block;
+    min-height: 0;
+    padding-block: 0;
+    height: calc(100svh + var(--pin-scroll, 60svh));
+  }
+  .pin-track:not([data-pin="off"]) .pin-stage {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    box-sizing: border-box;
+    /* Keep the pinned content clear of the floating header (top 16px + 54px pill). */
+    padding-block: 80px 16px;
+    display: flex;
+    align-items: center;
+    overflow: clip;
+  }
+  .pin-track:not([data-pin="off"]) .pin-layout {
+    display: grid;
+    grid-template-columns: minmax(320px, 1.15fr) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(40px, 5vw, 64px);
+  }
+  /* Slightly tighter vertical rhythm so the text column fits common laptop heights. */
+  .pin-track:not([data-pin="off"]) [data-pin-text] > :not(:first-child, :nth-child(2)) {
+    margin-top: 24px;
+  }
+  .pin-track:not([data-pin="off"]) .pin-window {
+    min-width: 0;
+    overflow: clip;
+    overflow-clip-margin: 8px;
+    padding-block: 8px;
+    /* Soft edges where the moving screens enter and leave the window. */
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 20px, #000 calc(100% - 20px), transparent);
+    mask-image: linear-gradient(to right, transparent, #000 20px, #000 calc(100% - 20px), transparent);
+  }
+  .pin-track:not([data-pin="off"]) .pin-row {
+    justify-content: flex-start;
+    padding-inline: 20px;
+    gap: clamp(32px, 4vw, 56px);
+    will-change: transform;
+  }
+  .pin-track:not([data-pin="off"]) .pin-row > li {
+    width: var(--pin-shot, 240px);
+  }
+  .pin-track:not([data-pin="off"]) .pin-row img {
+    width: var(--pin-shot, 240px);
+  }
 }
 
 @keyframes result-in {

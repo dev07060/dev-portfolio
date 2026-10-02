@@ -42,7 +42,7 @@ export default function HeroSection({
   const hasHeadline = Boolean(profile.headline);
   return (
     <section id="top" aria-labelledby="hero-name" className="screen bg-ground">
-      <header className="absolute inset-x-0 top-0">
+      <header id="hero-header" className="absolute inset-x-0 top-0">
         <div className="screen-inner flex min-h-20 flex-wrap items-center justify-between gap-x-6 gap-y-2">
           <a href="#top" className="inline-flex min-h-11 items-center text-[17px] font-bold tracking-[-0.01em] text-ink">
             {copy.navBrandLabel}
