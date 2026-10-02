@@ -14,6 +14,7 @@ export const featuredProjectIds = [
 export const additionalProjectIds = [
   'easy-contract-viewer-server',
   'fiet-fitness-trainer',
+  'fiet-fitness-user',
   'haru-check',
   'weedool',
 ] as const;

@@ -84,7 +84,7 @@ test('keyword-only matches are reported without repeating visible text', async (
 });
 
 const FEATURED = ['local-mobile-rag-gemma', 'easy-contract-viewer', 'law-info-engine'];
-const ADDITIONAL = ['easy-contract-viewer-server', 'fiet-fitness-trainer', 'haru-check', 'weedool'];
+const ADDITIONAL = ['easy-contract-viewer-server', 'fiet-fitness-trainer', 'fiet-fitness-user', 'haru-check', 'weedool'];
 
 test('case order follows featured then additional ids without duplicates', async () => {
   const { buildCaseOrder, caseNumber, caseAnchorId } = await importTypeScriptModule('src/lib/caseOrder.ts');
@@ -92,9 +92,10 @@ test('case order follows featured then additional ids without duplicates', async
   assert.deepEqual(order, [...FEATURED, ...ADDITIONAL]);
   assert.equal(caseNumber(order, 'easy-contract-viewer-server'), 4);
   assert.equal(caseNumber(order, 'fiet-fitness-trainer'), 5);
-  assert.equal(caseNumber(order, 'haru-check'), 6);
-  assert.equal(caseNumber(order, 'weedool'), 7);
-  assert.equal(caseNumber(order, 'fiet-fitness-user'), null);
+  assert.equal(caseNumber(order, 'fiet-fitness-user'), 6);
+  assert.equal(caseNumber(order, 'haru-check'), 7);
+  assert.equal(caseNumber(order, 'weedool'), 8);
+  assert.equal(caseNumber(order, 'motgo'), null);
   assert.equal(caseAnchorId(1), 'case-01');
   assert.equal(caseAnchorId(12), 'case-12');
 });
@@ -120,7 +121,7 @@ test('featured search targets become section anchors and others stay modal targe
 test('other projects are numbered cases that no section or career entry links to', async () => {
   const { buildCaseOrder, findOtherProjectIds } = await importTypeScriptModule('src/lib/caseOrder.ts');
   const order = buildCaseOrder(FEATURED, ADDITIONAL);
-  const linked = ['local-mobile-rag-gemma', 'fiet-fitness-trainer', 'weedool', 'easy-contract-viewer-server'];
+  const linked = ['local-mobile-rag-gemma', 'fiet-fitness-trainer', 'fiet-fitness-user', 'weedool', 'easy-contract-viewer-server'];
   assert.deepEqual(findOtherProjectIds(order, FEATURED.length, linked), ['haru-check']);
 });
 
@@ -146,7 +147,7 @@ test('search documents produce the approved results for the demo keywords', asyn
   const { searchDocuments } = await importTypeScriptModule('src/lib/portfolioSearch.ts');
   const ids = (query) => searchDocuments(documents, query).map((r) => r.document.id);
 
-  assert.equal(documents.length, 8);
+  assert.equal(documents.length, 9);
   assert.deepEqual(ids('Flutter'), ['easy-contract-viewer', 'fiet-fitness-trainer', 'weedool']);
   assert.deepEqual(ids('RAG'), ['local-mobile-rag-gemma', 'easy-contract-viewer', 'law-info-engine']);
   assert.deepEqual(ids('모바일 개발'), ['crypto-exchange-app', 'easy-contract-viewer', 'fiet-fitness-trainer']);
@@ -161,11 +162,15 @@ test('search documents only target public projects that exist', async () => {
   for (const document of documents) {
     if (document.target.kind === 'project') {
       assert.ok(projectIds.has(document.target.projectId), document.id);
-      assert.notEqual(document.target.projectId, 'fiet-fitness-user');
       assert.notEqual(document.target.projectId, 'motgo');
     }
     assert.doesNotMatch(document.meta, /BM25|HNSW|RRF/);
   }
+  const fietTargets = documents
+    .filter((document) => document.target.kind === 'project')
+    .map((document) => document.target.projectId)
+    .filter((id) => id.startsWith('fiet-'));
+  assert.deepEqual(fietTargets.sort(), ['fiet-fitness-trainer', 'fiet-fitness-user']);
 });
 
 test('keyword hints match word prefixes of 2+ characters only', async () => {

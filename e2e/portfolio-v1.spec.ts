@@ -5,8 +5,9 @@ import { expect, test } from '@playwright/test';
 const additionalCases = [
   [4, 'Easy Contract Viewer Server'],
   [5, '피에트 피트니스 트레이너'],
-  [6, 'HaruCheck'],
-  [7, 'Weedool'],
+  [6, '피에트 피트니스'],
+  [7, 'HaruCheck'],
+  [8, 'Weedool'],
 ] as const;
 
 test('확정안 v1 섹션 순서와 배경 톤', async ({ page }) => {
@@ -44,7 +45,7 @@ test('움직임 줄이기에서는 자동 입력 없이 Flutter 결과로 고정
   await expect(page.getByLabel('포트폴리오 검색')).toHaveValue('Flutter');
   await expect(page.getByRole('button', { name: '자동 입력 멈추기' })).toHaveCount(0);
   await expect(page.getByRole('button', { name: '자동 입력 다시 보기' })).toHaveCount(0);
-  await expect(page.getByText('프로젝트 8개에서 찾기')).toBeVisible();
+  await expect(page.getByText('프로젝트 9개에서 찾기')).toBeVisible();
 });
 
 test('히어로 검색 결과 제목은 검색어와 건수를 보여 주고 목록을 설명한다', async ({ page }) => {
@@ -203,7 +204,7 @@ for (const route of ['/', '/freelancer']) {
   });
 }
 
-test('사례 #4–#7은 프로젝트 사례 버튼으로 열리고 비공개 프로젝트는 나오지 않는다', async ({ page }) => {
+test('사례 #4–#8은 프로젝트 사례 버튼으로 열리고 비공개 프로젝트는 나오지 않는다', async ({ page }) => {
   await page.goto('/');
   for (const [number, title] of additionalCases) {
     const button = page
@@ -219,9 +220,9 @@ test('사례 #4–#7은 프로젝트 사례 버튼으로 열리고 비공개 프
     await expect(dialog).toHaveCount(0);
   }
 
-  await expect(page.getByRole('button', { name: /^프로젝트 사례 #8/ })).toHaveCount(0);
-  await expect(page.getByRole('link', { name: /^프로젝트 사례 #8/ })).toHaveCount(0);
-  for (const hidden of [/피에트 피트니스(?! 트레이너)/, /Motgo/, /맛집 투표/]) {
+  await expect(page.getByRole('button', { name: /^프로젝트 사례 #9/ })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: /^프로젝트 사례 #9/ })).toHaveCount(0);
+  for (const hidden of [/Motgo/, /맛집 투표/]) {
     await expect(page.getByRole('button', { name: hidden })).toHaveCount(0);
     await expect(page.getByRole('link', { name: hidden })).toHaveCount(0);
   }

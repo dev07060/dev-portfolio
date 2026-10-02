@@ -171,19 +171,15 @@ test('additional projects expose the backend-first four-case selection and retai
   assert.ok(selection, 'additionalProjectIds must exist');
   assert.match(
     selection[1],
-    /'easy-contract-viewer-server'[\s\S]*?'fiet-fitness-trainer'[\s\S]*?'haru-check'[\s\S]*?'weedool'/
+    /'easy-contract-viewer-server',\s*'fiet-fitness-trainer',\s*'fiet-fitness-user',\s*'haru-check',\s*'weedool'/
   );
-  assert.doesNotMatch(selection[1], /motgo|fiet-fitness-user/);
+  assert.doesNotMatch(selection[1], /motgo/);
   assert.match(projects, /id: ["']motgo["']/);
   assert.match(projects, /id: ["']fiet-fitness-user["']/);
   assert.match(freelancerData, /import \{ additionalProjectIds \} from '.\/portfolio';/);
   assert.match(
     recruitment,
-    /company: '㈜피에트'[\s\S]*?relatedProjectIds: \['fiet-fitness-trainer'\]/
-  );
-  assert.doesNotMatch(
-    recruitment.match(/company: '㈜피에트'[\s\S]*?\n  \},/)?.[0] ?? '',
-    /fiet-fitness-user/
+    /company: '㈜피에트'[\s\S]*?relatedProjectIds: \['fiet-fitness-trainer', 'fiet-fitness-user'\]/
   );
   assert.match(
     portfolioData,

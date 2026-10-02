@@ -54,8 +54,9 @@ const additionalCaseButton = (page: Page, number: number) =>
 const additionalCases = [
   [4, 'Easy Contract Viewer Server'],
   [5, '피에트 피트니스 트레이너'],
-  [6, 'HaruCheck'],
-  [7, 'Weedool (TuringBio)'],
+  [6, '피에트 피트니스'],
+  [7, 'HaruCheck'],
+  [8, 'Weedool (TuringBio)'],
 ] as const;
 
 test('한국어 단일 홈과 skip link, 대표 사례 순서를 제공한다', async ({
@@ -415,7 +416,7 @@ test('경력은 대표 성과만 먼저 보여주고 나머지를 펼쳐 제공�
   ).toBeVisible();
 });
 
-test('320px 추가 프로젝트 사례 #4–#7 버튼이 보이고 각각 기존 상세를 연다', async ({
+test('320px 추가 프로젝트 사례 #4–#8 버튼이 보이고 각각 기존 상세를 연다', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 320, height: 800 });
@@ -478,35 +479,41 @@ test('피에트 트레이너 상세는 스플래시 대신 인바디 리포트�
   ).toBeVisible();
 });
 
-test('피에트 사용자 앱은 데이터에 남고 공개 프로젝트 링크에서는 제외된다', async ({
+test('피에트 경력의 프로젝트 사례 #5·#6으로 두 피에트 앱 상세를 모두 연다', async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/#career');
 
-  const userAppName = /피에트 피트니스(?! 트레이너)/;
-  await expect(page.getByRole('heading', { name: userAppName })).toHaveCount(0);
-  await expect(page.getByRole('link', { name: userAppName })).toHaveCount(0);
-  await expect(page.getByRole('button', { name: userAppName })).toHaveCount(0);
-
   const fietExperience = page.locator('#career ol > li').filter({ hasText: '㈜피에트' });
   await fietExperience.locator('details > summary', { hasText: '자세히' }).click();
-  await expect(
-    fietExperience.getByRole('button', {
-      name: '프로젝트 사례 #5, 피에트 피트니스 트레이너 화면 보기',
+
+  for (const [number, title, evidence] of [
+    [5, '피에트 피트니스 트레이너', 'BLE 실시간 센서 연동'],
+    [6, '피에트 피트니스', 'Firebase Cloud Messaging 기반 푸시 알림'],
+  ] as const) {
+    const button = fietExperience.getByRole('button', {
+      name: `프로젝트 사례 #${number}, ${title} 화면 보기`,
       exact: true,
-    })
-  ).toBeVisible();
-  await expect(fietExperience.getByRole('button', { name: userAppName })).toHaveCount(0);
-  await expect(fietExperience.getByRole('link', { name: userAppName })).toHaveCount(0);
+    });
+    await expect(button).toBeVisible();
+    await button.click();
+    const dialog = page.getByRole('dialog');
+    await expect(dialog.getByRole('heading', { name: title, exact: true })).toBeVisible();
+    await expect(dialog).toContainText(evidence);
+    await page.keyboard.press('Escape');
+    await expect(dialog).toHaveCount(0);
+  }
 
   const search = page.getByLabel('포트폴리오 검색');
   await search.fill('피에트');
   const results = page.getByRole('list', { name: '검색 결과' });
-  await expect(results.getByRole('listitem')).not.toHaveCount(0);
   await expect(results).toContainText('피에트 피트니스 트레이너');
-  // Any '피에트 피트니스' not followed by ' 트레이너' would be the hidden user app.
-  await expect(results).not.toContainText(userAppName);
+  await expect(results).toContainText(/피에트 피트니스(?! 트레이너)/);
+
+  await expect(page.locator('main')).not.toContainText(/Motgo|맛집 투표/);
+  await expect(page.getByRole('button', { name: /Motgo|맛집 투표/ })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: /Motgo|맛집 투표/ })).toHaveCount(0);
 });
 
 test('390px 프로젝트 상세은 제목 다음에 eager 시각 근거를 제공한다', async ({

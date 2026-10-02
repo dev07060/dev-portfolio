@@ -78,4 +78,12 @@ export const heroSearchDocuments: readonly SearchDocument[] = [
     meta: '모바일 앱',
     target: { kind: 'project', projectId: 'haru-check' },
   },
+  {
+    id: 'fiet-fitness-user',
+    title: '피에트 피트니스',
+    snippet: 'Flutter 회원용 앱. 트레이너와 연동한 운동·식단 기록, FCM 푸시 알림, 수분·체중 이력 차트.',
+    keywords: ['모바일', 'Dart', 'Firebase', '식단', '차트'],
+    meta: '모바일 앱 · ㈜피에트',
+    target: { kind: 'project', projectId: 'fiet-fitness-user' },
+  },
 ];
