@@ -9,9 +9,13 @@ export const SNAP_DEBOUNCE_MS = 240;
 export const SNAP_FREE_THRESHOLD = 0.25;
 /** Settle animation: Lenis-like ease-out. */
 export const SNAP_DURATION_S = 0.8;
+/** Wheel deltas smaller than this carry no intent (trackpad noise, inertia tails). */
+const NOISE_DELTA = 2;
+/** While settling, same-direction deltas below this (late inertia tail) are swallowed instead of cancelling it. */
+const TAIL_DELTA = 4;
 const easeOutQuart = (t: number) => 1 - (1 - t) ** 4;
 
-type SnapPoint = { y: number; kind: 'start' | 'end'; section: number };
+export type SnapPoint = { y: number; kind: 'start' | 'end'; section: number };
 
 /** Keys whose Space/PageDown meaning belongs to the focused control, not the page. */
 const KEY_OWNERS =
@@ -40,8 +44,9 @@ function snapPoints(lenis: Lenis): SnapPoint[] {
 
 /**
  * Where to settle after scrolling to `position` while moving in `direction` (1 down, -1 up).
- * - Between two sections (the viewport straddles a boundary): settle on the next section start in
- *   the direction of travel, so one wheel notch moves one section.
+ * - Between two sections (the viewport straddles a boundary): settle on the next point in the
+ *   direction of travel, so one wheel notch moves one section. Going up, the end point of a section
+ *   that overflows by no more than the threshold is skipped in favour of that section's start.
  * - Inside a tall section (between its start and end points): free scrolling; settle only when
  *   moving toward a boundary that is within the threshold. Never pulled back against the wheel.
  * Returns null when no snap should happen.
@@ -51,7 +56,7 @@ export function resolveSnapTarget(
   position: number,
   direction: number,
   threshold: number
-): number | null {
+): SnapPoint | null {
   if (!direction || points.length < 2) return null;
   if (points.some((point) => Math.abs(point.y - position) <= 1)) return null;
   const nextIndex = points.findIndex((point) => point.y > position);
@@ -59,9 +64,15 @@ export function resolveSnapTarget(
   const previous = points[nextIndex - 1];
   const next = points[nextIndex];
   const free = previous.kind === 'start' && next.kind === 'end' && previous.section === next.section;
-  if (!free) return direction > 0 ? next.y : previous.y;
-  if (direction > 0 && next.y - position <= threshold) return next.y;
-  if (direction < 0 && position - previous.y <= threshold) return previous.y;
+  if (!free) {
+    if (direction > 0) return next;
+    // Going up past a section that overflows the viewport only slightly (e.g. the hero by a few dozen px):
+    // land on its start rather than on an end point that sits just below it.
+    const start = points.find((point) => point.kind === 'start' && point.section === previous.section);
+    return previous.kind === 'end' && start && previous.y - start.y <= threshold ? start : previous;
+  }
+  if (direction > 0 && next.y - position <= threshold) return next;
+  if (direction < 0 && position - previous.y <= threshold) return previous;
   return null;
 }
 
@@ -85,7 +96,10 @@ export function attachSectionSnap(lenis: Lenis): () => void {
   const media = window.matchMedia(SNAP_MEDIA);
   let timer = 0;
   let gestureStart: number | null = null;
-  let pointerDown = false;
+  /** Sign of the last wheel delta with intent: the direction the user is heading now. */
+  let lastDirection = 0;
+  /** Direction of the last settle; only meaningful while Lenis reports a snap scroll in flight. */
+  let settling = 0;
 
   const active = () => media.matches && !lenis.isStopped;
 
@@ -93,30 +107,64 @@ export function attachSectionSnap(lenis: Lenis): () => void {
     window.clearTimeout(timer);
     timer = 0;
     gestureStart = null;
+    lastDirection = 0;
   };
 
-  const settleTo = (y: number) => {
-    lenis.scrollTo(y, { duration: SNAP_DURATION_S, easing: easeOutQuart, userData: { initiator: 'snap' } });
+  const settleTo = (point: SnapPoint, correct = true) => {
+    settling = Math.sign(point.y - lenis.targetScroll) || 1;
+    lenis.scrollTo(point.y, {
+      duration: SNAP_DURATION_S,
+      easing: easeOutQuart,
+      userData: { initiator: 'snap' },
+      onComplete: () => {
+        if (!correct || !active()) return;
+        // Layout may have shifted during the animation (lazy images, fonts): land on where the point is now.
+        const now = snapPoints(lenis).find((p) => p.section === point.section && p.kind === point.kind);
+        if (now && Math.abs(now.y - point.y) > 2) settleTo(now, false);
+      },
+    });
   };
 
   const settle = () => {
     timer = 0;
     const start = gestureStart;
+    const direction = lastDirection;
     gestureStart = null;
-    if (start === null || pointerDown || !active()) return;
+    lastDirection = 0;
+    if (start === null || !active()) return;
     const position = Math.min(Math.max(lenis.targetScroll, 0), lenis.limit);
     const target = resolveSnapTarget(
       snapPoints(lenis),
       position,
-      Math.sign(position - start),
+      direction || Math.sign(position - start),
       window.innerHeight * SNAP_FREE_THRESHOLD
     );
-    if (target !== null) settleTo(target);
+    if (target) settleTo(target);
   };
 
-  const onVirtualScroll = ({ event }: { event: Event }) => {
+  /** Lenis `virtualScroll` filter: runs before Lenis handles a wheel/touch event; false = Lenis ignores it. */
+  const previousFilter = lenis.options.virtualScroll;
+  lenis.options.virtualScroll = (data) => {
+    if (typeof previousFilter === 'function' && previousFilter(data) === false) return false;
+    const { event, deltaY } = data;
+    const snapInFlight = (lenis.userData as { initiator?: string } | undefined)?.initiator === 'snap';
+    if (snapInFlight && event.type.includes('wheel') && Math.sign(deltaY) === settling && Math.abs(deltaY) < TAIL_DELTA) {
+      // A late inertia tail would cancel the settle mid-flight and stall; it already points the same way.
+      if (event.cancelable) event.preventDefault();
+      return false;
+    }
+    return true;
+  };
+
+  const onVirtualScroll = ({ event, deltaY }: { event: Event; deltaY: number }) => {
     if (!event.type.includes('wheel') || !active()) return;
+    if ((event as WheelEvent).buttons) {
+      // A button is held (text selection, scrollbar or middle-button drag): leave the page where it is.
+      cancel();
+      return;
+    }
     if (gestureStart === null) gestureStart = lenis.targetScroll;
+    if (Math.abs(deltaY) >= NOISE_DELTA) lastDirection = Math.sign(deltaY);
     window.clearTimeout(timer);
     timer = window.setTimeout(settle, SNAP_DEBOUNCE_MS);
   };
@@ -131,37 +179,33 @@ export function attachSectionSnap(lenis: Lenis): () => void {
     const owner = event.target instanceof Element ? event.target : null;
     if (owner?.closest(KEY_OWNERS) || scrollableAncestor(owner)) return;
     const position = lenis.targetScroll;
-    const points = snapPoints(lenis);
+    const all = snapPoints(lenis);
+    const threshold = window.innerHeight * SNAP_FREE_THRESHOLD;
+    // Paging skips the end point of a section that overflows only slightly (one page covers it anyway).
+    const points = all.filter(
+      (point) =>
+        point.kind === 'start' ||
+        point.y - (all.find((p) => p.kind === 'start' && p.section === point.section)?.y ?? -Infinity) > threshold
+    );
     const next =
       direction > 0
         ? points.find((point) => point.y > position + 1)
         : [...points].reverse().find((point) => point.y < position - 1);
-    // A boundary further than one page away (inside a tall section): keep native paging.
-    if (!next || Math.abs(next.y - position) > window.innerHeight) return;
+    // A boundary clearly further than one page away (inside a tall section): keep native paging.
+    if (!next || Math.abs(next.y - position) > window.innerHeight + threshold) return;
     event.preventDefault();
-    settleTo(next.y);
-  };
-
-  const onPointerDown = () => {
-    pointerDown = true;
-    cancel();
-  };
-  const onPointerUp = () => {
-    pointerDown = false;
+    settleTo(next);
   };
 
   const offVirtualScroll = lenis.on('virtual-scroll', onVirtualScroll);
   window.addEventListener('keydown', onKeyDown);
-  window.addEventListener('pointerdown', onPointerDown, { passive: true });
-  window.addEventListener('pointerup', onPointerUp, { passive: true });
-  window.addEventListener('pointercancel', onPointerUp, { passive: true });
+  window.addEventListener('pointerdown', cancel, { passive: true });
 
   return () => {
     cancel();
     offVirtualScroll();
+    lenis.options.virtualScroll = previousFilter;
     window.removeEventListener('keydown', onKeyDown);
-    window.removeEventListener('pointerdown', onPointerDown);
-    window.removeEventListener('pointerup', onPointerUp);
-    window.removeEventListener('pointercancel', onPointerUp);
+    window.removeEventListener('pointerdown', cancel);
   };
 }

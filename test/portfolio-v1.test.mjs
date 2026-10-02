@@ -386,29 +386,64 @@ test('A14 case #2 pins only at >=768px with motion allowed', () => {
   assert.match(hook, /if \(reducedMotion\) return;/);
 });
 
-test('A15 section snap rides on Lenis: desktop pointer only, never under reduced motion, cleaned up', () => {
+test('A15 section snap is attached to Lenis after the reduced-motion guard and detached before destroy', () => {
   const hook = read('src/lib/useSmoothScroll.ts');
-  const snap = read('src/lib/sectionSnap.ts');
-
-  // Only attached to the Lenis instance, which is never created under reduced motion.
   const guard = hook.indexOf('if (reducedMotion) return;');
   const create = hook.indexOf('new Lenis(');
   const attach = hook.indexOf('attachSectionSnap(lenis)');
-  assert.ok(guard > -1 && create > guard && attach > create, 'snap is attached after the reduced-motion guard and Lenis');
-  assert.equal(hook.match(/attachSectionSnap\(/g)?.length, 1);
+  assert.ok(guard > -1 && create > guard && attach > create);
   const cleanup = hook.slice(hook.indexOf('return () => {'));
   assert.ok(cleanup.indexOf('detachSnap()') > -1 && cleanup.indexOf('detachSnap()') < cleanup.indexOf('lenis.destroy()'));
+});
 
-  // Off below 768px and on touch-only (coarse) pointers; inactive while Lenis is stopped (modal).
-  assert.match(snap, /SNAP_MEDIA = '\(min-width: 48rem\) and \(pointer: fine\)'/);
-  assert.match(snap, /media\.matches && !lenis\.isStopped/);
-  // Wheel only (touch keeps native scroll), snap points are every top-level section.
-  assert.match(snap, /event\.type\.includes\('wheel'\)/);
-  assert.match(snap, /querySelectorAll<HTMLElement>\('main > section'\)/);
-  // Everything it registers is removed again.
-  for (const name of ['keydown', 'pointerdown', 'pointerup', 'pointercancel']) {
-    assert.match(snap, new RegExp(`removeEventListener\\('${name}'`), name);
+test('A15 resolveSnapTarget: boundary zones follow the direction, tall sections stay free', async () => {
+  const { resolveSnapTarget, SNAP_MEDIA, SNAP_FREE_THRESHOLD } = await importTypeScriptModule('src/lib/sectionSnap.ts');
+  assert.equal(SNAP_MEDIA, '(min-width: 48rem) and (pointer: fine)');
+  const vh = 900;
+  const threshold = vh * SNAP_FREE_THRESHOLD; // 225
+  // Geometry measured at 1440×900: hero 900, career 1143 (tall), case-01 900, case-02 track 1478 (tall), case-03, contact.
+  const points = [
+    { y: 0, kind: 'start', section: 0 },
+    { y: 900, kind: 'start', section: 1 },
+    { y: 1143, kind: 'end', section: 1 },
+    { y: 2043, kind: 'start', section: 2 },
+    { y: 2943, kind: 'start', section: 3 },
+    { y: 3521, kind: 'end', section: 3 },
+    { y: 4421, kind: 'start', section: 4 },
+    { y: 5321, kind: 'start', section: 5 },
+  ];
+  const at = (position, direction) => resolveSnapTarget(points, position, direction, threshold)?.y ?? null;
+  const rows = [
+    // [position, direction, expected, why]
+    [240, 1, 900, 'boundary zone, down: next section start even when the previous one is nearer'],
+    [100, -1, 0, 'boundary zone, up: previous boundary even when moved down overall'],
+    [1500, 1, 2043, 'past the career end, down: case-01 start'],
+    [1500, -1, 1143, 'past the career end, up: career end-aligned point'],
+    [3700, -1, 3521, 'below the case-02 track end, up: track end'],
+    [960, 1, 1143, 'career free zone, within threshold of its end: settle on the end'],
+    [960, -1, 900, 'career free zone, within threshold of its start going up'],
+    [2943 + 120, 1, null, 'case-02 track, mid: free'],
+    [2943 + 300, -1, null, 'case-02 track, 300px in going up: free (beyond threshold)'],
+    [2943 + 200, -1, 2943, 'case-02 track, within threshold of its start going up'],
+    [3521 - 200, 1, 3521, 'case-02 track, within threshold of its end going down'],
+    [3521 - 300, 1, null, 'case-02 track, 300px before its end: free'],
+    [900, 1, null, 'already on a point'],
+    [901, -1, null, 'within 1px of a point'],
+    [1500, 0, null, 'no direction'],
+    [6000, 1, null, 'past the last point'],
+  ];
+  for (const [position, direction, expected, why] of rows) {
+    assert.equal(at(position, direction), expected, `${position} ${direction}: ${why}`);
   }
-  assert.match(snap, /offVirtualScroll\(\)/);
-  assert.match(snap, /clearTimeout\(timer\)/);
+  assert.equal(resolveSnapTarget([points[0]], 100, 1, threshold), null, 'needs two points');
+
+  // Hero slightly taller than the viewport (946 at 900): its 46px end point is skipped going up.
+  const hero = [
+    { y: 0, kind: 'start', section: 0 },
+    { y: 46, kind: 'end', section: 0 },
+    { y: 946, kind: 'start', section: 1 },
+  ];
+  assert.equal(resolveSnapTarget(hero, 300, -1, threshold)?.y, 0);
+  assert.equal(resolveSnapTarget(hero, 300, 1, threshold)?.y, 946);
+  assert.equal(resolveSnapTarget(hero, 20, 1, threshold)?.y, 46);
 });

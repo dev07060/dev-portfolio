@@ -652,14 +652,48 @@ test.describe('1440px 섹션 스냅', () => {
     expect(Math.abs((await settledScrollY(page)) - careerTop)).toBeLessThanOrEqual(2);
   });
 
-  test('트랙패드처럼 작은 휠 30번(40px)도 다음 섹션 시작에 멈춘다', async ({ page }) => {
+  test('트랙패드처럼 작은 휠 30번(40px)은 지나간 거리 다음의 경계에 정확히 멈춘다', async ({ page }) => {
     for (let step = 0; step < 30; step += 1) await page.mouse.wheel(0, 40);
-    const position = await settledScrollY(page);
-    const starts = await page.locator('main > section').evaluateAll((nodes) =>
-      nodes.map((node) => Math.round(node.getBoundingClientRect().top + window.scrollY))
+    // 1200px down from the top: past the career end-aligned point, so the next boundary is case #1's start.
+    const careerEnd = await page.locator('#career').evaluate(
+      (node) => node.getBoundingClientRect().top + window.scrollY + node.getBoundingClientRect().height - window.innerHeight
     );
-    expect(starts.some((start) => Math.abs(start - position) <= 2)).toBe(true);
-    expect(position).toBeGreaterThan(0);
+    const case01Top = await sectionTop(page, 'case-01');
+    expect(careerEnd).toBeLessThan(1200);
+    expect(case01Top).toBeGreaterThan(1200);
+    expect(Math.abs((await settledScrollY(page)) - case01Top)).toBeLessThanOrEqual(2);
+  });
+
+  test('아래로 세 칸 굴리다 위로 한 칸이면 마지막 방향(위)의 경계로 돌아간다', async ({ page }) => {
+    const case01Top = await sectionTop(page, 'case-01');
+    await page.evaluate((y) => window.scrollTo(0, y), case01Top);
+    await settledScrollY(page);
+    for (let step = 0; step < 3; step += 1) await page.mouse.wheel(0, 120);
+    await page.mouse.wheel(0, -120);
+    // Net displacement is +240 (toward case #2), but the last input was up.
+    expect(Math.abs((await settledScrollY(page)) - case01Top)).toBeLessThanOrEqual(2);
+  });
+
+  test('ArrowDown 키 스크롤은 스냅하지 않는다', async ({ page, browserName }) => {
+    test.skip(browserName === 'webkit', 'Playwright WebKit does not scroll the page with ArrowDown from <body>.');
+    await page.locator('body').focus();
+    for (let step = 0; step < 3; step += 1) await page.keyboard.press('ArrowDown');
+    const position = await settledScrollY(page);
+    expect(position).toBeGreaterThan(20);
+    expect(position).toBeLessThan((await sectionTop(page, 'career')) - 100);
+  });
+
+  test('모달이 열려 있으면 휠로 스냅하지 않는다', async ({ page }) => {
+    const case01Top = await sectionTop(page, 'case-01');
+    await page.evaluate((y) => window.scrollTo(0, y), case01Top + 300);
+    await settledScrollY(page);
+    await page.locator('#case-02').getByRole('button', { name: /^사례 자세히/ }).click();
+    await expect(page.getByRole('dialog')).toBeVisible();
+    await expect(page.locator('html')).toHaveClass(/\blenis-stopped\b/);
+    const before = await settledScrollY(page);
+    await page.mouse.move(720, 450);
+    for (let step = 0; step < 3; step += 1) await page.mouse.wheel(0, 120);
+    expect(await settledScrollY(page)).toBe(before);
   });
 
   test('#career 중간에서 아래로 끝을 넘기면 #case-01 시작에 멈춘다', async ({ page }) => {
@@ -734,6 +768,25 @@ test.describe('1440px 섹션 스냅', () => {
     await settledScrollY(page);
     expect(await viewportTopOf(page, 'contact')).toBeLessThanOrEqual(2);
   });
+});
+
+test('히어로 높이는 검색 자동 입력 결과에 따라 바뀌지 않는다', async ({ page }) => {
+  for (const viewport of [
+    { width: 1440, height: 900 },
+    { width: 1440, height: 700 },
+    { width: 1024, height: 768 },
+    { width: 768, height: 1024 },
+  ]) {
+    await openAt(page, viewport);
+    const input = page.getByLabel('포트폴리오 검색');
+    const heights = new Set<number>();
+    for (const word of ['Flutter', 'RAG', '모바일 개발', '온디바이스']) {
+      await input.fill(word);
+      await expect(page.getByRole('list', { name: '검색 결과' }).getByRole('listitem').first()).toBeVisible();
+      heights.add(await page.locator('#top').evaluate((node) => Math.round(node.getBoundingClientRect().height)));
+    }
+    expect([...heights], `${viewport.width}×${viewport.height}`).toHaveLength(1);
+  }
 });
 
 test('390px에서는 스냅하지 않고 휠이 남긴 위치에 머문다', async ({ page }) => {

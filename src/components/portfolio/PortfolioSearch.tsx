@@ -196,7 +196,8 @@ export default function PortfolioSearch({ documents, onOpenProject }: PortfolioS
         {hasQuery ? `결과 ${results.length}건` : '추천 결과'}
       </p>
 
-      <ul aria-label="검색 결과" className="m-0 flex min-h-[380px] list-none flex-col gap-1.5 p-0">
+      {/* md+: room for the tallest demo result set (모바일 개발, ~472px) so the hero keeps its height during autoplay. */}
+      <ul aria-label="검색 결과" className="m-0 flex min-h-[380px] list-none flex-col gap-1.5 p-0 md:min-h-[480px]">
         {results.map((result, index) => {
           const { document } = result;
           const target = document.target;
