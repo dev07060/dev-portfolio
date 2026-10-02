@@ -31,7 +31,7 @@ test('히어로 검색은 자동 입력으로 Flutter 결과를 보여 주고 �
   await expect(results.getByRole('listitem').first()).toContainText('Easy Contract Viewer');
 
   await page.getByRole('button', { name: '자동 입력 멈추기' }).click();
-  await expect(page.getByText('프로젝트 8개에서 찾기')).toBeVisible();
+  await expect(page.getByRole('button', { name: '자동 입력 다시 보기' })).toBeVisible();
 
   await input.fill('BLE');
   await expect(results.getByRole('listitem')).toHaveCount(1);
@@ -43,6 +43,71 @@ test('움직임 줄이기에서는 자동 입력 없이 Flutter 결과로 고정
   await page.goto('/');
   await expect(page.getByLabel('포트폴리오 검색')).toHaveValue('Flutter');
   await expect(page.getByRole('button', { name: '자동 입력 멈추기' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: '자동 입력 다시 보기' })).toHaveCount(0);
+  await expect(page.getByText('프로젝트 8개에서 찾기')).toBeVisible();
+});
+
+test('히어로 검색 결과 제목은 검색어와 건수를 보여 주고 목록을 설명한다', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  const heading = page.locator('#portfolio-search-results-heading');
+  await expect(heading).toHaveText('‘Flutter’ 결과 3건');
+  const list = page.getByRole('list', { name: '검색 결과' });
+  await expect(list).toHaveAttribute('aria-describedby', 'portfolio-search-results-heading');
+  await page.getByLabel('포트폴리오 검색').fill('BLE');
+  await expect(heading).toHaveText('‘BLE’ 결과 1건');
+  await expect(heading).toHaveAttribute('aria-live', 'polite');
+  await page.getByLabel('포트폴리오 검색').fill('');
+  await expect(heading).toHaveText('추천 결과');
+});
+
+test('누른 추천 검색어만 aria-pressed=true로 선택 상태가 된다', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  const panel = page.locator('.search-panel');
+  await panel.getByRole('button', { name: '모바일 개발', exact: true }).click();
+  await expect(panel.getByRole('button', { name: '모바일 개발', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  for (const other of ['Flutter', 'RAG', '온디바이스', 'BLE']) {
+    await expect(panel.getByRole('button', { name: other, exact: true })).toHaveAttribute('aria-pressed', 'false');
+  }
+  await page.getByLabel('포트폴리오 검색').fill('ble ');
+  await expect(panel.getByRole('button', { name: 'BLE', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await expect(panel.getByRole('button', { name: '모바일 개발', exact: true })).toHaveAttribute('aria-pressed', 'false');
+});
+
+test('자동 입력을 멈춘 뒤 다시 보기로 재시작하고 다시 멈출 수 있다', async ({ page }) => {
+  await page.goto('/');
+  const input = page.getByLabel('포트폴리오 검색');
+  const heading = page.locator('#portfolio-search-results-heading');
+  await expect(input).toHaveValue('Flutter', { timeout: 5_000 });
+  await expect(heading).toHaveAttribute('aria-live', 'off');
+
+  // Keyboard activation: the control keeps focus while its label flips (WebKit doesn't focus buttons on click).
+  await page.getByRole('button', { name: '자동 입력 멈추기' }).focus();
+  await page.keyboard.press('Enter');
+  const replay = page.getByRole('button', { name: '자동 입력 다시 보기' });
+  await expect(replay).toBeFocused();
+  await expect(heading).toHaveAttribute('aria-live', 'polite');
+  const stoppedValue = await input.inputValue();
+
+  await page.keyboard.press('Enter');
+  const stop = page.getByRole('button', { name: '자동 입력 멈추기' });
+  await expect(stop).toBeFocused();
+  await expect(heading).toHaveAttribute('aria-live', 'off');
+  // Restarts from the next demo word (RAG after Flutter), typing it out again.
+  await expect.poll(() => input.inputValue(), { timeout: 5_000 }).not.toBe(stoppedValue);
+  await expect(input).toHaveValue('RAG', { timeout: 5_000 });
+
+  await stop.click();
+  await expect(page.getByRole('button', { name: '자동 입력 다시 보기' })).toBeVisible();
+  const value = await input.inputValue();
+  await page.waitForTimeout(800);
+  await expect(input).toHaveValue(value);
+
+  // Typing stops autoplay too, and the control then offers replay.
+  await page.getByRole('button', { name: '자동 입력 다시 보기' }).click();
+  await input.fill('BLE');
+  await expect(page.getByRole('button', { name: '자동 입력 다시 보기' })).toBeVisible();
 });
 
 test('히어로 검색 화면에는 BM25·HNSW·RRF 같은 알고리즘 라벨이 없다', async ({ page }) => {
@@ -91,7 +156,7 @@ test('히어로 검색 키워드 힌트는 한 글자 입력에 반응하지 않
     await expect(panel).not.toContainText(/BM25|HNSW|RRF/);
   }
   await input.fill('F');
-  await expect(panel).not.toContainText('관련 키워드');
+  await expect(page.getByRole('list', { name: '검색 결과' })).not.toContainText('키워드');
 });
 
 test('사례 #1 탭은 화살표 키로 이동하고 패널을 바꾼다', async ({ page }) => {
@@ -786,6 +851,40 @@ test('히어로 높이는 검색 자동 입력 결과에 따라 바뀌지 않는
       heights.add(await page.locator('#top').evaluate((node) => Math.round(node.getBoundingClientRect().height)));
     }
     expect([...heights], `${viewport.width}×${viewport.height}`).toHaveLength(1);
+  }
+});
+
+test('히어로 높이는 자동 입력이 데모 단어를 도는 동안 바뀌지 않는다', async ({ page }) => {
+  test.setTimeout(90_000);
+  for (const viewport of [
+    { width: 1440, height: 900 },
+    { width: 1024, height: 768 },
+  ]) {
+    await openAt(page, viewport);
+    // Autoplay pauses while the panel is out of view; at 1024 the panel sits below the intro.
+    await page.locator('.search-panel').evaluate((node) => node.scrollIntoView({ block: 'center' }));
+    // Poll the hero height every animation frame while autoplay types every demo word once.
+    const result = await page.evaluate(
+      (words) =>
+        new Promise<{ heights: number[]; seen: string[] }>((resolve) => {
+          const input = document.querySelector<HTMLInputElement>('#portfolio-search-input')!;
+          const hero = document.querySelector<HTMLElement>('#top')!;
+          const heights = new Set<number>();
+          const seen = new Set<string>();
+          const started = performance.now();
+          const tick = () => {
+            heights.add(Math.round(hero.getBoundingClientRect().height * 100) / 100);
+            if (words.includes(input.value)) seen.add(input.value);
+            if (seen.size === words.length || performance.now() - started > 40_000) {
+              resolve({ heights: [...heights], seen: [...seen] });
+            } else requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        }),
+      ['Flutter', 'RAG', '모바일 개발', '온디바이스']
+    );
+    expect(result.seen, `${viewport.width}×${viewport.height}`).toHaveLength(4);
+    expect(result.heights, `${viewport.width}×${viewport.height}`).toHaveLength(1);
   }
 });
 

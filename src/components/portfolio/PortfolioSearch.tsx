@@ -129,6 +129,15 @@ export default function PortfolioSearch({ documents, onOpenProject }: PortfolioS
     if (reducedMotion) setQuery(REDUCED_MOTION_QUERY);
   };
 
+  /** Replays the demo from the word after the one it stopped on; the button keeps focus (same element). */
+  const replayDemo = () => {
+    if (demoRunning || reducedMotion) return;
+    const next = (progress.current.word + 1) % DEMO_WORDS.length;
+    progress.current = { word: next, chars: 0, phase: 'type', started: true };
+    setInputText('');
+    setDemoRunning(true);
+  };
+
   const runQuery = (value: string) => {
     stopDemo();
     setQuery(value);
@@ -142,107 +151,141 @@ export default function PortfolioSearch({ documents, onOpenProject }: PortfolioS
     [documents, effectiveQuery]
   );
   const hasQuery = tokenize(effectiveQuery).length > 0;
+  const normalizedQuery = effectiveQuery.trim().toLowerCase();
   const listKey = results.map((result) => result.document.id).join('|');
 
   return (
     <div ref={rootRef} className="search-panel">
-      <div className="flex items-center justify-between gap-3 text-xs text-sub">
-        <label htmlFor="portfolio-search-input">포트폴리오 검색</label>
-        {demoActive ? (
-          <button
-            type="button"
-            onClick={stopDemo}
-            className="-my-3 min-h-11 text-sub underline decoration-line-soft underline-offset-4 hover:text-marker"
-          >
-            자동 입력 멈추기
-          </button>
-        ) : (
-          <span>프로젝트 <span className="font-mono">{documents.length}</span>개에서 찾기</span>
-        )}
+      <div className="search-query">
+        <div className="flex min-h-6 items-center justify-between gap-3 text-[13px] text-sub">
+          <label htmlFor="portfolio-search-input" className="font-medium">포트폴리오 검색</label>
+          {reducedMotion ? (
+            <span>프로젝트 <span className="font-mono">{documents.length}</span>개에서 찾기</span>
+          ) : (
+            <button
+              type="button"
+              onClick={demoRunning ? stopDemo : replayDemo}
+              className="search-demo-control"
+            >
+              {demoRunning ? (
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
+                  <rect x="2" y="1.5" width="2.75" height="9" rx="0.75" />
+                  <rect x="7.25" y="1.5" width="2.75" height="9" rx="0.75" />
+                </svg>
+              ) : (
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
+                  <path d="M3 1.9v8.2a.6.6 0 0 0 .9.52l7-4.1a.6.6 0 0 0 0-1.04l-7-4.1A.6.6 0 0 0 3 1.9Z" />
+                </svg>
+              )}
+              {demoRunning ? '자동 입력 멈추기' : '자동 입력 다시 보기'}
+            </button>
+          )}
+        </div>
+
+        <div className="search-field">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" />
+            <path d="M20 20l-4-4" />
+          </svg>
+          <input
+            id="portfolio-search-input"
+            type="search"
+            value={shownInput}
+            onFocus={stopDemo}
+            onChange={(event) => runQuery(event.target.value)}
+            placeholder="기술, 제품, 키워드로 검색"
+            autoComplete="off"
+            className="min-w-0 flex-1 border-0 bg-transparent text-xl font-medium text-ink outline-none placeholder:text-sub"
+          />
+        </div>
+
+        <div className="flex flex-wrap items-baseline gap-x-5">
+          <span className="mr-1 text-xs text-sub">추천 검색어</span>
+          {SUGGESTIONS.map((label) => {
+            const selected = label.toLowerCase() === normalizedQuery;
+            return (
+              <button
+                key={label}
+                type="button"
+                aria-pressed={selected}
+                onClick={() => runQuery(label)}
+                className="search-suggestion"
+              >
+                {label}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
-      <div className="search-field">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-          <circle cx="11" cy="11" r="7" />
-          <path d="M20 20l-4-4" />
-        </svg>
-        <input
-          id="portfolio-search-input"
-          type="search"
-          value={shownInput}
-          onFocus={stopDemo}
-          onChange={(event) => runQuery(event.target.value)}
-          placeholder="기술, 제품, 키워드로 검색"
-          autoComplete="off"
-          className="min-w-0 flex-1 border-0 bg-transparent text-xl font-medium text-ink outline-none placeholder:text-sub"
-        />
-      </div>
-
-      <div className="flex flex-wrap items-center gap-x-4">
-        <span className="text-xs text-sub">추천 검색어</span>
-        {SUGGESTIONS.map((label) => (
-          <button
-            key={label}
-            type="button"
-            onClick={() => runQuery(label)}
-            className="inline-flex min-h-11 min-w-11 items-center justify-center text-sm text-sub underline decoration-line-soft underline-offset-4 hover:text-marker"
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-
-      <p aria-live={demoActive ? 'off' : 'polite'} className="m-0 font-mono text-xs text-sub">
-        {hasQuery ? `결과 ${results.length}건` : '추천 결과'}
-      </p>
-
-      {/* md+: room for the tallest demo result set (모바일 개발, ~472px) so the hero keeps its height during autoplay. */}
-      <ul aria-label="검색 결과" className="m-0 flex min-h-[380px] list-none flex-col gap-1.5 p-0 md:min-h-[480px]">
-        {results.map((result, index) => {
-          const { document } = result;
-          const target = document.target;
-          const sweepKey = `${effectiveQuery}:${document.id}`;
-          const markDelay = 140 + index * 70;
-          const body = (
+      <div className="search-results">
+        <p id="portfolio-search-results-heading" aria-live={demoActive ? 'off' : 'polite'} className="search-results-heading">
+          {hasQuery ? (
             <>
-              <span className="w-6 shrink-0 pt-[3px] font-mono text-[13px] text-sub">
-                {String(index + 1).padStart(2, '0')}
-              </span>
-              <span className="flex min-w-0 flex-col gap-1">
-                <span className={document.monoTitle ? 'font-mono text-[19px] font-medium' : 'text-[19px] font-semibold'}>
-                  <Highlighted segments={result.titleSegments} sweepKey={`${sweepKey}:t`} delayMs={markDelay} />
-                </span>
-                <span className="text-[15px] leading-[1.65] text-sub">
-                  <Highlighted segments={result.snippetSegments} sweepKey={`${sweepKey}:s`} delayMs={markDelay} />
-                </span>
-                {result.keywordMatches.length > 0 && (
-                  <span className="font-mono text-xs text-sub">
-                    관련 키워드 · {result.keywordMatches.join(', ')}
-                  </span>
-                )}
-                <span className="font-mono text-xs text-sub">{document.meta}</span>
+              <span className="[overflow-wrap:anywhere]">‘{effectiveQuery.trim()}’</span> 결과{' '}
+              {/* leading-none: the mono digit must not grow the line box (heading height stays fixed). */}
+              <span className="font-semibold leading-none text-ink">
+                <span className="font-mono font-medium">{results.length}</span>건
               </span>
             </>
-          );
-          return (
-            <li key={`${listKey}:${document.id}`} className="search-result" style={{ animationDelay: `${index * 70}ms` }}>
-              {target.kind === 'anchor' ? (
-                <a href={target.href} className="search-result-link">{body}</a>
-              ) : (
-                <button type="button" onClick={() => onOpenProject(target.projectId)} className="search-result-link">
-                  {body}
-                </button>
-              )}
-            </li>
-          );
-        })}
-      </ul>
-
-      {hasQuery && results.length === 0 && (
-        <p className="m-0 text-[15px] leading-[1.7] text-sub">
-          ‘{effectiveQuery}’에 맞는 결과가 없습니다. 추천 검색어를 눌러 보세요.
+          ) : (
+            '추천 결과'
+          )}
         </p>
-      )}
+
+        {/* The hero must keep one height while autoplay cycles the demo words (section snapping reads it):
+            .search-result-area reserves exactly the tallest demo result set (measured; see globals.css). */}
+        <div className="search-result-area">
+        <ul
+          aria-label="검색 결과"
+          aria-describedby="portfolio-search-results-heading"
+          className="search-result-list"
+        >
+          {results.map((result, index) => {
+            const { document } = result;
+            const target = document.target;
+            const sweepKey = `${effectiveQuery}:${document.id}`;
+            const markDelay = 140 + index * 70;
+            const body = (
+              <>
+                <span className="w-6 shrink-0 font-mono text-[13px] text-sub">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                <span className="flex min-w-0 flex-col gap-1">
+                  <span className={document.monoTitle ? 'font-mono text-[19px] font-medium leading-[1.4]' : 'text-[19px] font-semibold leading-[1.4]'}>
+                    <Highlighted segments={result.titleSegments} sweepKey={`${sweepKey}:t`} delayMs={markDelay} />
+                  </span>
+                  <span className="text-[15px] leading-[1.65] text-sub">
+                    <Highlighted segments={result.snippetSegments} sweepKey={`${sweepKey}:s`} delayMs={markDelay} />
+                  </span>
+                  <span className="text-[13px] leading-[1.5] text-sub">
+                    {document.meta}
+                    {result.keywordMatches.length > 0 && ` · 키워드 ${result.keywordMatches.join(', ')}`}
+                  </span>
+                </span>
+              </>
+            );
+            return (
+              <li key={`${listKey}:${document.id}`} className="search-result" style={{ animationDelay: `${index * 70}ms` }}>
+                {target.kind === 'anchor' ? (
+                  <a href={target.href} className="search-result-link">{body}</a>
+                ) : (
+                  <button type="button" onClick={() => onOpenProject(target.projectId)} className="search-result-link">
+                    {body}
+                  </button>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+
+        {hasQuery && results.length === 0 && (
+          <p className="m-0 text-[15px] leading-[1.7] text-sub">
+            ‘{effectiveQuery}’에 맞는 결과가 없습니다. 추천 검색어를 눌러 보세요.
+          </p>
+        )}
+        </div>
+      </div>
     </div>
   );
 }

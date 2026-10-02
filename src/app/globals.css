@@ -102,15 +102,24 @@ body[data-portfolio-overlay="true"] .skip-link {
   .btn-outline { border: 1.5px solid var(--color-ink); color: var(--color-ink); }
   .btn-outline:hover { border-color: var(--color-marker); color: var(--color-marker); }
 
+  /* Query block (header, field, suggestions) and results block are two groups: tight inside, a clear gap between. */
   .search-panel {
+    container-type: inline-size;
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 30px;
     padding: 28px;
     border-radius: 22px;
     background: var(--color-surface);
     border: 1px solid var(--color-line);
   }
+  .search-query,
+  .search-results {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .search-results { gap: 8px; }
   .search-field {
     display: flex;
     align-items: center;
@@ -121,6 +130,89 @@ body[data-portfolio-overlay="true"] .skip-link {
     background: var(--color-surface-2);
   }
   .search-field:focus-within { box-shadow: 0 0 0 2px var(--color-marker); }
+  .search-demo-control {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    margin-block: -10px;
+    padding-inline: 4px;
+    margin-inline-end: -4px;
+    border-radius: 8px;
+    color: var(--color-sub);
+    transition: color 150ms ease;
+  }
+  .search-demo-control:hover { color: var(--color-ink); }
+  .search-demo-control:hover svg { color: var(--color-marker); }
+  /* Text-only suggestions: spacing comes from the row gap; the 44px hit area is a centered pseudo-element. */
+  .search-suggestion {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: 14px;
+    color: var(--color-sub);
+    text-decoration: underline;
+    text-decoration-color: var(--color-line-soft);
+    text-underline-offset: 5px;
+  }
+  .search-suggestion::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: max(100%, 44px);
+    height: 100%;
+    transform: translateX(-50%);
+  }
+  .search-suggestion:hover { color: var(--color-marker); }
+  .search-suggestion[aria-pressed="true"] {
+    color: var(--color-ink);
+    text-decoration-color: var(--color-marker);
+    text-decoration-thickness: 2px;
+  }
+  .search-results-heading {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--color-sub);
+  }
+  .search-result-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    /* The last row's 14px link padding would add to the panel padding; pull it back so bottom ≈ top padding. */
+    margin: 0 0 -14px;
+    padding: 0;
+    list-style: none;
+  }
+  /* Reserves exactly the tallest result set autoplay can show — every typed prefix of Flutter / RAG / 모바일 개발 /
+     온디바이스, e.g. 'RA' is the tallest at some phone widths — so the hero height never changes while it cycles
+     (section snapping reads it). Rows wrap by the panel's width, not the viewport, so the reservation steps on
+     the panel's content width (container queries). Value = ceil(tallest list height) − 14px (the list's negative
+     bottom margin) + 1px for sub-pixel line boxes; measured in Chromium and WebKit, 320–1600px viewports in 4px
+     steps, each step starting at the first width where the smaller set was observed. Re-measure if search
+     documents or result typography change; the e2e '히어로 높이' tests guard it. */
+  .search-result-area { min-height: 699px; }
+  @container (min-width: 226px) { .search-result-area { min-height: 674px; } }
+  @container (min-width: 230px) { .search-result-area { min-height: 647px; } }
+  @container (min-width: 234px) { .search-result-area { min-height: 603px; } }
+  @container (min-width: 238px) { .search-result-area { min-height: 589px; } }
+  @container (min-width: 254px) { .search-result-area { min-height: 569px; } }
+  @container (min-width: 262px) { .search-result-area { min-height: 557px; } }
+  @container (min-width: 266px) { .search-result-area { min-height: 545px; } }
+  @container (min-width: 270px) { .search-result-area { min-height: 538px; } }
+  @container (min-width: 274px) { .search-result-area { min-height: 518px; } }
+  @container (min-width: 278px) { .search-result-area { min-height: 513px; } }
+  @container (min-width: 282px) { .search-result-area { min-height: 495px; } }
+  @container (min-width: 294px) { .search-result-area { min-height: 488px; } }
+  @container (min-width: 327px) { .search-result-area { min-height: 469px; } }
+  @container (min-width: 342px) { .search-result-area { min-height: 444px; } }
+  @container (min-width: 367px) { .search-result-area { min-height: 419px; } }
+  @container (min-width: 410px) { .search-result-area { min-height: 394px; } }
+  @container (min-width: 640px) { .search-result-area { min-height: 370px; } }
+  @container (min-width: 691px) { .search-result-area { min-height: 345px; } }
+  @container (min-width: 723px) { .search-result-area { min-height: 320px; } }
   .search-result { animation: result-in 300ms ease both; }
   .search-result-link {
     display: flex;
@@ -129,6 +221,7 @@ body[data-portfolio-overlay="true"] .skip-link {
     margin-inline: -12px;
     padding: 14px 12px;
     border-radius: 12px;
+    align-items: baseline;
     color: var(--color-ink);
     text-align: left;
   }

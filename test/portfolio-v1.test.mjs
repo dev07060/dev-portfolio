@@ -447,3 +447,18 @@ test('A15 resolveSnapTarget: boundary zones follow the direction, tall sections 
   assert.equal(resolveSnapTarget(hero, 300, 1, threshold)?.y, 946);
   assert.equal(resolveSnapTarget(hero, 20, 1, threshold)?.y, 46);
 });
+
+test('hero search reserves the tallest demo result set by panel width instead of a fixed 480px band', () => {
+  const search = read('src/components/portfolio/PortfolioSearch.tsx');
+  const css = read('src/app/globals.css');
+  assert.doesNotMatch(search, /min-h-\[480px\]/);
+  assert.match(search, /className="search-result-area"/);
+  assert.match(css, /\.search-panel \{\s*container-type: inline-size;/);
+  assert.match(css, /@container \(min-width: [\d.]+px\) \{ \.search-result-area \{ min-height: \d+px; \} \}/);
+  // Suggestions keep a 44px hit area without padding short words visually.
+  assert.doesNotMatch(search, /min-w-11 items-center justify-center/);
+  assert.match(css, /\.search-suggestion::after \{[^}]*width: max\(100%, 44px\);/);
+  assert.match(search, /aria-pressed=\{selected\}/);
+  // Korean meta prose is sans (A12); the old mono '결과 N건' label is gone.
+  assert.doesNotMatch(search, /font-mono text-xs text-sub/);
+});
