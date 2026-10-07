@@ -648,13 +648,24 @@ test('프레젠테이션이 slide status와 preview focus restoration을 제공�
 });
 
 test('스크롤 가능한 screenshot region을 keyboard로 탐색한다', async ({ page }) => {
+  // No public project ships a long-page screenshot any more; serve a retained long capture
+  // (h/w ≈ 2.9) for the Ieum '시스템 구성' screen, which the data flags as scrollable.
+  await page.route(/\/images\/law-info-engine\/architecture\.svg/, (route) =>
+    route.fulfill({
+      path: `${process.cwd()}/public/images/law-info-engine/search-ui-full.png`,
+      contentType: 'image/png',
+    })
+  );
   await page.goto('/');
   await caseDetailButton(page, '기업 법령 검토 엔진(이음)').click();
+  await page
+    .getByRole('list', { name: '기업 법령 검토 엔진(이음) 화면 목록' })
+    .getByRole('button', { name: '시스템 구성' })
+    .click();
   await page.getByRole('button', { name: '기업 법령 검토 엔진(이음) 프레젠테이션 열기' }).click();
-  await page.getByRole('button', { name: '이전 화면' }).click();
 
   const region = page.getByRole('region', {
-    name: '검색 결과·인용 스크린샷 스크롤 영역',
+    name: '시스템 구성 스크린샷 스크롤 영역',
   });
   await expect(region).toBeVisible();
   await expect

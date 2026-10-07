@@ -739,14 +739,29 @@ test('case verification labels distinguish methods from verified results', () =>
   );
 });
 
-test('기업 법령 검토 엔진(이음) is typed as an API while scrollable product screens stay scrollable', () => {
-  const projects = read('src/data/projects.ts');
-  const swiftyStart = projects.indexOf('id: "law-info-engine"');
-  const swiftyEnd = projects.indexOf('\n  },', swiftyStart);
-  const swifty = projects.slice(swiftyStart, swiftyEnd);
+test('기업 법령 검토 엔진(이음) is typed as an API; 16:10 screenshots are contained while diagrams stay scrollable', async () => {
+  const { projects } = await importTypeScriptModule('src/data/projects.ts');
+  const ieum = projects.find((project) => project.id === 'law-info-engine');
+  const byId = Object.fromEntries(ieum.screens.map((screen) => [screen.id, screen]));
 
-  assert.match(swifty, /type: "api"/);
-  assert.match(swifty, /id: "search-ui-full"[\s\S]*?scrollable: true/);
+  assert.equal(ieum.type, 'api');
+  assert.deepEqual(ieum.screens.map((screen) => screen.id), [
+    'ieum-home',
+    'ieum-report-citation',
+    'ieum-open-checks',
+    'ieum-tax-report',
+    'architecture',
+    'api-flows',
+    'ieum-showcase',
+  ]);
+  assert.equal(ieum.screens[ieum.cardPresentation.thumbnailScreenIndex].id, 'ieum-report-citation');
+  for (const id of ['ieum-home', 'ieum-report-citation', 'ieum-open-checks', 'ieum-tax-report', 'ieum-showcase']) {
+    assert.match(byId[id].imagePath, /^\/images\/law-info-engine\/ieum\//, id);
+    assert.notEqual(byId[id].scrollable, true, `${id} is a 16:10 / 16:9 capture, not a long page`);
+  }
+  for (const id of ['architecture', 'api-flows']) {
+    assert.equal(byId[id].scrollable, true, id);
+  }
 });
 
 test('empty experience and missing resume actions stay hidden', () => {

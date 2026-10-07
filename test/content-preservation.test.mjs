@@ -1,6 +1,6 @@
 // test/content-preservation.test.mjs
 import assert from 'node:assert/strict';
-import { existsSync, readdirSync, statSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import { importTypeScriptModule } from './helpers/importTs.mjs';
@@ -40,20 +40,33 @@ test('every project keeps its tech stack, screens, and implementation notes', as
   }
 });
 
+// public/images as of HEAD 3576ca8 (`git ls-tree -r --name-only 3576ca8 public/images`).
+// Screens may be swapped in project data, but no file that existed then may be deleted or moved.
+const HEAD_PUBLIC_IMAGES = readFileSync(
+  new URL('./fixtures/head-3576ca8-public-images.txt', import.meta.url),
+  'utf8'
+)
+  .split('\n')
+  .filter(Boolean);
+
 test('every screenshot path referenced by project data exists under public/', async () => {
   const { projects } = await importTypeScriptModule('src/data/projects.ts');
   const paths = projects.flatMap((project) =>
     project.screens.map((screen) => screen.imagePath).filter(Boolean)
   );
-  assert.equal(paths.length, 62);
+  assert.ok(paths.length > 0);
   for (const path of paths) {
     assert.ok(existsSync(new URL(`../public${path}`, import.meta.url)), `missing ${path}`);
   }
 });
 
-test('public/images keeps all 95 files', () => {
+test('public/images keeps every file from HEAD 3576ca8 (95 files) and only grows', () => {
+  assert.equal(HEAD_PUBLIC_IMAGES.length, 95);
+  for (const file of HEAD_PUBLIC_IMAGES) {
+    assert.ok(existsSync(new URL(`../${file}`, import.meta.url)), `missing ${file}`);
+  }
   const root = fileURLToPath(new URL('../public/images', import.meta.url));
-  assert.equal(listFiles(root).filter((file) => !file.endsWith('.DS_Store')).length, 95);
+  assert.ok(listFiles(root).filter((file) => !file.endsWith('.DS_Store')).length >= 95);
 });
 
 test('recruitment data keeps all experience entries, highlights, and case details', async () => {

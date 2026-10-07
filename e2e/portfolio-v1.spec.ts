@@ -984,19 +984,59 @@ const openIeumModal = async (page: import('@playwright/test').Page) => {
   return dialog;
 };
 
-test('1440 이음 모달: 긴 화면은 패널 폭으로 스크롤되고 프레임 라벨은 현재 화면 제목이다', async ({ page }) => {
+// No public project currently ships a long-page screenshot, so the tall-image behavior is
+// exercised by serving a retained long capture (h/w ≈ 2.9) in place of the Ieum
+// '시스템 구성' diagram, which is the screen flagged `scrollable` in the data.
+const TALL_FIXTURE = 'public/images/law-info-engine/search-ui-full.png';
+const serveTallImageForArchitecture = (page: import('@playwright/test').Page) =>
+  page.route(/\/images\/law-info-engine\/architecture\.svg/, (route) =>
+    route.fulfill({ path: `${process.cwd()}/${TALL_FIXTURE}`, contentType: 'image/png' })
+  );
+
+test('1440 이음 모달: 16:10 화면은 패널 폭을 채우고 스크롤되지 않으며 프레임 라벨은 현재 화면 제목이다', async ({ page }) => {
+  const dialog = await openIeumModal(page);
+  const label = dialog.locator('[data-screen-frame-label]');
+  // Opens on the report + citation screen (thumbnailScreenIndex) and labels it.
+  await expect(label).toHaveText('검토 보고서와 근거 원문');
+  await expect(dialog).not.toContainText('백엔드 아키텍처');
+
+  const frame = dialog.locator('[data-screen-frame]');
+  await expect(frame).toHaveAttribute('data-fit', 'contain');
+  await expect(dialog.locator('[data-scroll-viewport]')).toHaveCount(0);
+  const media = dialog.locator('[data-modal-media] img');
+  await expect(media).toHaveAttribute(
+    'alt',
+    '감사인의 대투자자 손해배상책임 검토 보고서와 오른쪽 근거 원문 패널의 외부감사법 제31조'
+  );
+  const widths = await dialog.evaluate((node) => ({
+    panel: node.querySelector('[data-modal-media]')!.getBoundingClientRect().width,
+    frame: node.querySelector('[data-screen-frame]')!.getBoundingClientRect().width,
+  }));
+  expect(widths.frame).toBeGreaterThanOrEqual(widths.panel * 0.9);
+
+  // The frame is a 1px line frame; the marker ring appears only on keyboard focus.
+  const border = await frame.evaluate((node) => getComputedStyle(node).borderTopWidth);
+  expect(border).toBe('1px');
+
+  // The presentation shows the same 16:10 capture whole, without a scroll region.
+  await dialog.getByRole('button', { name: '기업 법령 검토 엔진(이음) 프레젠테이션 열기' }).click();
+  const presentation = page.getByRole('dialog', { name: '검토 보고서와 근거 원문' });
+  await expect(presentation).toBeVisible();
+  await expect(presentation.getByRole('region', { name: /스크린샷 스크롤 영역$/ })).toHaveCount(0);
+  await expect(presentation.locator('[data-scroll-hint]')).toHaveCount(0);
+});
+
+test('1440 이음 모달: 긴 화면은 패널 폭으로 스크롤된다', async ({ page }) => {
+  await serveTallImageForArchitecture(page);
   const dialog = await openIeumModal(page);
   const list = dialog.getByRole('list', { name: '기업 법령 검토 엔진(이음) 화면 목록' });
   const label = dialog.locator('[data-screen-frame-label]');
-  // Opens on the architecture screen (thumbnailScreenIndex) and labels it.
-  await expect(label).toHaveText('시스템 구성');
-  await expect(dialog).not.toContainText('백엔드 아키텍처');
 
-  await list.getByRole('button', { name: '검색 결과·인용' }).click();
-  await expect(label).toHaveText('검색 결과·인용');
+  await list.getByRole('button', { name: '시스템 구성' }).click();
+  await expect(label).toHaveText('시스템 구성');
   const frame = dialog.locator('[data-screen-frame]');
   await expect(frame).toHaveAttribute('data-fit', 'scroll');
-  const region = dialog.getByRole('region', { name: '검색 결과·인용 화면, 스크롤 가능', exact: true });
+  const region = dialog.getByRole('region', { name: '시스템 구성 화면, 스크롤 가능', exact: true });
   await expect(region).toBeVisible();
   await expect(region).toHaveAttribute('data-lenis-prevent');
   const widths = await dialog.evaluate((node) => ({
@@ -1015,24 +1055,23 @@ test('1440 이음 모달: 긴 화면은 패널 폭으로 스크롤되고 프레�
   await expect.poll(() => region.evaluate((node) => node.scrollTop)).toBeGreaterThan(0);
   await region.evaluate((node) => node.scrollTo({ top: node.scrollHeight }));
   await expect(hint).toBeHidden();
-
-  // The frame is a 1px line frame; the marker ring appears only on keyboard focus.
-  const border = await frame.evaluate((node) => getComputedStyle(node).borderTopWidth);
-  expect(border).toBe('1px');
 });
 
 test('모달 화면 목록이 미디어 이미지를 바꾸고 aria-current를 옮긴다', async ({ page }) => {
   const dialog = await openIeumModal(page);
   const list = dialog.getByRole('list', { name: '기업 법령 검토 엔진(이음) 화면 목록' });
   const items = list.getByRole('button');
-  await expect(items).toHaveCount(5);
+  await expect(items).toHaveCount(7);
   const current = list.locator('[aria-current="true"]');
   await expect(current).toHaveCount(1);
-  await expect(current).toHaveText('시스템 구성');
+  await expect(current).toHaveText('검토 보고서와 근거 원문');
 
   const media = dialog.locator('[data-modal-media] img');
-  await expect(media).toHaveAttribute('alt', '기업 법령 검토 엔진(이음) 시스템 구성');
-  const target = list.getByRole('button', { name: 'API 진입 화면' });
+  await expect(media).toHaveAttribute(
+    'alt',
+    '감사인의 대투자자 손해배상책임 검토 보고서와 오른쪽 근거 원문 패널의 외부감사법 제31조'
+  );
+  const target = list.getByRole('button', { name: '사안 입력' });
   await target.click();
   await expect(target).toHaveAttribute('aria-current', 'true');
   await expect(current).toHaveCount(1);
@@ -1040,8 +1079,11 @@ test('모달 화면 목록이 미디어 이미지를 바꾸고 aria-current를 �
   await target.focus();
   await page.keyboard.press('Enter');
   await expect(target).toBeFocused();
-  await expect(media).toHaveAttribute('alt', '기업 법령 검토 엔진(이음) API 진입 화면');
-  await expect(dialog.locator('[aria-live="polite"]')).toHaveText('API 진입 화면 화면 표시 중');
+  await expect(media).toHaveAttribute(
+    'alt',
+    "이음 첫 화면. '어떤 사안을 검토할까요?' 입력란과 최근 검토 문서 목록"
+  );
+  await expect(dialog.locator('[aria-live="polite"]')).toHaveText('사안 입력 화면 표시 중');
 
   // Keyboard: Enter on another item switches as well; the presentation opens on that screen.
   await list.getByRole('button', { name: '검색·분석 경로' }).focus();
@@ -1052,17 +1094,18 @@ test('모달 화면 목록이 미디어 이미지를 바꾸고 aria-current를 �
 });
 
 test('프레젠테이션: 보이는 진행 번호 없이 sr-only 상태와 긴 화면 스크롤 힌트를 제공한다', async ({ page }) => {
+  await serveTallImageForArchitecture(page);
   const dialog = await openIeumModal(page);
   await dialog
     .getByRole('list', { name: '기업 법령 검토 엔진(이음) 화면 목록' })
-    .getByRole('button', { name: '검색 결과·인용' })
+    .getByRole('button', { name: '시스템 구성' })
     .click();
   await dialog.getByRole('button', { name: '기업 법령 검토 엔진(이음) 프레젠테이션 열기' }).click();
 
-  const presentation = page.getByRole('dialog', { name: '검색 결과·인용' });
+  const presentation = page.getByRole('dialog', { name: '시스템 구성' });
   await expect(presentation).toBeVisible();
   const status = presentation.locator('[aria-live="polite"]');
-  await expect(status).toHaveText('화면 3 / 5, 검색 결과·인용');
+  await expect(status).toHaveText('화면 5 / 7, 시스템 구성');
   await expect(status).toHaveClass(/\bsr-only\b/);
   // No visible 'NN / NN' progress text anywhere in the overlay.
   const visibleText = await presentation.evaluate((node) => {
@@ -1071,9 +1114,9 @@ test('프레젠테이션: 보이는 진행 번호 없이 sr-only 상태와 긴 �
     return clone.textContent ?? '';
   });
   expect(visibleText).not.toMatch(/\b\d{1,2}\s*\/\s*\d{1,2}\b/);
-  await expect(presentation.locator('[data-presentation-progress] > span')).toHaveCount(5);
+  await expect(presentation.locator('[data-presentation-progress] > span')).toHaveCount(7);
 
-  const region = presentation.getByRole('region', { name: '검색 결과·인용 스크린샷 스크롤 영역' });
+  const region = presentation.getByRole('region', { name: '시스템 구성 스크린샷 스크롤 영역' });
   await expect(region).toHaveAttribute('data-lenis-prevent');
   await expect
     .poll(() => region.evaluate((node) => node.scrollHeight > node.clientHeight))
@@ -1090,7 +1133,7 @@ test('프레젠테이션: 보이는 진행 번호 없이 sr-only 상태와 긴 �
   }));
   expect(heights.bar).toBeLessThanOrEqual(90);
   expect(heights.stage).toBeGreaterThanOrEqual(900 * 0.7);
-  for (const name of ['이전 화면', '다음 화면', '프레젠테이션 닫기', '검색 결과·인용 원본 이미지 새 창에서 열기']) {
+  for (const name of ['이전 화면', '다음 화면', '프레젠테이션 닫기', '시스템 구성 원본 이미지 새 창에서 열기']) {
     const box = (await presentation.getByRole(name.includes('원본') ? 'link' : 'button', { name }).boundingBox())!;
     expect(box.height).toBeGreaterThanOrEqual(44);
     expect(box.width).toBeGreaterThanOrEqual(44);

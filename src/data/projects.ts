@@ -92,7 +92,7 @@ export const projects: Project[] = [
     ],
     cardPresentation: {
       variant: "architecture",
-      thumbnailScreenIndex: 3,
+      thumbnailScreenIndex: 1,
       description:
         "공식 조문을 직접 열어 확인한 근거로만 보고서를 쓰는 Google ADK 기반 법령 검토 에이전트입니다.",
       evidenceBadges: [
@@ -110,28 +110,32 @@ export const projects: Project[] = [
     iconType: "scale",
     screens: [
       {
-        id: "api-landing",
-        imageAlt: "기업 법령 검토 엔진(이음) API 진입 화면",
-        title: "API 진입 화면",
-        desc: "law-api.swifty.kr 개발자 진입 화면 — endpoint 인덱스와 health 표면.",
-        imagePath: "/images/law-info-engine/api-landing.png",
-        scrollable: true,
+        id: "ieum-home",
+        imageAlt: "이음 첫 화면. '어떤 사안을 검토할까요?' 입력란과 최근 검토 문서 목록",
+        title: "사안 입력",
+        desc: "사안과 질문을 적으면 검토를 시작합니다. 17개 분야·207개 법령의 공식 데이터를 기준으로 합니다.",
+        imagePath: "/images/law-info-engine/ieum/01-home.png",
       },
       {
-        id: "search-ui",
-        imageAlt: "기업 법령 검토 엔진(이음) 검색 화면",
-        title: "검색 화면",
-        desc: "실제 서비스 검색 화면 — 자연어 질의로 조문 단위 결과를 돌려줍니다.",
-        imagePath: "/images/law-info-engine/search-ui.png",
-        scrollable: true,
+        id: "ieum-report-citation",
+        imageAlt: "감사인의 대투자자 손해배상책임 검토 보고서와 오른쪽 근거 원문 패널의 외부감사법 제31조",
+        title: "검토 보고서와 근거 원문",
+        desc: "보고서 문장 옆에서 근거 조문 원문과 시행일을 바로 확인합니다.",
+        imagePath: "/images/law-info-engine/ieum/02-report-citation.png",
       },
       {
-        id: "search-ui-full",
-        imageAlt: "기업 법령 검토 엔진(이음) 검색 결과·인용",
-        title: "검색 결과·인용",
-        desc: "모든 결과에 법령명·조문경로·시행일·출처 URL이 함께 노출됩니다.",
-        imagePath: "/images/law-info-engine/search-ui-full.png",
-        scrollable: true,
+        id: "ieum-open-checks",
+        imageAlt: "보고서의 추가 확인이 필요한 사항과 사실 확인을 묻는 남은 확인 카드",
+        title: "남은 확인",
+        desc: "근거가 부족한 부분은 '남은 확인'으로 분리해 사용자에게 사실관계를 되묻습니다.",
+        imagePath: "/images/law-info-engine/ieum/03-open-checks.png",
+      },
+      {
+        id: "ieum-tax-report",
+        imageAlt: "세금계산서 지연 수취 시 매입세액 공제 검토 보고서와 근거 원문 패널의 부가가치세법 시행령 제75조",
+        title: "세무 검토 보고서",
+        desc: "다른 분야의 사안도 같은 형식으로 검토합니다. 매입세액 공제 요건을 부가가치세법 시행령 원문과 함께 보여 줍니다.",
+        imagePath: "/images/law-info-engine/ieum/04-tax-report-citation.png",
       },
       {
         id: "architecture",
@@ -148,6 +152,13 @@ export const projects: Project[] = [
         desc: "단순 조문 검색 경로와 쟁점 분해 + 지식그래프 확장 근거 경로의 단계별 흐름.",
         imagePath: "/images/law-info-engine/api-flows.svg",
         scrollable: true,
+      },
+      {
+        id: "ieum-showcase",
+        imageAlt: "데스크톱과 모바일의 이음 검토 보고서 화면. 모바일은 본문·근거 원문·대화 탭으로 나뉩니다",
+        title: "데스크톱·모바일 보고서 화면",
+        desc: "같은 보고서를 데스크톱에서는 근거 원문 패널과 함께, 모바일에서는 본문·근거 원문·대화 탭으로 봅니다.",
+        imagePath: "/images/law-info-engine/ieum/showcase-responsive.png",
       },
     ],
     links: [

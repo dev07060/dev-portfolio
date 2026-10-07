@@ -45,8 +45,8 @@ export default function CaseLawSection({
             <Image
               src={screen.imagePath}
               alt={screen.imageAlt}
-              width={1454}
-              height={1319}
+              width={3840}
+              height={2160}
               sizes="(min-width: 1024px) 700px, 100vw"
               className="h-auto w-full rounded-2xl"
             />
