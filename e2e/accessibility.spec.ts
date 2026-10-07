@@ -28,13 +28,14 @@ const normalizedAnchors = (page: Page) =>
     anchors.map((anchor) => {
       const href = anchor.getAttribute('href');
       if (href === null) {
-        return { href, normalizedHref: null, pathname: null };
+        return { href, normalizedHref: null, sameOrigin: false, pathname: null };
       }
 
       const normalized = new URL(href, document.baseURI);
       return {
         href,
         normalizedHref: normalized.href,
+        sameOrigin: normalized.origin === window.location.origin,
         pathname: normalized.pathname.replace(/\/+$/, '') || '/',
       };
     })
@@ -93,7 +94,7 @@ test('한국어 단일 홈과 skip link, 대표 사례 순서를 제공한다', 
   expect(await caseHeadings(page)).toEqual([
     'Flutter 공개 패키지',
     'Easy Contract Viewer',
-    'Swifty-law',
+    '기업 법령 검토 엔진(이음)',
   ]);
 
   await experienceLink.click();
@@ -108,13 +109,13 @@ test('프리랜서 전달용 라우트는 공개 홈에서 숨겨지고 검색 �
   await page.goto('/');
   const publicHomeAnchors = await normalizedAnchors(page);
   expect(
-    publicHomeAnchors.filter((anchor) => anchor.pathname === '/freelancer')
+    publicHomeAnchors.filter((anchor) => anchor.sameOrigin && anchor.pathname === '/freelancer')
   ).toEqual([]);
 
   await page.goto('/freelancer');
 
   const freelancerAnchors = await normalizedAnchors(page);
-  expect(freelancerAnchors.filter((anchor) => anchor.pathname === '/')).toEqual(
+  expect(freelancerAnchors.filter((anchor) => anchor.sameOrigin && anchor.pathname === '/')).toEqual(
     []
   );
 
@@ -170,7 +171,7 @@ test('프리랜서 전달용 라우트는 공개 홈에서 숨겨지고 검색 �
   expect(await caseHeadings(page)).toEqual([
     'Easy Contract Viewer',
     'Flutter 공개 패키지',
-    'Swifty-law',
+    '기업 법령 검토 엔진(이음)',
   ]);
 
   const detailButton = caseDetailButton(page, 'Easy Contract Viewer');
@@ -228,7 +229,7 @@ test('두 실제 라우트 설정의 모든 프로젝트 ID가 사례 경로로 
   for (const path of ['/', '/freelancer']) {
     await page.goto(path);
 
-    for (const title of ['mobile_rag_engine', 'Easy Contract Viewer', 'Swifty-law']) {
+    for (const title of ['mobile_rag_engine', 'Easy Contract Viewer', '기업 법령 검토 엔진(이음)']) {
       await expect(caseDetailButton(page, title)).toHaveCount(1);
     }
     for (const [number, title] of additionalCases) {
@@ -648,8 +649,8 @@ test('프레젠테이션이 slide status와 preview focus restoration을 제공�
 
 test('스크롤 가능한 screenshot region을 keyboard로 탐색한다', async ({ page }) => {
   await page.goto('/');
-  await caseDetailButton(page, 'Swifty-law').click();
-  await page.getByRole('button', { name: 'Swifty-law 프레젠테이션 열기' }).click();
+  await caseDetailButton(page, '기업 법령 검토 엔진(이음)').click();
+  await page.getByRole('button', { name: '기업 법령 검토 엔진(이음) 프레젠테이션 열기' }).click();
   await page.getByRole('button', { name: '이전 화면' }).click();
 
   const region = page.getByRole('region', {

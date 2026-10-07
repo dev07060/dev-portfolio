@@ -2,6 +2,8 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
+const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 const additionalCases = [
   [4, 'Easy Contract Viewer Server'],
   [5, '피에트 피트니스 트레이너'],
@@ -186,7 +188,7 @@ test('경력 자세히는 summary와 나머지 성과를 모두 보여 준다', 
 for (const route of ['/', '/freelancer']) {
   test(`${route} 대표·추가 프로젝트가 모두 모달로 열린다`, async ({ page }) => {
     await page.goto(route);
-    for (const title of ['mobile_rag_engine', 'Easy Contract Viewer', 'Swifty-law']) {
+    for (const title of ['mobile_rag_engine', 'Easy Contract Viewer', '기업 법령 검토 엔진(이음)']) {
       const button = page.getByRole('button', { name: `사례 자세히, ${title}`, exact: true });
       await expect(button).toHaveCount(1);
       await expect(button).toHaveAttribute('aria-haspopup', 'dialog');
@@ -214,7 +216,7 @@ test('사례 #4–#8은 프로젝트 사례 버튼으로 열리고 비공개 프
     await button.scrollIntoViewIfNeeded();
     await expect(button).toBeVisible();
     await button.click();
-    const dialog = page.getByRole('dialog', { name: new RegExp(title) });
+    const dialog = page.getByRole('dialog', { name: new RegExp(escapeRegExp(title)) });
     await expect(dialog).toBeVisible();
     await page.keyboard.press('Escape');
     await expect(dialog).toHaveCount(0);
@@ -283,14 +285,14 @@ test('홈과 열린 모달에 critical/serious axe 위반이 없다', async ({ p
 
 for (const [anchor, title] of [
   ['#case-01', 'mobile_rag_engine'],
-  ['#case-03', 'Swifty-law'],
+  ['#case-03', '기업 법령 검토 엔진(이음)'],
 ] as const) {
   test(`1024×768 ${title} 모달은 헤더가 잘리지 않고 상세 끝까지 스크롤된다`, async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.setViewportSize({ width: 1024, height: 768 });
     await page.goto('/');
     await page.locator(anchor).getByRole('button', { name: /^사례 자세히/ }).click();
-    const dialog = page.getByRole('dialog', { name: new RegExp(title) });
+    const dialog = page.getByRole('dialog', { name: new RegExp(escapeRegExp(title)) });
     await expect(dialog).toBeVisible();
 
     const scroller = dialog.getByRole('region', { name: `${title} 프로젝트 상세`, exact: true });
