@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="1600" height="1000" role="img" aria-labelledby="ieum-system-title ieum-system-desc" font-family="'IBM Plex Sans KR', system-ui, sans-serif">
+  <title id="ieum-system-title">이음 시스템 구성</title>
+  <desc id="ieum-system-desc">웹 UI가 FastAPI를 호출하고, FastAPI는 Google ADK Workflow 기반 보고서 워크플로 에이전트와 ADK Runner 기반 후속 대화 에이전트를 실행합니다. 두 에이전트는 Vertex AI의 Gemini를 호출하고 에이전트 도구를 씁니다. 검색 도구는 후보만 돌려주고, 열람 도구가 공식 원문을 열며, 실제로 연 조문과 행정규칙만 열람 기록에 남아 인용할 수 있습니다. 후속 대화의 판례 후보는 참조조문이 이미 확인한 조문인 대법원 판결로 한정됩니다. 검색은 Milvus 의미·용어 하이브리드 색인, 조문 원문과 보고서·대화 세션·판례-조문 연결은 PostgreSQL, 행정규칙과 판결 원문은 국가법령 Open API를 씁니다. 공식 법령 데이터 파이프라인이 Open API에서 수집한 17개 분야 207개 법령을 정규화해 Milvus와 PostgreSQL에 적재합니다.</desc>
+  <defs>
+    <style>
+      .title { font-size: 40px; font-weight: 700; fill: #ECECE7; letter-spacing: -0.5px; }
+      .lead { font-size: 22px; fill: #ABABA5; }
+      .h { font-size: 26px; font-weight: 700; fill: #ECECE7; }
+      .h-sm { font-size: 24px; font-weight: 700; fill: #ECECE7; }
+      .b { font-size: 22px; fill: #ABABA5; }
+      .b-ink { font-size: 22px; fill: #ECECE7; }
+      .label { font-size: 22px; font-weight: 600; fill: #ABABA5; }
+      .acc { font-size: 22px; font-weight: 600; fill: #F3E04A; }
+      .mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 22px; fill: #ECECE7; }
+      .box { fill: #34353A; stroke: #5A5C62; stroke-width: 2; }
+      .box-key { fill: #3E3F45; stroke: #F3E04A; stroke-width: 2.5; }
+      .region { fill: none; stroke: #4A4C52; stroke-width: 2; stroke-dasharray: 10 8; }
+      .boundary { fill: none; stroke: #F3E04A; stroke-width: 2; stroke-dasharray: 12 8; }
+      .arrow { fill: none; stroke: #ABABA5; stroke-width: 2.5; marker-end: url(#arrow); }
+      .arrow-key { fill: none; stroke: #F3E04A; stroke-width: 2.5; marker-end: url(#arrow-key); }
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#ABABA5"/>
+    </marker>
+    <marker id="arrow-key" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#F3E04A"/>
+    </marker>
+  </defs>
+
+  <rect width="1600" height="1000" fill="#2A2B2F"/>
+
+  <text x="60" y="76" class="title">이음 시스템 구성</text>
+  <text x="60" y="114" class="lead">공식 원문을 직접 열어 확인한 근거로만 보고서를 쓰는 법령 검토 에이전트</text>
+
+  <!-- Row A: entry -->
+  <rect x="60" y="150" width="420" height="68" rx="12" class="box"/>
+  <text x="84" y="193" class="h">웹 UI</text>
+  <text x="172" y="193" class="b">사안 · 보고서 · 후속 대화</text>
+
+  <path d="M480 184 H552" class="arrow"/>
+
+  <rect x="560" y="150" width="480" height="68" rx="12" class="box"/>
+  <text x="584" y="193" class="h">FastAPI</text>
+  <text x="704" y="193" class="mono">/v1/cases/{id}/…</text>
+
+  <!-- legend -->
+  <line x1="1140" y1="172" x2="1196" y2="172" class="boundary"/>
+  <text x="1212" y="180" class="b">인용 경계</text>
+  <line x1="1140" y1="206" x2="1188" y2="206" class="arrow"/>
+  <text x="1212" y="214" class="b">호출 · 조회</text>
+
+  <!-- FastAPI to agents -->
+  <path d="M680 218 V248 H350 V272" class="arrow"/>
+  <path d="M920 218 V248 H1250 V272" class="arrow"/>
+
+  <!-- Row B: agents + model -->
+  <rect x="60" y="280" width="580" height="190" rx="14" class="box"/>
+  <text x="88" y="324" class="h">보고서 워크플로 에이전트</text>
+  <text x="88" y="360" class="b">Google ADK Workflow · 역할별 세션 분리</text>
+  <text x="88" y="402" class="b-ink">조사 → 독립 답변 → 초안 작성 → 대조·수정</text>
+  <text x="88" y="440" class="b">쟁점 계획은 첫 조사 응답에서 서버가 고정</text>
+
+  <rect x="690" y="300" width="220" height="150" rx="14" class="box"/>
+  <text x="800" y="364" class="h" text-anchor="middle">Gemini</text>
+  <text x="800" y="400" class="b" text-anchor="middle">Vertex AI</text>
+  <path d="M640 375 H682" class="arrow"/>
+  <path d="M960 375 H918" class="arrow"/>
+
+  <rect x="960" y="280" width="580" height="190" rx="14" class="box"/>
+  <text x="988" y="324" class="h">후속 대화 에이전트</text>
+  <text x="988" y="360" class="b">Google ADK Runner · 세션은 PostgreSQL</text>
+  <text x="988" y="402" class="b-ink">보고서 위 질문에 답하고 수정을 제안</text>
+  <text x="988" y="440" class="b"><tspan class="mono">submit_report_response</tspan> 호출로 턴 종료</text>
+
+  <!-- agents to tools -->
+  <path d="M350 470 V512" class="arrow"/>
+  <path d="M1250 470 V512" class="arrow"/>
+
+  <!-- Row C: agent tools -->
+  <rect x="60" y="520" width="1480" height="262" rx="16" class="region"/>
+  <text x="90" y="560" class="label">에이전트 도구</text>
+
+  <rect x="446" y="534" width="728" height="236" rx="14" class="boundary"/>
+  <text x="472" y="568" class="acc">인용 경계 · 열람한 원문만 보고서에 인용</text>
+
+  <rect x="90" y="590" width="310" height="170" rx="12" class="box"/>
+  <text x="114" y="632" class="h-sm">검색 · 후보</text>
+  <text x="114" y="670" class="b">조문·행정규칙 후보</text>
+  <text x="114" y="704" class="b">후보는 인용할 수 없음</text>
+  <text x="114" y="740" class="mono">search_official_*</text>
+
+  <path d="M400 675 H462" class="arrow"/>
+
+  <rect x="470" y="590" width="320" height="170" rx="12" class="box-key"/>
+  <text x="494" y="632" class="h-sm">열람 · 원문</text>
+  <text x="494" y="670" class="b">공식 원문과 시행일</text>
+  <text x="494" y="704" class="b">조문 · 행정규칙</text>
+  <text x="494" y="740" class="mono">read_official_*</text>
+
+  <path d="M790 675 H836" class="arrow-key"/>
+
+  <rect x="844" y="590" width="306" height="170" rx="12" class="box-key"/>
+  <text x="868" y="632" class="h-sm">열람 기록</text>
+  <text x="868" y="670" class="b-ink">실제로 연 조문과</text>
+  <text x="868" y="704" class="b-ink">행정규칙만</text>
+  <text x="868" y="740" class="acc">인용 가능한 근거</text>
+
+  <path d="M1150 675 H1202" class="arrow"/>
+
+  <rect x="1210" y="590" width="300" height="170" rx="12" class="box"/>
+  <text x="1234" y="632" class="h-sm">판례 후보 · 후속 대화</text>
+  <text x="1234" y="670" class="b">참조조문이 이미 확인한</text>
+  <text x="1234" y="704" class="b">조문인 대법원 판결만</text>
+  <text x="1234" y="740" class="b">유사도는 순서만 정함</text>
+
+  <!-- tools to data -->
+  <path d="M230 760 V812" class="arrow"/>
+  <path d="M630 770 V812" class="arrow"/>
+  <path d="M1400 760 V812" class="arrow"/>
+
+  <!-- Row D: data -->
+  <rect x="60" y="820" width="340" height="130" rx="12" class="box"/>
+  <text x="84" y="860" class="h-sm">Milvus</text>
+  <text x="84" y="896" class="b">의미·용어</text>
+  <text x="84" y="928" class="b">하이브리드 색인</text>
+
+  <rect x="440" y="820" width="380" height="130" rx="12" class="box"/>
+  <text x="464" y="860" class="h-sm">PostgreSQL</text>
+  <text x="464" y="896" class="b">조문 원문 · 보고서</text>
+  <text x="464" y="928" class="b">대화 세션 · 판례-조문 연결</text>
+
+  <rect x="860" y="820" width="360" height="130" rx="12" class="box"/>
+  <text x="884" y="860" class="h-sm">법령 데이터 파이프라인</text>
+  <text x="884" y="896" class="b">수집 → 조문 정규화</text>
+  <text x="884" y="928" class="b">17개 분야 · 207개 법령</text>
+
+  <rect x="1260" y="820" width="280" height="130" rx="12" class="box"/>
+  <text x="1284" y="860" class="h-sm">국가법령 Open API</text>
+  <text x="1284" y="896" class="b">행정규칙 원문</text>
+  <text x="1284" y="928" class="b">판결 원문</text>
+
+  <path d="M1260 885 H1228" class="arrow"/>
+  <path d="M860 885 H828" class="arrow"/>
+  <path d="M1040 950 V976 H230 V958" class="arrow"/>
+</svg>

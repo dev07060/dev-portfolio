@@ -138,20 +138,20 @@ export const projects: Project[] = [
         imagePath: "/images/law-info-engine/ieum/04-tax-report-citation.png",
       },
       {
-        id: "architecture",
-        imageAlt: "기업 법령 검토 엔진(이음) 시스템 구성",
+        id: "ieum-system",
+        imageAlt:
+          "이음 시스템 구성도. 웹 UI와 FastAPI 아래에 보고서 워크플로 에이전트(Google ADK Workflow)와 후속 대화 에이전트(ADK Runner)가 Vertex AI의 Gemini를 호출하고, 검색(후보)·열람(원문)·판례 후보 도구를 거쳐 Milvus, PostgreSQL, 국가법령 Open API와 법령 데이터 파이프라인으로 이어집니다. 열람 도구와 열람 기록이 인용 경계로 묶여 있습니다",
         title: "시스템 구성",
-        desc: "5계층 흐름 — 원천 수집, 데이터 정제, 색인·지식그래프, 분석, API 노출.",
-        imagePath: "/images/law-info-engine/architecture.svg",
-        scrollable: true,
+        desc: "검색 도구는 후보만 돌려주고, 열람 도구로 실제로 연 조문과 행정규칙만 열람 기록에 남아 인용할 수 있습니다. 판례 후보는 이미 확인한 조문을 참조조문으로 둔 대법원 판결로 한정합니다.",
+        imagePath: "/images/law-info-engine/ieum/system.svg",
       },
       {
-        id: "api-flows",
-        imageAlt: "기업 법령 검토 엔진(이음) 검색·분석 경로",
-        title: "검색·분석 경로",
-        desc: "단순 조문 검색 경로와 쟁점 분해 + 지식그래프 확장 근거 경로의 단계별 흐름.",
-        imagePath: "/images/law-info-engine/api-flows.svg",
-        scrollable: true,
+        id: "ieum-report-flow",
+        imageAlt:
+          "보고서 생성·검증 경로도. 사안 입력, 조사(쟁점 계획 서버 고정), 독립 답변, 초안 작성, 대조·수정을 거쳐 검토 완료 또는 검증 전 저장으로 나뉘고, 검증 전 보고서는 근거 검토만 다시 실행합니다. 아래에는 제출 도구 호출로 턴을 끝내는 후속 대화 흐름이 있습니다",
+        title: "보고서 생성·검증 경로",
+        desc: "조사 → 독립 답변 → 초안 작성 → 대조·수정 순서로 실행하고, 마지막 대조가 현재 본문과 일치하고 고칠 문장이 없을 때만 검토 완료로 표시합니다. 중간에 멈추면 검증 전으로 저장해 근거 검토만 다시 실행합니다.",
+        imagePath: "/images/law-info-engine/ieum/report-flow.svg",
       },
       {
         id: "ieum-showcase",

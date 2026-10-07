@@ -984,12 +984,12 @@ const openIeumModal = async (page: import('@playwright/test').Page) => {
   return dialog;
 };
 
-// No public project currently ships a long-page screenshot, so the tall-image behavior is
-// exercised by serving a retained long capture (h/w ≈ 2.9) in place of the Ieum
-// '시스템 구성' diagram, which is the screen flagged `scrollable` in the data.
+// No public api project ships a long-page screenshot any more, so the modal's tall-image
+// behavior (fit is decided from the image's intrinsic ratio) is exercised by serving a
+// retained long capture (h/w ≈ 2.9) in place of the Ieum '시스템 구성' diagram.
 const TALL_FIXTURE = 'public/images/law-info-engine/search-ui-full.png';
 const serveTallImageForArchitecture = (page: import('@playwright/test').Page) =>
-  page.route(/\/images\/law-info-engine\/architecture\.svg/, (route) =>
+  page.route(/\/images\/law-info-engine\/ieum\/system\.svg/, (route) =>
     route.fulfill({ path: `${process.cwd()}/${TALL_FIXTURE}`, contentType: 'image/png' })
   );
 
@@ -1086,26 +1086,25 @@ test('모달 화면 목록이 미디어 이미지를 바꾸고 aria-current를 �
   await expect(dialog.locator('[aria-live="polite"]')).toHaveText('사안 입력 화면 표시 중');
 
   // Keyboard: Enter on another item switches as well; the presentation opens on that screen.
-  await list.getByRole('button', { name: '검색·분석 경로' }).focus();
+  await list.getByRole('button', { name: '보고서 생성·검증 경로' }).focus();
   await page.keyboard.press('Enter');
-  await expect(list.getByRole('button', { name: '검색·분석 경로' })).toHaveAttribute('aria-current', 'true');
+  await expect(list.getByRole('button', { name: '보고서 생성·검증 경로' })).toHaveAttribute('aria-current', 'true');
   await dialog.getByRole('button', { name: '기업 법령 검토 엔진(이음) 프레젠테이션 열기' }).click();
-  await expect(page.getByRole('heading', { name: '검색·분석 경로', level: 2 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '보고서 생성·검증 경로', level: 2 })).toBeVisible();
 });
 
-test('프레젠테이션: 보이는 진행 번호 없이 sr-only 상태와 긴 화면 스크롤 힌트를 제공한다', async ({ page }) => {
-  await serveTallImageForArchitecture(page);
+test('프레젠테이션: 보이는 진행 번호 없이 sr-only 상태를 제공하고 16:10 구성도는 스크롤 없이 전체를 보여 준다', async ({ page }) => {
   const dialog = await openIeumModal(page);
   await dialog
     .getByRole('list', { name: '기업 법령 검토 엔진(이음) 화면 목록' })
-    .getByRole('button', { name: '시스템 구성' })
+    .getByRole('button', { name: '보고서 생성·검증 경로' })
     .click();
   await dialog.getByRole('button', { name: '기업 법령 검토 엔진(이음) 프레젠테이션 열기' }).click();
 
-  const presentation = page.getByRole('dialog', { name: '시스템 구성' });
+  const presentation = page.getByRole('dialog', { name: '보고서 생성·검증 경로' });
   await expect(presentation).toBeVisible();
   const status = presentation.locator('[aria-live="polite"]');
-  await expect(status).toHaveText('화면 5 / 7, 시스템 구성');
+  await expect(status).toHaveText('화면 6 / 7, 보고서 생성·검증 경로');
   await expect(status).toHaveClass(/\bsr-only\b/);
   // No visible 'NN / NN' progress text anywhere in the overlay.
   const visibleText = await presentation.evaluate((node) => {
@@ -1116,15 +1115,11 @@ test('프레젠테이션: 보이는 진행 번호 없이 sr-only 상태와 긴 �
   expect(visibleText).not.toMatch(/\b\d{1,2}\s*\/\s*\d{1,2}\b/);
   await expect(presentation.locator('[data-presentation-progress] > span')).toHaveCount(7);
 
-  const region = presentation.getByRole('region', { name: '시스템 구성 스크린샷 스크롤 영역' });
-  await expect(region).toHaveAttribute('data-lenis-prevent');
-  await expect
-    .poll(() => region.evaluate((node) => node.scrollHeight > node.clientHeight))
-    .toBe(true);
-  const hint = presentation.locator('[data-scroll-hint]');
-  await expect(hint).toBeVisible();
-  await region.evaluate((node) => node.scrollTo({ top: node.scrollHeight }));
-  await expect(hint).toBeHidden();
+  // The 16:10 diagram is contained whole: no scroll region, no scroll hint.
+  const diagram = presentation.locator('img[src*="/images/law-info-engine/ieum/report-flow.svg"]');
+  await expect(diagram).toBeVisible();
+  await expect(presentation.getByRole('region', { name: /스크린샷 스크롤 영역$/ })).toHaveCount(0);
+  await expect(presentation.locator('[data-scroll-hint]')).toHaveCount(0);
 
   // The compact bottom bar leaves most of the height to the image stage.
   const heights = await presentation.evaluate((node) => ({
@@ -1133,11 +1128,34 @@ test('프레젠테이션: 보이는 진행 번호 없이 sr-only 상태와 긴 �
   }));
   expect(heights.bar).toBeLessThanOrEqual(90);
   expect(heights.stage).toBeGreaterThanOrEqual(900 * 0.7);
-  for (const name of ['이전 화면', '다음 화면', '프레젠테이션 닫기', '시스템 구성 원본 이미지 새 창에서 열기']) {
+  for (const name of ['이전 화면', '다음 화면', '프레젠테이션 닫기', '보고서 생성·검증 경로 원본 이미지 새 창에서 열기']) {
     const box = (await presentation.getByRole(name.includes('원본') ? 'link' : 'button', { name }).boundingBox())!;
     expect(box.height).toBeGreaterThanOrEqual(44);
     expect(box.width).toBeGreaterThanOrEqual(44);
   }
+});
+
+test('프레젠테이션: 긴 화면은 스크롤 영역과 스크롤 힌트를 제공한다', async ({ page }) => {
+  // The Ieum diagrams are 16:10 now; the long-screen path is exercised on a screen the data
+  // flags `scrollable` (피에트 피트니스 트레이너 '결과 리포트 - 인바디').
+  await page.goto('/');
+  await page.getByRole('button', { name: /^프로젝트 사례 #5,/ }).first().click();
+  const dialog = page.getByRole('dialog', { name: /피에트 피트니스 트레이너/ });
+  await dialog
+    .getByRole('button', { name: '피에트 피트니스 트레이너 결과 리포트 - 인바디 프레젠테이션 열기' })
+    .click();
+
+  const presentation = page.getByRole('dialog', { name: '결과 리포트 - 인바디' });
+  await expect(presentation).toBeVisible();
+  const region = presentation.getByRole('region', { name: '결과 리포트 - 인바디 스크린샷 스크롤 영역' });
+  await expect(region).toHaveAttribute('data-lenis-prevent');
+  await expect
+    .poll(() => region.evaluate((node) => node.scrollHeight > node.clientHeight))
+    .toBe(true);
+  const hint = presentation.locator('[data-scroll-hint]');
+  await expect(hint).toBeVisible();
+  await region.evaluate((node) => node.scrollTo({ top: node.scrollHeight }));
+  await expect(hint).toBeHidden();
 });
 
 test('폰 사례(Easy Contract Viewer) 모달은 디바이스 프레임을 유지한다', async ({ page }) => {

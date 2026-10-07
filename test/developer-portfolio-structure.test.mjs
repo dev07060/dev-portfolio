@@ -739,7 +739,7 @@ test('case verification labels distinguish methods from verified results', () =>
   );
 });
 
-test('기업 법령 검토 엔진(이음) is typed as an API; 16:10 screenshots are contained while diagrams stay scrollable', async () => {
+test('기업 법령 검토 엔진(이음) is typed as an API; captures and 16:10 diagrams are contained, old diagrams stay on disk', async () => {
   const { projects } = await importTypeScriptModule('src/data/projects.ts');
   const ieum = projects.find((project) => project.id === 'law-info-engine');
   const byId = Object.fromEntries(ieum.screens.map((screen) => [screen.id, screen]));
@@ -750,8 +750,8 @@ test('기업 법령 검토 엔진(이음) is typed as an API; 16:10 screenshots 
     'ieum-report-citation',
     'ieum-open-checks',
     'ieum-tax-report',
-    'architecture',
-    'api-flows',
+    'ieum-system',
+    'ieum-report-flow',
     'ieum-showcase',
   ]);
   assert.equal(ieum.screens[ieum.cardPresentation.thumbnailScreenIndex].id, 'ieum-report-citation');
@@ -759,8 +759,19 @@ test('기업 법령 검토 엔진(이음) is typed as an API; 16:10 screenshots 
     assert.match(byId[id].imagePath, /^\/images\/law-info-engine\/ieum\//, id);
     assert.notEqual(byId[id].scrollable, true, `${id} is a 16:10 / 16:9 capture, not a long page`);
   }
-  for (const id of ['architecture', 'api-flows']) {
-    assert.equal(byId[id].scrollable, true, id);
+  assert.equal(byId['ieum-system'].title, '시스템 구성');
+  assert.equal(byId['ieum-report-flow'].title, '보고서 생성·검증 경로');
+  for (const [id, file] of [['ieum-system', 'system.svg'], ['ieum-report-flow', 'report-flow.svg']]) {
+    assert.equal(byId[id].imagePath, `/images/law-info-engine/ieum/${file}`, id);
+    assert.notEqual(byId[id].scrollable, true, `${id} is a 16:10 diagram`);
+    const svg = read(`public${byId[id].imagePath}`);
+    assert.match(svg, /viewBox="0 0 1600 1000"/, `${id} viewBox`);
+    assert.match(svg, /<title id="[^"]+">[^<]+<\/title>/, `${id} title`);
+    assert.match(svg, /<desc id="[^"]+">[^<]+<\/desc>/, `${id} desc`);
+  }
+  // The previous diagrams are no longer listed but stay on disk (content preservation).
+  for (const file of ['architecture.svg', 'api-flows.svg']) {
+    assert.ok(read(`public/images/law-info-engine/${file}`).length > 0, file);
   }
 });
 
