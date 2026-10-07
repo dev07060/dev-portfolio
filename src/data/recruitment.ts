@@ -170,8 +170,8 @@ export const recruitmentCases: RecruitmentCase[] = [
     sectionSummary:
       'Google ADK로 조사·작성·검증 단계를 나눈 에이전트가 국가법령 원문을 검색하고 열람합니다. 열람하지 않은 조문은 인용할 수 없고, 별도 대조 단계에서 근거와 어긋난 문장이 없을 때만 보고서를 검토 완료로 표시합니다.',
     figure: {
-      screenId: 'ieum-showcase',
-      caption: '검토 보고서와 근거 원문 패널. 모바일에서는 본문·근거 원문·대화를 탭으로 오갑니다.',
+      screenId: 'ieum-report-citation',
+      caption: '검토 보고서. 문장마다 붙은 근거 조문의 원문과 시행일을 오른쪽 패널에서 바로 확인합니다.',
     },
     statusLabel: '운영 중인 사안 검토 서비스',
     problem:
