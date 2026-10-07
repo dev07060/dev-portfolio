@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>구조 비교</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&amp;family=Noto+Serif+KR:wght@500;700&amp;family=Geist+Mono:wght@400;500&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#0f766e}a:hover{color:#0b5f58}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1160px; box-sizing: border-box; padding: 64px; background: #faf7f2; color: #1f1b16; font-family: 'Noto Sans KR', system-ui, sans-serif; display: flex; flex-direction: column; gap: 40px">
+
+<div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 40px">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<div style="font-family: 'Geist Mono', monospace; font-size: 13px; letter-spacing: 0.04em; color: #0f766e">glasses-dev.win · 정보 구조</div>
+<h1 style="margin: 0; font-family: 'Noto Serif KR', serif; font-weight: 700; font-size: 44px; line-height: 1.2">현재 구조와 제안 구조</h1>
+</div>
+<div style="display: flex; align-items: center; gap: 16px; font-size: 13px; color: #4a4339">
+<span style="font-family: 'Geist Mono', monospace; color: #756b60">블록 높이 = 상대적 비중</span>
+<span style="display: inline-flex; align-items: center; gap: 6px"><span style="padding: 3px 8px; border-radius: 999px; background: #f6e3dc; color: #9d4530; font-size: 12px; font-weight: 500">문제</span>현재 구조의 약점</span>
+<span style="display: inline-flex; align-items: center; gap: 6px"><span style="padding: 3px 8px; border-radius: 999px; background: #dcefec; color: #0b5f58; font-size: 12px; font-weight: 500">변경</span>제안에서 바뀐 점</span>
+</div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; align-items: start">
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; flex-direction: column; gap: 6px; padding-bottom: 14px; border-bottom: 1px solid #e8dfd0">
+<div style="font-family: 'Geist Mono', monospace; font-size: 12px; color: #756b60">현재 · 라이브</div>
+<div style="font-family: 'Noto Serif KR', serif; font-size: 24px; font-weight: 700">항목별 나열</div>
+<div style="font-size: 14px; color: #4a4339">사례·경력·프로젝트가 서로 같은 비중으로 이어집니다.</div>
+</div>
+<div style="height: 40px; box-sizing: border-box; padding: 0 16px; background: #ffffff; border: 1px solid #e8dfd0; border-radius: 10px; display: flex; align-items: center; font-size: 14px; font-weight: 500">내비게이션</div>
+<div style="height: 120px; box-sizing: border-box; padding: 14px 16px; background: #ffffff; border: 1px solid #e8dfd0; border-radius: 10px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 8px"><span style="font-size: 15px; font-weight: 700">히어로</span><span style="padding: 3px 8px; border-radius: 999px; background: #f6e3dc; color: #9d4530; font-size: 12px; font-weight: 500">같은 주장 3줄</span></div>
+<div style="font-size: 13px; line-height: 1.55; color: #4a4339">이름 · 역할 · 포지션 · 소개문 · 역량→프로젝트 4칸 · CTA 3개 · 근거 2개</div>
+<div style="display: flex; gap: 6px"><span style="padding: 3px 8px; border-radius: 999px; background: #f6e3dc; color: #9d4530; font-size: 12px; font-weight: 500">사례 이름을 미리 반복</span></div>
+</div>
+<div style="height: 130px; box-sizing: border-box; padding: 14px 16px; background: #ffffff; border: 1px solid #e8dfd0; border-radius: 10px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 8px"><span style="font-size: 15px; font-weight: 700">대표 기술 사례</span><span style="padding: 3px 8px; border-radius: 999px; background: #f6e3dc; color: #9d4530; font-size: 12px; font-weight: 500">연결이 안 보임</span></div>
+<div style="font-size: 13px; line-height: 1.55; color: #4a4339">mobile_rag_engine · Easy Contract Viewer · Swifty-law를 같은 크기 카드 3장으로 나란히 배치</div>
+</div>
+<div style="height: 190px; box-sizing: border-box; padding: 14px 16px; background: #ffffff; border: 1px solid #e8dfd0; border-radius: 10px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 8px"><span style="font-size: 15px; font-weight: 700">경력과 역할</span><span style="padding: 3px 8px; border-radius: 999px; background: #f6e3dc; color: #9d4530; font-size: 12px; font-weight: 500">가장 긴 섹션</span></div>
+<div style="font-size: 13px; line-height: 1.55; color: #4a4339">6개 회사를 각각 카드 + 대표 성과 + 펼치기로. 페이지에서 가장 많은 스크롤을 차지</div>
+</div>
+<div style="height: 100px; box-sizing: border-box; padding: 14px 16px; background: #ffffff; border: 1px solid #e8dfd0; border-radius: 10px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 8px"><span style="font-size: 15px; font-weight: 700">추가 프로젝트</span><span style="padding: 3px 8px; border-radius: 999px; background: #f6e3dc; color: #9d4530; font-size: 12px; font-weight: 500">ECV Server 분리</span></div>
+<div style="font-size: 13px; line-height: 1.55; color: #4a4339">ECV Server · HaruCheck · 피에트 트레이너 · Weedool</div>
+</div>
+<div style="height: 52px; box-sizing: border-box; padding: 0 16px; background: #ffffff; border: 1px solid #e8dfd0; border-radius: 10px; display: flex; align-items: center; font-size: 14px; font-weight: 500">연락 CTA</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px; padding: 20px; margin: -20px; background: #ffffff; border: 2px solid #0f766e; border-radius: 16px">
+<div style="display: flex; flex-direction: column; gap: 6px; padding-bottom: 14px; border-bottom: 1px solid #e8dfd0">
+<div style="display: flex; align-items: center; gap: 8px"><span style="font-family: 'Geist Mono', monospace; font-size: 12px; color: #0f766e">제안 A</span><span style="padding: 2px 8px; border-radius: 999px; background: #0f766e; color: #ffffff; font-size: 12px; font-weight: 500">추천</span></div>
+<div style="font-family: 'Noto Serif KR', serif; font-size: 24px; font-weight: 700">하나의 시스템 이야기</div>
+<div style="font-size: 14px; color: #4a4339">검색 엔진 하나가 앱·고객사·서버로 이어지는 흐름을 축으로 삼습니다.</div>
+</div>
+<div style="height: 40px; box-sizing: border-box; padding: 0 16px; background: #faf7f2; border: 1px solid #e8dfd0; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; font-size: 14px; font-weight: 500"><span>내비게이션 + 이력서 링크</span><span style="padding: 3px 8px; border-radius: 999px; background: #dcefec; color: #0b5f58; font-size: 12px; font-weight: 500">유지</span></div>
+<div style="height: 96px; box-sizing: border-box; padding: 14px 16px; background: #faf7f2; border: 1px solid #e8dfd0; border-radius: 10px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 8px"><span style="font-size: 15px; font-weight: 700">히어로</span><span style="padding: 3px 8px; border-radius: 999px; background: #dcefec; color: #0b5f58; font-size: 12px; font-weight: 500">압축</span></div>
+<div style="font-size: 13px; line-height: 1.55; color: #4a4339">이름 · 역할 · 소개 한 줄 · CTA + '포트폴리오 검색' UI</div>
+</div>
+<div style="height: 80px; box-sizing: border-box; padding: 14px 16px; background: #faf7f2; border: 1px solid #e8dfd0; border-radius: 10px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 8px"><span style="font-size: 15px; font-weight: 700">검색 결과 = 목차</span><span style="padding: 3px 8px; border-radius: 999px; background: #dcefec; color: #0b5f58; font-size: 12px; font-weight: 500">신규</span></div>
+<div style="font-size: 13px; line-height: 1.55; color: #4a4339">히어로 검색 UI의 결과 3건이 각 사례로 연결</div>
+</div>
+<div style="height: 132px; box-sizing: border-box; padding: 14px 16px; background: #faf7f2; border: 1px solid #e8dfd0; border-radius: 10px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 8px"><span style="font-size: 15px; font-weight: 700">사례 01 · mobile_rag_engine</span><span style="padding: 3px 8px; border-radius: 999px; background: #dcefec; color: #0b5f58; font-size: 12px; font-weight: 500">확대</span></div>
+<div style="font-size: 13px; line-height: 1.55; color: #4a4339">한 화면: 출처 있는 수치 3개 · ingest/query 한 문단 · 실제 앱 화면. 나머지 사례가 기대는 중심 사례</div>
+</div>
+<div style="height: 104px; box-sizing: border-box; padding: 14px 16px; background: #faf7f2; border: 1px solid #e8dfd0; border-radius: 10px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 8px"><span style="font-size: 15px; font-weight: 700">사례 02 · 03</span><span style="padding: 3px 8px; border-radius: 999px; background: #dcefec; color: #0b5f58; font-size: 12px; font-weight: 500">합침</span></div>
+<div style="font-size: 13px; line-height: 1.55; color: #4a4339">각각 한 화면 · ECV는 화면 3장으로 검색→요약→원문 · Swifty-law는 검색 화면 + 릴리스 게이트</div>
+</div>
+<div style="height: 80px; box-sizing: border-box; padding: 14px 16px; background: #faf7f2; border: 1px solid #e8dfd0; border-radius: 10px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 8px"><span style="font-size: 15px; font-weight: 700">경력 원장</span><span style="padding: 3px 8px; border-radius: 999px; background: #dcefec; color: #0b5f58; font-size: 12px; font-weight: 500">축소</span></div>
+<div style="font-size: 13px; line-height: 1.55; color: #4a4339">6칸 그리드, 시작 연도를 큰 숫자로 · 성과 1줄</div>
+</div>
+<div style="height: 56px; box-sizing: border-box; padding: 0 16px; background: #faf7f2; border: 1px solid #e8dfd0; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; font-size: 14px; font-weight: 500"><span>그 밖의 작업 → 경력 안 링크로</span><span style="padding: 3px 8px; border-radius: 999px; background: #dcefec; color: #0b5f58; font-size: 12px; font-weight: 500">삭제</span></div>
+<div style="height: 52px; box-sizing: border-box; padding: 0 16px; background: #faf7f2; border: 1px solid #e8dfd0; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; font-size: 14px; font-weight: 500"><span>연락</span><span style="padding: 3px 8px; border-radius: 999px; background: #dcefec; color: #0b5f58; font-size: 12px; font-weight: 500">유지</span></div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; flex-direction: column; gap: 6px; padding-bottom: 14px; border-bottom: 1px solid #e8dfd0">
+<div style="font-family: 'Geist Mono', monospace; font-size: 12px; color: #756b60">제안 B · 대안</div>
+<div style="font-family: 'Noto Serif KR', serif; font-size: 24px; font-weight: 700">두 트랙 분리</div>
+<div style="font-size: 14px; color: #4a4339">채용 공고 유형에 맞춰 읽을 트랙을 고르게 합니다.</div>
+</div>
+<div style="height: 40px; box-sizing: border-box; padding: 0 16px; background: #ffffff; border: 1px solid #e8dfd0; border-radius: 10px; display: flex; align-items: center; font-size: 14px; font-weight: 500">내비게이션</div>
+<div style="height: 120px; box-sizing: border-box; padding: 14px 16px; background: #ffffff; border: 1px solid #e8dfd0; border-radius: 10px; display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 8px"><span style="font-size: 15px; font-weight: 700">히어로 + 트랙 선택</span><span style="padding: 3px 8px; border-radius: 999px; background: #dcefec; color: #0b5f58; font-size: 12px; font-weight: 500">신규</span></div>
+<div style="display: flex; gap: 8px">
+<span style="flex-grow: 1; padding: 8px 10px; border-radius: 8px; background: #1f1b16; color: #faf7f2; font-size: 13px; font-weight: 500; text-align: center">Flutter 제품</span>
+<span style="flex-grow: 1; padding: 8px 10px; border-radius: 8px; border: 1px solid #1f1b16; font-size: 13px; font-weight: 500; text-align: center">RAG · 검색 백엔드</span>
+</div>
+<div style="font-size: 13px; color: #4a4339">URL 파라미터로 트랙을 미리 고른 링크 공유</div>
+</div>
+<div style="height: 170px; box-sizing: border-box; padding: 14px 16px; background: #ffffff; border: 1px solid #e8dfd0; border-radius: 10px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 8px"><span style="font-size: 15px; font-weight: 700">트랙별 사례</span><span style="padding: 3px 8px; border-radius: 999px; background: #dcefec; color: #0b5f58; font-size: 12px; font-weight: 500">재배치</span></div>
+<div style="font-size: 13px; line-height: 1.55; color: #4a4339">Flutter: ECV · 피에트 트레이너 · HaruCheck<br>RAG: mobile_rag_engine · Swifty-law · ECV Server</div>
+</div>
+<div style="height: 110px; box-sizing: border-box; padding: 14px 16px; background: #ffffff; border: 1px solid #e8dfd0; border-radius: 10px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 8px"><span style="font-size: 15px; font-weight: 700">트랙별 경력 하이라이트</span><span style="padding: 3px 8px; border-radius: 999px; background: #dcefec; color: #0b5f58; font-size: 12px; font-weight: 500">신규</span></div>
+<div style="font-size: 13px; line-height: 1.55; color: #4a4339">트랙에 맞는 성과만 골라 3줄</div>
+</div>
+<div style="height: 80px; box-sizing: border-box; padding: 14px 16px; background: #ffffff; border: 1px solid #e8dfd0; border-radius: 10px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 8px"><span style="font-size: 15px; font-weight: 700">전체 경력 원장</span><span style="padding: 3px 8px; border-radius: 999px; background: #dcefec; color: #0b5f58; font-size: 12px; font-weight: 500">축소</span></div>
+<div style="font-size: 13px; line-height: 1.55; color: #4a4339">A안과 같은 6줄 목록</div>
+</div>
+<div style="height: 52px; box-sizing: border-box; padding: 0 16px; background: #ffffff; border: 1px solid #e8dfd0; border-radius: 10px; display: flex; align-items: center; font-size: 14px; font-weight: 500">연락</div>
+</div>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1160}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

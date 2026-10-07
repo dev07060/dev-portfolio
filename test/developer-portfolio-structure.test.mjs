@@ -12,6 +12,24 @@ const read = (path) => {
   return existsSync(url) ? readFileSync(url, 'utf8') : '';
 };
 
+const v1SectionComponents = [
+  'HeroSection',
+  'PortfolioSearch',
+  'CareerSection',
+  'CaseLink',
+  'CaseLabel',
+  'CaseEngineSection',
+  'CaseContractViewerSection',
+  'CaseLawSection',
+  'ContactSection',
+];
+const v1CaseSections = ['CaseEngineSection', 'CaseContractViewerSection', 'CaseLawSection'];
+const readExisting = (path) => {
+  const source = read(path);
+  assert.notEqual(source, '', `${path} must exist`);
+  return source;
+};
+
 const unlistedFreelancerRoutePattern =
   /\/freelancer\/?(?=[?#\s'"`<>,;)}\]]|$)/;
 
@@ -59,42 +77,8 @@ test('home renders one deterministic portfolio without audience parsing', () => 
 
   assert.doesNotMatch(page, /searchParams|parseAudience|initialAudience/);
   assert.doesNotMatch(portfolio, /Audience|audienceContent|initialAudience/);
-  assert.match(portfolio, /<DeveloperHero/);
-});
-
-test('portfolio follows the approved recruitment section order', () => {
-  const portfolio = read('src/components/Portfolio.tsx');
-  const markers = [
-    '<RecruitmentNav',
-    '<DeveloperHero',
-    '<FeaturedWork',
-    '<ExperienceTimeline',
-    '<ProjectArchive',
-    '<RecruitmentCTA',
-    '<Footer',
-  ];
-
-  let previous = -1;
-  for (const marker of markers) {
-    const current = portfolio.indexOf(marker);
-    assert.ok(current > previous, `${marker} must appear in approved order`);
-    previous = current;
-  }
-});
-
-test('featured cases tell engine product backend story', () => {
-  const portfolioData = read('src/data/portfolio.ts');
-  const expected = [
-    "'local-mobile-rag-gemma'",
-    "'easy-contract-viewer'",
-    "'law-info-engine'",
-  ];
-
-  let previous = -1;
-  for (const marker of expected) {
-    const current = portfolioData.indexOf(marker);
-    assert.ok(current > previous, `${marker} must keep approved order`);
-    previous = current;
+  for (const section of ['<HeroSection', '<CareerSection', '<ContactSection']) {
+    assert.ok(portfolio.includes(section), `${section} must be rendered`);
   }
 });
 
@@ -126,31 +110,27 @@ test('Easy Contract Viewer Server copy is bounded by a committed private-source 
 
 test('API projects use a backend-specific type and label', () => {
   const projectTypes = read('src/types/project.ts');
-  const archive = read('src/components/widgets/ProjectArchive.tsx');
-  const modal = read('src/components/widgets/ProjectModal.tsx');
-  const card = read('src/components/widgets/ProjectCard.tsx');
-  const deviceFrame = read('src/components/widgets/DeviceFrame.tsx');
+  const modal = readExisting('src/components/widgets/ProjectModal.tsx');
+  const deviceFrame = readExisting('src/components/widgets/DeviceFrame.tsx');
 
   assert.match(projectTypes, /type: 'mobile' \| 'web' \| 'tablet' \| 'package' \| 'api'/);
-  assert.match(archive, /project\.type === 'api'[\s\S]*?return '백엔드 API'/);
   assert.match(modal, /project\.type === 'api'[\s\S]*?return '백엔드 API'/);
-  assert.match(card, /project\.type === 'api'[\s\S]*?label: '백엔드 API'/);
-  assert.match(
-    card,
-    /project\.type === 'package' \|\| project\.type === 'api'[\s\S]*?fit="contain"/
-  );
+  // A18: the frame header names the screen being shown, not a static '백엔드 아키텍처' label.
+  assert.doesNotMatch(deviceFrame, /백엔드 아키텍처|패키지 아키텍처/);
+  assert.match(deviceFrame, /data-screen-frame-label[\s\S]*?\{screen\?\.title \?\? project\.title\}/);
   assert.match(
     deviceFrame,
-    /project\.type === 'package' \|\| project\.type === 'api'[\s\S]*?백엔드 아키텍처/
+    /project\.type === 'api' && currentScreen\?\.scrollable[\s\S]*?<WebPresentationFrame/
   );
-  const packageFrameFallback = deviceFrame.slice(
-    deviceFrame.indexOf('{featuredScreen?.imagePath ? ('),
+  const screenFrame = deviceFrame.slice(
+    deviceFrame.indexOf('const ScreenFrame'),
     deviceFrame.indexOf('// Mobile Frame Component')
   );
   assert.match(
-    packageFrameFallback,
-    /\{isApi \? \([\s\S]*?<Server size=\{56\}[\s\S]*?<PackageIcon size=\{56\}/
+    screenFrame,
+    /project\.type === 'api' \? Server : project\.type === 'package' \? PackageIcon/
   );
+  assert.match(screenFrame, /<FallbackIcon size=\{56\}/);
 });
 
 test('Easy Contract Viewer Server uses source-backed architecture assets', () => {
@@ -191,27 +171,23 @@ test('additional projects expose the backend-first four-case selection and retai
   assert.ok(selection, 'additionalProjectIds must exist');
   assert.match(
     selection[1],
-    /'easy-contract-viewer-server'[\s\S]*?'haru-check'[\s\S]*?'fiet-fitness-trainer'[\s\S]*?'weedool'/
+    /'easy-contract-viewer-server',\s*'fiet-fitness-trainer',\s*'fiet-fitness-user',\s*'haru-check',\s*'weedool'/
   );
-  assert.doesNotMatch(selection[1], /motgo|fiet-fitness-user/);
+  assert.doesNotMatch(selection[1], /motgo/);
   assert.match(projects, /id: ["']motgo["']/);
   assert.match(projects, /id: ["']fiet-fitness-user["']/);
   assert.match(freelancerData, /import \{ additionalProjectIds \} from '.\/portfolio';/);
   assert.match(
     recruitment,
-    /company: '㈜피에트'[\s\S]*?relatedProjectIds: \['fiet-fitness-trainer'\]/
-  );
-  assert.doesNotMatch(
-    recruitment.match(/company: '㈜피에트'[\s\S]*?\n  \},/)?.[0] ?? '',
-    /fiet-fitness-user/
+    /company: '㈜피에트'[\s\S]*?relatedProjectIds: \['fiet-fitness-trainer', 'fiet-fitness-user'\]/
   );
   assert.match(
     portfolioData,
-    /additionalDescription:[\s\S]*?'Python 검색·요약 백엔드와 AI·BLE 제품화 경험을 보완하는 네 가지 사례입니다\.'/
+    /additionalDescription:[\s\S]*?'Python 검색·요약 백엔드와 AI·BLE 제품화 경험을 보완하는 다섯 가지 사례입니다\.'/
   );
   assert.match(
     freelancerData,
-    /additionalDescription:[\s\S]*?'FastAPI 백엔드와 AI·BLE 모바일 제품화 경험을 보여주는 네 가지 수행 사례입니다\.'/
+    /additionalDescription:[\s\S]*?'FastAPI 백엔드와 AI·BLE 모바일 제품화 경험을 보여주는 다섯 가지 수행 사례입니다\.'/
   );
 });
 
@@ -281,7 +257,7 @@ test('route configuration has no unused cross-route link abstraction', () => {
   const types = read('src/types/portfolio.ts');
   const portfolioData = read('src/data/portfolio.ts');
   const portfolio = read('src/components/Portfolio.tsx');
-  const navigation = read('src/components/widgets/RecruitmentNav.tsx');
+  const navigation = readExisting('src/components/portfolio/HeroSection.tsx');
   const freelancerData = read('src/data/freelancer.ts');
 
   for (const name of ['Capability', 'PortfolioCopy', 'PortfolioConfig']) {
@@ -298,14 +274,16 @@ test('route configuration has no unused cross-route link abstraction', () => {
 test('route pages inject presentation configuration into the shared portfolio', () => {
   const home = read('src/app/page.tsx');
   const portfolio = read('src/components/Portfolio.tsx');
-  const featured = read('src/components/widgets/FeaturedWork.tsx');
 
   assert.match(home, /import \{ recruitmentPortfolioConfig \}/);
   assert.match(home, /<Portfolio config=\{recruitmentPortfolioConfig\}/);
   assert.match(portfolio, /config: PortfolioConfig/);
   assert.match(portfolio, /const Portfolio = \(\{ config \}/);
   assert.doesNotMatch(portfolio, /from '@\/data\/recruitment'/);
-  assert.doesNotMatch(featured, /from '@\/data\/portfolio'/);
+  for (const name of v1SectionComponents) {
+    const source = readExisting(`src/components/portfolio/${name}.tsx`);
+    assert.doesNotMatch(source, /from '@\/data\/(?:portfolio|recruitment|freelancer)'/, name);
+  }
 });
 
 test('project selection fails closed with the missing id and selection context', async () => {
@@ -429,14 +407,14 @@ test('active source has no audience runtime', () => {
   const files = [
     'src/app/page.tsx',
     'src/components/Portfolio.tsx',
-    'src/components/widgets/ProjectCard.tsx',
-    'src/components/widgets/ProjectArchive.tsx',
+    ...v1SectionComponents.map((name) => `src/components/portfolio/${name}.tsx`),
+    'src/components/widgets/ProjectModal.tsx',
     'src/data/projects.ts',
     'src/types/project.ts',
   ];
 
   for (const file of files) {
-    const source = read(file);
+    const source = readExisting(file);
     assert.doesNotMatch(source, /Audience|audienceOverrides|audienceContent/);
   }
 });
@@ -444,14 +422,14 @@ test('active source has no audience runtime', () => {
 test('active source has no locale runtime', () => {
   const files = [
     'src/components/Portfolio.tsx',
-    'src/components/widgets/ProjectCard.tsx',
-    'src/components/widgets/ProjectArchive.tsx',
+    ...v1SectionComponents.map((name) => `src/components/portfolio/${name}.tsx`),
+    'src/components/widgets/ProjectModal.tsx',
     'src/data/projects.ts',
     'src/types/project.ts',
   ];
 
   for (const file of files) {
-    const source = read(file);
+    const source = readExisting(file);
     assert.doesNotMatch(source, /useLocale|LocaleText|LocalizedString|localize\(/);
   }
 });
@@ -487,11 +465,10 @@ test('recruitment data separates project assets from hiring evidence', () => {
   assert.doesNotMatch(data, /MAU 1만|5년 4개월|10–100×/);
 });
 
-test('featured cases distinguish public evidence and integrate supporting packages', () => {
+test('featured cases keep cards concise and integrate supporting packages in detail', () => {
   const types = read('src/types/recruitment.ts');
   const data = read('src/data/recruitment.ts');
-  const card = read('src/components/widgets/ProjectCard.tsx');
-  const modal = read('src/components/widgets/ProjectModal.tsx');
+  const modal = readExisting('src/components/widgets/ProjectModal.tsx');
   const portfolio = read('src/components/Portfolio.tsx');
   const widgets = read('src/components/widgets/index.ts');
   const standalone = read('src/components/widgets/OpenSourceBanner.tsx');
@@ -501,13 +478,11 @@ test('featured cases distinguish public evidence and integrate supporting packag
     data,
     /projectId: 'local-mobile-rag-gemma'[\s\S]*?supportingPackages: \[[\s\S]*?name: 'rag_engine_flutter'[\s\S]*?version: '0\.18\.3'/
   );
-  assert.match(card, /evidenceLinks\.length > 0/);
-  assert.match(card, /공개 근거가 있는 결과/);
-  assert.match(card, /핵심 결과/);
-  assert.doesNotMatch(card, /검증 가능한 결과/);
-  assert.match(card, /관련 공개 패키지/);
   assert.match(modal, /관련 공개 패키지/);
-  assert.match(modal, /supportingPackages/);
+  assert.match(
+    modal,
+    /recruitmentCase\?\.supportingPackages\?\.length[\s\S]*?<SupportingPackages items=\{recruitmentCase\.supportingPackages\}/
+  );
   assert.doesNotMatch(portfolio, /<OpenSourceBanner/);
   assert.doesNotMatch(widgets, /OpenSourceBanner/);
   assert.equal(standalone, '');
@@ -524,7 +499,7 @@ test('verified resume input populates six latest-first experience entries withou
     '한국와콤',
   ];
 
-  assert.match(data, /총 5년 5개월/);
+  assert.match(data, /label: '총 경력'[\s\S]*?value: '5년 5개월'/);
   assert.match(data, /resumeUrl: '\/oh-byeonghee-resume-ko\.pdf'/);
 
   let previous = -1;
@@ -534,7 +509,11 @@ test('verified resume input populates six latest-first experience entries withou
     previous = current;
   }
   assert.doesNotMatch(data, /\b01[016789][-.\s]?\d{3,4}[-.\s]?\d{4}\b/);
-  assert.doesNotMatch(data, /(?:휴대폰|주소|거주지|생년월일|희망\s*(?:연봉|급여|근무지)|병역)\s*[:：]?/);
+  assert.doesNotMatch(data, /\+82[-.\s]?1[016789]/);
+  assert.doesNotMatch(
+    data,
+    /(?:휴대폰\s*(?:번호\s*)?[:：]|핸드폰|전화\s*번호|연락처\s*[:：]|주소|거주지|생년월일|희망\s*(?:연봉|급여|근무지)|병역)\s*[:：]?/
+  );
 });
 
 test('public resume PDF is extractable and contains only approved public profile fields', () => {
@@ -561,31 +540,36 @@ test('public resume PDF is extractable and contains only approved public profile
   }
 
   assert.doesNotMatch(text, /\b01[016789][-.\s]?\d{3,4}[-.\s]?\d{4}\b/);
+  assert.doesNotMatch(text, /\+82[-.\s]?1[016789]/);
   assert.doesNotMatch(
     text,
-    /(?:휴대폰|주소|거주지|생년월일|학력|희망\s*(?:연봉|급여|근무지)|병역|보훈|장애)\s*[:：]?/
+    /(?:휴대폰|핸드폰|전화\s*번호|연락처\s*[:：]|주소|거주지|생년월일|학력|희망\s*(?:연봉|급여|근무지)|병역|보훈|장애)\s*[:：]?/
   );
   assert.doesNotMatch(text, /(?:연봉|급여)\s*[:：]?\s*[\d,]+\s*만?원/);
   assert.doesNotMatch(text, /Motgo|맛집 투표/);
 });
 
-test('experience timeline resolves project ids to readable linked project names', () => {
-  const timeline = read('src/components/widgets/ExperienceTimeline.tsx');
+test('career case links resolve project ids to readable project names', () => {
+  const caseLink = readExisting('src/components/portfolio/CaseLink.tsx');
+  const career = readExisting('src/components/portfolio/CareerSection.tsx');
   const portfolio = read('src/components/Portfolio.tsx');
 
-  assert.match(timeline, /projects: Project\[\]/);
-  assert.match(timeline, /projects\.find/);
-  assert.match(timeline, /relatedProject\.title/);
-  assert.match(timeline, /href=\{relatedProjectHref/);
-  assert.match(portfolio, /<ExperienceTimeline[\s\S]*?projects=\{projects\}/);
+  assert.match(caseLink, /projects: Project\[\]/);
+  assert.match(caseLink, /projects\.find/);
+  assert.match(caseLink, /const title = displayTitle\(project\)/);
+  assert.match(caseLink, /aria-label=\{`\$\{label\}, \$\{title\}`\}/);
+  assert.match(caseLink, /aria-label=\{`\$\{label\}, \$\{title\} 화면 보기`\}/);
+  assert.match(career, /<CaseLink[\s\S]*?projectId=\{projectId\}/);
+  assert.match(career, /item\.relatedProjectIds\.map/);
+  assert.match(portfolio, /<CareerSection[\s\S]*?projects=\{projects\}/);
 });
 
-test('experience timeline keeps one result visible and discloses the remaining detail', () => {
+test('career keeps one highlight visible and discloses summary and the rest', () => {
   const types = read('src/types/portfolio.ts');
   const portfolioData = read('src/data/portfolio.ts');
   const freelancerData = read('src/data/freelancer.ts');
   const portfolio = read('src/components/Portfolio.tsx');
-  const timeline = read('src/components/widgets/ExperienceTimeline.tsx');
+  const career = readExisting('src/components/portfolio/CareerSection.tsx');
 
   assert.match(types, /experienceDescription: string;/);
   assert.match(
@@ -598,18 +582,14 @@ test('experience timeline keeps one result visible and discloses the remaining d
   );
   assert.match(freelancerData, /experienceItems,/);
   assert.doesNotMatch(freelancerData, /freelancerExperienceItems|fietExperience/);
-  assert.match(
-    portfolio,
-    /<ExperienceTimeline[\s\S]*?description=\{copy\.experienceDescription\}/
-  );
-  assert.match(timeline, /description: string;/);
-  assert.match(timeline, /description=\{description\}/);
-  assert.match(timeline, /<details/);
-  assert.match(timeline, /<summary[\s\S]*?상세 경력 보기/);
-  assert.match(timeline, /item\.highlights\[0\]/);
-  assert.match(timeline, /item\.highlights\.slice\(1\)/);
-  assert.match(timeline, /item\.employmentType/);
-  assert.match(timeline, /eyebrow="경력"/);
+  assert.match(portfolio, /<CareerSection[\s\S]*?copy=\{copy\}/);
+  assert.match(career, /\{copy\.experienceDescription\}/);
+  assert.match(career, /const \[firstHighlight, \.\.\.restHighlights\] = item\.highlights/);
+  assert.match(career, /item\.cardHighlight \?\? firstHighlight/);
+  assert.match(career, /item\.cardHighlight \? item\.highlights : restHighlights/);
+  assert.match(career, /<details[\s\S]*?<summary[\s\S]*?자세히[\s\S]*?item\.summary/);
+  assert.match(career, /item\.employmentType/);
+  assert.match(career, />경력</);
 });
 
 test('active project copy uses the latest stable mobile_rag_engine release', () => {
@@ -647,7 +627,7 @@ test('case detail separates verification, outcomes, trade-offs, and non-goals', 
     '— 문제와 제약',
     '— 직접 설계·구현한 범위',
     '— 구조와 핵심 기술',
-    '— 테스트·평가·운영 검증',
+    '테스트·평가·운영 검증',
     '— 결과와 영향',
     '— 트레이드오프와 비목표',
   ];
@@ -662,15 +642,10 @@ test('case detail separates verification, outcomes, trade-offs, and non-goals', 
 test('active recruitment UI keeps decorative copy Korean', () => {
   const activeUi = [
     'src/data/recruitment.ts',
-    'src/components/widgets/DeveloperHero.tsx',
-    'src/components/widgets/FeaturedWork.tsx',
-    'src/components/widgets/ExperienceTimeline.tsx',
-    'src/components/widgets/ProjectArchive.tsx',
+    ...v1SectionComponents.map((name) => `src/components/portfolio/${name}.tsx`),
     'src/components/widgets/ProjectModal.tsx',
-    'src/components/widgets/RecruitmentCTA.tsx',
-    'src/components/widgets/Footer.tsx',
   ]
-    .map(read)
+    .map(readExisting)
     .join('\n');
 
   for (const pattern of [
@@ -690,99 +665,159 @@ test('active recruitment UI keeps decorative copy Korean', () => {
 test('hero owns compact project-backed capabilities without a standalone section', () => {
   const portfolio = read('src/components/Portfolio.tsx');
   const portfolioData = read('src/data/portfolio.ts');
-  const hero = read('src/components/widgets/DeveloperHero.tsx');
+  const hero = readExisting('src/components/portfolio/HeroSection.tsx');
   const widgets = read('src/components/widgets/index.ts');
   const standalone = read('src/components/widgets/CoreCapabilities.tsx');
 
-  assert.match(portfolio, /<DeveloperHero[\s\S]*?capabilities=\{capabilities\}/);
+  assert.match(portfolio, /<HeroSection[\s\S]*?capabilities=\{capabilities\}/);
   assert.doesNotMatch(portfolio, /<CoreCapabilities/);
   assert.match(hero, /capabilities: Capability\[\]/);
+  assert.match(hero, /aria-label=\{copy\.capabilityAriaLabel\}/);
   assert.match(hero, /capabilities\.map/);
+  assert.match(hero, /\{capability\.title\}[\s\S]*?\{capability\.evidence\}/);
+  assert.doesNotMatch(hero, /<span className="truncate font-mono/);
   assert.doesNotMatch(widgets, /CoreCapabilities/);
   assert.equal(standalone, '');
+  assert.match(portfolioData, /capabilityAriaLabel: '핵심 개발 역량 요약'/);
 
+  const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   for (const [title, evidence] of [
     ['Flutter 제품화·릴리스', 'Easy Contract Viewer'],
-    ['온디바이스 Retrieval/RAG', 'mobile_rag_engine'],
-    ['Rust FFI·네이티브 검색', 'mobile_rag_engine'],
-    ['검색 백엔드·평가 운영', 'Swifty-law'],
+    ['온디바이스 검색·Rust FFI', 'mobile_rag_engine'],
+    ['LLM 에이전트·검색 백엔드', '기업 법령 검토 엔진(이음)'],
   ]) {
-    assert.match(portfolioData, new RegExp(`title: '${title}'[\\s\\S]*?evidence: '${evidence}'`));
+    assert.match(portfolioData, new RegExp(`title: '${title}'[\\s\\S]*?evidence: '${escapeRegExp(evidence)}'`));
   }
+  assert.doesNotMatch(portfolioData, /title: 'Rust FFI·네이티브 검색'/);
 });
 
-test('additional projects use a compact archive without thumbnail cards', () => {
-  const archive = read('src/components/widgets/ProjectArchive.tsx');
-  const grid = read('src/components/widgets/ProjectGrid.tsx');
-  const portfolio = read('src/components/Portfolio.tsx');
-  const widgets = read('src/components/widgets/index.ts');
+test('hero separates career context from linked public evidence', () => {
+  const recruitment = read('src/data/recruitment.ts');
+  const hero = readExisting('src/components/portfolio/HeroSection.tsx');
 
-  assert.match(archive, /projects\.map/);
-  assert.match(archive, /techStack\.slice\(0, 3\)/);
-  assert.match(archive, /담당 범위/);
-  assert.match(archive, /상세 보기/);
-  assert.match(archive, /id=\{`project-\$\{project\.id\}`\}/);
-  assert.doesNotMatch(archive, /ScreenImage|ProjectThumbnail|imagePath/);
-  assert.match(portfolio, /<ProjectArchive/);
-  assert.doesNotMatch(portfolio, /<ProjectGrid/);
-  assert.match(widgets, /ProjectArchive/);
-  assert.doesNotMatch(widgets, /ProjectGrid/);
-  assert.equal(grid, '');
+  assert.match(recruitment, /label: '총 경력'[\s\S]*?value: '5년 5개월'/);
+  assert.match(hero, /profile\.proofItems\.map/);
+  assert.match(hero, /item\.evidence \? \([\s\S]*?<a href=\{item\.evidence\}/);
+  assert.match(hero, /\) : \([\s\S]*?monoTokens\(item\.value\)/);
 });
 
-test('recruitment flow has explicit component boundaries', () => {
-  for (const component of [
-    'RecruitmentNav',
-    'DeveloperHero',
-    'ExperienceTimeline',
-    'ProjectArchive',
-    'RecruitmentCTA',
-    'SectionContainer',
-    'SectionHeader',
-  ]) {
-    const source = read(`src/components/widgets/${component}.tsx`);
-    assert.ok(source.length > 0, `${component} must exist`);
+test('hero renders profile role and positioning alongside the v1 headline and intro', () => {
+  const hero = readExisting('src/components/portfolio/HeroSection.tsx');
+
+  assert.match(hero, /\{profile\.headline \?\? profile\.role\}/);
+  assert.match(hero, /hasHeadline && \([\s\S]*?\{profile\.role\}/);
+  assert.match(hero, /\{profile\.intro \?\? profile\.positioning\}/);
+  assert.match(hero, /profile\.intro && \([\s\S]*?\{profile\.positioning\}/);
+});
+
+test('case detail modal renders the former card summary as plain text', () => {
+  const modal = readExisting('src/components/widgets/ProjectModal.tsx');
+  const summary = modal.slice(modal.indexOf('const ProjectCardSummary'));
+
+  assert.match(modal, /<ProjectCardSummary project=\{project\} \/>[\s\S]*?— 문제와 제약/);
+  assert.match(summary, /project\.cardPresentation\?\.description/);
+  assert.match(summary, /project\.cardPresentation\?\.highlight/);
+  assert.match(summary, /project\.cardPresentation\?\.evidenceBadges \?\? project\.evidenceBadges/);
+  assert.match(summary, /\{description\}/);
+  assert.match(summary, /\{highlight\}/);
+  assert.match(summary, /evidenceBadges\.join\(' · '\)/);
+});
+
+test('case verification labels distinguish methods from verified results', () => {
+  const types = read('src/types/recruitment.ts');
+  const data = read('src/data/recruitment.ts');
+  const modal = read('src/components/widgets/ProjectModal.tsx');
+
+  assert.match(types, /verificationLabel\?: string;/);
+  assert.match(
+    data,
+    /projectId: 'easy-contract-viewer'[\s\S]*?verificationLabel: '검증 기준·방법'/
+  );
+  assert.match(
+    modal,
+    /recruitmentCase\.verificationLabel \?\? '테스트·평가·운영 검증'/
+  );
+});
+
+test('기업 법령 검토 엔진(이음) is typed as an API; captures and 16:10 diagrams are contained, old diagrams stay on disk', async () => {
+  const { projects } = await importTypeScriptModule('src/data/projects.ts');
+  const ieum = projects.find((project) => project.id === 'law-info-engine');
+  const byId = Object.fromEntries(ieum.screens.map((screen) => [screen.id, screen]));
+
+  assert.equal(ieum.type, 'api');
+  assert.deepEqual(ieum.screens.map((screen) => screen.id), [
+    'ieum-home',
+    'ieum-report-citation',
+    'ieum-open-checks',
+    'ieum-tax-report',
+    'ieum-system',
+    'ieum-report-flow',
+    'ieum-showcase',
+  ]);
+  assert.equal(ieum.screens[ieum.cardPresentation.thumbnailScreenIndex].id, 'ieum-report-citation');
+  for (const id of ['ieum-home', 'ieum-report-citation', 'ieum-open-checks', 'ieum-tax-report', 'ieum-showcase']) {
+    assert.match(byId[id].imagePath, /^\/images\/law-info-engine\/ieum\//, id);
+    assert.notEqual(byId[id].scrollable, true, `${id} is a 16:10 / 16:9 capture, not a long page`);
+  }
+  assert.equal(byId['ieum-system'].title, '시스템 구성');
+  assert.equal(byId['ieum-report-flow'].title, '보고서 생성·검증 경로');
+  for (const [id, file] of [['ieum-system', 'system.svg'], ['ieum-report-flow', 'report-flow.svg']]) {
+    assert.equal(byId[id].imagePath, `/images/law-info-engine/ieum/${file}`, id);
+    assert.notEqual(byId[id].scrollable, true, `${id} is a 16:10 diagram`);
+    const svg = read(`public${byId[id].imagePath}`);
+    assert.match(svg, /viewBox="0 0 1600 1000"/, `${id} viewBox`);
+    assert.match(svg, /<title id="[^"]+">[^<]+<\/title>/, `${id} title`);
+    assert.match(svg, /<desc id="[^"]+">[^<]+<\/desc>/, `${id} desc`);
+  }
+  // The previous diagrams are no longer listed but stay on disk (content preservation).
+  for (const file of ['architecture.svg', 'api-flows.svg']) {
+    assert.ok(read(`public/images/law-info-engine/${file}`).length > 0, file);
   }
 });
 
 test('empty experience and missing resume actions stay hidden', () => {
-  const timeline = read('src/components/widgets/ExperienceTimeline.tsx');
-  const navigation = read('src/components/widgets/RecruitmentNav.tsx');
+  const career = readExisting('src/components/portfolio/CareerSection.tsx');
+  const hero = readExisting('src/components/portfolio/HeroSection.tsx');
+  const contact = readExisting('src/components/portfolio/ContactSection.tsx');
   const portfolio = read('src/components/Portfolio.tsx');
-  const resumeSurfaces = [
-    read('src/components/widgets/DeveloperHero.tsx'),
-    read('src/components/widgets/RecruitmentCTA.tsx'),
-  ];
 
-  assert.match(timeline, /if \(!items\.length\) return null/);
-  assert.match(navigation, /hasExperience\s*&&/);
+  assert.match(career, /if \(!items\.length\) return null/);
+  assert.match(hero, /hasExperience && <a href="#career"/);
   assert.match(portfolio, /hasExperience=\{experienceItems\.length > 0\}/);
-  for (const source of resumeSurfaces) {
+  for (const source of [hero, contact]) {
     assert.match(source, /profile\.resumeUrl\s*&&/);
   }
 });
 
 test('app bar uses a portfolio brand label instead of repeating the hero name', () => {
-  const navigation = read('src/components/widgets/RecruitmentNav.tsx');
+  const hero = readExisting('src/components/portfolio/HeroSection.tsx');
   const portfolioData = read('src/data/portfolio.ts');
+  const appBar = hero.slice(hero.indexOf('<header'), hero.indexOf('</header>'));
 
-  assert.match(portfolioData, /navBrandLabel: 'DEV PORTFOLIO'/);
-  assert.match(navigation, /\{brandLabel\}/);
-  assert.doesNotMatch(navigation, />\s*오병희\s*</);
-  assert.match(navigation, /href="#about"/);
-  assert.doesNotMatch(navigation, /label: '소개'/);
-  assert.match(navigation, /label: '기술 사례', href: '#featured-work'/);
-  assert.match(navigation, /inline-flex min-h-11 items-center/);
+  assert.match(portfolioData, /navBrandLabel: '포트폴리오'/);
+  assert.match(appBar, /\{copy\.navBrandLabel\}/);
+  assert.doesNotMatch(appBar, /profile\.name|>\s*오병희\s*</);
+  assert.match(appBar, /href="#top"/);
+  assert.match(appBar, /aria-label="주요 메뉴"/);
+  assert.match(appBar, /href=\{firstCaseHref\}/);
+  assert.match(hero, /inline-flex min-h-11 items-center/);
 });
 
 test('project detail and presentation actions use Korean accessible names', () => {
-  const card = read('src/components/widgets/ProjectCard.tsx');
-  const modal = read('src/components/widgets/ProjectModal.tsx');
-  const device = read('src/components/widgets/DeviceFrame.tsx');
-  const presentation = read('src/components/widgets/PresentationOverlay.tsx');
+  const caseLink = readExisting('src/components/portfolio/CaseLink.tsx');
+  const modal = readExisting('src/components/widgets/ProjectModal.tsx');
+  const device = readExisting('src/components/widgets/DeviceFrame.tsx');
+  const presentation = readExisting('src/components/widgets/PresentationOverlay.tsx');
 
-  assert.match(card, /aria-haspopup="dialog"/);
-  assert.match(card, /\$\{title\} 프로젝트 상세 열기/);
+  const detailButton = readExisting('src/components/portfolio/CaseDetailButton.tsx');
+  assert.match(detailButton, /aria-haspopup="dialog"/);
+  assert.match(detailButton, /aria-label=\{`사례 자세히, \$\{title\}`\}/);
+  assert.match(detailButton, />\s*사례 자세히\s*<\/button>/);
+  for (const name of v1CaseSections) {
+    const section = readExisting(`src/components/portfolio/${name}.tsx`);
+    assert.match(section, /<CaseDetailButton project=\{project\} onOpenProject=\{onOpenProject\} \/>/, name);
+  }
+  assert.match(caseLink, /`\$\{label\}, \$\{title\} 화면 보기`/);
   assert.match(modal, /\$\{project\.title\} 프로젝트 상세 닫기/);
   assert.match(device, /\$\{title\} 프레젠테이션 열기/);
   assert.match(presentation, /aria-label="프레젠테이션 닫기"/);
@@ -802,16 +837,70 @@ test('modal order and screenshot regions follow reading and keyboard order', () 
   const details = modal.indexOf('<ProjectInfoDetails');
   assert.ok(header > -1 && header < visual, 'modal header must precede visual evidence');
   assert.ok(visual < details, 'visual evidence must precede detailed copy on mobile');
-  assert.match(device, /tabIndex=\{isScrollable \? 0 : undefined\}/);
-  assert.match(device, /role=\{isScrollable \? 'region' : undefined\}/);
+  const headerSource = modal.slice(modal.indexOf('const ProjectInfoHeader'), modal.indexOf('const ProjectInfoDetails'));
+  const detailsSource = modal.slice(modal.indexOf('const ProjectInfoDetails'), modal.indexOf('const ProjectCardSummary'));
+  assert.match(headerSource, /<ProjectCardSummary project=\{project\} \/>/, 'card summary must sit in the header, before the visual on mobile');
+  assert.doesNotMatch(detailsSource, /<ProjectCardSummary/);
+  // The screen list belongs to the screens region: frame → list → details.
+  const list = modal.indexOf('<ScreenList');
+  assert.ok(visual < list && list < details, 'screen list must follow the frame, before details');
+  assert.match(modal, /aria-current=\{isCurrent \? 'true' : undefined\}/);
+  assert.match(modal, /aria-live="polite"/);
+  // Long screenshots scroll inside a named, focusable, Lenis-free region.
+  const viewport = read('src/components/widgets/ScrollViewport.tsx');
+  assert.match(viewport, /role="region"/);
+  assert.match(viewport, /tabIndex=\{0\}/);
+  assert.match(viewport, /data-lenis-prevent/);
+  assert.match(viewport, /아래로 더 있음/);
   assert.match(device, /스크린샷 스크롤 영역/);
+  assert.match(device, /화면, 스크롤 가능/);
   assert.doesNotMatch(device, /scrollbar-hide/);
+  assert.doesNotMatch(viewport, /scrollbar-hide/);
 });
 
 test('unverified profile facts stay hidden and resume actions remain data-driven', () => {
   const recruitment = read('src/data/recruitment.ts');
-  const hero = read('src/components/widgets/DeveloperHero.tsx');
+  const hero = readExisting('src/components/portfolio/HeroSection.tsx');
+  const contact = readExisting('src/components/portfolio/ContactSection.tsx');
 
   assert.doesNotMatch(recruitment, /MAU 1만|5년 4개월|10–100×/);
-  assert.match(hero, /profile\.resumeUrl/);
+  for (const source of [hero, contact]) {
+    assert.match(source, /href=\{profile\.resumeUrl\}/);
+    assert.doesNotMatch(source, /oh-byeonghee-resume-ko\.pdf/);
+  }
+});
+
+test('information labels remain readable without tiny active text', () => {
+  for (const name of v1SectionComponents) {
+    const file = `src/components/portfolio/${name}.tsx`;
+    assert.doesNotMatch(readExisting(file), /text-\[(?:8|9|10|11)px\]/, file);
+  }
+  for (const file of [
+    'src/components/widgets/DeviceFrame.tsx',
+    'src/components/widgets/ProjectModal.tsx',
+  ]) {
+    assert.doesNotMatch(readExisting(file), /text-\[(?:8|9|10)px\]/, file);
+  }
+});
+
+test('contact section leads with a clear email action and stable Korean copy', () => {
+  const contact = readExisting('src/components/portfolio/ContactSection.tsx');
+  const css = read('src/app/globals.css');
+  const portfolioData = read('src/data/portfolio.ts');
+  const emailAction = contact.indexOf('href={buildMailHref(profile.email, copy.contactMailSubject)}');
+  const resumeAction = contact.indexOf('href={profile.resumeUrl}');
+
+  assert.match(contact, /<h2 id="contact-title"/);
+  assert.match(contact, /\{copy\.contactDescription\}/);
+  assert.match(css, /word-break:\s*keep-all/);
+  assert.ok(emailAction > -1 && emailAction < resumeAction);
+  assert.match(portfolioData, /contactCta: '이메일 보내기'/);
+  assert.match(
+    portfolioData,
+    /contactHeading:[\s\S]*?'모바일 제품과 로컬 검색 기술을 함께 다룰 개발자를 찾고 계신가요\?'/
+  );
+  assert.match(
+    portfolioData,
+    /contactDescription:[\s\S]*?'역할과 해결하려는 문제를 알려주세요\. 관련 경험과 구현 사례를 바탕으로 함께 이야기 나누겠습니다\.'/
+  );
 });

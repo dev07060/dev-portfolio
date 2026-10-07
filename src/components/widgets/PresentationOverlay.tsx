@@ -1,6 +1,6 @@
 'use client';
 
-import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ExternalLink, X } from 'lucide-react';
 import { useRef } from 'react';
 import { Project } from '@/types/project';
 import DeviceFrame from './DeviceFrame';
@@ -54,53 +54,67 @@ const PresentationOverlay = ({
     else if (dx > 0 && !isFirst) onPrevSlide();
   };
 
+  const currentScreen = project.screens[currentScreenIndex];
+  const canOpenOriginal =
+    (project.type === 'package' || project.type === 'api') &&
+    Boolean(currentScreen.imagePath);
+  const navButtonClass = (disabled: boolean) =>
+    `inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-full border border-white/20 text-ink transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marker ${
+      disabled
+        ? 'bg-white/[0.03] opacity-25 cursor-not-allowed'
+        : 'bg-white/10 hover:border-white/40 hover:bg-white/20'
+    }`;
+
   return (
     <div
       ref={dialogRef}
+      data-lenis-prevent
       role="dialog"
       aria-modal="true"
       aria-labelledby={titleId}
       aria-describedby={descriptionId}
       tabIndex={-1}
-      className="fixed inset-0 z-[60] bg-[#1f1b16] flex flex-col items-center justify-center animate-fade-in"
+      className="fixed inset-0 z-[60] bg-ground flex flex-col animate-fade-in"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      {/* Navigation Controls */}
-      <button
-        ref={closeButtonRef}
-        type="button"
-        onClick={onExit}
-        aria-label="프레젠테이션 닫기"
-        className="absolute right-6 top-6 z-50 inline-flex min-h-11 min-w-11 items-center justify-center rounded-full bg-white/10 p-3 text-white transition-colors hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#faf7f2]"
-      >
-        <X size={24} />
-      </button>
-
-      {/* Progress indicator (top center) */}
-      <div
-        aria-hidden="true"
-        className="absolute top-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-1.5"
-      >
-        {project.screens.map((_, i) => (
-          <span
-            key={i}
-            className={`h-1 rounded-full transition-all ${
-              i === currentScreenIndex
-                ? 'w-6 bg-[#faf7f2]'
-                : 'w-1.5 bg-white/30'
-            }`}
-          />
-        ))}
+      {/* Top bar: the single progress indicator (dots) and the close button */}
+      <div className="relative flex h-16 w-full shrink-0 items-center justify-center md:h-[72px]">
+        <div
+          aria-hidden="true"
+          data-presentation-progress
+          className="flex items-center gap-1.5"
+        >
+          {project.screens.map((_, i) => (
+            <span
+              key={i}
+              className={`h-1 rounded-full transition-all ${
+                i === currentScreenIndex ? 'w-6 bg-marker' : 'w-1.5 bg-white/30'
+              }`}
+            />
+          ))}
+        </div>
+        <button
+          ref={closeButtonRef}
+          type="button"
+          onClick={onExit}
+          aria-label="프레젠테이션 닫기"
+          className="absolute right-3 top-1/2 z-50 inline-flex min-h-11 min-w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-ink transition-colors hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marker md:right-6"
+        >
+          <X size={22} aria-hidden="true" />
+        </button>
       </div>
 
+      {/* Progress for screen readers only — no visible progress numbers. */}
       <p aria-live="polite" aria-atomic="true" className="sr-only">
-        화면 {currentScreenIndex + 1} / {project.screens.length}:{' '}
-        {project.screens[currentScreenIndex].title}
+        {`화면 ${currentScreenIndex + 1} / ${project.screens.length}, ${currentScreen.title}`}
       </p>
 
-      {/* Main Visual Area */}
-      <div className="flex-1 min-h-0 w-full flex items-center justify-center px-3 pt-12 pb-2 md:p-10 overflow-hidden">
+      {/* Image stage: a size container, so frames can use all of its height (cqh). */}
+      <div
+        data-presentation-stage
+        className="flex min-h-0 w-full flex-1 items-center justify-center overflow-hidden px-3 pb-3 md:px-10 md:pb-4 [container-type:size]"
+      >
         <DeviceFrame
           project={project}
           onEnterPresentation={() => {}}
@@ -109,79 +123,61 @@ const PresentationOverlay = ({
         />
       </div>
 
-      {/* Unified Navigation Bar - Below Device Frame */}
-      <div className="w-full shrink-0 flex items-center justify-center gap-4 md:gap-6 py-3 md:py-5">
-        <button
-          type="button"
-          onClick={onPrevSlide}
-          disabled={isFirst}
-          aria-label="이전 화면"
-          className={`inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-white/20 p-3 text-white transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#faf7f2] md:p-3.5 ${
-            isFirst
-              ? 'bg-white/[0.03] opacity-25 cursor-not-allowed'
-              : 'bg-white/10 hover:bg-white/20 hover:border-white/40 hover:scale-105 active:scale-95'
-          }`}
-        >
-          <ChevronLeft size={24} className="md:size-7" />
-        </button>
+      {/* Compact bottom bar: prev · title + one-line description · original · next */}
+      <div
+        data-presentation-bar
+        className="w-full shrink-0 border-t border-white/10 bg-surface px-3 py-2 md:px-6 md:py-3"
+      >
+        <div className="mx-auto flex max-w-5xl items-center gap-3 md:gap-5">
+          <button
+            type="button"
+            onClick={onPrevSlide}
+            disabled={isFirst}
+            aria-label="이전 화면"
+            className={navButtonClass(isFirst)}
+          >
+            <ChevronLeft size={22} aria-hidden="true" />
+          </button>
 
-        <span className="text-white/90 text-sm md:text-base font-mono min-w-[70px] md:min-w-[80px] text-center tracking-wider">
-          {String(currentScreenIndex + 1).padStart(2, '0')} / {String(project.screens.length).padStart(2, '0')}
-        </span>
+          <div className="min-w-0 flex-1 text-center">
+            <h2
+              id={titleId}
+              className="truncate text-base font-semibold text-ink md:text-lg"
+            >
+              {currentScreen.title}
+            </h2>
+            <p
+              id={descriptionId}
+              title={currentScreen.desc}
+              className="truncate text-[13px] leading-relaxed text-sub md:text-sm"
+            >
+              {currentScreen.desc}
+            </p>
+          </div>
 
-        <button
-          type="button"
-          onClick={onNextSlide}
-          disabled={isLast}
-          aria-label="다음 화면"
-          className={`inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-white/20 p-3 text-white transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#faf7f2] md:p-3.5 ${
-            isLast
-              ? 'bg-white/[0.03] opacity-25 cursor-not-allowed'
-              : 'bg-white/10 hover:bg-white/20 hover:border-white/40 hover:scale-105 active:scale-95'
-          }`}
-        >
-          <ChevronRight size={24} className="md:size-7" />
-        </button>
-      </div>
+          {canOpenOriginal && (
+            <a
+              href={currentScreen.imagePath}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${currentScreen.title} 원본 이미지 새 창에서 열기`}
+              className="link-marker inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center gap-1.5 text-[13px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marker"
+            >
+              <span className="hidden sm:inline">원본 이미지 열기</span>
+              <ExternalLink size={13} aria-hidden="true" />
+            </a>
+          )}
 
-      {/* Bottom Caption Area */}
-      <CaptionArea
-        project={project}
-        currentScreenIndex={currentScreenIndex}
-        titleId={titleId}
-        descriptionId={descriptionId}
-      />
-    </div>
-  );
-};
-
-// Bottom Caption Component
-const CaptionArea = ({
-  project,
-  currentScreenIndex,
-  titleId,
-  descriptionId,
-}: {
-  project: Project;
-  currentScreenIndex: number;
-  titleId: string;
-  descriptionId: string;
-}) => {
-  return (
-    <div className="w-full shrink-0 bg-[#1f1b16]/90 backdrop-blur-md p-3 md:p-8 border-t border-white/10 text-center">
-      <div className="max-w-4xl mx-auto">
-        <h2
-          id={titleId}
-          className="font-serif text-lg md:text-3xl font-light text-[#faf7f2] mb-1 md:mb-2"
-        >
-          {project.screens[currentScreenIndex].title}
-        </h2>
-        <p
-          id={descriptionId}
-          className="text-[#cfc4b2] text-xs md:text-base leading-relaxed"
-        >
-          {project.screens[currentScreenIndex].desc}
-        </p>
+          <button
+            type="button"
+            onClick={onNextSlide}
+            disabled={isLast}
+            aria-label="다음 화면"
+            className={navButtonClass(isLast)}
+          >
+            <ChevronRight size={22} aria-hidden="true" />
+          </button>
+        </div>
       </div>
     </div>
   );

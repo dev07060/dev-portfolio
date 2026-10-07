@@ -1,0 +1,79 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "Main.dc.html": {
+      "h": 1160,
+      "title": "구조 비교 · 현재 vs 제안",
+      "w": 1440,
+      "x": 0,
+      "y": 0
+    },
+    "Direction.dc.html": {
+      "h": 1120,
+      "title": "레퍼런스 · 디자인 방향",
+      "w": 1440,
+      "x": 0,
+      "y": 1280
+    },
+    "MobileHero.dc.html": {
+      "h": 844,
+      "title": "확정안 v1 · 모바일 첫 화면",
+      "w": 390,
+      "x": 3040,
+      "y": 0
+    },
+    "MobileMap.dc.html": {
+      "h": 844,
+      "title": "확정안 v1 · 모바일 사례 #1",
+      "w": 390,
+      "x": 3510,
+      "y": 0
+    },
+    "Proposal.dc.html": {
+      "expand": "fill",
+      "is_interactive": true,
+      "h": 5400,
+      "title": "확정안 v1 · 데스크톱 페이지",
+      "w": 1440,
+      "x": 1520,
+      "y": 0
+    },
+    "Spec.dc.html": {
+      "expand": "fill",
+      "h": 8200,
+      "title": "구현 명세 · 확정안 v1",
+      "w": 1440,
+      "x": 3980,
+      "y": 0
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-10-01T17:35:04.593Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "view": "canvas"
+  },
+  "notes": {
+    "rowTitle": {
+      "kind": "title1",
+      "maxW": 5420,
+      "text": "glasses-dev.win — 구조 재설계",
+      "w": 240,
+      "x": 0,
+      "y": -300
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Direction.dc.html",
+    "Proposal.dc.html",
+    "MobileHero.dc.html",
+    "MobileMap.dc.html",
+    "Spec.dc.html"
+  ],
+  "pages": [],
+  "title": "Portfolio Restructure"
+}

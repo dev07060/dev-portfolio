@@ -24,6 +24,9 @@ export interface PortfolioCopy {
   additionalDescription: string;
   contactHeading: string;
   contactDescription: string;
+  careerHeading: string;
+  otherProjectsLabel: string;
+  contactHeadingHighlight?: string;
 }
 
 export interface PortfolioConfig {

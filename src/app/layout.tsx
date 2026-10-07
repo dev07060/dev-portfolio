@@ -1,35 +1,17 @@
 import type { Metadata } from 'next';
-import {
-  Fraunces,
-  Geist_Mono,
-  Noto_Sans_KR,
-  Noto_Serif_KR,
-} from 'next/font/google';
+import { IBM_Plex_Mono, IBM_Plex_Sans_KR } from 'next/font/google';
 import './globals.css';
 
-const notoSansKr = Noto_Sans_KR({
-  variable: '--font-noto-sans-kr',
-  weight: 'variable',
+const plexSansKr = IBM_Plex_Sans_KR({
+  variable: '--font-plex-sans-kr',
+  weight: ['400', '500', '600', '700'],
   subsets: ['latin'],
   display: 'swap',
 });
 
-const notoSerifKr = Noto_Serif_KR({
-  variable: '--font-noto-serif-kr',
-  weight: 'variable',
-  subsets: ['latin'],
-  display: 'swap',
-});
-
-const fraunces = Fraunces({
-  variable: '--font-fraunces',
-  subsets: ['latin'],
-  axes: ['opsz', 'SOFT'],
-  display: 'swap',
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
+const plexMono = IBM_Plex_Mono({
+  variable: '--font-plex-mono',
+  weight: ['400', '500'],
   subsets: ['latin'],
   display: 'swap',
 });
@@ -46,14 +28,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="ko"
-      className={`${notoSansKr.variable} ${notoSerifKr.variable} ${fraunces.variable} ${geistMono.variable}`}
-    >
+    <html lang="ko" className={`${plexSansKr.variable} ${plexMono.variable}`}>
       <body className="antialiased">
         <a
           href="#main-content"
-          className="skip-link sr-only z-[100] rounded-md bg-[#1f1b16] px-4 py-3 text-sm font-semibold text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
+          className="skip-link sr-only z-[100] rounded-md bg-marker px-4 py-3 text-sm font-semibold text-ground focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
         >
           본문으로 건너뛰기
         </a>

@@ -1,21 +1,33 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, type ComponentType } from 'react';
 import type { Project } from '@/types/project';
 import type { PortfolioConfig } from '@/types/portfolio';
 import { projects } from '@/data/projects';
 import { resolveProjectIds } from '@/data/resolveProjectIds';
+import { heroSearchDocuments } from '@/data/searchDocuments';
 import {
-  RecruitmentNav,
-  DeveloperHero,
-  FeaturedWork,
-  ExperienceTimeline,
-  ProjectArchive,
-  RecruitmentCTA,
-  Footer,
-  ProjectModal,
-  PresentationOverlay,
-} from './widgets';
+  buildCaseOrder,
+  caseAnchorId,
+  findOtherProjectIds,
+  resolveSearchDocuments,
+} from '@/lib/caseOrder';
+import { useSmoothScroll } from '@/lib/useSmoothScroll';
+import { ProjectModal, PresentationOverlay } from './widgets';
+import FloatingHeader from './portfolio/FloatingHeader';
+import HeroSection from './portfolio/HeroSection';
+import CareerSection from './portfolio/CareerSection';
+import CaseEngineSection from './portfolio/CaseEngineSection';
+import CaseContractViewerSection from './portfolio/CaseContractViewerSection';
+import CaseLawSection from './portfolio/CaseLawSection';
+import ContactSection from './portfolio/ContactSection';
+import type { CaseSectionProps } from './portfolio/caseSectionTypes';
+
+const caseSections: Record<string, ComponentType<CaseSectionProps>> = {
+  'local-mobile-rag-gemma': CaseEngineSection,
+  'easy-contract-viewer': CaseContractViewerSection,
+  'law-info-engine': CaseLawSection,
+};
 
 interface PortfolioProps {
   config: PortfolioConfig;
@@ -154,49 +166,84 @@ const Portfolio = ({ config }: PortfolioProps) => {
     };
   }, [selectedProject]);
 
+  // Lenis smooth scroll (off under reduced motion); paused while the modal/overlay is open.
+  useSmoothScroll(selectedProject !== null);
+
+  const openProjectById = (projectId: string) => {
+    const project = projects.find((candidate) => candidate.id === projectId);
+    if (project) handleProjectClick(project);
+  };
+
+  const caseOrder = buildCaseOrder(
+    featuredProjects.map((project) => project.id),
+    additionalProjects.map((project) => project.id)
+  );
+  const otherProjectIds = findOtherProjectIds(caseOrder, featuredProjects.length, [
+    ...experienceItems.flatMap((item) => item.relatedProjectIds),
+    ...cases.flatMap((item) => item.relatedProjectIds ?? []),
+  ]);
+  const heroDocuments = resolveSearchDocuments(heroSearchDocuments, featuredProjectIds);
+  const firstCaseHref = `#${caseAnchorId(1)}`;
+
   return (
     <>
       <div
         inert={selectedProject ? true : undefined}
         aria-hidden={selectedProject ? true : undefined}
-        className="min-h-screen bg-[#faf7f2] text-[#1f1b16] font-sans outline-none"
+        className="min-h-screen bg-ground font-sans text-ink outline-none"
       >
-        <RecruitmentNav
-          hasExperience={experienceItems.length > 0}
+        <FloatingHeader
           brandLabel={copy.navBrandLabel}
+          firstCaseHref={firstCaseHref}
+          hasExperience={experienceItems.length > 0}
+          resumeUrl={profile.resumeUrl}
+          heroHeaderId="hero-header"
         />
-
         <main id="main-content" tabIndex={-1} className="outline-none">
-          <DeveloperHero
+          <HeroSection
             profile={profile}
+            copy={copy}
             capabilities={capabilities}
-            copy={copy}
+            searchDocuments={heroDocuments}
+            firstCaseHref={firstCaseHref}
+            hasExperience={experienceItems.length > 0}
+            onOpenProject={openProjectById}
           />
 
-          <FeaturedWork
-            projects={featuredProjects}
-            cases={cases}
-            copy={copy}
-            onProjectClick={handleProjectClick}
-          />
-
-          <ExperienceTimeline
+          <CareerSection
             items={experienceItems}
+            copy={copy}
+            resumeUrl={profile.resumeUrl}
+            caseOrder={caseOrder}
+            featuredCount={featuredProjects.length}
             projects={projects}
-            description={copy.experienceDescription}
+            otherProjectIds={otherProjectIds}
+            onOpenProject={openProjectById}
           />
 
-          <ProjectArchive
-            projects={additionalProjects}
-            onProjectClick={handleProjectClick}
-            heading={copy.additionalHeading}
-            description={copy.additionalDescription}
-          />
+          {featuredProjects.map((project, index) => {
+            const Section = caseSections[project.id];
+            const recruitmentCase = cases.find((item) => item.projectId === project.id);
+            if (!Section || !recruitmentCase) {
+              throw new Error(`Missing case section or case data for "${project.id}"`);
+            }
+            return (
+              <Section
+                key={project.id}
+                anchorId={caseAnchorId(index + 1)}
+                caseNumber={index + 1}
+                project={project}
+                recruitmentCase={recruitmentCase}
+                caseOrder={caseOrder}
+                featuredCount={featuredProjects.length}
+                projects={projects}
+                onOpenProject={openProjectById}
+              />
+            );
+          })}
 
-          <RecruitmentCTA profile={profile} copy={copy} />
+          <ContactSection profile={profile} copy={copy} />
         </main>
-
-        <Footer />
       </div>
 
       {/* Project Detail Modal */}
@@ -211,6 +258,7 @@ const Portfolio = ({ config }: PortfolioProps) => {
           currentScreenIndex={currentScreenIndex}
           onClose={closeModal}
           onEnterPresentation={enterPresentationMode}
+          onSelectScreen={setCurrentScreenIndex}
         />
       )}
 

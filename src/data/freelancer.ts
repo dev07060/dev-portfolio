@@ -13,10 +13,12 @@ const freelancerProfile: RecruitmentProfile = {
   position: '크로스플랫폼 앱 · Native 연동 · Retrieval/RAG · FastAPI',
   positioning: '기존 모바일 제품의 고도화부터 문서·PDF 검색 기능과 검색 백엔드까지 구현합니다.',
   resumeUrl: undefined,
+  headline: undefined,
+  intro: undefined,
 };
 
 const freelancerCopy: PortfolioCopy = {
-  navBrandLabel: 'FREELANCE PORTFOLIO',
+  navBrandLabel: '프리랜서 포트폴리오',
   heroEyebrow: '프리랜서 프로젝트 포트폴리오',
   capabilityAriaLabel: '의뢰 가능 범위 요약',
   primaryCta: '대표 수행 사례',
@@ -28,8 +30,11 @@ const freelancerCopy: PortfolioCopy = {
   experienceDescription: '최신순으로 역할과 대표 성과를 요약했습니다.',
   additionalHeading: '추가 프로젝트',
   additionalDescription:
-    'FastAPI 백엔드와 AI·BLE 모바일 제품화 경험을 보여주는 네 가지 수행 사례입니다.',
+    'FastAPI 백엔드와 AI·BLE 모바일 제품화 경험을 보여주는 다섯 가지 수행 사례입니다.',
   contactHeading: '모바일 제품이나 문서 검색 기능을 개발·개선하려고 하시나요?',
+  careerHeading: '5년 5개월, 여섯 팀',
+  otherProjectsLabel: '그 밖의 프로젝트',
+  contactHeadingHighlight: '모바일 제품이나 문서 검색 기능',
   contactDescription:
     '현재 구조와 해결하려는 문제를 알려주시면 직접 수행 가능한 범위와 검증 기준을 관련 구현 근거로 답변드리겠습니다.',
 };
@@ -48,8 +53,8 @@ const freelancerCapabilities: Capability[] = [
     evidence: 'Easy Contract Viewer',
   },
   {
-    title: 'FastAPI 검색 백엔드·평가',
-    evidence: 'Swifty-law',
+    title: 'FastAPI·LLM 에이전트 백엔드',
+    evidence: '기업 법령 검토 엔진(이음)',
   },
 ];
 
