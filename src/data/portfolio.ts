@@ -52,8 +52,8 @@ export const capabilities: Capability[] = [
     evidence: 'mobile_rag_engine',
   },
   {
-    title: '검색 백엔드·평가 운영',
-    evidence: 'Swifty-law',
+    title: 'LLM 에이전트·검색 백엔드',
+    evidence: '기업 법령 검토 엔진(이음)',
   },
 ];
 

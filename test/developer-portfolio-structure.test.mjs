@@ -680,12 +680,13 @@ test('hero owns compact project-backed capabilities without a standalone section
   assert.equal(standalone, '');
   assert.match(portfolioData, /capabilityAriaLabel: '핵심 개발 역량 요약'/);
 
+  const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   for (const [title, evidence] of [
     ['Flutter 제품화·릴리스', 'Easy Contract Viewer'],
     ['온디바이스 검색·Rust FFI', 'mobile_rag_engine'],
-    ['검색 백엔드·평가 운영', 'Swifty-law'],
+    ['LLM 에이전트·검색 백엔드', '기업 법령 검토 엔진(이음)'],
   ]) {
-    assert.match(portfolioData, new RegExp(`title: '${title}'[\\s\\S]*?evidence: '${evidence}'`));
+    assert.match(portfolioData, new RegExp(`title: '${title}'[\\s\\S]*?evidence: '${escapeRegExp(evidence)}'`));
   }
   assert.doesNotMatch(portfolioData, /title: 'Rust FFI·네이티브 검색'/);
 });
@@ -738,7 +739,7 @@ test('case verification labels distinguish methods from verified results', () =>
   );
 });
 
-test('Swifty-law is typed as an API while scrollable product screens stay scrollable', () => {
+test('기업 법령 검토 엔진(이음) is typed as an API while scrollable product screens stay scrollable', () => {
   const projects = read('src/data/projects.ts');
   const swiftyStart = projects.indexOf('id: "law-info-engine"');
   const swiftyEnd = projects.indexOf('\n  },', swiftyStart);

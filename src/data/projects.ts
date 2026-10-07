@@ -80,38 +80,38 @@ export const projects: Project[] = [
   {
     id: "law-info-engine",
     type: "api",
-    title: "Swifty-law",
-    subtitle: "인용 기반 한국 법령 검색 RAG 엔진",
+    title: "기업 법령 검토 엔진(이음)",
+    subtitle: "공식 조문·판례를 근거로 사안을 검토하는 법령 에이전트",
     description:
-      "공식 법령정보를 인용 가능한 단위로 정규화·색인하고 hybrid retrieval로 검색하는 사내 공통 엔진. LLM은 검색된 공식 chunk와 citation 안에서만 답변합니다.",
+      "사안과 질문을 받으면 쟁점을 나누고, 국가법령 원문을 직접 열어 확인한 근거로 검토 보고서를 쓰는 서비스입니다. 열람하지 않은 조문은 인용할 수 없습니다.",
     implementationPoints: [
-      "Bronze/Silver/Gold 3계층 레이크로 원본 API에서 청크·임베딩을 언제든 재생성 가능하게 설계.",
-      "SBERT dense + Milvus BM25 sparse를 RRFRanker(60)로 융합하고 corpus 기반 질의 확장 적용.",
-      "국가법령 Open API quota를 일일 한도·최소 간격·지수 백오프 재시도로 1급 시민으로 보호.",
-      "golden_retrieval_v1(74 dev / 30 holdout) nDCG@5 / MRR@10 / Recall@10 회귀 게이트로 릴리스 차단.",
+      "Google ADK Workflow로 조사 → 초안 작성 → 독립 답변 → 대조·수정 단계를 나눈 보고서 에이전트를 구현했습니다.",
+      "에이전트 도구를 검색(후보)과 열람(원문)으로 분리해, 실제로 연 조문만 인용할 수 있게 했습니다.",
+      "보고서 위 후속 대화 에이전트는 매 턴을 제출 도구 호출로 끝내고, 도구 호출 수와 요청 시간을 제한합니다.",
+      "판례는 참조조문이 이미 확인한 조문을 가리키는 대법원 판결만 후보로 삼습니다.",
     ],
     cardPresentation: {
       variant: "architecture",
       thumbnailScreenIndex: 3,
       description:
-        "Bronze/Silver/Gold 레이크, Milvus dense/sparse ranking, citation metadata, evaluation gate를 갖춘 hybrid retrieval 백엔드입니다.",
+        "공식 조문을 직접 열어 확인한 근거로만 보고서를 쓰는 Google ADK 기반 법령 검토 에이전트입니다.",
       evidenceBadges: [
+        "Google ADK",
+        "Gemini · Vertex AI",
         "FastAPI",
+        "PostgreSQL",
         "Milvus",
-        "RRFRanker",
-        "Bronze/Silver/Gold",
-        "evaluation",
       ],
       highlight:
-        "golden retrieval set 기준 nDCG@5 / MRR@10 / Recall@10으로 릴리스를 게이트했습니다.",
+        "에이전트 워크플로·도구 설계, 근거 검증, 법령 데이터·검색 파이프라인을 직접 설계하고 구현했습니다.",
     },
-    techStack: ["Python", "FastAPI", "PostgreSQL", "Milvus", "SBERT", "Docker"],
+    techStack: ["Python", "FastAPI", "Google ADK", "Gemini (Vertex AI)", "PostgreSQL", "Milvus", "Docker"],
     color: "from-amber-500 to-orange-600",
     iconType: "scale",
     screens: [
       {
         id: "api-landing",
-        imageAlt: "Swifty-law API 진입 화면",
+        imageAlt: "기업 법령 검토 엔진(이음) API 진입 화면",
         title: "API 진입 화면",
         desc: "law-api.swifty.kr 개발자 진입 화면 — endpoint 인덱스와 health 표면.",
         imagePath: "/images/law-info-engine/api-landing.png",
@@ -119,7 +119,7 @@ export const projects: Project[] = [
       },
       {
         id: "search-ui",
-        imageAlt: "Swifty-law 검색 화면",
+        imageAlt: "기업 법령 검토 엔진(이음) 검색 화면",
         title: "검색 화면",
         desc: "실제 서비스 검색 화면 — 자연어 질의로 조문 단위 결과를 돌려줍니다.",
         imagePath: "/images/law-info-engine/search-ui.png",
@@ -127,7 +127,7 @@ export const projects: Project[] = [
       },
       {
         id: "search-ui-full",
-        imageAlt: "Swifty-law 검색 결과·인용",
+        imageAlt: "기업 법령 검토 엔진(이음) 검색 결과·인용",
         title: "검색 결과·인용",
         desc: "모든 결과에 법령명·조문경로·시행일·출처 URL이 함께 노출됩니다.",
         imagePath: "/images/law-info-engine/search-ui-full.png",
@@ -135,7 +135,7 @@ export const projects: Project[] = [
       },
       {
         id: "architecture",
-        imageAlt: "Swifty-law 시스템 구성",
+        imageAlt: "기업 법령 검토 엔진(이음) 시스템 구성",
         title: "시스템 구성",
         desc: "5계층 흐름 — 원천 수집, 데이터 정제, 색인·지식그래프, 분석, API 노출.",
         imagePath: "/images/law-info-engine/architecture.svg",
@@ -143,7 +143,7 @@ export const projects: Project[] = [
       },
       {
         id: "api-flows",
-        imageAlt: "Swifty-law 검색·분석 경로",
+        imageAlt: "기업 법령 검토 엔진(이음) 검색·분석 경로",
         title: "검색·분석 경로",
         desc: "단순 조문 검색 경로와 쟁점 분해 + 지식그래프 확장 근거 경로의 단계별 흐름.",
         imagePath: "/images/law-info-engine/api-flows.svg",
@@ -153,7 +153,7 @@ export const projects: Project[] = [
     links: [
       {
         label: "서비스 보기",
-        url: "https://law-api.swifty.kr/search-info/",
+        url: "https://law-api.swifty.kr/",
       },
       {
         label: "API 문서",

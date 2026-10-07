@@ -53,8 +53,8 @@ const freelancerCapabilities: Capability[] = [
     evidence: 'Easy Contract Viewer',
   },
   {
-    title: 'FastAPI 검색 백엔드·평가',
-    evidence: 'Swifty-law',
+    title: 'FastAPI·LLM 에이전트 백엔드',
+    evidence: '기업 법령 검토 엔진(이음)',
   },
 ];
 
