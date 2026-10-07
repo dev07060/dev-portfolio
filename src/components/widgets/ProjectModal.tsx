@@ -15,6 +15,7 @@ interface ProjectModalProps {
   currentScreenIndex: number;
   onClose: () => void;
   onEnterPresentation: (e: React.MouseEvent | React.KeyboardEvent) => void;
+  onSelectScreen: (index: number) => void;
 }
 
 const ProjectModal = ({
@@ -25,6 +26,7 @@ const ProjectModal = ({
   currentScreenIndex,
   onClose,
   onEnterPresentation,
+  onSelectScreen,
 }: ProjectModalProps) => {
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -81,11 +83,20 @@ const ProjectModal = ({
           titleId={titleId}
         />
 
-        <div className="lg:sticky lg:top-0 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:h-[calc(min(720px,100vh-2rem)-2px)] lg:self-start">
+        {/* Screens region: the current screen, then the list that switches it. */}
+        <div
+          data-project-screens
+          className="flex flex-col bg-gradient-to-b from-surface to-surface-2 lg:sticky lg:top-0 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:h-[calc(min(720px,100vh-2rem)-2px)] lg:self-start"
+        >
           <DeviceFrame
             project={project}
             currentScreenIndex={currentScreenIndex}
             onEnterPresentation={onEnterPresentation}
+          />
+          <ScreenList
+            project={project}
+            currentScreenIndex={currentScreenIndex}
+            onSelectScreen={onSelectScreen}
           />
         </div>
 
@@ -95,6 +106,51 @@ const ProjectModal = ({
           descriptionId={descriptionId}
         />
       </div>
+    </div>
+  );
+};
+
+// Plain text list of every screen; the current one carries the link-marker underline.
+const ScreenList = ({
+  project,
+  currentScreenIndex,
+  onSelectScreen,
+}: {
+  project: Project;
+  currentScreenIndex: number;
+  onSelectScreen: (index: number) => void;
+}) => {
+  if (project.screens.length < 2) return null;
+  const currentScreen = project.screens[currentScreenIndex] ?? project.screens[0];
+
+  return (
+    <div className="shrink-0 px-4 pb-4 sm:px-6 lg:px-8 lg:pb-5">
+      <ul
+        aria-label={`${project.title} 화면 목록`}
+        data-screen-list
+        className="flex flex-wrap gap-x-5"
+      >
+        {project.screens.map((screen, index) => {
+          const isCurrent = index === currentScreenIndex;
+          return (
+            <li key={screen.id}>
+              <button
+                type="button"
+                aria-current={isCurrent ? 'true' : undefined}
+                onClick={() => onSelectScreen(index)}
+                className={`inline-flex min-h-11 items-center text-left text-sm [word-break:keep-all] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marker ${
+                  isCurrent ? 'link-marker font-semibold' : 'text-sub hover:text-ink'
+                }`}
+              >
+                {screen.title}
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+      <p aria-live="polite" aria-atomic="true" className="sr-only">
+        {`${currentScreen.title} 화면 표시 중`}
+      </p>
     </div>
   );
 };

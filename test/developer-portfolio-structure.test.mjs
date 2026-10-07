@@ -115,22 +115,22 @@ test('API projects use a backend-specific type and label', () => {
 
   assert.match(projectTypes, /type: 'mobile' \| 'web' \| 'tablet' \| 'package' \| 'api'/);
   assert.match(modal, /project\.type === 'api'[\s\S]*?return '백엔드 API'/);
-  assert.match(
-    deviceFrame,
-    /project\.type === 'package' \|\| project\.type === 'api'[\s\S]*?백엔드 아키텍처/
-  );
+  // A18: the frame header names the screen being shown, not a static '백엔드 아키텍처' label.
+  assert.doesNotMatch(deviceFrame, /백엔드 아키텍처|패키지 아키텍처/);
+  assert.match(deviceFrame, /data-screen-frame-label[\s\S]*?\{screen\?\.title \?\? project\.title\}/);
   assert.match(
     deviceFrame,
     /project\.type === 'api' && currentScreen\?\.scrollable[\s\S]*?<WebPresentationFrame/
   );
-  const packageFrameFallback = deviceFrame.slice(
-    deviceFrame.indexOf('{featuredScreen?.imagePath ? ('),
+  const screenFrame = deviceFrame.slice(
+    deviceFrame.indexOf('const ScreenFrame'),
     deviceFrame.indexOf('// Mobile Frame Component')
   );
   assert.match(
-    packageFrameFallback,
-    /\{isApi \? \([\s\S]*?<Server size=\{56\}[\s\S]*?<PackageIcon size=\{56\}/
+    screenFrame,
+    /project\.type === 'api' \? Server : project\.type === 'package' \? PackageIcon/
   );
+  assert.match(screenFrame, /<FallbackIcon size=\{56\}/);
 });
 
 test('Easy Contract Viewer Server uses source-backed architecture assets', () => {
@@ -815,10 +815,21 @@ test('modal order and screenshot regions follow reading and keyboard order', () 
   const detailsSource = modal.slice(modal.indexOf('const ProjectInfoDetails'), modal.indexOf('const ProjectCardSummary'));
   assert.match(headerSource, /<ProjectCardSummary project=\{project\} \/>/, 'card summary must sit in the header, before the visual on mobile');
   assert.doesNotMatch(detailsSource, /<ProjectCardSummary/);
-  assert.match(device, /tabIndex=\{isScrollable \? 0 : undefined\}/);
-  assert.match(device, /role=\{isScrollable \? 'region' : undefined\}/);
+  // The screen list belongs to the screens region: frame → list → details.
+  const list = modal.indexOf('<ScreenList');
+  assert.ok(visual < list && list < details, 'screen list must follow the frame, before details');
+  assert.match(modal, /aria-current=\{isCurrent \? 'true' : undefined\}/);
+  assert.match(modal, /aria-live="polite"/);
+  // Long screenshots scroll inside a named, focusable, Lenis-free region.
+  const viewport = read('src/components/widgets/ScrollViewport.tsx');
+  assert.match(viewport, /role="region"/);
+  assert.match(viewport, /tabIndex=\{0\}/);
+  assert.match(viewport, /data-lenis-prevent/);
+  assert.match(viewport, /아래로 더 있음/);
   assert.match(device, /스크린샷 스크롤 영역/);
+  assert.match(device, /화면, 스크롤 가능/);
   assert.doesNotMatch(device, /scrollbar-hide/);
+  assert.doesNotMatch(viewport, /scrollbar-hide/);
 });
 
 test('unverified profile facts stay hidden and resume actions remain data-driven', () => {

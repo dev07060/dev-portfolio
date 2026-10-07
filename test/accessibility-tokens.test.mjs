@@ -41,6 +41,14 @@ test('project detail exposes a named keyboard-scroll region', () => {
   assert.match(modal, /focus-visible:ring-inset/);
 });
 
+test('presentation shows no visible progress numbers, only the dots and an sr-only status', () => {
+  const presentation = read('src/components/widgets/PresentationOverlay.tsx');
+
+  assert.doesNotMatch(presentation, /padStart/);
+  assert.match(presentation, /className="sr-only"[\s\S]*?`화면 \$\{currentScreenIndex \+ 1\} \/ \$\{project\.screens\.length\}, \$\{currentScreen\.title\}`/);
+  assert.match(presentation, /data-presentation-progress/);
+});
+
 test('architecture presentations expose the original image with a full-size target', () => {
   const presentation = read('src/components/widgets/PresentationOverlay.tsx');
 

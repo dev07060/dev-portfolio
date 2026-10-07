@@ -476,7 +476,7 @@ test('피에트 트레이너 상세는 스플래시 대신 인바디 리포트�
   });
   await preview.click();
   await expect(
-    page.getByText('화면 2 / 6: 결과 리포트 - 인바디', { exact: true })
+    page.getByText('화면 2 / 6, 결과 리포트 - 인바디', { exact: true })
   ).toBeVisible();
 });
 

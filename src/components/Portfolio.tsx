@@ -258,6 +258,7 @@ const Portfolio = ({ config }: PortfolioProps) => {
           currentScreenIndex={currentScreenIndex}
           onClose={closeModal}
           onEnterPresentation={enterPresentationMode}
+          onSelectScreen={setCurrentScreenIndex}
         />
       )}
 
