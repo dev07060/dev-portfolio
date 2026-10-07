@@ -116,11 +116,28 @@ const ScreenFrame = ({
         isTall ? 'h-[min(64svh,560px)] lg:h-full' : 'lg:max-h-full'
       }`}
     >
+      {/* The '크게 보기' cue sits in the label bar so it never covers the screenshot or diagram. */}
       <figcaption
-        data-screen-frame-label
-        className="flex min-h-10 shrink-0 items-center border-b border-line px-4 py-2 text-[13px] font-semibold leading-snug text-ink"
+        className="flex min-h-11 shrink-0 items-center justify-between gap-3 border-b border-line py-1 pl-4 pr-2 text-[13px] font-semibold leading-snug text-ink"
       >
-        {screen?.title ?? project.title}
+        <span data-screen-frame-label className="min-w-0">{screen?.title ?? project.title}</span>
+        {screen?.imagePath && isTall ? (
+          <button
+            type="button"
+            onClick={onClick}
+            onKeyDown={handleActivationKey(onClick)}
+            aria-label={openLabel}
+            className="inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-md px-2 text-[13px] font-semibold text-sub transition-colors hover:text-marker focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marker"
+          >
+            <Maximize2 size={12} aria-hidden="true" />
+            크게 보기
+          </button>
+        ) : (
+          <span aria-hidden="true" className="inline-flex shrink-0 items-center gap-1.5 px-2 text-[13px] font-semibold text-sub">
+            <Maximize2 size={12} aria-hidden="true" />
+            크게 보기
+          </span>
+        )}
       </figcaption>
 
       {screen?.imagePath && isTall ? (
@@ -139,16 +156,6 @@ const ScreenFrame = ({
               loading="eager"
             />
           </ScrollViewport>
-          <button
-            type="button"
-            onClick={onClick}
-            onKeyDown={handleActivationKey(onClick)}
-            aria-label={openLabel}
-            className="absolute bottom-3 right-5 z-20 inline-flex min-h-11 items-center gap-1.5 rounded-full bg-black/75 px-4 text-[13px] font-semibold text-ink shadow-sm transition-colors hover:bg-black/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marker"
-          >
-            <Maximize2 size={12} aria-hidden="true" />
-            눌러서 크게 보기
-          </button>
         </div>
       ) : (
         <button
@@ -179,7 +186,6 @@ const ScreenFrame = ({
               <span className="text-2xl font-bold">{project.title}</span>
             </span>
           )}
-          <OpenBadge className="absolute bottom-3 left-1/2 -translate-x-1/2" />
         </button>
       )}
     </figure>
