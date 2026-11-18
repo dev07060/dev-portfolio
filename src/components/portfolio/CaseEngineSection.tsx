@@ -76,6 +76,7 @@ export default function CaseEngineSection({
                 width={1200}
                 height={980}
                 sizes="(min-width: 1024px) 560px, 100vw"
+                loading="eager"
                 className="h-auto w-full rounded-2xl transition-opacity group-hover:opacity-90"
               />
               <span

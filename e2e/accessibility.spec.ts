@@ -143,7 +143,6 @@ test('프리랜서 전달용 라우트는 공개 홈에서 숨겨지고 검색 �
   const hero = page.locator('#top');
   for (const copy of [
     '모바일 제품 · 문서 검색/RAG 프로젝트 수행 개발자',
-    '크로스플랫폼 앱 · Native 연동 · Retrieval/RAG · FastAPI',
     '기존 모바일 제품의 고도화부터 문서·PDF 검색 기능과 LLM 에이전트 백엔드까지 구현합니다.',
     '모바일 앱 구축·고도화',
   ]) {

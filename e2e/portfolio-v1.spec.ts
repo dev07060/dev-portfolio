@@ -130,8 +130,8 @@ test('히어로 검색 화면에는 BM25·HNSW·RRF 같은 알고리즘 라벨�
 for (const [route, role, positioning] of [
   [
     '/',
-    '크로스플랫폼 개발자 · 로컬 RAG 엔지니어',
-    '모바일 제품과 로컬 검색 엔진을 설계·구현하고 평가와 운영까지 연결합니다.',
+    'Flutter · 온디바이스 RAG 개발자',
+    'Flutter로 iOS·Android 제품을 만들고 운영해 왔습니다. 최근에는 앱 안에서 동작하는 로컬 검색 엔진까지 직접 만들어 제품에 붙였습니다.',
   ],
   [
     '/freelancer',
@@ -139,7 +139,7 @@ for (const [route, role, positioning] of [
     '기존 모바일 제품의 고도화부터 문서·PDF 검색 기능과 LLM 에이전트 백엔드까지 구현합니다.',
   ],
 ] as const) {
-  test(`${route} 히어로가 profile.role과 positioning을 보여 준다`, async ({ page }) => {
+  test(`${route} 히어로가 헤드라인(없으면 role)과 소개(없으면 positioning)를 보여 준다`, async ({ page }) => {
     await page.goto(route);
     const hero = page.locator('#top');
     await expect(hero.getByText(role, { exact: true })).toBeVisible();
@@ -350,7 +350,7 @@ test('사례 #1 구조도를 누르면 상세 모달 없이 크게 보기가 열
   await trigger.click();
   const dialogs = page.getByRole('dialog');
   await expect(dialogs).toHaveCount(1);
-  await expect(dialogs.first()).toContainText('아키텍처');
+  await expect(dialogs.first()).toContainText('한눈에 보기');
   await page.keyboard.press('Escape');
   await expect(dialogs).toHaveCount(0);
   await expect(trigger).toBeFocused();

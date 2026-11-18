@@ -315,14 +315,17 @@ body[data-portfolio-overlay="true"] .skip-link {
   /* All screens share one grid cell, centred and aligned (no staggered offsets). */
   .pin-track:not([data-pin="off"]) .pin-row {
     display: grid;
+    /* One track as wide as the window, so the screens are sized against it and never widen it. */
+    grid-template-columns: minmax(0, 1fr);
     width: 100%;
     justify-items: center;
     container-type: inline-size;
   }
   .pin-track:not([data-pin="off"]) .pin-row > li {
     grid-area: 1 / 1;
-    width: var(--shot-w);
-    max-width: 100%;
+    /* Height-driven, but never wider than the window minus its faded edges (2 x 24px): on tall
+       viewports (browser zoom below 100%) the width limit wins and the screen shrinks as a whole. */
+    width: min(var(--shot-w), calc(100cqw - 48px));
     transition:
       transform 560ms cubic-bezier(0.22, 1, 0.36, 1),
       opacity 420ms ease-out,
