@@ -86,21 +86,21 @@
     <text x="80" y="590" class="step">Rust FFI search core</text>
     <text x="80" y="614" class="desc">색인과 검색 hot path를 native로 처리</text>
     <text x="80" y="633" class="desc">패키지 bridge를 통해 호출</text>
-    <text x="80" y="658" class="note">Rust search는 약 1-2ms로 측정</text>
+    <text x="80" y="658" class="note">토크나이징·청킹·BM25·HNSW 처리</text>
   </g>
   <g>
     <rect x="430" y="564" width="340" height="118" rx="12" fill="#eff6ff" stroke="#0284c7" stroke-width="1.5"/>
     <text x="450" y="590" class="step">ONNX embedding runtime</text>
     <text x="450" y="614" class="desc">청크와 질의를 로컬에서 임베딩</text>
     <text x="450" y="633" class="desc">외부 embedding API 호출 없음</text>
-    <text x="450" y="658" class="note">warm embed는 약 26.7ms로 측정</text>
+    <text x="450" y="658" class="note">flutter_onnxruntime 플러그인으로 실행</text>
   </g>
   <g>
     <rect x="800" y="564" width="340" height="118" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
     <text x="820" y="590" class="step">SQLite chunk store</text>
     <text x="820" y="614" class="desc">text, metadata, vector를 앱 sandbox에 저장</text>
     <text x="820" y="633" class="desc">검색과 activation의 기반 데이터</text>
-    <text x="820" y="658" class="note">activation timing은 별도 측정</text>
+    <text x="820" y="658" class="note">HNSW 색인 파일도 디스크에 유지</text>
   </g>
 
   <path class="arrow" d="M600 686 L600 720"/>
@@ -113,13 +113,13 @@
     <rect x="60" y="778" width="530" height="106" rx="12" fill="#faf5ff" stroke="#a855f7" stroke-width="1.5"/>
     <text x="80" y="805" class="step">HNSW 벡터 경로</text>
     <text x="80" y="830" class="desc">임베딩된 청크에서 의미 기반 후보 수집</text>
-    <text x="80" y="851" class="note">vector-only recall은 PR-P5-1.html에서 검증</text>
+    <text x="80" y="851" class="note">search()는 벡터 전용 검색</text>
   </g>
   <g>
     <rect x="610" y="778" width="530" height="106" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
     <text x="630" y="805" class="step">BM25 희소 검색 경로</text>
     <text x="630" y="830" class="desc">정확한 키워드와 용어 근거를 보강</text>
-    <text x="630" y="851" class="note">hybrid ranking caveat를 별도 문서화</text>
+    <text x="630" y="851" class="note">두 순위를 RRF로 결합</text>
   </g>
 
   <path class="arrow" d="M600 888 L600 922"/>

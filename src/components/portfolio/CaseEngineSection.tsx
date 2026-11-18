@@ -20,15 +20,21 @@ export default function CaseEngineSection({
 
   return (
     <section id={anchorId} aria-labelledby={`${anchorId}-title`} className="screen bg-slate">
-      <div className="screen-inner flex flex-wrap items-center gap-16">
-        <div className="flex min-w-0 flex-[1_1_560px] flex-col">
+      {/* 두 세로선(왼쪽 열·오른쪽 열)과 두 가로줄(머리말·본문)에 모든 요소를 맞춘다. */}
+      <div className="screen-inner grid gap-x-16 gap-y-10 lg:grid-cols-2 lg:gap-y-12">
+        <div className="flex min-w-0 flex-col">
           <CaseLabel n={caseNumber} />
           <h2 id={`${anchorId}-title`} className="t-h2 m-0">{recruitmentCase.sectionTitle ?? project.title}</h2>
-          {recruitmentCase.sectionLead && (
-            <p className="t-lead mb-0 mt-6 max-w-[560px]">{recruitmentCase.sectionLead}</p>
-          )}
+        </div>
+        {recruitmentCase.sectionLead ? (
+          <p className="t-lead m-0 min-w-0 max-w-[560px] lg:self-end">{recruitmentCase.sectionLead}</p>
+        ) : (
+          <div aria-hidden="true" className="hidden lg:block" />
+        )}
+
+        <div className="flex min-w-0 flex-col lg:justify-between">
           {features.length > 0 && (
-            <div className="mt-10 flex flex-col gap-[18px]">
+            <div className="flex flex-col gap-[18px]">
               <h3 className="t-group m-0">핵심 기능</h3>
               <ul className="m-0 flex list-none flex-col gap-[18px] p-0">
                 {features.map((feature) => (
@@ -40,22 +46,24 @@ export default function CaseEngineSection({
               </ul>
             </div>
           )}
-          <div className="mt-8 flex flex-col gap-2">
-            <h3 className="t-group m-0">사용 기술</h3>
-            <p className="m-0 text-base leading-[1.8]">{project.techStack.join(' · ')}</p>
-          </div>
-          <div className="mt-7 flex flex-wrap gap-x-7 gap-y-1 text-[15px] font-medium">
-            {links.map((link) => (
-              <a key={link.url} href={link.url} target="_blank" rel="noopener noreferrer" className="link-marker inline-flex min-h-11 items-center">
-                {link.label} ↗
-              </a>
-            ))}
-            <CaseDetailButton project={project} onOpenProject={onOpenProject} />
+          <div>
+            <div className="mt-8 flex flex-col gap-2">
+              <h3 className="t-group m-0">사용 기술</h3>
+              <p className="m-0 text-base leading-[1.8]">{project.techStack.join(' · ')}</p>
+            </div>
+            <div className="mt-5 flex flex-wrap gap-x-7 gap-y-1 text-[15px] font-medium">
+              {links.map((link) => (
+                <a key={link.url} href={link.url} target="_blank" rel="noopener noreferrer" className="link-marker inline-flex min-h-11 items-center">
+                  {link.label} ↗
+                </a>
+              ))}
+              <CaseDetailButton project={project} onOpenProject={onOpenProject} />
+            </div>
           </div>
         </div>
 
         {figure && screen?.imagePath && (
-          <figure className="m-0 flex min-w-0 flex-[1_1_480px] flex-col gap-3.5">
+          <figure className="m-0 flex min-w-0 flex-col gap-3.5">
             <button
               type="button"
               onClick={(event) => onOpenScreen(project.id, screen.id, event.currentTarget)}
@@ -72,7 +80,7 @@ export default function CaseEngineSection({
               />
               <span
                 aria-hidden="true"
-                className="pointer-events-none absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-black/70 px-3 py-1.5 text-[13px] font-semibold text-ink shadow-sm"
+                className="pointer-events-none absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-black/70 px-3 py-1.5 text-[13px] font-semibold text-ink shadow-sm"
               >
                 <Maximize2 size={12} aria-hidden="true" />
                 크게 보기

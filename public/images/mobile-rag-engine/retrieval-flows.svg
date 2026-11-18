@@ -140,18 +140,18 @@
   </g>
   <g>
     <rect x="430" y="746" width="330" height="88" rx="12" fill="#ffffff" stroke="#c7d2fe" stroke-width="1.5"/>
-    <text x="452" y="776" class="step">Recall quality report</text>
-    <text x="452" y="802" class="desc">PR-P5-1.html: vector-only mean 1.00</text>
+    <text x="452" y="776" class="step">Retrieval quality</text>
+    <text x="452" y="802" class="desc">80 queries: passage_recall@10 0.925-0.9625</text>
   </g>
   <g>
     <rect x="800" y="746" width="330" height="88" rx="12" fill="#ffffff" stroke="#c7d2fe" stroke-width="1.5"/>
-    <text x="822" y="776" class="step">Latency reports</text>
-    <text x="822" y="802" class="desc">PR-P3 / PR-P4: activate and embed timing</text>
+    <text x="822" y="776" class="step">ask and LLM tools</text>
+    <text x="822" y="802" class="desc">answer from your LLM with cited passages</text>
   </g>
 
   <path class="arrow-soft" d="M998 638 L998 692 L225 692 L225 744"/>
   <path class="arrow-soft" d="M998 638 L998 692 L595 692 L595 744"/>
   <path class="arrow-soft" d="M998 638 L998 692 L965 692 L965 744"/>
 
-  <text x="600" y="870" text-anchor="middle" class="note">The card should read as an engine implementation with evidence, not as a Gemma demo app screenshot.</text>
+  <text x="600" y="870" text-anchor="middle" class="note">No LLM is bundled. The app chooses the model that writes the answer.</text>
 </svg>
