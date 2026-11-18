@@ -144,7 +144,7 @@ test('프리랜서 전달용 라우트는 공개 홈에서 숨겨지고 검색 �
   for (const copy of [
     '모바일 제품 · 문서 검색/RAG 프로젝트 수행 개발자',
     '크로스플랫폼 앱 · Native 연동 · Retrieval/RAG · FastAPI',
-    '기존 모바일 제품의 고도화부터 문서·PDF 검색 기능과 검색 백엔드까지 구현합니다.',
+    '기존 모바일 제품의 고도화부터 문서·PDF 검색 기능과 LLM 에이전트 백엔드까지 구현합니다.',
     '모바일 앱 구축·고도화',
   ]) {
     await expect(hero).toContainText(copy);
@@ -691,13 +691,6 @@ test('reduced motion에서 named animation과 자동 입력을 제거한다', as
     expect(names.length).toBeGreaterThan(0);
     expect(names.every((name) => name === 'none')).toBe(true);
   }
-
-  const panelTransition = await page
-    .locator('#case-01 .engine-panel')
-    .evaluate((element) => getComputedStyle(element).transitionDuration);
-  expect(
-    panelTransition.split(',').every((duration) => Number.parseFloat(duration) <= 0.00001)
-  ).toBe(true);
 });
 
 test('home, modal, presentation에 critical/serious axe 위반이 없다', async ({ page }) => {
@@ -820,7 +813,7 @@ for (const viewport of [
     );
     await expectHorizontallyReachable(
       page,
-      firstCase.getByRole('link', { name: 'GitHub ↗' })
+      firstCase.getByRole('link', { name: 'pub.dev ↗' })
     );
 
     const detailButton = caseDetailButton(page, 'mobile_rag_engine');

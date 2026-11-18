@@ -49,6 +49,9 @@ const Portfolio = ({ config }: PortfolioProps) => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [isPresentationMode, setIsPresentationMode] = useState(false);
   const [currentScreenIndex, setCurrentScreenIndex] = useState(0);
+  // Opened straight from a case section figure: the presentation shows without the detail modal.
+  const [isPresentationOnly, setIsPresentationOnly] = useState(false);
+  const presentationOnlyRef = useRef(false);
   const presentationTriggerRef = useRef<HTMLElement | null>(null);
   const featuredProjects = resolveProjectIds(
     featuredProjectIds,
@@ -69,6 +72,8 @@ const Portfolio = ({ config }: PortfolioProps) => {
     setIsAnimating(true);
     setCurrentScreenIndex(preferredScreenIndex);
     setIsPresentationMode(false);
+    presentationOnlyRef.current = false;
+    setIsPresentationOnly(false);
   };
   const closeModal = () => {
     setIsAnimating(false);
@@ -87,6 +92,11 @@ const Portfolio = ({ config }: PortfolioProps) => {
 
   const exitPresentationMode = () => {
     setIsPresentationMode(false);
+    if (presentationOnlyRef.current) {
+      presentationOnlyRef.current = false;
+      setSelectedProject(null);
+      setIsPresentationOnly(false);
+    }
     window.requestAnimationFrame(() => {
       const trigger = presentationTriggerRef.current;
       if (trigger?.isConnected) {
@@ -174,6 +184,18 @@ const Portfolio = ({ config }: PortfolioProps) => {
     if (project) handleProjectClick(project);
   };
 
+  const openScreenById = (projectId: string, screenId: string, trigger: HTMLElement) => {
+    const project = projects.find((candidate) => candidate.id === projectId);
+    const screenIndex = project?.screens.findIndex((screen) => screen.id === screenId) ?? -1;
+    if (!project || screenIndex < 0) return;
+    presentationTriggerRef.current = trigger;
+    setSelectedProject(project);
+    setCurrentScreenIndex(screenIndex);
+    presentationOnlyRef.current = true;
+    setIsPresentationOnly(true);
+    setIsPresentationMode(true);
+  };
+
   const caseOrder = buildCaseOrder(
     featuredProjects.map((project) => project.id),
     additionalProjects.map((project) => project.id)
@@ -238,6 +260,7 @@ const Portfolio = ({ config }: PortfolioProps) => {
                 featuredCount={featuredProjects.length}
                 projects={projects}
                 onOpenProject={openProjectById}
+                onOpenScreen={openScreenById}
               />
             );
           })}
@@ -247,7 +270,7 @@ const Portfolio = ({ config }: PortfolioProps) => {
       </div>
 
       {/* Project Detail Modal */}
-      {selectedProject && (
+      {selectedProject && !isPresentationOnly && (
         <ProjectModal
           project={selectedProject}
           recruitmentCase={cases.find(

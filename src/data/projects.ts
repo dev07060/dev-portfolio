@@ -326,9 +326,9 @@ export const projects: Project[] = [
     id: "fiet-fitness-trainer",
     type: "tablet",
     title: "피에트 피트니스 트레이너",
-    subtitle: "피에트 피트니스 센터의 트레이너 전용 앱",
+    subtitle: "MVM Fitness 트레이너용 태블릿 앱",
     description:
-      "피에트 피트니스 센터의 트레이너 전용 앱입니다. 회원 관리, 운동 프로그램 설계, 식단 관리 및 체중 데이터 추적을 태블릿에 최적화된 인터페이스로 제공합니다.",
+      "MVM 삼성역점에서 운영한 MVM Fitness의 트레이너 전용 앱입니다. 회원 관리, 운동 프로그램 설계, 식단 관리 및 체중 데이터 추적을 태블릿에 최적화된 인터페이스로 제공합니다.",
     implementationPoints: [
       "트레이너 업무 흐름에 맞춘 태블릿 우선 Flutter UI와 재사용 위젯을 구축했습니다.",
       "체중계와 가속도 센서 연동을 위한 BLE 실시간 데이터 전송 흐름을 구현했습니다.",
@@ -401,9 +401,9 @@ export const projects: Project[] = [
     id: "fiet-fitness-user",
     type: "mobile",
     title: "피에트 피트니스",
-    subtitle: "AI 건강 관리 회사가 만든 새로운 개념의 피트니스 센터",
+    subtitle: "MVM Fitness 회원용 모바일 앱",
     description:
-      "AI 건강 관리 회사가 만든 새로운 개념의 피트니스 센터 앱입니다. 트레이너와 연동하여 맞춤형 운동 프로그램과 식단을 확인하고 진행 상황을 기록합니다.",
+      "MVM 삼성역점에서 운영한 MVM Fitness의 회원용 앱입니다. 트레이너와 연동하여 맞춤형 운동 프로그램과 식단을 확인하고 진행 상황을 기록합니다.",
     implementationPoints: [
       "Flutter 상태 기반 UI로 운동/식단 추적 화면을 구현했습니다.",
       "Firebase Cloud Messaging 기반 푸시 알림 워크플로를 연동했습니다.",
@@ -470,12 +470,12 @@ export const projects: Project[] = [
     id: "local-mobile-rag-gemma",
     type: "package",
     title: "mobile_rag_engine",
-    releaseLabel: "pub.dev 0.20.0",
+    releaseLabel: "pub.dev 0.24.0",
     subtitle: "모바일에서 완전 로컬 RAG를 실행하는 Flutter 패키지",
     description:
       "Flutter 앱에 서버 업로드 없는 온디바이스 문서 검색과 RAG 기능을 붙일 수 있는 공개 Flutter 패키지입니다.",
     implementationPoints: [
-      "Flutter 공개 API, 예제, 문서, 릴리스 패키징을 포함해 mobile_rag_engine 0.20.0을 배포했습니다.",
+      "Flutter 공개 API, 예제, 문서, 릴리스 패키징을 포함해 mobile_rag_engine 0.24.0을 배포했습니다.",
       "제품 API 계층과 네이티브 hot path를 분리해 Flutter facade, Dart orchestration, Rust FFI core로 구성했습니다.",
       "문서 파싱, 청크 메타데이터, ONNX 임베딩, SQLite 저장, 색인 write까지 인제스트 경로를 구현했습니다.",
       "질의 임베딩, HNSW 벡터 검색, BM25 sparse 검색, 후보 결합, context assembly까지 쿼리 경로를 구현했습니다.",

@@ -36,7 +36,7 @@
     <rect x="430" y="160" width="340" height="94" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
     <text x="450" y="187" class="step">Example app + docs</text>
     <text x="450" y="212" class="desc">Runnable integration path for package adopters</text>
-    <text x="450" y="232" class="note">pub.dev 0.18.6 release evidence</text>
+    <text x="450" y="232" class="note">pub.dev 0.24.0 release evidence</text>
   </g>
   <g>
     <rect x="800" y="160" width="340" height="94" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>

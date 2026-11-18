@@ -11,7 +11,7 @@ const freelancerProfile: RecruitmentProfile = {
   ...recruitmentProfile,
   role: '모바일 제품 · 문서 검색/RAG 프로젝트 수행 개발자',
   position: '크로스플랫폼 앱 · Native 연동 · Retrieval/RAG · FastAPI',
-  positioning: '기존 모바일 제품의 고도화부터 문서·PDF 검색 기능과 검색 백엔드까지 구현합니다.',
+  positioning: '기존 모바일 제품의 고도화부터 문서·PDF 검색 기능과 LLM 에이전트 백엔드까지 구현합니다.',
   resumeUrl: undefined,
   headline: undefined,
   intro: undefined,

@@ -246,8 +246,8 @@ test('recruitment cases carry the v1 section content and reference real screens'
 
   assert.equal(recruitmentProfile.headline, 'Flutter · 온디바이스 RAG 개발자');
   assert.equal(byId['local-mobile-rag-gemma'].sectionTitle, 'Flutter 공개 패키지');
-  assert.equal(byId['local-mobile-rag-gemma'].introTopics.length, 4);
-  assert.deepEqual(byId['local-mobile-rag-gemma'].metrics.map((m) => m.value), ['0.20.0', '25.9ms']);
+  assert.equal(byId['local-mobile-rag-gemma'].features.length, 4);
+  assert.ok(screenIds('local-mobile-rag-gemma').includes(byId['local-mobile-rag-gemma'].figure.screenId));
   assert.equal(byId['easy-contract-viewer'].features.length, 4);
   assert.deepEqual(byId['easy-contract-viewer'].relatedProjectIds, ['easy-contract-viewer-server']);
   for (const step of byId['easy-contract-viewer'].stepScreens) {

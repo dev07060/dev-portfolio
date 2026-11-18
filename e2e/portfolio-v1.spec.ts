@@ -136,7 +136,7 @@ for (const [route, role, positioning] of [
   [
     '/freelancer',
     '모바일 제품 · 문서 검색/RAG 프로젝트 수행 개발자',
-    '기존 모바일 제품의 고도화부터 문서·PDF 검색 기능과 검색 백엔드까지 구현합니다.',
+    '기존 모바일 제품의 고도화부터 문서·PDF 검색 기능과 LLM 에이전트 백엔드까지 구현합니다.',
   ],
 ] as const) {
   test(`${route} 히어로가 profile.role과 positioning을 보여 준다`, async ({ page }) => {
@@ -160,21 +160,6 @@ test('히어로 검색 키워드 힌트는 한 글자 입력에 반응하지 않
   }
   await input.fill('F');
   await expect(page.getByRole('list', { name: '검색 결과' })).not.toContainText('키워드');
-});
-
-test('사례 #1 탭은 화살표 키로 이동하고 패널을 바꾼다', async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto('/');
-  const section = page.locator('#case-01');
-  const tabs = section.getByRole('tab');
-  await expect(tabs).toHaveCount(4);
-  await tabs.first().focus();
-  await page.keyboard.press('ArrowDown');
-  await expect(tabs.nth(1)).toBeFocused();
-  await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true');
-  await expect(section.getByRole('tabpanel')).toContainText('파싱부터 색인까지 기기 안에서');
-  await page.keyboard.press('End');
-  await expect(tabs.nth(3)).toHaveAttribute('aria-selected', 'true');
 });
 
 test('경력 자세히는 summary와 나머지 성과를 모두 보여 준다', async ({ page }) => {
@@ -328,93 +313,47 @@ for (const [anchor, title] of [
   });
 }
 
-test('390px 사례 #1은 지표 2열 → 탭(밑줄) → 패널 → 링크 순서다', async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/');
-  const section = page.locator('#case-01');
-  const top = (locator: ReturnType<typeof section.locator>) =>
-    locator.evaluate((node) => node.getBoundingClientRect().top);
+for (const viewport of [
+  { width: 1280, height: 800, label: '데스크톱' },
+  { width: 390, height: 844, label: '390px' },
+]) {
+  test(`${viewport.label} 사례 #1은 핵심 기능과 구조도를 보여 주고 탭·지표는 없다`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.setViewportSize({ width: viewport.width, height: viewport.height });
+    await page.goto('/');
+    const section = page.locator('#case-01');
+    await expect(section.getByRole('tab')).toHaveCount(0);
+    await expect(section.locator('dl')).toHaveCount(0);
+    await expect(section.getByRole('heading', { name: '핵심 기능' })).toBeVisible();
+    await expect(section.locator('ul > li')).toHaveCount(4);
+    await expect(section.getByRole('link')).toHaveCount(1);
 
-  const metrics = section.locator('dl > div');
-  await expect(metrics).toHaveCount(2);
-  const [first, second] = await metrics.evaluateAll((nodes) =>
-    nodes.map((node) => node.getBoundingClientRect())
-  );
-  expect(Math.abs(first.top - second.top)).toBeLessThan(2);
-  expect(second.left).toBeGreaterThan(first.right);
-
-  const selected = section.getByRole('tab', { selected: true });
-  const decoration = await selected.locator('.engine-tab-label').evaluate((node) => {
-    const style = getComputedStyle(node);
-    return { line: style.textDecorationLine, color: style.textDecorationColor };
+    const figure = section.locator('figure');
+    await expect(figure.locator('img')).toBeVisible();
+    const rect = (locator: ReturnType<typeof section.locator>) =>
+      locator.evaluate((node) => node.getBoundingClientRect().toJSON());
+    const link = await rect(section.getByRole('button', { name: /^사례 자세히/ }));
+    const box = await rect(figure);
+    if (viewport.width >= 1024) {
+      expect(box.left).toBeGreaterThan(link.right);
+    } else {
+      expect(box.top).toBeGreaterThan(link.bottom);
+    }
   });
-  expect(decoration.line).toContain('underline');
-  expect(decoration.color).toBe('rgb(243, 224, 74)');
-  await expect(selected.locator('.engine-tab-bar')).toBeHidden();
-  expect(await section.locator('.engine-panel').evaluate((node) => getComputedStyle(node).rowGap)).toBe('14px');
+}
 
-  const metricsTop = await top(section.locator('dl'));
-  const tabsTop = await top(section.getByRole('tablist'));
-  const panelTop = await top(section.getByRole('tabpanel'));
-  const linksTop = await top(section.getByRole('button', { name: /^사례 자세히/ }));
-  expect(metricsTop).toBeLessThan(tabsTop);
-  expect(tabsTop).toBeLessThan(panelTop);
-  expect(panelTop).toBeLessThan(linksTop);
-});
-
-test('390px 사례 #1에서 선택된 탭 다음 Tab은 링크보다 먼저 탭 패널로 간다', async ({ page, browserName }) => {
+test('사례 #1 구조도를 누르면 상세 모달 없이 크게 보기가 열리고, 닫으면 그림으로 포커스가 돌아온다', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.setViewportSize({ width: 390, height: 844 });
+  await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/');
-  const section = page.locator('#case-01');
-  const selected = section.getByRole('tab', { selected: true });
-  await selected.focus();
-  await expect(selected).toBeFocused();
-  await page.keyboard.press('Tab');
-  await expect(section.getByRole('tabpanel')).toBeFocused();
-  // WebKit skips links on Tab by default (Safari "Press Tab to highlight each item" is off).
-  await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
-  await expect(section.getByRole('link').first()).toBeFocused();
-});
-
-test('사례 #1은 DOM 순서도 탭 → 패널 → 링크이고 CSS order에 기대지 않는다', async ({ page }) => {
-  await page.goto('/');
-  const section = page.locator('#case-01');
-  const order = await section.evaluate((root) => {
-    const tablist = root.querySelector('[role="tablist"]')!;
-    const panel = root.querySelector('[role="tabpanel"]')!;
-    const link = root.querySelector('a[href^="http"]')!;
-    const follows = (a: Element, b: Element) =>
-      Boolean(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
-    const usesOrder = [...root.querySelectorAll('*')].some(
-      (node) => getComputedStyle(node).order !== '0' || getComputedStyle(node).display === 'contents'
-    );
-    return { tabsBeforePanel: follows(tablist, panel), panelBeforeLink: follows(panel, link), usesOrder };
-  });
-  expect(order).toEqual({ tabsBeforePanel: true, panelBeforeLink: true, usesOrder: false });
-});
-
-test('데스크톱 사례 #1 탭은 왼쪽 막대 표시를 유지한다', async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.setViewportSize({ width: 1280, height: 800 });
-  await page.goto('/');
-  const selected = page.locator('#case-01').getByRole('tab', { selected: true });
-  await expect(selected.locator('.engine-tab-bar')).toBeVisible();
-  const line = await selected
-    .locator('.engine-tab-label')
-    .evaluate((node) => getComputedStyle(node).textDecorationLine);
-  expect(line).toBe('none');
-  const section = page.locator('#case-01');
-  const rect = (locator: ReturnType<typeof section.locator>) =>
-    locator.evaluate((node) => node.getBoundingClientRect().toJSON());
-  const tabs = await rect(section.getByRole('tablist'));
-  const panel = await rect(section.getByRole('tabpanel'));
-  const link = await rect(section.getByRole('button', { name: /^사례 자세히/ }));
-  expect(link.top).toBeGreaterThan(tabs.bottom);
-  expect(link.left).toBeLessThan(panel.left);
-  expect(panel.left).toBeGreaterThan(tabs.right);
-  expect(await section.locator('.engine-panel').evaluate((node) => getComputedStyle(node).rowGap)).toBe('24px');
+  const trigger = page.locator('#case-01').getByRole('button', { name: 'mobile_rag_engine 구조도 크게 보기' });
+  await trigger.click();
+  const dialogs = page.getByRole('dialog');
+  await expect(dialogs).toHaveCount(1);
+  await expect(dialogs.first()).toContainText('아키텍처');
+  await page.keyboard.press('Escape');
+  await expect(dialogs).toHaveCount(0);
+  await expect(trigger).toBeFocused();
 });
 
 // A14 scroll format: Lenis smooth scroll, floating header, case #2 horizontal pin.

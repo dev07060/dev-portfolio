@@ -10,4 +10,5 @@ export interface CaseSectionProps {
   featuredCount: number;
   projects: Project[];
   onOpenProject: (projectId: string) => void;
+  onOpenScreen: (projectId: string, screenId: string, trigger: HTMLElement) => void;
 }

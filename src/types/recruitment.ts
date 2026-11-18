@@ -12,18 +12,6 @@ export interface SupportingPackage {
   links: EvidenceLink[];
 }
 
-export interface IntroTopic {
-  label: string;
-  title: string;
-  body: string;
-  flow?: string;
-}
-
-export interface CaseMetric {
-  value: string;
-  label: string;
-}
-
 export interface CaseFeature {
   title: string;
   description: string;
@@ -57,8 +45,6 @@ export interface RecruitmentCase {
   sectionTitle?: string;
   sectionLead?: string;
   sectionSummary?: string;
-  metrics?: CaseMetric[];
-  introTopics?: IntroTopic[];
   features?: CaseFeature[];
   stepScreens?: CaseStepScreen[];
   figure?: CaseFigure;

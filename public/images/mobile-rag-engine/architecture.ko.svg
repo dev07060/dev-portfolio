@@ -36,7 +36,7 @@
     <rect x="430" y="160" width="340" height="94" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
     <text x="450" y="187" class="step">예제 앱 + 문서</text>
     <text x="450" y="212" class="desc">패키지 도입자가 따라갈 수 있는 실행 경로</text>
-    <text x="450" y="232" class="note">pub.dev 0.18.6 릴리스 증거</text>
+    <text x="450" y="232" class="note">pub.dev 0.24.0 릴리스 증거</text>
   </g>
   <g>
     <rect x="800" y="160" width="340" height="94" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>

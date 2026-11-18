@@ -50,7 +50,7 @@ export const heroSearchDocuments: readonly SearchDocument[] = [
     snippet: '문서를 서버에 올리지 않고 온디바이스에서 검색과 RAG context 생성까지 처리하는 Flutter 패키지.',
     keywords: ['모바일', 'Dart', 'Rust FFI', 'ONNX', 'SQLite', '하이브리드'],
     hiddenKeywords: ['HNSW', 'BM25', 'RRF'],
-    meta: 'pub.dev · 0.20.0',
+    meta: 'pub.dev · 0.24.0',
     target: { kind: 'project', projectId: 'local-mobile-rag-gemma' },
   },
   {

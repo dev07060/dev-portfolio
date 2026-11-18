@@ -19,7 +19,7 @@ export const recruitmentProfile: RecruitmentProfile = {
   proofItems: [
     {
       label: '공개 패키지',
-      value: 'mobile_rag_engine · pub.dev 0.20.0',
+      value: 'mobile_rag_engine · pub.dev 0.24.0',
       evidence: 'https://pub.dev/packages/mobile_rag_engine',
     },
     {
@@ -35,36 +35,17 @@ export const recruitmentCases: RecruitmentCase[] = [
     sectionTitle: 'Flutter 공개 패키지',
     sectionLead:
       'mobile_rag_engine은 문서를 서버에 올리지 않고, 휴대폰 안에서 검색과 RAG context 생성까지 끝내는 패키지입니다.',
-    metrics: [
-      { value: '0.20.0', label: 'pub.dev 배포 버전' },
-      { value: '25.9ms', label: '234자 임베딩 평균, 기기 내 · 디버그 빌드' },
+    features: [
+      { title: '완전 로컬 RAG', description: '문서를 서버로 보내지 않고 기기 안에서 검색합니다.' },
+      { title: '기기 안 색인', description: '문서 분할, 임베딩, SQLite 저장을 모두 기기에서 처리합니다.' },
+      { title: '하이브리드 검색', description: '의미 검색과 키워드 검색 결과를 합쳐 찾습니다.' },
+      { title: '3계층 구조', description: 'Flutter API, Dart 제어, Rust 코어로 역할을 나눴습니다.' },
     ],
-    introTopics: [
-      {
-        label: '완전 로컬 RAG',
-        title: '문서가 기기 밖으로 나가지 않습니다',
-        body: 'Flutter 앱에서 문서를 서버에 업로드하지 않고 검색과 RAG context 생성을 처리합니다. 패키지는 LLM에 넘길 context까지만 책임지고, LLM provider와 채팅 UX는 앱에 맡깁니다.',
-      },
-      {
-        label: '색인 파이프라인',
-        title: '파싱부터 색인까지 기기 안에서',
-        body: '문서 파싱, chunk metadata, ONNX embedding, SQLite 저장, index write로 이어지는 ingest 경로를 직접 구현했습니다. 234자 텍스트 임베딩은 기기에서 평균 25.9ms가 걸렸습니다.',
-        flow: '파싱 → chunk metadata → ONNX embedding → SQLite → index',
-      },
-      {
-        label: '하이브리드 검색',
-        title: '의미 검색과 키워드 검색을 함께',
-        body: 'HNSW vector 검색과 BM25 sparse 검색의 후보를 결합해 context로 조립합니다. 메리츠화재 태블릿 앱에서는 여기에 RRF 융합 랭킹과 질의 유형별 가중치를 더했습니다.',
-        flow: 'HNSW + BM25 → 후보 결합 → LLM-ready context',
-      },
-      {
-        label: '3계층 구조',
-        title: '제품 API와 네이티브 hot path를 분리',
-        body: '앱이 쓰는 Flutter facade, 흐름을 제어하는 Dart orchestration, 네이티브 hot path를 맡는 Rust FFI 코어로 나눴습니다. Flutter 쪽 사용 면은 단순해지고, 대신 네이티브 빌드와 릴리스 경계를 함께 관리합니다.',
-        flow: 'Flutter facade → Dart orchestration → Rust FFI core',
-      },
-    ],
-    statusLabel: 'pub.dev 공개 패키지 · 0.20.0',
+    figure: {
+      screenId: 'architecture',
+      caption: '패키지 구조. 앱이 쓰는 Flutter API 아래에서 Dart가 작업 흐름을 맡고, Rust 코어가 색인과 검색을 처리합니다.',
+    },
+    statusLabel: 'pub.dev 공개 패키지 · 0.24.0',
     problem:
       'Flutter 앱에서 문서를 서버에 업로드하지 않고 로컬 문서 검색과 RAG context 생성을 처리해야 했습니다.',
     contributions: [
@@ -73,10 +54,10 @@ export const recruitmentCases: RecruitmentCase[] = [
       'HNSW vector search, BM25 sparse retrieval, 후보 결합, context assembly로 이어지는 query 경로를 구현했습니다.',
     ],
     verification: [
-      'GitHub 소스, 예제, 문서와 pub.dev 0.20.0 릴리스를 공개 근거로 함께 확인할 수 있습니다.',
+      'GitHub 소스, 예제, 문서와 pub.dev 0.24.0 릴리스를 공개 근거로 함께 확인할 수 있습니다.',
     ],
     outcomes: [
-      'Flutter 공개 API, 예제, 문서, 릴리스 패키징을 포함한 0.20.0을 pub.dev에 배포했습니다.',
+      'Flutter 공개 API, 예제, 문서, 릴리스 패키징을 포함한 0.24.0을 pub.dev에 배포했습니다.',
       'Easy Contract Viewer 같은 Flutter 제품에서 로컬 색인과 원문 기반 context 생성에 재사용할 수 있는 기반을 만들었습니다.',
     ],
     tradeoffs: [
@@ -100,7 +81,7 @@ export const recruitmentCases: RecruitmentCase[] = [
     supportingPackages: [
       {
         name: 'rag_engine_flutter',
-        version: '0.18.3',
+        version: '0.23.0',
         relationship:
           'mobile_rag_engine의 네이티브 Rust FFI와 토크나이징 경로를 제공하는 기반 패키지입니다.',
         techStack: [
@@ -202,7 +183,7 @@ export const recruitmentCases: RecruitmentCase[] = [
     ],
     evidenceLinks: [
       {
-        label: '검색 서비스',
+        label: '서비스 보기',
         url: 'https://law-api.swifty.kr/',
         kind: 'live',
       },
