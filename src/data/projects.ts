@@ -326,9 +326,9 @@ export const projects: Project[] = [
     id: "fiet-fitness-trainer",
     type: "tablet",
     title: "피에트 피트니스 트레이너",
-    subtitle: "피에트 피트니스 센터의 트레이너 전용 앱",
+    subtitle: "MVM Fitness 트레이너용 태블릿 앱",
     description:
-      "피에트 피트니스 센터의 트레이너 전용 앱입니다. 회원 관리, 운동 프로그램 설계, 식단 관리 및 체중 데이터 추적을 태블릿에 최적화된 인터페이스로 제공합니다.",
+      "MVM 삼성역점에서 운영한 MVM Fitness의 트레이너 전용 앱입니다. 회원 관리, 운동 프로그램 설계, 식단 관리 및 체중 데이터 추적을 태블릿에 최적화된 인터페이스로 제공합니다.",
     implementationPoints: [
       "트레이너 업무 흐름에 맞춘 태블릿 우선 Flutter UI와 재사용 위젯을 구축했습니다.",
       "체중계와 가속도 센서 연동을 위한 BLE 실시간 데이터 전송 흐름을 구현했습니다.",
@@ -401,9 +401,9 @@ export const projects: Project[] = [
     id: "fiet-fitness-user",
     type: "mobile",
     title: "피에트 피트니스",
-    subtitle: "AI 건강 관리 회사가 만든 새로운 개념의 피트니스 센터",
+    subtitle: "MVM Fitness 회원용 모바일 앱",
     description:
-      "AI 건강 관리 회사가 만든 새로운 개념의 피트니스 센터 앱입니다. 트레이너와 연동하여 맞춤형 운동 프로그램과 식단을 확인하고 진행 상황을 기록합니다.",
+      "MVM 삼성역점에서 운영한 MVM Fitness의 회원용 앱입니다. 트레이너와 연동하여 맞춤형 운동 프로그램과 식단을 확인하고 진행 상황을 기록합니다.",
     implementationPoints: [
       "Flutter 상태 기반 UI로 운동/식단 추적 화면을 구현했습니다.",
       "Firebase Cloud Messaging 기반 푸시 알림 워크플로를 연동했습니다.",
@@ -470,15 +470,17 @@ export const projects: Project[] = [
     id: "local-mobile-rag-gemma",
     type: "package",
     title: "mobile_rag_engine",
-    releaseLabel: "pub.dev 0.20.0",
-    subtitle: "모바일에서 완전 로컬 RAG를 실행하는 Flutter 패키지",
+    releaseLabel: "pub.dev 0.24.0",
+    subtitle: "앱 안에서 완전 로컬 RAG를 실행하는 Flutter 패키지",
     description:
-      "Flutter 앱에 서버 업로드 없는 온디바이스 문서 검색과 RAG 기능을 붙일 수 있는 공개 Flutter 패키지입니다.",
+      "Flutter 앱에 서버 없이 동작하는 문서 검색과 RAG를 붙이는 공개 패키지입니다. 문서 분할, 임베딩, 저장, 검색이 모두 기기 안에서 실행되고 iOS·Android·macOS·Windows를 지원합니다.",
     implementationPoints: [
-      "Flutter 공개 API, 예제, 문서, 릴리스 패키징을 포함해 mobile_rag_engine 0.20.0을 배포했습니다.",
-      "제품 API 계층과 네이티브 hot path를 분리해 Flutter facade, Dart orchestration, Rust FFI core로 구성했습니다.",
-      "문서 파싱, 청크 메타데이터, ONNX 임베딩, SQLite 저장, 색인 write까지 인제스트 경로를 구현했습니다.",
-      "질의 임베딩, HNSW 벡터 검색, BM25 sparse 검색, 후보 결합, context assembly까지 쿼리 경로를 구현했습니다.",
+      "Flutter 공개 API, 예제, 가이드 문서, 릴리스 패키징을 포함해 mobile_rag_engine 0.24.0을 배포했습니다.",
+      "제품 API 계층과 네이티브 hot path를 분리해 Flutter facade, Dart orchestration, Rust FFI core로 구성하고 토크나이징·청킹·SQLite 저장·색인을 네이티브에서 처리했습니다.",
+      "텍스트 PDF·DOCX·Markdown·일반 텍스트 파싱, 청크 메타데이터, ONNX 임베딩, SQLite 저장, 색인 갱신까지 인제스트 경로를 구현했습니다.",
+      "질의 임베딩, HNSW 벡터 검색, BM25 키워드 검색, RRF 결합, 토큰 예산 안의 context 조립까지 쿼리 경로를 구현했습니다.",
+      "앱이 넘긴 생성 함수로 답을 만들고 인용 구절을 돌려주는 ask와, 검색 결과의 JSON·LLM 도구 출력을 추가했습니다.",
+      "서명된 사전 빌드 바이너리로 Rust 툴체인 없이 Android·iOS·macOS·Windows(x64)에서 빌드되게 했습니다.",
       "Easy Contract Viewer 같은 제품에서 로컬 색인과 원문 기반 context 생성을 재사용할 수 있는 기반 기술로 구성했습니다.",
     ],
     cardPresentation: {
@@ -513,22 +515,30 @@ export const projects: Project[] = [
         id: "overview",
         imageAlt: "mobile_rag_engine 패키지 개요",
         title: "패키지 개요",
-        desc: "mobile_rag_engine은 Flutter 앱 안에서 로컬 문서 검색, retrieval, LLM-ready context 생성을 처리하는 pub.dev 공개 패키지입니다.",
+        desc: "mobile_rag_engine은 Flutter 앱 안에서 문서 색인, 하이브리드 검색, LLM-ready context 조립과 인용 답변까지 처리하는 pub.dev 공개 패키지입니다.",
         imagePath: "/images/mobile-rag-engine/problem.ko.svg",
       },
       {
         id: "architecture",
         imageAlt: "mobile_rag_engine 아키텍처",
         title: "아키텍처",
-        desc: "패키지는 Flutter facade, Dart orchestration, Rust FFI search core, ONNX embedding runtime, SQLite chunk/index store, HNSW/BM25 retrieval path로 나뉩니다.",
+        desc: "Flutter facade와 Dart orchestration이 Rust FFI 코어(토크나이징·청킹·SQLite·HNSW/BM25)와 Flutter 쪽 ONNX Runtime 임베딩에 작업을 맡깁니다.",
         imagePath: "/images/mobile-rag-engine/architecture.ko.svg",
       },
       {
         id: "retrieval-flows",
         imageAlt: "mobile_rag_engine 연동 흐름",
         title: "연동 흐름",
-        desc: "앱이 문서를 로컬에서 인제스트하고, chunk/index를 저장하고, HNSW/BM25 검색을 실행한 뒤 제품 기능에 근거 context를 넘길 수 있게 합니다.",
+        desc: "문서를 기기에서 인제스트해 chunk와 색인을 저장하고, HNSW·BM25 결과를 RRF로 결합한 뒤 토큰 예산에 맞춘 context나 인용 답변으로 돌려줍니다.",
         imagePath: "/images/mobile-rag-engine/retrieval-flows.ko.svg",
+      },
+      {
+        id: "at-a-glance",
+        imageAlt:
+          "mobile_rag_engine 한눈에 보기. 문서 추가는 addDocumentFromFile, 검색은 searchHybridWithContext, 답변은 ask 한 줄로 호출합니다. 아래에 80문항에서 정답 구절이 상위 10개 안에 든 비율 92.5~96.25%, 검색에 필요한 서버 0, 지원 플랫폼 4개가 적혀 있습니다",
+        title: "한눈에 보기",
+        desc: "문서 추가, 검색, 답변이 각각 한 줄의 호출입니다. 수치는 0.24.0 코드로 2026-11-16에 측정한 값이고, 모델에 따라 92.5%(MiniLM)에서 96.25%(BGE-m3)까지입니다.",
+        imagePath: "/images/mobile-rag-engine/at-a-glance.ko.svg",
       },
     ],
     links: [

@@ -351,7 +351,7 @@ test('freelancer route is unlisted, purpose-specific, and absent from public nav
   for (const copy of [
     "role: '모바일 제품 · 문서 검색/RAG 프로젝트 수행 개발자'",
     "position: '크로스플랫폼 앱 · Native 연동 · Retrieval/RAG · FastAPI'",
-    "positioning: '기존 모바일 제품의 고도화부터 문서·PDF 검색 기능과 검색 백엔드까지 구현합니다.'",
+    "positioning: '기존 모바일 제품의 고도화부터 문서·PDF 검색 기능과 LLM 에이전트 백엔드까지 구현합니다.'",
     "contactMailSubject: '[프로젝트 문의] 모바일 제품 · 문서 RAG 개발'",
     "featuredDescription: '모바일 제품, 문서 검색 엔진, 운영 가능한 검색 백엔드로 이어지는 수행 사례입니다.'",
     "contactHeading: '모바일 제품이나 문서 검색 기능을 개발·개선하려고 하시나요?'",
@@ -458,7 +458,7 @@ test('recruitment data separates project assets from hiring evidence', () => {
     assert.match(types, new RegExp(`interface ${name}`));
   }
   assert.match(data, /local-mobile-rag-gemma/);
-  assert.match(data, /pub\.dev 0\.20\.0/);
+  assert.match(data, /pub\.dev 0\.24\.0/);
   assert.doesNotMatch(data, /pub\.dev 0\.18\.6/);
   assert.match(types, /statusLabel: string;/);
   assert.doesNotMatch(types, /publicStatus: string;/);
@@ -476,7 +476,7 @@ test('featured cases keep cards concise and integrate supporting packages in det
   assert.match(types, /supportingPackages\?: SupportingPackage\[\];/);
   assert.match(
     data,
-    /projectId: 'local-mobile-rag-gemma'[\s\S]*?supportingPackages: \[[\s\S]*?name: 'rag_engine_flutter'[\s\S]*?version: '0\.18\.3'/
+    /projectId: 'local-mobile-rag-gemma'[\s\S]*?supportingPackages: \[[\s\S]*?name: 'rag_engine_flutter'[\s\S]*?version: '0\.23\.0'/
   );
   assert.match(modal, /관련 공개 패키지/);
   assert.match(
@@ -597,7 +597,7 @@ test('active project copy uses the latest stable mobile_rag_engine release', () 
   const projects = read('src/data/projects.ts');
 
   for (const source of [recruitment, projects]) {
-    assert.match(source, /0\.20\.0/);
+    assert.match(source, /0\.24\.0/);
     assert.doesNotMatch(source, /0\.18\.6/);
   }
 });
@@ -701,13 +701,15 @@ test('hero separates career context from linked public evidence', () => {
   assert.match(hero, /\) : \([\s\S]*?monoTokens\(item\.value\)/);
 });
 
-test('hero renders profile role and positioning alongside the v1 headline and intro', () => {
+test('hero keeps the name small and gives the largest type to the headline', () => {
   const hero = readExisting('src/components/portfolio/HeroSection.tsx');
+  const css = read('src/app/globals.css');
 
-  assert.match(hero, /\{profile\.headline \?\? profile\.role\}/);
-  assert.match(hero, /hasHeadline && \([\s\S]*?\{profile\.role\}/);
+  assert.match(hero, /<h1 id="hero-name"[\s\S]*?t-name[\s\S]*?\{profile\.name\}[\s\S]*?t-hero[\s\S]*?\{profile\.headline \?\? profile\.role\}[\s\S]*?<\/h1>/);
   assert.match(hero, /\{profile\.intro \?\? profile\.positioning\}/);
-  assert.match(hero, /profile\.intro && \([\s\S]*?\{profile\.positioning\}/);
+  // 헤드라인과 겹치는 role·positioning 줄을 다시 쌓지 않는다.
+  assert.doesNotMatch(hero, /hasHeadline|profile\.intro && /);
+  assert.doesNotMatch(css, /\.t-display/);
 });
 
 test('case detail modal renders the former card summary as plain text', () => {

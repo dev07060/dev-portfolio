@@ -39,7 +39,6 @@ export default function HeroSection({
   hasExperience,
   onOpenProject,
 }: HeroSectionProps) {
-  const hasHeadline = Boolean(profile.headline);
   return (
     <section id="top" aria-labelledby="hero-name" className="screen bg-ground">
       <header id="hero-header" className="absolute inset-x-0 top-0">
@@ -67,41 +66,41 @@ export default function HeroSection({
 
       <div className="screen-inner flex flex-wrap items-center gap-16">
         <div className="flex min-w-0 flex-[1_1_440px] flex-col">
-          <h1 id="hero-name" className="t-display m-0">{profile.name}</h1>
-          <p className="t-role mb-0 mt-5">{profile.headline ?? profile.role}</p>
-          {hasHeadline && (
-            <p className="mb-0 mt-3 text-base font-medium text-sub">{profile.role}</p>
-          )}
-          <p className="mb-0 mt-8 max-w-[500px] text-lg leading-[1.75] text-sub">
+          {/* 이름은 누구인지만 알려 주고, 가장 큰 글자는 무엇을 하는 사람인지에 쓴다. */}
+          <h1 id="hero-name" className="m-0">
+            <span className="t-name block">{profile.name}</span>
+            <span className="t-hero mt-4 block">{profile.headline ?? profile.role}</span>
+          </h1>
+          <p className="t-lead mb-0 mt-6 max-w-[520px]">
             {profile.intro ?? profile.positioning}
           </p>
-          {profile.intro && (
-            <p className="mb-0 mt-3 max-w-[500px] text-[15px] leading-[1.7] text-sub">{profile.positioning}</p>
-          )}
-          <p className="mb-0 mt-4 text-[13px] text-faint">
-            {profile.proofItems.map((item, index) => (
-              <span key={item.label}>
-                {index > 0 && ' · '}
-                {item.label}{' '}
-                {item.evidence ? (
-                  <a href={item.evidence} target="_blank" rel="noopener noreferrer" className="text-sub underline decoration-line-soft underline-offset-4 hover:text-marker">
-                    {monoTokens(item.value)} ↗
-                  </a>
-                ) : (
-                  monoTokens(item.value)
-                )}
-              </span>
-            ))}
-            {' · '}
-            {profile.position}
-          </p>
-          <ul aria-label={copy.capabilityAriaLabel} className="m-0 mt-2 flex list-none flex-wrap gap-x-5 gap-y-1 p-0 text-sm text-sub">
-            {capabilities.map((capability) => (
-              <li key={capability.title}>
-                {capability.title} <span className="text-faint">{capability.evidence}</span>
-              </li>
-            ))}
-          </ul>
+          <div className="mt-8 max-w-[520px] border-t border-line pt-5">
+            <p className="m-0 text-[15px] leading-[1.7] text-sub">
+              {profile.proofItems.map((item, index) => (
+                <span key={item.label}>
+                  {index > 0 && ' · '}
+                  <span className={item.evidence ? undefined : 'whitespace-nowrap'}>
+                    {item.label}{' '}
+                    {item.evidence ? (
+                      <a href={item.evidence} target="_blank" rel="noopener noreferrer" className="font-medium text-ink underline decoration-line-soft underline-offset-4 hover:text-marker">
+                        {monoTokens(item.value)} ↗
+                      </a>
+                    ) : (
+                      <span className="font-medium text-ink">{monoTokens(item.value)}</span>
+                    )}
+                  </span>
+                </span>
+              ))}
+            </p>
+            <ul aria-label={copy.capabilityAriaLabel} className="m-0 mt-4 grid list-none gap-2 p-0">
+              {capabilities.map((capability) => (
+                <li key={capability.title} className="flex flex-wrap items-baseline justify-between gap-x-4">
+                  <span className="text-base font-semibold text-ink">{capability.title}</span>
+                  <span className="text-sm text-sub">{capability.evidence}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
           <div className="mt-10 flex flex-wrap items-center gap-x-5 gap-y-3">
             {profile.resumeUrl && <a href={profile.resumeUrl} target="_blank" rel="noopener noreferrer" className="btn-primary">이력서 PDF</a>}
             <a href={buildMailHref(profile.email, copy.contactMailSubject)} className="btn-outline">{copy.contactCta}</a>

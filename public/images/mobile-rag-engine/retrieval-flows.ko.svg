@@ -140,18 +140,18 @@
   </g>
   <g>
     <rect x="430" y="746" width="330" height="88" rx="12" fill="#ffffff" stroke="#c7d2fe" stroke-width="1.5"/>
-    <text x="452" y="776" class="step">Recall 품질 리포트</text>
-    <text x="452" y="802" class="desc">PR-P5-1.html: vector-only mean 1.00</text>
+    <text x="452" y="776" class="step">검색 품질 측정</text>
+    <text x="452" y="802" class="desc">80문항 passage_recall@10 0.925~0.9625</text>
   </g>
   <g>
     <rect x="800" y="746" width="330" height="88" rx="12" fill="#ffffff" stroke="#c7d2fe" stroke-width="1.5"/>
-    <text x="822" y="776" class="step">Latency 리포트</text>
-    <text x="822" y="802" class="desc">PR-P3 / PR-P4: activate와 embed timing</text>
+    <text x="822" y="776" class="step">ask · LLM 도구</text>
+    <text x="822" y="802" class="desc">앱의 LLM으로 답변 + 인용 구절 반환</text>
   </g>
 
   <path class="arrow-soft" d="M998 638 L998 692 L225 692 L225 744"/>
   <path class="arrow-soft" d="M998 638 L998 692 L595 692 L595 744"/>
   <path class="arrow-soft" d="M998 638 L998 692 L965 692 L965 744"/>
 
-  <text x="600" y="870" text-anchor="middle" class="note">이 카드는 Gemma 데모 화면이 아니라 엔진 구현과 검증 증거로 읽혀야 한다.</text>
+  <text x="600" y="870" text-anchor="middle" class="note">LLM은 내장하지 않는다. 답변 생성은 앱이 고른 모델이 맡는다.</text>
 </svg>

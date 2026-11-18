@@ -36,7 +36,7 @@
     <rect x="430" y="160" width="340" height="94" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
     <text x="450" y="187" class="step">Example app + docs</text>
     <text x="450" y="212" class="desc">Runnable integration path for package adopters</text>
-    <text x="450" y="232" class="note">pub.dev 0.18.6 release evidence</text>
+    <text x="450" y="232" class="note">pub.dev 0.24.0 release evidence</text>
   </g>
   <g>
     <rect x="800" y="160" width="340" height="94" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
@@ -86,21 +86,21 @@
     <text x="80" y="590" class="step">Rust FFI search core</text>
     <text x="80" y="614" class="desc">native hot path for index and retrieval work</text>
     <text x="80" y="633" class="desc">called through the package bridge</text>
-    <text x="80" y="658" class="note">Rust search measured around 1-2ms</text>
+    <text x="80" y="658" class="note">tokenizing, chunking, BM25 and HNSW</text>
   </g>
   <g>
     <rect x="430" y="564" width="340" height="118" rx="12" fill="#eff6ff" stroke="#0284c7" stroke-width="1.5"/>
     <text x="450" y="590" class="step">ONNX embedding runtime</text>
     <text x="450" y="614" class="desc">local embedding for chunks and queries</text>
     <text x="450" y="633" class="desc">without external embedding API calls</text>
-    <text x="450" y="658" class="note">warm embed measured around 26.7ms</text>
+    <text x="450" y="658" class="note">runs through the flutter_onnxruntime plugin</text>
   </g>
   <g>
     <rect x="800" y="564" width="340" height="118" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
     <text x="820" y="590" class="step">SQLite chunk store</text>
     <text x="820" y="614" class="desc">text, metadata, and vectors are persisted</text>
     <text x="820" y="633" class="desc">inside the mobile app sandbox</text>
-    <text x="820" y="658" class="note">activation timing tracked separately</text>
+    <text x="820" y="658" class="note">HNSW index files persist on disk</text>
   </g>
 
   <path class="arrow" d="M600 686 L600 720"/>
@@ -113,13 +113,13 @@
     <rect x="60" y="778" width="530" height="106" rx="12" fill="#faf5ff" stroke="#a855f7" stroke-width="1.5"/>
     <text x="80" y="805" class="step">HNSW vector path</text>
     <text x="80" y="830" class="desc">semantic nearest-neighbor candidates from embedded chunks</text>
-    <text x="80" y="851" class="note">vector-only recall validated in PR-P5-1.html</text>
+    <text x="80" y="851" class="note">search() is vector-only</text>
   </g>
   <g>
     <rect x="610" y="778" width="530" height="106" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
     <text x="630" y="805" class="step">BM25 sparse path</text>
     <text x="630" y="830" class="desc">keyword evidence path for exact term matches</text>
-    <text x="630" y="851" class="note">fusion caveat documented for hybrid ranking</text>
+    <text x="630" y="851" class="note">both rankings fused with RRF</text>
   </g>
 
   <path class="arrow" d="M600 888 L600 922"/>
